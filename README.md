@@ -17,7 +17,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/MurilloYonamine/5th-Semester-Project">
-    <img src="Media/unity-engine-logo.png" alt="Logo" width="80" height="80">
+    <img src="Media/unity-engine-logo.png" alt="Logo" width="256" height="256">
   </a>
 
   <h3 align="center">5th Semester Project</h3>

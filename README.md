@@ -17,7 +17,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/MurilloYonamine/5th-Semester-Project">
-    <img src="media/unity-engine-logo.png" alt="Logo" width="80" height="80">
+    <img src="Media/unity-engine-logo.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">5th Semester Project</h3>
@@ -211,7 +211,6 @@ Project Link: [https://github.com/MurilloYonamine/5th-Semester-Project](https://
 ## Acknowledgments
 
 - [Easy Audio Cutter](https://assetstore.unity.com/packages/tools/audio/easy-audio-cutter-183303)
-- [Fast Script Reload](https://assetstore.unity.com/packages/tools/utilities/fast-script-reload-172013)
 - [M Studio Colourful Hierarchy](https://assetstore.unity.com/packages/tools/utilities/mstudio-colourful-hierarchy-183317)
 - [Player Prefs Editor](https://assetstore.unity.com/packages/tools/utilities/player-prefs-editor-184618)
 - [Odin Inspector 4.0](https://assetstore.unity.com/packages/tools/utilities/odin-inspector-89041)

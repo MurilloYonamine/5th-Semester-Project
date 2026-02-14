@@ -1,11 +1,18 @@
-name: Actions 😎
+name: Unity CI
 
 # Dispara o workflow em push e pull_request.
-on: [push, pull_request]
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 # Permite criar releases e enviar artefatos.
 permissions:
   contents: write
+  checks: write
 
 jobs:
   # Build e testes no Linux, com cache e artefatos.
@@ -37,6 +44,7 @@ jobs:
             Library-${{ matrix.projectPath }}-
             Library-
       - uses: game-ci/unity-test-runner@v4
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         id: testRunner
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -49,7 +57,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test results (all modes)
+          name: Test results (all modes) - ${{ matrix.targetPlatform }}
           path: ${{ steps.testRunner.outputs.artifactsPath }}
       - if: matrix.targetPlatform == 'Android'
         uses: jlumbroso/free-disk-space@v1.2.0
@@ -65,7 +73,7 @@ jobs:
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
       - uses: actions/upload-artifact@v4
         with:
-          name: Build
+          name: Build - ${{ matrix.targetPlatform }}
           path: build
 
   # Build para Windows (32 e 64 bits), gera artefatos.
@@ -110,7 +118,7 @@ jobs:
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
       - uses: actions/upload-artifact@v4
         with:
-          name: Build
+          name: Build - ${{ matrix.targetPlatform }}
           path: build
 
   # Publica os artefatos no GitHub Release quando a tag v* for criada.

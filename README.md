@@ -69,12 +69,19 @@ FeatureName/
 │
 ├── Scripts/
 ├── Prefabs/
-├── ScriptableObjects/
+├── Models/
 ├── Sprites/
+├── Animations/
+├── Audio/
 └── FeatureName.asmdef
 ```
 
-Keep features isolated and organized.
+### Layer Style
+
+<a href="https://github.com/MurilloYonamine/5th-Semester-Project">
+  <img src="Media/Diagrams/architecture.drawio.png" alt="Logo">
+</a>
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

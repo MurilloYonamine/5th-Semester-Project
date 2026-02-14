@@ -51,7 +51,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test results (all modes)
+          name: Test results (${{ matrix.targetPlatform }})
           path: ${{ steps.testRunner.outputs.artifactsPath }}
       - if: matrix.targetPlatform == 'Android'
         uses: jlumbroso/free-disk-space@v1.2.0
@@ -117,6 +117,7 @@ jobs:
   release:
     name: Create Release and Upload Artifacts
     runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: 
       - buildAndTestForLinuxBasedPlatforms
       - buildForWindowsBasedPlatforms

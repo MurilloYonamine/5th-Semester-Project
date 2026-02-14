@@ -158,15 +158,15 @@ jobs:
             case "$platform" in
               StandaloneLinux64)
                 out="${repo}-Linux-x86_64-${version}.tar.gz"
-                tar -czf "packaged/$out" -C "$dir/build" .
+                tar -czf "packaged/$out" -C "$dir" .
                 ;;
               StandaloneWindows)
                 out="${repo}-Windows-x86-${version}.zip"
-                (cd "$dir/build" && zip -r "../../../packaged/$out" .)
+                (cd "$dir" && zip -r "../packaged/$out" .)
                 ;;
               StandaloneWindows64)
                 out="${repo}-Windows-x86_64-${version}.zip"
-                (cd "$dir/build" && zip -r "../../../packaged/$out" .)
+                (cd "$dir" && zip -r "../packaged/$out" .)
                 ;;
             esac
           done

@@ -1,63 +1,55 @@
-name: Unity CI
+name: Unity Build, Test and Release
 
-# Dispara o workflow em push e pull_request.
 on: 
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
-
-# Permite criar releases e enviar artefatos.
-permissions:
-  contents: write
-  checks: write
+    branches: [main]
 
 jobs:
-  # Build e testes no Linux, com cache e artefatos.
-  buildAndTestForLinuxBasedPlatforms:
-    name: Build for ${{ matrix.targetPlatform }}
-    runs-on: ubuntu-latest
+  buildAndTest:
+    name: Build and Test for ${{ matrix.targetPlatform }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        projectPath:
-          - ./
-        unityVersion:
-          - 6000.0.30f1
-        targetPlatform:
-          - StandaloneLinux64 # Build a Linux 64-bit standalone.
+        os: [ubuntu-latest, windows-2022]
+        projectPath: [./]
+        unityVersion: [6000.0.30f1]
+        targetPlatform: [StandaloneLinux64, WebGL, StandaloneWindows, StandaloneWindows64]
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           lfs: true
+
       - uses: actions/cache@v3
         with:
           path: ${{ matrix.projectPath }}/Library
-          key:
-            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{
-            hashFiles(matrix.projectPath) }}
+          key: Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{ hashFiles(matrix.projectPath) }}
           restore-keys: |
             Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
             Library-${{ matrix.projectPath }}-
             Library-
+
       - uses: game-ci/unity-test-runner@v4
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         id: testRunner
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           projectPath: ${{ matrix.projectPath }}
           unityVersion: ${{ matrix.unityVersion }}
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: Test results (all modes) - ${{ matrix.targetPlatform }}
+          name: Test results (all modes)
           path: ${{ steps.testRunner.outputs.artifactsPath }}
-      - if: matrix.targetPlatform == 'Android'
-        uses: jlumbroso/free-disk-space@v1.2.0
+
       - uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
@@ -68,99 +60,48 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
+
       - uses: actions/upload-artifact@v4
         with:
-          name: Build - ${{ matrix.targetPlatform }}
+          name: Build-${{ matrix.targetPlatform }}
           path: build
 
-  # Build para Windows (32 e 64 bits), gera artefatos.
-  buildForWindowsBasedPlatforms:
-    name: Build for ${{ matrix.targetPlatform }}
-    runs-on: windows-2022
-    strategy:
-      fail-fast: false
-      matrix:
-        projectPath:
-          - ./
-        unityVersion:
-          - 6000.0.30f1
-        targetPlatform:
-          - StandaloneWindows # Build a Windows 32-bit standalone.
-          - StandaloneWindows64 # Build a Windows 64-bit standalone.
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          lfs: true
-      - uses: actions/cache@v3
-        with:
-          path: ${{ matrix.projectPath }}/Library
-          key:
-            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{
-            hashFiles(matrix.projectPath) }}
-          restore-keys: |
-            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
-            Library-${{ matrix.projectPath }}-
-            Library-
-      - uses: game-ci/unity-builder@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
-          targetPlatform: ${{ matrix.targetPlatform }}
-          customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Build - ${{ matrix.targetPlatform }}
-          path: build
-
-  # Cria uma tag automaticamente apos os builds na branch main.
-  create_tag:
-    name: Create Tag
-    runs-on: ubuntu-latest
-    needs:
-      - buildAndTestForLinuxBasedPlatforms
-      - buildForWindowsBasedPlatforms
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    outputs:
-      tag: ${{ steps.create.outputs.tag }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-      - name: Create Tag
-        id: create
-        run: |
-          TAG="v$(date +'%Y.%m.%d.%H%M')"
-          echo "Creating tag $TAG"
-          git tag "$TAG"
-          git push origin "$TAG"
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
-
-  # Publica os artefatos no GitHub Release.
   release:
-    name: Publish Release
+    name: Create Release and Upload Artifacts
     runs-on: ubuntu-latest
-    needs:
-      - create_tag
-    if: needs.create_tag.outputs.tag != ''
+    needs: buildAndTest
     steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-      - name: Upload to GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ needs.create_tag.outputs.tag }}
-          name: Release ${{ needs.create_tag.outputs.tag }}
-          files: |
-            artifacts/**/*
+      - uses: actions/checkout@v4
 
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: build_artifacts
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Artifacts to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: build_artifacts/
+          asset_name: build-${{ matrix.targetPlatform }}.zip
+          asset_content_type: application/zip
+
+      - name: Create Tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag -a "v${{ github.run_number }}" -m "Release ${{ github.run_number }}"
+          git push origin "v${{ github.run_number }}"

@@ -82,6 +82,10 @@ FeatureName/
   <img src="Media/Diagrams/architecture.drawio.png" alt="Logo">
 </a>
 
+## Credits
+
+CI/CD powered by [GameCI](https://game.ci/) and GitHub Actions.
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

@@ -128,26 +128,57 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Compute version tag
+        id: version
+        run: |
+          DATE=$(date +"%Y.%m.%d")
+          echo "value=v.${DATE}.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+
       - name: Download All Build Artifacts
         uses: actions/download-artifact@v4
         with:
           path: build_artifacts
 
       - name: Package build artifacts (Linux .tar.gz, others .zip)
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
         run: |
           mkdir -p packaged
+
+          repo="${GITHUB_REPOSITORY##*/}"
+          version="${VERSION}"
+
           for dir in build_artifacts/*; do
-            name=$(basename "$dir")
-            if [[ "$name" == *StandaloneLinux64* ]]; then
-              tar -czf "packaged/${name}.tar.gz" -C "$dir" .
-            else
-              zip -r "packaged/${name}.zip" "$dir"
-            fi
+            name="$(basename "$dir")"
+
+            # only build artifacts
+            [[ "$name" != Build-* ]] && continue
+
+            platform="${name#Build-}"
+
+            case "$platform" in
+              StandaloneLinux64)
+                out="${repo}-Linux-x86_64-${version}.tar.gz"
+                tar -czf "packaged/$out" -C "$dir/build" .
+                ;;
+              StandaloneWindows)
+                out="${repo}-Windows-x86-${version}.zip"
+                (cd "$dir/build" && zip -r "../../../packaged/$out" .)
+                ;;
+              StandaloneWindows64)
+                out="${repo}-Windows-x86_64-${version}.zip"
+                (cd "$dir/build" && zip -r "../../../packaged/$out" .)
+                ;;
+              WebGL)
+                out="${repo}-WebGL-${version}.zip"
+                (cd "$dir/build" && zip -r "../../../packaged/$out" .)
+                ;;
+            esac
           done
 
       - name: Create GitHub Release and upload assets
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.run_number }}
-          name: Release ${{ github.run_number }}
+          tag_name: ${{ steps.version.outputs.value }}
+          name: Release ${{ steps.version.outputs.value }}
           files: packaged/*

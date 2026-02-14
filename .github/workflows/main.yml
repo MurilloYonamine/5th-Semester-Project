@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: write
+
 jobs:
   buildAndTestForLinuxBasedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}
@@ -64,12 +67,12 @@ jobs:
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
       - uses: actions/upload-artifact@v4
         with:
-          name: Build
+          name: Build-${{ matrix.targetPlatform }}
           path: build
 
   buildForWindowsBasedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}
-    runs-on: windows-2022
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -108,7 +111,7 @@ jobs:
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
       - uses: actions/upload-artifact@v4
         with:
-          name: Build
+          name: Build-${{ matrix.targetPlatform }}
           path: build
 
   release:
@@ -125,30 +128,21 @@ jobs:
         with:
           path: build_artifacts
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Package build artifacts (Linux .tar.gz, others .zip)
+        run: |
+          mkdir -p packaged
+          for dir in build_artifacts/*; do
+            name=$(basename "$dir")
+            if [[ "$name" == *StandaloneLinux64* ]]; then
+              tar -czf "packaged/${name}.tar.gz" -C "$dir" .
+            else
+              zip -r "packaged/${name}.zip" "$dir"
+            fi
+          done
+
+      - name: Create GitHub Release and upload assets
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Build Artifacts to Release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: build_artifacts/
-          asset_name: build.zip
-          asset_content_type: application/zip
-
-      - name: Create Git Tag
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git tag -a "v${{ github.run_number }}" -m "Release ${{ github.run_number }}"
-          git push origin "v${{ github.run_number }}"
+          name: Release ${{ github.run_number }}
+          files: packaged/*

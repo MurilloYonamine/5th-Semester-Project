@@ -130,8 +130,8 @@ jobs:
       - name: Compute version tag
         id: version
         run: |
-          DATE=$(date +"%Y.%m.%d")
-          echo "value=v.${DATE}.${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
+          DATE=$(date +"%y.%m.%d")
+          echo "value=v.${DATE}-${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
 
       - name: Download All Build Artifacts
         uses: actions/download-artifact@v4

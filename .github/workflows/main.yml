@@ -162,11 +162,11 @@ jobs:
                 ;;
               StandaloneWindows)
                 out="${repo}-Windows-x86-${version}.zip"
-                (cd "$dir" && zip -r "../packaged/$out" .)
+                zip -r "packaged/$out" "$dir"
                 ;;
               StandaloneWindows64)
                 out="${repo}-Windows-x86_64-${version}.zip"
-                (cd "$dir" && zip -r "../packaged/$out" .)
+                zip -r "packaged/$out" "$dir"
                 ;;
             esac
           done

@@ -1,16 +1,13 @@
 name: Actions 😎
 
-# ===== explicação rapida
 # Dispara o workflow em push e pull_request.
 on: [push, pull_request]
 
-# ===== explicação rapida
 # Permite criar releases e enviar artefatos.
 permissions:
   contents: write
 
 jobs:
-  # ===== explicação rapida
   # Build e testes no Linux, com cache e artefatos.
   buildAndTestForLinuxBasedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}
@@ -71,7 +68,6 @@ jobs:
           name: Build
           path: build
 
-  # ===== explicação rapida
   # Build para Windows (32 e 64 bits), gera artefatos.
   buildForWindowsBasedPlatforms:
     name: Build for ${{ matrix.targetPlatform }}
@@ -80,7 +76,7 @@ jobs:
       fail-fast: false
       matrix:
         projectPath:
-          - test-project
+          - ./
         unityVersion:
           - 6000.0.30f1
         targetPlatform:
@@ -117,7 +113,6 @@ jobs:
           name: Build
           path: build
 
-  # ===== explicação rapida
   # Publica os artefatos no GitHub Release quando a tag v* for criada.
   release:
     name: Publish Release

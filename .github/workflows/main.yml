@@ -121,14 +121,40 @@ jobs:
           name: Build - ${{ matrix.targetPlatform }}
           path: build
 
-  # Publica os artefatos no GitHub Release quando a tag v* for criada.
-  release:
-    name: Publish Release
+  # Cria uma tag automaticamente apos os builds na branch main.
+  create_tag:
+    name: Create Tag
     runs-on: ubuntu-latest
     needs:
       - buildAndTestForLinuxBasedPlatforms
       - buildForWindowsBasedPlatforms
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    outputs:
+      tag: ${{ steps.create.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Create Tag
+        id: create
+        run: |
+          TAG="v$(date +'%Y.%m.%d.%H%M')"
+          echo "Creating tag $TAG"
+          git tag "$TAG"
+          git push origin "$TAG"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+  # Publica os artefatos no GitHub Release.
+  release:
+    name: Publish Release
+    runs-on: ubuntu-latest
+    needs:
+      - create_tag
+    if: needs.create_tag.outputs.tag != ''
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -136,6 +162,8 @@ jobs:
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ needs.create_tag.outputs.tag }}
+          name: Release ${{ needs.create_tag.outputs.tag }}
           files: |
             artifacts/**/*
 

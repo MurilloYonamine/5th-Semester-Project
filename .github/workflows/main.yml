@@ -24,7 +24,6 @@ jobs:
           - 6000.0.30f1
         targetPlatform:
           - StandaloneLinux64 # Build a Linux 64-bit standalone.
-          - WebGL # WebGL.
     steps:
       - uses: actions/checkout@v4
         with:
@@ -167,10 +166,6 @@ jobs:
                 ;;
               StandaloneWindows64)
                 out="${repo}-Windows-x86_64-${version}.zip"
-                (cd "$dir/build" && zip -r "../../../packaged/$out" .)
-                ;;
-              WebGL)
-                out="${repo}-WebGL-${version}.zip"
                 (cd "$dir/build" && zip -r "../../../packaged/$out" .)
                 ;;
             esac

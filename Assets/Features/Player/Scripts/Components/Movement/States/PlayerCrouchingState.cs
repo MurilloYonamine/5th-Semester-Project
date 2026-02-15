@@ -4,41 +4,45 @@
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
-    public sealed class PlayerCrouchingState : PlayerMovementStateBase {
+    public sealed class PlayerCrouchingState : MovementState {
         public PlayerCrouchingState(PlayerMovement context) : base(context) { }
-
         public override void Enter() {
-            Context.StartCrouch();
+            _context.StartCrouch();
         }
 
         public override void Exit() {
-            Context.StopCrouch();
+            _context.StopCrouch();
         }
 
         public override void HandleCrouch(bool isPressed) {
-            if (!Context.EnableCrouch) return;
+            if (!_context.EnableCrouch) return;
 
-            if (!Context.HoldToCrouch) {
+            if (!_context.HoldToCrouch) {
                 if (isPressed) {
-                    Context.ChangeState(new PlayerWalkingState(Context));
+                    _context.ChangeState(new PlayerWalkingState(_context));
                 }
                 return;
             }
 
             if (!isPressed) {
-                Context.ChangeState(new PlayerWalkingState(Context));
+                _context.ChangeState(new PlayerWalkingState(_context));
             }
         }
 
         public override void HandleSprint(bool isPressed) {
             if (!isPressed) return;
 
-            Context.StopCrouch();
-            if (Context.TryStartSprint()) {
-                Context.ChangeState(new PlayerSprintingState(Context));
-            } else {
-                Context.ChangeState(new PlayerWalkingState(Context));
+            _context.StopCrouch();
+            if (_context.TryStartSprint()) {
+                _context.ChangeState(new PlayerSprintingState(_context));
+                return;
             }
+
+            _context.ChangeState(new PlayerWalkingState(_context));
+        }
+
+        public override float GetCurrentSpeed() {
+            return _context.WalkSpeed * _context.SpeedReduction;
         }
     }
 }

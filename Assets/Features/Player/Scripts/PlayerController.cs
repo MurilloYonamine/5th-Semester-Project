@@ -1,7 +1,6 @@
 // Autor: Murillo Gomes Yonamine
 // Data: 14/02/2026
 
-using FifthSemester.Core.Events;
 using FifthSemester.Player.Components;
 using System;
 using UnityEngine;

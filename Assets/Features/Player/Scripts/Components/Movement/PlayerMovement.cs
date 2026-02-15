@@ -8,6 +8,7 @@ using UnityEngine;
 namespace FifthSemester.Player.Components {
     [Serializable]
     public class PlayerMovement : PlayerComponent {
+
         private Rigidbody _rigidbody;
         private PlayerEvents _playerEvents;
 
@@ -16,12 +17,14 @@ namespace FifthSemester.Player.Components {
         [SerializeField] private float _walkSpeed = 5f;
         [SerializeField] private float _maxVelocityChange = 10f;
 
+
         [Header("Sprint")]
         [SerializeField] private bool _enableSprint = true;
         [SerializeField] private bool _unlimitedSprint = false;
         [SerializeField] private float _sprintSpeed = 7f;
         [SerializeField] private float _sprintDuration = 5f;
-        [SerializeField] private float _sprintCooldown = 0.5f;
+        [SerializeField] private float _sprintCooldownSeconds = 0.5f;
+
 
         [Header("Crouch")]
         [SerializeField] private bool _enableCrouch = true;
@@ -32,17 +35,23 @@ namespace FifthSemester.Player.Components {
         private Vector2 _moveInput;
         private bool _isWalking;
 
-        // Sprint state
-        [SerializeField] private IMovementState _currentState;
+        private MovementState _currentState;
+
+
+        [Header("Sprint State")]
         private bool _sprintButtonHeld;
         private bool _isSprinting;
         private float _sprintRemaining;
         private bool _isSprintCooldown;
-        private float _sprintCooldownTimer;
+        private float _sprintCooldownRemaining;
 
-        // Crouch state
+
+        [Header("Crouch State")]
         private bool _isCrouched;
         private Vector3 _originalScale;
+
+
+        #region Unity Lifecycle
 
         public override void OnAwake() {
             _playerEvents = _player.InputEvents;
@@ -74,8 +83,28 @@ namespace FifthSemester.Player.Components {
         }
 
         public override void OnFixedUpdate() {
-            _currentState?.FixedTick();
+            if (!PlayerCanMove || Rigidbody == null) return;
+
+            Vector2 moveInput = MoveInput;
+            Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
+
+            if (input.sqrMagnitude > 0.0001f) {
+                SetIsWalking(true);
+            }
+            else {
+                SetIsWalking(false);
+                SetIsSprinting(false);
+            }
+
+            float currentSpeed = _currentState?.GetCurrentSpeed() ?? 0f;
+            Vector3 targetVelocity = PlayerTransform.TransformDirection(input) * currentSpeed;
+
+            ApplyVelocity(targetVelocity);
         }
+
+        #endregion
+
+        #region Input Handlers
 
         private void HandleMove(Vector2 direction) {
             _moveInput = direction;
@@ -90,6 +119,10 @@ namespace FifthSemester.Player.Components {
             _currentState?.HandleCrouch(isPressed);
         }
 
+        #endregion
+
+        #region Crouch Logic
+
         private void ToggleCrouchState() {
             if (_isCrouched) {
                 StopCrouch();
@@ -98,6 +131,26 @@ namespace FifthSemester.Player.Components {
                 StartCrouch();
             }
         }
+
+        public void StartCrouch() {
+            if (_isCrouched) return;
+
+            _player.transform.localScale = new Vector3(_originalScale.x, _crouchHeight, _originalScale.z);
+            _walkSpeed *= _speedReduction;
+            _isCrouched = true;
+        }
+
+        public void StopCrouch() {
+            if (!_isCrouched) return;
+
+            _player.transform.localScale = _originalScale;
+            _walkSpeed /= _speedReduction;
+            _isCrouched = false;
+        }
+
+        #endregion
+
+        #region Sprint Logic
 
         private void HandleSprintStamina() {
             if (!_enableSprint || _unlimitedSprint) return;
@@ -108,7 +161,7 @@ namespace FifthSemester.Player.Components {
                     _sprintRemaining = 0f;
                     _isSprinting = false;
                     _isSprintCooldown = true;
-                    _sprintCooldownTimer = _sprintCooldown;
+                    _sprintCooldownRemaining = _sprintCooldownSeconds;
                 }
             }
             else if (!_isSprintCooldown) {
@@ -116,19 +169,11 @@ namespace FifthSemester.Player.Components {
             }
 
             if (_isSprintCooldown) {
-                _sprintCooldownTimer -= Time.deltaTime;
-                if (_sprintCooldownTimer <= 0f) {
+                _sprintCooldownRemaining -= Time.deltaTime;
+                if (_sprintCooldownRemaining <= 0f) {
                     _isSprintCooldown = false;
                 }
             }
-        }
-
-        public void ChangeState(IMovementState newState) {
-            if (_currentState == newState) return;
-
-            _currentState?.Exit();
-            _currentState = newState;
-            _currentState?.Enter();
         }
 
         public bool TryStartSprint() {
@@ -148,7 +193,7 @@ namespace FifthSemester.Player.Components {
             if (!_unlimitedSprint && _sprintRemaining <= 0f) {
                 _isSprinting = false;
                 _isSprintCooldown = true;
-                _sprintCooldownTimer = _sprintCooldown;
+                _sprintCooldownRemaining = _sprintCooldownSeconds;
                 return false;
             }
 
@@ -164,6 +209,20 @@ namespace FifthSemester.Player.Components {
             _sprintButtonHeld = false;
             _isSprinting = false;
         }
+
+        #endregion
+
+        #region State Machine
+
+        public void ChangeState(MovementState newState) {
+            _currentState?.Exit();
+            _currentState = newState;
+            _currentState?.Enter();
+        }
+
+        #endregion
+
+        #region Public API / Properties
 
         public bool PlayerCanMove => _playerCanMove;
         public Vector2 MoveInput => _moveInput;
@@ -197,22 +256,6 @@ namespace FifthSemester.Player.Components {
             _rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
         }
 
-        public void StartCrouch() {
-            if (_isCrouched) return;
-
-            _player.transform.localScale = new Vector3(_originalScale.x, _crouchHeight, _originalScale.z);
-            _walkSpeed *= _speedReduction;
-            _isCrouched = true;
-        }
-
-        public void StopCrouch() {
-            if (!_isCrouched) return;
-
-            _player.transform.localScale = _originalScale;
-            _walkSpeed /= _speedReduction;
-            _isCrouched = false;
-        }
-
         public bool IsSprinting => _isSprinting;
         public bool IsSprintOnCooldown => _isSprintCooldown;
         public bool UsesSprintStamina => _enableSprint && !_unlimitedSprint;
@@ -221,5 +264,7 @@ namespace FifthSemester.Player.Components {
         public float SprintPercent => _unlimitedSprint || _sprintDuration <= 0f
             ? 1f
             : Mathf.Clamp01(_sprintRemaining / _sprintDuration);
+
+        #endregion
     }
 }

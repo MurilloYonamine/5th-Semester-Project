@@ -18,7 +18,7 @@ namespace FifthSemester.Core.Events {
         public static event Action<Vector2> OnMove;
         public static event Action<Vector2> OnLook;
         public static event Action OnJump;
-        public static event Action OnCrouch;
+        public static event Action<bool> OnCrouch; 
         public static event Action<bool> OnSprint;
         public static event Action OnInteract;
 
@@ -42,6 +42,7 @@ namespace FifthSemester.Core.Events {
             _look.canceled += HandleLook;
             _jump.performed += HandleJump;
             _crouch.performed += HandleCrouch;
+            _crouch.canceled += HandleCrouch;
             _sprint.performed += HandleSprint;
             _sprint.canceled += HandleSprint;
             _interact.performed += HandleInteract;
@@ -54,6 +55,7 @@ namespace FifthSemester.Core.Events {
             _look.canceled -= HandleLook;
             _jump.performed -= HandleJump;
             _crouch.performed -= HandleCrouch;
+            _crouch.canceled -= HandleCrouch;
             _sprint.performed -= HandleSprint;
             _sprint.canceled -= HandleSprint;
             _interact.performed -= HandleInteract;
@@ -80,7 +82,10 @@ namespace FifthSemester.Core.Events {
 
         public void HandleCrouch(InputAction.CallbackContext context) {
             if (context.performed) {
-                OnCrouch?.Invoke();
+                OnCrouch?.Invoke(true);
+            }
+            else if (context.canceled) {
+                OnCrouch?.Invoke(false);
             }
         }
         public void HandleSprint(InputAction.CallbackContext context) {

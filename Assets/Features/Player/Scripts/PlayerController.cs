@@ -7,11 +7,13 @@ namespace FifthSemester.Player {
     public class PlayerController : MonoBehaviour {
         [Header("Player Unity Components")]
         public Rigidbody Rigidbody { get; private set; }
+        [field: SerializeField] public Camera PlayerCamera { get; private set; }
 
         [Header("Player Components")]
         private PlayerComponent[] _playerComponents;
         [field: SerializeField] public PlayerEvents InputEvents { get; private set; }
         [field: SerializeField] public PlayerMovement PlayerMovement { get; private set; }
+        [field: SerializeField] public PlayerCamera PlayerCameraComponent { get; private set; }
 
         [Header("Settings")]
         [SerializeField] private bool lockCursor = true;
@@ -22,6 +24,7 @@ namespace FifthSemester.Player {
             _playerComponents = new PlayerComponent[] {
                 InputEvents,
                 PlayerMovement,
+                PlayerCameraComponent,
             };
             ForEachComponent(component => component.Initialize(this));
             ForEachComponent(component => component.OnAwake());

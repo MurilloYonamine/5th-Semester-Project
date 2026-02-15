@@ -33,6 +33,7 @@ namespace FifthSemester.Player.Components {
         private bool _isWalking;
 
         // Sprint state
+        [SerializeField] private IMovementState _currentState;
         private bool _sprintButtonHeld;
         private bool _isSprinting;
         private float _sprintRemaining;
@@ -51,6 +52,8 @@ namespace FifthSemester.Player.Components {
             if (!_unlimitedSprint) {
                 _sprintRemaining = _sprintDuration;
             }
+
+            ChangeState(new PlayerWalkingState(this));
         }
 
         public override void OnEnable() {
@@ -67,105 +70,32 @@ namespace FifthSemester.Player.Components {
 
         public override void OnUpdate() {
             HandleSprintStamina();
+            _currentState?.Tick();
         }
 
         public override void OnFixedUpdate() {
-            if (!_playerCanMove || _rigidbody == null) return;
-
-            Vector3 input = new Vector3(_moveInput.x, 0f, _moveInput.y);
-
-            if (input.sqrMagnitude > 0.0001f) {
-                _isWalking = true;
-            }
-            else {
-                _isWalking = false;
-                _isSprinting = false;
-            }
-
-            float currentSpeed = _walkSpeed;
-            if (_enableSprint && _isSprinting) {
-                currentSpeed = _sprintSpeed;
-            }
-
-            Vector3 targetVelocity = _player.transform.TransformDirection(input) * currentSpeed;
-
-            Vector3 velocity = _rigidbody.linearVelocity;
-            Vector3 velocityChange = targetVelocity - velocity;
-            velocityChange.x = Mathf.Clamp(velocityChange.x, -_maxVelocityChange, _maxVelocityChange);
-            velocityChange.z = Mathf.Clamp(velocityChange.z, -_maxVelocityChange, _maxVelocityChange);
-            velocityChange.y = 0f;
-
-            _rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
+            _currentState?.FixedTick();
         }
 
         private void HandleMove(Vector2 direction) {
             _moveInput = direction;
+            _currentState?.HandleMove(direction);
         }
 
         private void HandleSprint(bool isPressed) {
-            if (!_enableSprint) {
-                _sprintButtonHeld = false;
-                _isSprinting = false;
-                return;
-            }
-
-            _sprintButtonHeld = isPressed;
-
-            if (!isPressed) {
-                _isSprinting = false;
-                return;
-            }
-
-            if (_isSprintCooldown) {
-                _isSprinting = false;
-                return;
-            }
-
-            if (!_unlimitedSprint && _sprintRemaining <= 0f) {
-                _isSprinting = false;
-                _isSprintCooldown = true;
-                _sprintCooldownTimer = _sprintCooldown;
-                return;
-            }
-
-            if (_isCrouched) {
-                ToggleCrouchState();
-            }
-
-            _isSprinting = true;
+            _currentState?.HandleSprint(isPressed);
         }
 
         private void HandleCrouch(bool isPressed) {
-            if (!_enableCrouch) return;
-
-            if (!_holdToCrouch) {
-                if (isPressed) {
-                    ToggleCrouchState();
-                }
-                return;
-            }
-            if (isPressed) {
-                if (!_isCrouched) {
-                    ToggleCrouchState();
-                }
-            }
-            else {
-                if (_isCrouched) {
-                    ToggleCrouchState();
-                }
-            }
+            _currentState?.HandleCrouch(isPressed);
         }
 
         private void ToggleCrouchState() {
             if (_isCrouched) {
-                _player.transform.localScale = _originalScale;
-                _walkSpeed /= _speedReduction;
-                _isCrouched = false;
+                StopCrouch();
             }
             else {
-                _player.transform.localScale = new Vector3(_originalScale.x, _crouchHeight, _originalScale.z);
-                _walkSpeed *= _speedReduction;
-                _isCrouched = true;
+                StartCrouch();
             }
         }
 
@@ -193,9 +123,101 @@ namespace FifthSemester.Player.Components {
             }
         }
 
+        public void ChangeState(IMovementState newState) {
+            if (_currentState == newState) return;
+
+            _currentState?.Exit();
+            _currentState = newState;
+            _currentState?.Enter();
+        }
+
+        public bool TryStartSprint() {
+            if (!_enableSprint) {
+                _sprintButtonHeld = false;
+                _isSprinting = false;
+                return false;
+            }
+
+            _sprintButtonHeld = true;
+
+            if (_isSprintCooldown) {
+                _isSprinting = false;
+                return false;
+            }
+
+            if (!_unlimitedSprint && _sprintRemaining <= 0f) {
+                _isSprinting = false;
+                _isSprintCooldown = true;
+                _sprintCooldownTimer = _sprintCooldown;
+                return false;
+            }
+
+            if (_isCrouched) {
+                StopCrouch();
+            }
+
+            _isSprinting = true;
+            return true;
+        }
+
+        public void StopSprint() {
+            _sprintButtonHeld = false;
+            _isSprinting = false;
+        }
+
+        public bool PlayerCanMove => _playerCanMove;
+        public Vector2 MoveInput => _moveInput;
+        public Rigidbody Rigidbody => _rigidbody;
+        public Transform PlayerTransform => _player.transform;
+        public float WalkSpeed => _walkSpeed;
+        public float SprintSpeed => _sprintSpeed;
+        public float MaxVelocityChange => _maxVelocityChange;
+
+        public bool EnableCrouch => _enableCrouch;
+        public bool HoldToCrouch => _holdToCrouch;
+        public bool IsCrouched => _isCrouched;
+
+        public void SetIsWalking(bool value) {
+            _isWalking = value;
+        }
+
+        public void SetIsSprinting(bool value) {
+            _isSprinting = value;
+        }
+
+        public void ApplyVelocity(Vector3 targetVelocity) {
+            if (_rigidbody == null) return;
+
+            Vector3 velocity = _rigidbody.linearVelocity;
+            Vector3 velocityChange = targetVelocity - velocity;
+            velocityChange.x = Mathf.Clamp(velocityChange.x, -_maxVelocityChange, _maxVelocityChange);
+            velocityChange.z = Mathf.Clamp(velocityChange.z, -_maxVelocityChange, _maxVelocityChange);
+            velocityChange.y = 0f;
+
+            _rigidbody.AddForce(velocityChange, ForceMode.VelocityChange);
+        }
+
+        public void StartCrouch() {
+            if (_isCrouched) return;
+
+            _player.transform.localScale = new Vector3(_originalScale.x, _crouchHeight, _originalScale.z);
+            _walkSpeed *= _speedReduction;
+            _isCrouched = true;
+        }
+
+        public void StopCrouch() {
+            if (!_isCrouched) return;
+
+            _player.transform.localScale = _originalScale;
+            _walkSpeed /= _speedReduction;
+            _isCrouched = false;
+        }
+
         public bool IsSprinting => _isSprinting;
         public bool IsSprintOnCooldown => _isSprintCooldown;
         public bool UsesSprintStamina => _enableSprint && !_unlimitedSprint;
+        public bool IsWalking => _isWalking;
+        public float SpeedReduction => _speedReduction;
         public float SprintPercent => _unlimitedSprint || _sprintDuration <= 0f
             ? 1f
             : Mathf.Clamp01(_sprintRemaining / _sprintDuration);

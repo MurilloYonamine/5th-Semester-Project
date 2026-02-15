@@ -141,5 +141,34 @@ namespace FifthSemester.Player.Components {
         }
 
         public bool IsGrounded => _isGrounded;
+
+        public bool EnableJump => _enableJump;
+        public float JumpUpVelocity => _jumpUpVelocity;
+        public float HangTime => _hangTime;
+        public float FallGravityMultiplier => _fallGravityMultiplier;
+        public float GroundCheckDistance => _groundCheckDistance;
+
+        #region Dev Tuning API
+
+        public void SetEnableJump(bool value) {
+            _enableJump = value;
+        }
+
+        public void SetJumpUpVelocity(float value) {
+            _jumpUpVelocity = Mathf.Max(0f, value);
+        }
+
+        public void SetHangTime(float value) {
+            _hangTime = Mathf.Max(0f, value);
+        }
+
+        public void SetFallGravityMultiplier(float value) {
+            _fallGravityMultiplier = Mathf.Max(0.1f, value);
+        }
+
+        public void SetGroundCheckDistance(float value) {
+            _groundCheckDistance = Mathf.Max(0.01f, value);
+        }
+        #endregion
     }
 }

@@ -218,6 +218,11 @@ namespace FifthSemester.Player.Components {
         public float SprintSpeed => _sprintSpeed;
         public float MaxVelocityChange => _maxVelocityChange;
 
+        public float SprintDuration => _sprintDuration;
+        public float SprintCooldownSeconds => _sprintCooldownSeconds;
+
+        public float CrouchHeight => _crouchHeight;
+
         public bool EnableCrouch => _enableCrouch;
         public bool HoldToCrouch => _holdToCrouch;
         public bool IsCrouched => _isCrouched;
@@ -250,6 +255,61 @@ namespace FifthSemester.Player.Components {
         public float SprintPercent => _unlimitedSprint || _sprintDuration <= 0f
             ? 1f
             : Mathf.Clamp01(_sprintRemaining / _sprintDuration);
+
+        #endregion
+
+        #region Dev Tuning API
+
+        public void SetPlayerCanMove(bool value) {
+            _playerCanMove = value;
+        }
+
+        public void SetWalkSpeed(float value) {
+            _walkSpeed = Mathf.Max(0f, value);
+        }
+
+        public void SetMaxVelocityChange(float value) {
+            _maxVelocityChange = Mathf.Max(0f, value);
+        }
+
+        public void SetEnableSprint(bool value) {
+            _enableSprint = value;
+        }
+
+        public void SetUnlimitedSprint(bool value) {
+            _unlimitedSprint = value;
+        }
+
+        public void SetSprintSpeed(float value) {
+            _sprintSpeed = Mathf.Max(0f, value);
+        }
+
+        public void SetSprintDuration(float value) {
+            _sprintDuration = Mathf.Max(0f, value);
+            if (!_unlimitedSprint) {
+                _sprintRemaining = Mathf.Clamp(_sprintRemaining, 0f, _sprintDuration);
+            }
+        }
+
+        public void SetSprintCooldownSeconds(float value) {
+            _sprintCooldownSeconds = Mathf.Max(0f, value);
+        }
+
+        public void SetEnableCrouch(bool value) {
+            _enableCrouch = value;
+        }
+
+        public void SetHoldToCrouch(bool value) {
+            _holdToCrouch = value;
+        }
+
+        public void SetCrouchHeight(float value) {
+            _crouchHeight = Mathf.Max(0.1f, value);
+        }
+
+        public void SetSpeedReduction(float value) {
+            _speedReduction = Mathf.Clamp(value, 0.1f, 1f);
+        }
 
         #endregion
     }

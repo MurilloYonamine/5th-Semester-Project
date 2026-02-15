@@ -2,7 +2,6 @@
 // Data: 14/02/2026
 
 using System;
-using FifthSemester.Core.Events;
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
@@ -10,12 +9,15 @@ namespace FifthSemester.Player.Components {
     public class PlayerMovement : PlayerComponent {
 
         private Rigidbody _rigidbody;
-        private PlayerEvents _playerEvents;
+        private MovementState _currentState;
 
         [Header("Movement")]
         [SerializeField] private bool _playerCanMove = true;
         [SerializeField] private float _walkSpeed = 5f;
         [SerializeField] private float _maxVelocityChange = 10f;
+
+        private Vector2 _moveInput;
+        private bool _isWalking;
 
 
         [Header("Sprint")]
@@ -32,14 +34,8 @@ namespace FifthSemester.Player.Components {
         [SerializeField] private float _crouchHeight = 0.75f;
         [SerializeField] private float _speedReduction = 0.5f;
 
-        private Vector2 _moveInput;
-        private bool _isWalking;
-
-        private MovementState _currentState;
-
 
         [Header("Sprint State")]
-        private bool _sprintButtonHeld;
         private bool _isSprinting;
         private float _sprintRemaining;
         private bool _isSprintCooldown;
@@ -54,7 +50,6 @@ namespace FifthSemester.Player.Components {
         #region Unity Lifecycle
 
         public override void OnAwake() {
-            _playerEvents = _player.InputEvents;
             _rigidbody = _player.Rigidbody;
             _originalScale = _player.transform.localScale;
 
@@ -104,7 +99,12 @@ namespace FifthSemester.Player.Components {
 
         #endregion
 
-        #region Input Handlers
+        #region Input Handlers & State Management
+        public void ChangeState(MovementState newState) {
+            _currentState?.Exit();
+            _currentState = newState;
+            _currentState?.Enter();
+        }
 
         private void HandleMove(Vector2 direction) {
             _moveInput = direction;
@@ -178,12 +178,9 @@ namespace FifthSemester.Player.Components {
 
         public bool TryStartSprint() {
             if (!_enableSprint) {
-                _sprintButtonHeld = false;
                 _isSprinting = false;
                 return false;
             }
-
-            _sprintButtonHeld = true;
 
             if (_isSprintCooldown) {
                 _isSprinting = false;
@@ -206,18 +203,7 @@ namespace FifthSemester.Player.Components {
         }
 
         public void StopSprint() {
-            _sprintButtonHeld = false;
             _isSprinting = false;
-        }
-
-        #endregion
-
-        #region State Machine
-
-        public void ChangeState(MovementState newState) {
-            _currentState?.Exit();
-            _currentState = newState;
-            _currentState?.Enter();
         }
 
         #endregion

@@ -155,5 +155,73 @@ namespace FifthSemester.Player.Components {
                 );
             }
         }
+
+        #region Dev Tuning API
+
+        public bool CameraCanMove => _cameraCanMove;
+        public bool InvertY => _invertY;
+        public float MouseSensitivity => _mouseSensitivity;
+        public float MaxLookAngle => _maxLookAngle;
+        public bool EnableZoom => _enableZoom;
+        public bool HoldToZoom => _holdToZoom;
+        public float ZoomFov => _zoomFov;
+        public float ZoomStepTime => _zoomStepTime;
+        public bool EnableHeadBob => _enableHeadBob;
+        public float BobSpeed => _bobSpeed;
+        public Vector3 BobAmount => _bobAmount;
+
+        public void SetCameraCanMove(bool value) {
+            _cameraCanMove = value;
+        }
+
+        public void SetInvertY(bool value) {
+            _invertY = value;
+        }
+
+        public void SetMouseSensitivity(float value) {
+            _mouseSensitivity = Mathf.Clamp01(value);
+        }
+
+        public void SetMaxLookAngle(float value) {
+            _maxLookAngle = Mathf.Clamp(value, 1f, 89f);
+        }
+
+        public void SetEnableZoom(bool value) {
+            _enableZoom = value;
+        }
+
+        public void SetHoldToZoom(bool value) {
+            _holdToZoom = value;
+        }
+
+        public void SetZoomFov(float value) {
+            if (_camera == null) {
+                _zoomFov = Mathf.Clamp(value, 1f, 179f);
+                return;
+            }
+
+            _zoomFov = Mathf.Clamp(value, 1f, 179f);
+        }
+
+        public void SetZoomStepTime(float value) {
+            _zoomStepTime = Mathf.Max(0.01f, value);
+        }
+
+        public void SetEnableHeadBob(bool value) {
+            _enableHeadBob = value;
+            if (!value && _joint != null) {
+                _joint.localPosition = _jointOriginalPos;
+            }
+        }
+
+        public void SetBobSpeed(float value) {
+            _bobSpeed = Mathf.Max(0f, value);
+        }
+
+        public void SetBobAmount(Vector3 value) {
+            _bobAmount = value;
+        }
+
+        #endregion
     }
 }

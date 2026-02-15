@@ -10,7 +10,6 @@ namespace FifthSemester.Player {
     public class PlayerController : MonoBehaviour {
         [Header("Player Unity Components")]
         public Rigidbody Rigidbody { get; private set; }
-        [field: SerializeField] public Camera PlayerCamera { get; private set; }
 
         [Header("Player Components")]
         private PlayerComponent[] _playerComponents;

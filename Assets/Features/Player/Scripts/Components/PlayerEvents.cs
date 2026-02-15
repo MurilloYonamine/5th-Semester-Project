@@ -10,7 +10,7 @@ namespace FifthSemester.Player.Components {
         public event Action<Vector2> OnLookInput;
         public event Action OnJumpInput;
         public event Action<bool> OnSprintInput;
-        public event Action OnCrouchInput;
+        public event Action<bool> OnCrouchInput;
         public event Action OnInteractInput;
 
         public override void OnAwake() {
@@ -19,22 +19,46 @@ namespace FifthSemester.Player.Components {
         public override void OnEnable() {
             _inputEvents.Enable();
 
-            InputEvents.OnMove += (input) => OnMoveInput?.Invoke(input);
-            InputEvents.OnLook += (input) => OnLookInput?.Invoke(input);
-            InputEvents.OnJump += () => OnJumpInput?.Invoke();
-            InputEvents.OnSprint += (isSprinting) => OnSprintInput?.Invoke(isSprinting);
-            InputEvents.OnCrouch += () => OnCrouchInput?.Invoke();
-            InputEvents.OnInteract += () => OnInteractInput?.Invoke();
+            InputEvents.OnMove += HandleMove;
+            InputEvents.OnLook += HandleLook;
+            InputEvents.OnJump += HandleJump;
+            InputEvents.OnSprint += HandleSprint;
+            InputEvents.OnCrouch += HandleCrouch;
+            InputEvents.OnInteract += HandleInteract;
         }
         public override void OnDisable() {
             _inputEvents.Disable();
 
-            InputEvents.OnMove -= (input) => OnMoveInput?.Invoke(input);
-            InputEvents.OnLook -= (input) => OnLookInput?.Invoke(input);
-            InputEvents.OnJump -= () => OnJumpInput?.Invoke();
-            InputEvents.OnSprint -= (isSprinting) => OnSprintInput?.Invoke(isSprinting);
-            InputEvents.OnCrouch -= () => OnCrouchInput?.Invoke();
-            InputEvents.OnInteract -= () => OnInteractInput?.Invoke();
+            InputEvents.OnMove -= HandleMove;
+            InputEvents.OnLook -= HandleLook;
+            InputEvents.OnJump -= HandleJump;
+            InputEvents.OnSprint -= HandleSprint;
+            InputEvents.OnCrouch -= HandleCrouch;
+            InputEvents.OnInteract -= HandleInteract;
+        }
+
+        private void HandleMove(Vector2 input) {
+            OnMoveInput?.Invoke(input);
+        }
+
+        private void HandleLook(Vector2 input) {
+            OnLookInput?.Invoke(input);
+        }
+
+        private void HandleJump() {
+            OnJumpInput?.Invoke();
+        }
+
+        private void HandleSprint(bool isSprinting) {
+            OnSprintInput?.Invoke(isSprinting);
+        }
+
+        private void HandleCrouch(bool isPressed) {
+            OnCrouchInput?.Invoke(isPressed);
+        }
+
+        private void HandleInteract() {
+            OnInteractInput?.Invoke();
         }
     }
 }

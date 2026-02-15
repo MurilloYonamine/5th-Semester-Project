@@ -132,10 +132,25 @@ namespace FifthSemester.Player.Components {
             _isSprinting = true;
         }
 
-        private void HandleCrouch() {
+        private void HandleCrouch(bool isPressed) {
             if (!_enableCrouch) return;
 
-            ToggleCrouchState();
+            if (!_holdToCrouch) {
+                if (isPressed) {
+                    ToggleCrouchState();
+                }
+                return;
+            }
+            if (isPressed) {
+                if (!_isCrouched) {
+                    ToggleCrouchState();
+                }
+            }
+            else {
+                if (_isCrouched) {
+                    ToggleCrouchState();
+                }
+            }
         }
 
         private void ToggleCrouchState() {

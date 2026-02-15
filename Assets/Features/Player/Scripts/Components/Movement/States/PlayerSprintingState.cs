@@ -4,30 +4,29 @@
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
-    public sealed class PlayerSprintingState : PlayerMovementStateBase {
+    public sealed class PlayerSprintingState : MovementState {
         public PlayerSprintingState(PlayerMovement context) : base(context) { }
-
-        protected override float GetCurrentSpeed() {
-            return Context.SprintSpeed;
+        public override void Enter() {
+            if (!_context.IsSprinting) {
+                _context.TryStartSprint();
+            }
         }
 
-        public override void Enter() {
-            if (!Context.IsSprinting) {
-                Context.TryStartSprint();
+        public override void Tick() {
+            if (!_context.IsSprinting) {
+                _context.ChangeState(new PlayerWalkingState(_context));
             }
         }
 
         public override void HandleSprint(bool isPressed) {
             if (!isPressed) {
-                Context.StopSprint();
-                Context.ChangeState(new PlayerWalkingState(Context));
+                _context.StopSprint();
+                _context.ChangeState(new PlayerWalkingState(_context));
             }
         }
 
-        public override void Tick() {
-            if (!Context.IsSprinting) {
-                Context.ChangeState(new PlayerWalkingState(Context));
-            }
+        public override float GetCurrentSpeed() {
+            return _context.SprintSpeed;
         }
     }
 }

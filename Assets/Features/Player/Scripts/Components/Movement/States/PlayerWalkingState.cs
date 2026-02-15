@@ -4,33 +4,36 @@
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
-    public sealed class PlayerWalkingState : PlayerMovementStateBase {
+    public sealed class PlayerWalkingState : MovementState {
         public PlayerWalkingState(PlayerMovement context) : base(context) { }
-
         public override void HandleSprint(bool isPressed) {
             if (!isPressed) {
-                Context.StopSprint();
+                _context.StopSprint();
                 return;
             }
 
-            if (Context.TryStartSprint()) {
-                Context.ChangeState(new PlayerSprintingState(Context));
+            if (_context.TryStartSprint()) {
+                _context.ChangeState(new PlayerSprintingState(_context));
             }
         }
 
         public override void HandleCrouch(bool isPressed) {
-            if (!Context.EnableCrouch) return;
+            if (!_context.EnableCrouch) return;
 
-            if (!Context.HoldToCrouch) {
+            if (!_context.HoldToCrouch) {
                 if (isPressed) {
-                    Context.ChangeState(new PlayerCrouchingState(Context));
+                    _context.ChangeState(new PlayerCrouchingState(_context));
                 }
                 return;
             }
 
             if (isPressed) {
-                Context.ChangeState(new PlayerCrouchingState(Context));
+                _context.ChangeState(new PlayerCrouchingState(_context));
             }
+        }
+
+        public override float GetCurrentSpeed() {
+            return _context.WalkSpeed;
         }
     }
 }

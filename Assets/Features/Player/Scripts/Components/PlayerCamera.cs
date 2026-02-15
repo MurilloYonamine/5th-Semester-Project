@@ -15,6 +15,12 @@ namespace FifthSemester.Player.Components {
         [SerializeField, Range(0f, 1f)] private float _mouseSensitivity = 0.5f;
         [SerializeField] private float _maxLookAngle = 50f;
 
+        [Header("Zoom")]
+        [SerializeField] private bool _enableZoom = true;
+        [SerializeField] private bool _holdToZoom = false;
+        [SerializeField] private float _zoomFov = 30f;
+        [SerializeField] private float _zoomStepTime = 5f;
+
         [Header("Head Bob")]
         [SerializeField] private bool _enableHeadBob = true;
         [SerializeField] private Transform _joint;
@@ -25,6 +31,11 @@ namespace FifthSemester.Player.Components {
         private float _pitch;
         private Vector2 _lookInput;
 
+        private bool _isZoomed;
+        private bool _zoomPressed;
+        private bool _zoomPrevPressed;
+        private float _defaultFov;
+
         private Vector3 _jointOriginalPos;
         private float _bobTimer;
         private PlayerMovement _movement;
@@ -34,10 +45,12 @@ namespace FifthSemester.Player.Components {
                 Vector3 euler = _camera.transform.localEulerAngles;
                 _pitch = euler.x;
                 _yaw = _player != null ? _player.transform.localEulerAngles.y : euler.y;
+
+                _defaultFov = _camera.fieldOfView;
             }
 
-            if (_player is PlayerController pc) {
-                _movement = pc.PlayerMovement;
+            if (_player is PlayerController player) {
+                _movement = player.PlayerMovement;
             }
 
             if (_joint != null) {
@@ -48,12 +61,14 @@ namespace FifthSemester.Player.Components {
         public override void OnEnable() {
             if (_player != null && _player.InputEvents != null) {
                 _player.InputEvents.OnLookInput += HandleLookInput;
+                _player.InputEvents.OnZoomInput += HandleZoomInput;
             }
         }
 
         public override void OnDisable() {
             if (_player != null && _player.InputEvents != null) {
                 _player.InputEvents.OnLookInput -= HandleLookInput;
+                _player.InputEvents.OnZoomInput -= HandleZoomInput;
             }
         }
 
@@ -74,11 +89,39 @@ namespace FifthSemester.Player.Components {
             _player.transform.localEulerAngles = new Vector3(0f, _yaw, 0f);
             _camera.transform.localEulerAngles = new Vector3(_pitch, 0f, 0f);
 
+            HandleZoom();
             HandleHeadBob();
         }
 
         private void HandleLookInput(Vector2 look) {
             _lookInput = look;
+        }
+
+        private void HandleZoomInput(bool isPressed) {
+            _zoomPressed = isPressed;
+        }
+
+        private void HandleZoom() {
+            if (!_enableZoom || _camera == null) return;
+
+            bool isSprinting = _movement != null && _movement.IsSprinting;
+
+            if (isSprinting) {
+                _isZoomed = false;
+            }
+            else if (_holdToZoom) {
+                _isZoomed = _zoomPressed;
+            }
+            else {
+                if (_zoomPressed && !_zoomPrevPressed) {
+                    _isZoomed = !_isZoomed;
+                }
+            }
+
+            _zoomPrevPressed = _zoomPressed;
+
+            float targetFov = _isZoomed ? _zoomFov : _defaultFov;
+            _camera.fieldOfView = Mathf.Lerp(_camera.fieldOfView, targetFov, _zoomStepTime * Time.deltaTime);
         }
 
         private void HandleHeadBob() {

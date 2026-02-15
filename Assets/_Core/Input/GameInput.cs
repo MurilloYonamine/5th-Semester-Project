@@ -109,6 +109,15 @@ namespace FifthSemester.Core.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Zoom"",
+                    ""type"": ""Button"",
+                    ""id"": ""bd9603af-85ff-44da-8f60-85269b4b2b81"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -494,6 +503,17 @@ namespace FifthSemester.Core.Input
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Crouch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8b1ef3c1-4c8b-4ad1-bc39-8fc7c0bfb6f8"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Zoom"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1090,6 +1110,7 @@ namespace FifthSemester.Core.Input
             m_Player_Previous = m_Player.FindAction("Previous", throwIfNotFound: true);
             m_Player_Next = m_Player.FindAction("Next", throwIfNotFound: true);
             m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
+            m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1178,6 +1199,7 @@ namespace FifthSemester.Core.Input
         private readonly InputAction m_Player_Previous;
         private readonly InputAction m_Player_Next;
         private readonly InputAction m_Player_Sprint;
+        private readonly InputAction m_Player_Zoom;
         public struct PlayerActions
         {
             private @GameInput m_Wrapper;
@@ -1191,6 +1213,7 @@ namespace FifthSemester.Core.Input
             public InputAction @Previous => m_Wrapper.m_Player_Previous;
             public InputAction @Next => m_Wrapper.m_Player_Next;
             public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
+            public InputAction @Zoom => m_Wrapper.m_Player_Zoom;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1227,6 +1250,9 @@ namespace FifthSemester.Core.Input
                 @Sprint.started += instance.OnSprint;
                 @Sprint.performed += instance.OnSprint;
                 @Sprint.canceled += instance.OnSprint;
+                @Zoom.started += instance.OnZoom;
+                @Zoom.performed += instance.OnZoom;
+                @Zoom.canceled += instance.OnZoom;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -1258,6 +1284,9 @@ namespace FifthSemester.Core.Input
                 @Sprint.started -= instance.OnSprint;
                 @Sprint.performed -= instance.OnSprint;
                 @Sprint.canceled -= instance.OnSprint;
+                @Zoom.started -= instance.OnZoom;
+                @Zoom.performed -= instance.OnZoom;
+                @Zoom.canceled -= instance.OnZoom;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -1449,6 +1478,7 @@ namespace FifthSemester.Core.Input
             void OnPrevious(InputAction.CallbackContext context);
             void OnNext(InputAction.CallbackContext context);
             void OnSprint(InputAction.CallbackContext context);
+            void OnZoom(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {

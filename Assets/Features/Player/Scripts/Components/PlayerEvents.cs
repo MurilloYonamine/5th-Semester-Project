@@ -15,6 +15,7 @@ namespace FifthSemester.Player.Components {
         public event Action<bool> OnSprintInput;
         public event Action<bool> OnCrouchInput;
         public event Action OnInteractInput;
+        public event Action<bool> OnZoomInput;
 
         public override void OnAwake() {
             _inputEvents = new InputEvents();
@@ -28,6 +29,7 @@ namespace FifthSemester.Player.Components {
             InputEvents.OnSprint += HandleSprint;
             InputEvents.OnCrouch += HandleCrouch;
             InputEvents.OnInteract += HandleInteract;
+            InputEvents.OnZoom += HandleZoom;
         }
         public override void OnDisable() {
             _inputEvents.Disable();
@@ -38,6 +40,7 @@ namespace FifthSemester.Player.Components {
             InputEvents.OnSprint -= HandleSprint;
             InputEvents.OnCrouch -= HandleCrouch;
             InputEvents.OnInteract -= HandleInteract;
+            InputEvents.OnZoom -= HandleZoom;
         }
 
         private void HandleMove(Vector2 input) {
@@ -62,6 +65,10 @@ namespace FifthSemester.Player.Components {
 
         private void HandleInteract() {
             OnInteractInput?.Invoke();
+        }
+
+        private void HandleZoom(bool isPressed) {
+            OnZoomInput?.Invoke(isPressed);
         }
     }
 }

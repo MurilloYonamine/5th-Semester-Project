@@ -17,6 +17,8 @@ namespace FifthSemester.Core.Events {
         private readonly InputAction _crouch;
         private readonly InputAction _sprint;
         private readonly InputAction _interact;
+        private readonly InputAction _zoom;
+
 
         public static event Action<Vector2> OnMove;
         public static event Action<Vector2> OnLook;
@@ -24,6 +26,8 @@ namespace FifthSemester.Core.Events {
         public static event Action<bool> OnCrouch; 
         public static event Action<bool> OnSprint;
         public static event Action OnInteract;
+        public static event Action<bool> OnZoom;
+
 
         public InputEvents() {
             _gameInput = new GameInput();
@@ -34,6 +38,7 @@ namespace FifthSemester.Core.Events {
             _crouch = _gameInput.Player.Crouch;
             _sprint = _gameInput.Player.Sprint;
             _interact = _gameInput.Player.Interact;
+            _zoom = _gameInput.Player.Zoom;
 
             SubscribeToActions();
             Enable();
@@ -49,6 +54,8 @@ namespace FifthSemester.Core.Events {
             _sprint.performed += HandleSprint;
             _sprint.canceled += HandleSprint;
             _interact.performed += HandleInteract;
+            _zoom.performed += HandleZoom;
+            _zoom.canceled += HandleZoom;
         }
 
         private void UnsubscribeFromActions() {
@@ -62,6 +69,8 @@ namespace FifthSemester.Core.Events {
             _sprint.performed -= HandleSprint;
             _sprint.canceled -= HandleSprint;
             _interact.performed -= HandleInteract;
+            _zoom.performed -= HandleZoom;
+            _zoom.canceled -= HandleZoom;
         }
         public void Enable() {
             _gameInput.Enable();
@@ -104,6 +113,14 @@ namespace FifthSemester.Core.Events {
                 OnInteract?.Invoke();
             }
         }
+        public void HandleZoom(InputAction.CallbackContext context) {
+            if (context.performed) {
+                OnZoom?.Invoke(true);
+            }
+            else if (context.canceled) {
+                OnZoom?.Invoke(false);
+            }
+        }
         public void Dispose() {
             UnsubscribeFromActions();
             Disable();
@@ -114,6 +131,7 @@ namespace FifthSemester.Core.Events {
             OnCrouch = null;
             OnSprint = null;
             OnInteract = null;
+            OnZoom = null;
         }
     }
 }

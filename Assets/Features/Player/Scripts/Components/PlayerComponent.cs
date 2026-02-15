@@ -6,9 +6,11 @@ using UnityEngine;
 namespace FifthSemester.Player.Components {
     public class PlayerComponent {
         protected PlayerController _player;
+        protected PlayerEvents _playerEvents;
 
         public void Initialize(PlayerController player) {
             _player = player;
+            _playerEvents = player.InputEvents;
         }
         public virtual void OnAwake() { }
         public virtual void OnStart() { }
@@ -17,5 +19,6 @@ namespace FifthSemester.Player.Components {
         public virtual void OnLateUpdate() { }
         public virtual void OnEnable() { }
         public virtual void OnDisable() { }
+        public virtual void OnDrawGizmos() { }
     }
 }

@@ -1,3 +1,6 @@
+// Autor: Murillo Gomes Yonamine
+// Data: 14/02/2026
+
 using FifthSemester.Player.Components;
 using UnityEngine;
 using UnityEngine.UI;

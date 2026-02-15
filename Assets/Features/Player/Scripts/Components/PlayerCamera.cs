@@ -1,3 +1,6 @@
+// Autor: Murillo Gomes Yonamine
+// Data: 14/02/2026
+
 using System;
 using UnityEngine;
 using FifthSemester.Core.Events;

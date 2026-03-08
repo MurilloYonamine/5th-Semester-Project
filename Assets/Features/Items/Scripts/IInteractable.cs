@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace FifthSemester.Items {
     public interface IInteractable {
-        [field: SerializeField] public bool IsInteractable { get; }
+        [SerializeField] public bool IsInteractable { get; }
         public void Interact();
         public void StopInteract();
     }

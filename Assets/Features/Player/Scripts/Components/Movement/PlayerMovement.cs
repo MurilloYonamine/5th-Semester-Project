@@ -6,11 +6,12 @@ using FifthSemester.Shared.AudioSystem;
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
-    [Serializable]
-    public class PlayerMovement : PlayerComponent {
+    public class PlayerMovement : MonoBehaviour {
 
         private Rigidbody _rigidbody;
         private MovementState _currentState;
+        private PlayerController _player;
+        private PlayerEvents _playerEvents;
 
         [Header("Movement")]
         [SerializeField] private bool _playerCanMove = true;
@@ -55,11 +56,12 @@ namespace FifthSemester.Player.Components {
         [SerializeField] private float _minFootstepSpeed = 0.1f;
         private float _footstepTimer;
 
-
         #region Unity Lifecycle
 
-        public override void OnAwake() {
-            _rigidbody = _player.Rigidbody;
+        private void Awake() {
+            _player = GetComponent<PlayerController>();
+            _playerEvents = _player.InputEvents;
+            _rigidbody = GetComponent<Rigidbody>();
             _originalScale = _player.transform.localScale;
 
             if (!_unlimitedSprint) {
@@ -69,24 +71,24 @@ namespace FifthSemester.Player.Components {
             ChangeState(new PlayerWalkingState(this));
         }
 
-        public override void OnEnable() {
+        private void OnEnable() {
             _playerEvents.OnMoveInput += HandleMove;
             _playerEvents.OnSprintInput += HandleSprint;
             _playerEvents.OnCrouchInput += HandleCrouch;
         }
 
-        public override void OnDisable() {
+        private void OnDisable() {
             _playerEvents.OnMoveInput -= HandleMove;
             _playerEvents.OnSprintInput -= HandleSprint;
             _playerEvents.OnCrouchInput -= HandleCrouch;
         }
 
-        public override void OnUpdate() {
+        private void Update() {
             HandleSprintStamina();
             _currentState?.Tick();
         }
 
-        public override void OnFixedUpdate() {
+        private void FixedUpdate() {
             if (!PlayerCanMove || Rigidbody == null) return;
 
             Vector2 moveInput = MoveInput;
@@ -108,7 +110,7 @@ namespace FifthSemester.Player.Components {
         }
 
         public void UpdateFootsteps() {
-            if (Rigidbody == null || _footstepClips.Length == 0 || !_player.PlayerJumpComponent.IsGrounded) return;
+            if (Rigidbody == null || _footstepClips.Length == 0 || !_player.IsGrounded) return;
 
             Vector3 horizontalVelocity = new Vector3(Rigidbody.linearVelocity.x, 0f, Rigidbody.linearVelocity.z);
             float speed = horizontalVelocity.magnitude;

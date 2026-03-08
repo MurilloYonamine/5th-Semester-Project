@@ -6,8 +6,7 @@ using UnityEngine;
 using FifthSemester.Core.Events;
 
 namespace FifthSemester.Player.Components {
-    [Serializable]
-    public class PlayerCamera : PlayerComponent {
+    public class PlayerCamera : MonoBehaviour {
         [Header("Camera")]
         [SerializeField] private Camera _camera;
         [SerializeField] private bool _cameraCanMove = true;
@@ -39,8 +38,12 @@ namespace FifthSemester.Player.Components {
         private Vector3 _jointOriginalPos;
         private float _bobTimer;
         private PlayerMovement _movement;
+        private PlayerController _player;
 
-        public override void OnAwake() {
+        private void Awake() {
+            _player = GetComponentInParent<PlayerController>();
+            _movement = _player != null ? _player.GetComponent<PlayerMovement>() : null;
+
             if (_camera != null) {
                 Vector3 euler = _camera.transform.localEulerAngles;
                 _pitch = euler.x;
@@ -49,30 +52,26 @@ namespace FifthSemester.Player.Components {
                 _defaultFov = _camera.fieldOfView;
             }
 
-            if (_player is PlayerController player) {
-                _movement = player.PlayerMovement;
-            }
-
             if (_joint != null) {
                 _jointOriginalPos = _joint.localPosition;
             }
         }
 
-        public override void OnEnable() {
+        private void OnEnable() {
             if (_player != null && _player.InputEvents != null) {
                 _player.InputEvents.OnLookInput += HandleLookInput;
                 _player.InputEvents.OnZoomInput += HandleZoomInput;
             }
         }
 
-        public override void OnDisable() {
+        private void OnDisable() {
             if (_player != null && _player.InputEvents != null) {
                 _player.InputEvents.OnLookInput -= HandleLookInput;
                 _player.InputEvents.OnZoomInput -= HandleZoomInput;
             }
         }
 
-        public override void OnUpdate() {
+        private void Update() {
             if (!_cameraCanMove || _camera == null || _player == null) return;
 
             _yaw = _player.transform.localEulerAngles.y + _lookInput.x * _mouseSensitivity;

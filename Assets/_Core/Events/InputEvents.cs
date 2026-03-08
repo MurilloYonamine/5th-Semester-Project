@@ -20,13 +20,13 @@ namespace FifthSemester.Core.Events {
         private readonly InputAction _zoom;
 
 
-        public static event Action<Vector2> OnMove;
-        public static event Action<Vector2> OnLook;
-        public static event Action OnJump;
-        public static event Action<bool> OnCrouch; 
-        public static event Action<bool> OnSprint;
-        public static event Action OnInteract;
-        public static event Action<bool> OnZoom;
+        public event Action<Vector2> OnMove;
+        public event Action<Vector2> OnLook;
+        public event Action OnJump;
+        public event Action<bool> OnCrouch;
+        public event Action<bool> OnSprint;
+        public event Action OnInteract;
+        public event Action<bool> OnZoom;
 
 
         public InputEvents() {
@@ -53,7 +53,7 @@ namespace FifthSemester.Core.Events {
             _crouch.canceled += HandleCrouch;
             _sprint.performed += HandleSprint;
             _sprint.canceled += HandleSprint;
-            _interact.performed += HandleInteract;
+            _interact.started += HandleInteract;
             _zoom.performed += HandleZoom;
             _zoom.canceled += HandleZoom;
         }
@@ -68,7 +68,7 @@ namespace FifthSemester.Core.Events {
             _crouch.canceled -= HandleCrouch;
             _sprint.performed -= HandleSprint;
             _sprint.canceled -= HandleSprint;
-            _interact.performed -= HandleInteract;
+            _interact.started -= HandleInteract;
             _zoom.performed -= HandleZoom;
             _zoom.canceled -= HandleZoom;
         }
@@ -109,9 +109,8 @@ namespace FifthSemester.Core.Events {
             }
         }
         public void HandleInteract(InputAction.CallbackContext context) {
-            if (context.performed) {
-                OnInteract?.Invoke();
-            }
+            Debug.Log("1 Interacting...");
+            OnInteract?.Invoke();
         }
         public void HandleZoom(InputAction.CallbackContext context) {
             if (context.performed) {

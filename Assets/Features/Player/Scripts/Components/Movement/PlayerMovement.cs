@@ -78,7 +78,6 @@ namespace FifthSemester.Player.Components {
 
         private void Awake() {
             _player = GetComponent<PlayerController>();
-            _playerEvents = _player.InputEvents;
             _rigidbody = GetComponent<Rigidbody>();
             _originalScale = _player.transform.localScale;
 
@@ -90,6 +89,7 @@ namespace FifthSemester.Player.Components {
         }
 
         private void OnEnable() {
+            _playerEvents = _player.PlayerEvents;
             _playerEvents.OnMoveInput += HandleMove;
             _playerEvents.OnSprintInput += HandleSprint;
             _playerEvents.OnCrouchInput += HandleCrouch;

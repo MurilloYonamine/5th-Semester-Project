@@ -8,16 +8,18 @@ using UnityEngine.InputSystem;
 
 namespace FifthSemester.Core.Events {
     public class InputEvents {
-        private readonly GameInput _gameInput;
+        private GameInput _gameInput;
 
         [Header("Input Actions")]
-        private readonly InputAction _move;
-        private readonly InputAction _look;
-        private readonly InputAction _jump;
-        private readonly InputAction _crouch;
-        private readonly InputAction _sprint;
-        private readonly InputAction _interact;
-        private readonly InputAction _zoom;
+        private InputAction _move;
+        private InputAction _look;
+        private InputAction _jump;
+        private InputAction _crouch;
+        private InputAction _sprint;
+        private InputAction _interact;
+        private InputAction _zoom;
+        private InputAction _next;
+        private InputAction _previous;
 
 
         public event Action<Vector2> OnMove;
@@ -27,9 +29,12 @@ namespace FifthSemester.Core.Events {
         public event Action<bool> OnSprint;
         public event Action OnInteract;
         public event Action<bool> OnZoom;
+        public event Action OnNext;
+        public event Action OnPrevious;
 
+        private void Initialize() {
+            if (_gameInput != null) return;
 
-        public InputEvents() {
             _gameInput = new GameInput();
 
             _move = _gameInput.Player.Move;
@@ -39,10 +44,12 @@ namespace FifthSemester.Core.Events {
             _sprint = _gameInput.Player.Sprint;
             _interact = _gameInput.Player.Interact;
             _zoom = _gameInput.Player.Zoom;
+            _next = _gameInput.Player.Next;
+            _previous = _gameInput.Player.Previous;
 
             SubscribeToActions();
-            Enable();
         }
+
         private void SubscribeToActions() {
             _move.performed += HandleMovement;
             _move.canceled += HandleMovement;
@@ -56,9 +63,13 @@ namespace FifthSemester.Core.Events {
             _interact.started += HandleInteract;
             _zoom.performed += HandleZoom;
             _zoom.canceled += HandleZoom;
+            _next.performed += HandleNext;
+            _previous.performed += HandlePrevious;
         }
 
         private void UnsubscribeFromActions() {
+            if (_gameInput == null) return;
+
             _move.performed -= HandleMovement;
             _move.canceled -= HandleMovement;
             _look.performed -= HandleLook;
@@ -71,12 +82,15 @@ namespace FifthSemester.Core.Events {
             _interact.started -= HandleInteract;
             _zoom.performed -= HandleZoom;
             _zoom.canceled -= HandleZoom;
+            _next.performed -= HandleNext;
+            _previous.performed -= HandlePrevious;
         }
         public void Enable() {
-            _gameInput.Enable();
+            Initialize();
+            _gameInput?.Enable();
         }
         public void Disable() {
-            _gameInput.Disable();
+            _gameInput?.Disable();
         }
         public void HandleMovement(InputAction.CallbackContext context) {
             OnMove?.Invoke(context.ReadValue<Vector2>());
@@ -109,7 +123,6 @@ namespace FifthSemester.Core.Events {
             }
         }
         public void HandleInteract(InputAction.CallbackContext context) {
-            Debug.Log("1 Interacting...");
             OnInteract?.Invoke();
         }
         public void HandleZoom(InputAction.CallbackContext context) {
@@ -118,6 +131,16 @@ namespace FifthSemester.Core.Events {
             }
             else if (context.canceled) {
                 OnZoom?.Invoke(false);
+            }
+        }
+        public void HandleNext(InputAction.CallbackContext context) {
+            if (context.performed) {
+                OnNext?.Invoke();
+            }
+        }
+        public void HandlePrevious(InputAction.CallbackContext context) {
+            if (context.performed) {
+                OnPrevious?.Invoke();
             }
         }
         public void Dispose() {

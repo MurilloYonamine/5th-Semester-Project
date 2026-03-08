@@ -33,12 +33,12 @@ namespace FifthSemester.Player.Components {
 
         private void Awake() {
             _player = GetComponent<PlayerController>();
-            _playerEvents = _player.InputEvents;
             _rigidbody = _player.GetComponent<Rigidbody>();
             _movement = _player.GetComponent<PlayerMovement>();
         }
 
         private void OnEnable() {
+            _playerEvents = _player.PlayerEvents;
             if (_playerEvents != null) {
                 _playerEvents.OnJumpInput += HandleJump;
             }

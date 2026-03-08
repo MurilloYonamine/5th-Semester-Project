@@ -16,12 +16,13 @@ namespace FifthSemester.Player.Components {
         public event Action<bool> OnCrouchInput;
         public event Action OnInteractInput;
         public event Action<bool> OnZoomInput;
+        public event Action OnNext;
+        public event Action OnPrevious;
 
-        public void OnAwake() {
+        private void Initialize() {
+            if (_inputEvents != null) return;
+
             _inputEvents = new InputEvents();
-        }
-        public void OnEnable() {
-            _inputEvents.Enable();
 
             _inputEvents.OnMove += HandleMove;
             _inputEvents.OnLook += HandleLook;
@@ -30,17 +31,17 @@ namespace FifthSemester.Player.Components {
             _inputEvents.OnCrouch += HandleCrouch;
             _inputEvents.OnInteract += HandleInteract;
             _inputEvents.OnZoom += HandleZoom;
+            _inputEvents.OnNext += HandleNext;
+            _inputEvents.OnPrevious += HandlePrevious;
         }
-        public void OnDisable() {
-            _inputEvents.Disable();
 
-            _inputEvents.OnMove -= HandleMove;
-            _inputEvents.OnLook -= HandleLook;
-            _inputEvents.OnJump -= HandleJump;
-            _inputEvents.OnSprint -= HandleSprint;
-            _inputEvents.OnCrouch -= HandleCrouch;
-            _inputEvents.OnInteract -= HandleInteract;
-            _inputEvents.OnZoom -= HandleZoom;
+        public void OnEnable() {
+            Initialize();
+            _inputEvents?.Enable();
+        }
+
+        public void OnDisable() {
+            _inputEvents?.Disable();
         }
 
         private void HandleMove(Vector2 input) {
@@ -64,12 +65,18 @@ namespace FifthSemester.Player.Components {
         }
 
         private void HandleInteract() {
-            Debug.Log("2 Interacting...");
             OnInteractInput?.Invoke();
         }
 
         private void HandleZoom(bool isPressed) {
             OnZoomInput?.Invoke(isPressed);
+        }
+
+        private void HandleNext() {
+            OnNext?.Invoke();
+        }
+        private void HandlePrevious() {
+            OnPrevious?.Invoke();
         }
     }
 }

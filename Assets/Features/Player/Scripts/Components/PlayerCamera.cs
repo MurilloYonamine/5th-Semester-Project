@@ -28,7 +28,9 @@ namespace FifthSemester.Player.Components {
         [SerializeField] private bool _enableHeadBob = true;
         [FoldoutGroup("Head Bob"), ShowIf("_enableHeadBob")]
         [SerializeField] private Transform _joint;
+        [FoldoutGroup("Head Bob"), ShowIf("_enableHeadBob")]
         [SerializeField] private float _bobSpeed = 10f;
+        [FoldoutGroup("Head Bob"), ShowIf("_enableHeadBob")]
         [SerializeField] private Vector3 _bobAmount = new Vector3(0.15f, 0.05f, 0f);
 
         private float _yaw;
@@ -44,9 +46,10 @@ namespace FifthSemester.Player.Components {
         private float _bobTimer;
         private PlayerMovement _movement;
         private PlayerController _player;
+        private PlayerEvents _playerEvents;
 
         private void Awake() {
-            _player = GetComponentInParent<PlayerController>();
+            _player = GetComponent<PlayerController>();
             _movement = _player != null ? _player.GetComponent<PlayerMovement>() : null;
 
             if (_camera != null) {
@@ -63,16 +66,17 @@ namespace FifthSemester.Player.Components {
         }
 
         private void OnEnable() {
-            if (_player != null && _player.InputEvents != null) {
-                _player.InputEvents.OnLookInput += HandleLookInput;
-                _player.InputEvents.OnZoomInput += HandleZoomInput;
+            _playerEvents = _player.PlayerEvents;
+            if (_player != null && _player.PlayerEvents != null) {
+                _playerEvents.OnLookInput += HandleLookInput;
+                _playerEvents.OnZoomInput += HandleZoomInput;
             }
         }
 
         private void OnDisable() {
-            if (_player != null && _player.InputEvents != null) {
-                _player.InputEvents.OnLookInput -= HandleLookInput;
-                _player.InputEvents.OnZoomInput -= HandleZoomInput;
+            if (_player != null && _player.PlayerEvents != null) {
+                _playerEvents.OnLookInput -= HandleLookInput;
+                _playerEvents.OnZoomInput -= HandleZoomInput;
             }
         }
 

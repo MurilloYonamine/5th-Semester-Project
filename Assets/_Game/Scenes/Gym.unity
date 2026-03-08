@@ -5133,7 +5133,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1097057126}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &616833624
@@ -10029,6 +10030,74 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1059955111}
   m_CullTransparentMesh: 1
+--- !u!1 &1097057125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1097057126}
+  - component: {fileID: 1097057127}
+  m_Layer: 0
+  m_Name: Audio Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1097057126
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1097057125}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 615883098}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1097057127
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1097057125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cee685a4bf8a6c42808848133bc88c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioFalloffCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: -80
+      inSlope: 0
+      outSlope: 80
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 80
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &1111502303
 GameObject:
   m_ObjectHideFlags: 0
@@ -19097,6 +19166,16 @@ MonoBehaviour:
     _holdToCrouch: 1
     _crouchHeight: 0.75
     _speedReduction: 0.5
+    _footstepClips:
+    - {fileID: 8300000, guid: 7e68c5f45e0571645b74ded7cf385a4e, type: 3}
+    - {fileID: 8300000, guid: f2be7185f0e90f94cab457becedff817, type: 3}
+    - {fileID: 8300000, guid: dbe806a61218cd64f9bb04a16c4e74d8, type: 3}
+    - {fileID: 8300000, guid: e29a9a2796c76bf43ab0bfa6e19239dd, type: 3}
+    - {fileID: 8300000, guid: 0620193909e89a04dba8626e3c7c9685, type: 3}
+    _walkFootstepInterval: 0.4
+    _sprintFootstepInterval: 0.32
+    _crouchFootstepInterval: 0.7
+    _minFootstepSpeed: 0.1
   <PlayerJumpComponent>k__BackingField:
     _enableJump: 1
     _jumpUpVelocity: 5
@@ -19128,5 +19207,5 @@ SceneRoots:
   - {fileID: 164285421}
   - {fileID: 808122303}
   - {fileID: 456264419}
-  - {fileID: 141537586}
   - {fileID: 616833625}
+  - {fileID: 141537586}

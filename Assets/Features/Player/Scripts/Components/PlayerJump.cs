@@ -2,15 +2,17 @@
 // Data: 15/02/2026
 
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
     public class PlayerJump : MonoBehaviour {
         [Header("Jump")]
+        [FoldoutGroup("Jump")]
         [SerializeField] private bool _enableJump = true;
 
-        [SerializeField, Range(1f, 20f), Tooltip("Velocidade inicial do pulo")] 
-        private float _jumpUpVelocity = 5f;
+        [FoldoutGroup("Jump"), ShowIf("_enableJump"), Range(1f, 20f)]
+        [SerializeField] private float _jumpUpVelocity = 5f;
 
         [SerializeField, Range(0f, 1f), Tooltip("Tempo que o jogador 'flutua' no topo do pulo, antes de começar a cair")] 
         private float _hangTime = 0.2f;    

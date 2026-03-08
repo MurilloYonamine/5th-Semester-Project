@@ -2,6 +2,7 @@
 // Data: 14/02/2026
 
 using FifthSemester.Player.Components;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace FifthSemester.Player {
@@ -14,7 +15,7 @@ namespace FifthSemester.Player {
         public Rigidbody Rigidbody { get; private set; }
 
         [Header("Player Components")]
-        [field: SerializeField] public PlayerEvents InputEvents { get; private set; }
+        public PlayerEvents InputEvents { get; private set; }
         public PlayerMovement PlayerMovement { get; private set; }
         public PlayerJump PlayerJump { get; private set; }
         public PlayerCamera PlayerCamera { get; private set; }
@@ -22,7 +23,7 @@ namespace FifthSemester.Player {
 
         [Header("Settings")]
         [SerializeField] private bool lockCursor = true;
-        [SerializeField] public bool IsGrounded => PlayerJump.IsGrounded;
+        public bool IsGrounded => PlayerJump.IsGrounded;
 
         private void Awake() {
             Rigidbody = GetComponent<Rigidbody>();

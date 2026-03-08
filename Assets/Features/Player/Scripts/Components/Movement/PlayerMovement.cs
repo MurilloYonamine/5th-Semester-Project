@@ -4,6 +4,7 @@
 using System;
 using FifthSemester.Shared.AudioSystem;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 namespace FifthSemester.Player.Components {
     public class PlayerMovement : MonoBehaviour {
@@ -14,8 +15,11 @@ namespace FifthSemester.Player.Components {
         private PlayerEvents _playerEvents;
 
         [Header("Movement")]
+        [FoldoutGroup("Movement")]
         [SerializeField] private bool _playerCanMove = true;
+        [FoldoutGroup("Movement")]
         [SerializeField] private float _walkSpeed = 5f;
+        [FoldoutGroup("Movement")]
         [SerializeField] private float _maxVelocityChange = 10f;
 
         private Vector2 _moveInput;
@@ -23,17 +27,26 @@ namespace FifthSemester.Player.Components {
 
 
         [Header("Sprint")]
+        [FoldoutGroup("Sprint")]
         [SerializeField] private bool _enableSprint = true;
+        [FoldoutGroup("Sprint"), ShowIf("_enableSprint")]
         [SerializeField] private bool _unlimitedSprint = false;
+        [FoldoutGroup("Sprint"), ShowIf("_enableSprint")]
         [SerializeField] private float _sprintSpeed = 7f;
+        [FoldoutGroup("Sprint"), ShowIf("@_enableSprint && !_unlimitedSprint")]
         [SerializeField] private float _sprintDuration = 5f;
+        [FoldoutGroup("Sprint"), ShowIf("@_enableSprint && !_unlimitedSprint")]
         [SerializeField] private float _sprintCooldownSeconds = 0.5f;
 
 
         [Header("Crouch")]
+        [FoldoutGroup("Crouch")]
         [SerializeField] private bool _enableCrouch = true;
+        [FoldoutGroup("Crouch"), ShowIf("_enableCrouch")]
         [SerializeField] private bool _holdToCrouch = false;
+        [FoldoutGroup("Crouch"), ShowIf("_enableCrouch")]
         [SerializeField] private float _crouchHeight = 0.75f;
+        [FoldoutGroup("Crouch"), ShowIf("_enableCrouch")]
         [SerializeField] private float _speedReduction = 0.5f;
 
 
@@ -49,10 +62,15 @@ namespace FifthSemester.Player.Components {
         private Vector3 _originalScale;
 
         [Header("Footsteps")]
+        [FoldoutGroup("Footsteps")]
         [SerializeField] private AudioClip[] _footstepClips;
+        [FoldoutGroup("Footsteps")]
         [SerializeField] private float _walkFootstepInterval = 0.5f;
+        [FoldoutGroup("Footsteps")]
         [SerializeField] private float _sprintFootstepInterval = 0.32f;
+        [FoldoutGroup("Footsteps")]
         [SerializeField] private float _crouchFootstepInterval = 0.7f;
+        [FoldoutGroup("Footsteps")]
         [SerializeField] private float _minFootstepSpeed = 0.1f;
         private float _footstepTimer;
 

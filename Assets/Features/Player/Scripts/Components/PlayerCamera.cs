@@ -4,6 +4,7 @@
 using System;
 using UnityEngine;
 using FifthSemester.Core.Events;
+using Sirenix.OdinInspector;
 
 namespace FifthSemester.Player.Components {
     public class PlayerCamera : MonoBehaviour {
@@ -16,12 +17,16 @@ namespace FifthSemester.Player.Components {
 
         [Header("Zoom")]
         [SerializeField] private bool _enableZoom = true;
+        [FoldoutGroup("Zoom"), ShowIf("_enableZoom")]
         [SerializeField] private bool _holdToZoom = false;
+        [FoldoutGroup("Zoom"), ShowIf("_enableZoom")]
         [SerializeField] private float _zoomFov = 30f;
+        [FoldoutGroup("Zoom"), ShowIf("_enableZoom")]
         [SerializeField] private float _zoomStepTime = 5f;
 
         [Header("Head Bob")]
         [SerializeField] private bool _enableHeadBob = true;
+        [FoldoutGroup("Head Bob"), ShowIf("_enableHeadBob")]
         [SerializeField] private Transform _joint;
         [SerializeField] private float _bobSpeed = 10f;
         [SerializeField] private Vector3 _bobAmount = new Vector3(0.15f, 0.05f, 0f);

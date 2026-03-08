@@ -2,6 +2,7 @@
 // Data: 14/02/2026
 
 using System;
+using FifthSemester.Shared.AudioSystem;
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
@@ -46,6 +47,14 @@ namespace FifthSemester.Player.Components {
         private bool _isCrouched;
         private Vector3 _originalScale;
 
+        [Header("Footsteps")]
+        [SerializeField] private AudioClip[] _footstepClips;
+        [SerializeField] private float _walkFootstepInterval = 0.5f;
+        [SerializeField] private float _sprintFootstepInterval = 0.32f;
+        [SerializeField] private float _crouchFootstepInterval = 0.7f;
+        [SerializeField] private float _minFootstepSpeed = 0.1f;
+        private float _footstepTimer;
+
 
         #region Unity Lifecycle
 
@@ -82,6 +91,7 @@ namespace FifthSemester.Player.Components {
 
             Vector2 moveInput = MoveInput;
             Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
+            UpdateFootsteps();
 
             if (input.sqrMagnitude > 0.0001f) {
                 SetIsWalking(true);
@@ -95,6 +105,28 @@ namespace FifthSemester.Player.Components {
             Vector3 targetVelocity = PlayerTransform.TransformDirection(input) * currentSpeed;
 
             ApplyVelocity(targetVelocity);
+        }
+
+        public void UpdateFootsteps() {
+            if (Rigidbody == null || _footstepClips.Length == 0 || !_player.PlayerJumpComponent.IsGrounded) return;
+
+            Vector3 horizontalVelocity = new Vector3(Rigidbody.linearVelocity.x, 0f, Rigidbody.linearVelocity.z);
+            float speed = horizontalVelocity.magnitude;
+
+            if (speed < _minFootstepSpeed) {
+                float intervalOnStop = _isCrouched ? _crouchFootstepInterval : _walkFootstepInterval;
+                _footstepTimer = intervalOnStop;
+                return;
+            }
+
+            float interval = _isSprinting ? _sprintFootstepInterval : (_isCrouched ? _crouchFootstepInterval : _walkFootstepInterval);
+            _footstepTimer += Time.deltaTime;
+
+            if (_footstepTimer >= interval) {
+                _footstepTimer -= interval;
+                AudioClip clip = _footstepClips[UnityEngine.Random.Range(0, _footstepClips.Length)];
+                AudioManager.Instance.PlaySFX(clip, volume: 0.5f);
+            }
         }
 
         #endregion

@@ -27,7 +27,7 @@ namespace FifthSemester.Player.Tuning {
 
         private void Awake() {
             if (_playerController != null) {
-                _camera = _playerController.PlayerCameraComponent;
+                _camera = _playerController.PlayerCamera;
             }
         }
 

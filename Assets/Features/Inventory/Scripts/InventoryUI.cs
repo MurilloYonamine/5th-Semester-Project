@@ -14,7 +14,7 @@ namespace FifthSemester.Inventory {
         [Header("Display Settings")]
         [SerializeField] private float _displayDuration = 3f;
         [SerializeField] private float _highlightScale = 1.2f;
-        [SerializeField] private float _AnimationDuration = 1f;
+        [SerializeField] private float _animationDuration = 1f;
 
         private int _currentIndex = 0;
         private Coroutine _hideCoroutine;

@@ -4,17 +4,22 @@
 using System;
 using FifthSemester.Shared.AudioSystem;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 namespace FifthSemester.Player.Components {
-    [Serializable]
-    public class PlayerMovement : PlayerComponent {
+    public class PlayerMovement : MonoBehaviour {
 
         private Rigidbody _rigidbody;
         private MovementState _currentState;
+        private PlayerController _player;
+        private PlayerEvents _playerEvents;
 
         [Header("Movement")]
+        [FoldoutGroup("Movement")]
         [SerializeField] private bool _playerCanMove = true;
+        [FoldoutGroup("Movement")]
         [SerializeField] private float _walkSpeed = 5f;
+        [FoldoutGroup("Movement")]
         [SerializeField] private float _maxVelocityChange = 10f;
 
         private Vector2 _moveInput;
@@ -22,17 +27,26 @@ namespace FifthSemester.Player.Components {
 
 
         [Header("Sprint")]
+        [FoldoutGroup("Sprint")]
         [SerializeField] private bool _enableSprint = true;
+        [FoldoutGroup("Sprint"), ShowIf("_enableSprint")]
         [SerializeField] private bool _unlimitedSprint = false;
+        [FoldoutGroup("Sprint"), ShowIf("_enableSprint")]
         [SerializeField] private float _sprintSpeed = 7f;
+        [FoldoutGroup("Sprint"), ShowIf("@_enableSprint && !_unlimitedSprint")]
         [SerializeField] private float _sprintDuration = 5f;
+        [FoldoutGroup("Sprint"), ShowIf("@_enableSprint && !_unlimitedSprint")]
         [SerializeField] private float _sprintCooldownSeconds = 0.5f;
 
 
         [Header("Crouch")]
+        [FoldoutGroup("Crouch")]
         [SerializeField] private bool _enableCrouch = true;
+        [FoldoutGroup("Crouch"), ShowIf("_enableCrouch")]
         [SerializeField] private bool _holdToCrouch = false;
+        [FoldoutGroup("Crouch"), ShowIf("_enableCrouch")]
         [SerializeField] private float _crouchHeight = 0.75f;
+        [FoldoutGroup("Crouch"), ShowIf("_enableCrouch")]
         [SerializeField] private float _speedReduction = 0.5f;
 
 
@@ -48,18 +62,23 @@ namespace FifthSemester.Player.Components {
         private Vector3 _originalScale;
 
         [Header("Footsteps")]
+        [FoldoutGroup("Footsteps")]
         [SerializeField] private AudioClip[] _footstepClips;
+        [FoldoutGroup("Footsteps")]
         [SerializeField] private float _walkFootstepInterval = 0.5f;
+        [FoldoutGroup("Footsteps")]
         [SerializeField] private float _sprintFootstepInterval = 0.32f;
+        [FoldoutGroup("Footsteps")]
         [SerializeField] private float _crouchFootstepInterval = 0.7f;
+        [FoldoutGroup("Footsteps")]
         [SerializeField] private float _minFootstepSpeed = 0.1f;
         private float _footstepTimer;
 
-
         #region Unity Lifecycle
 
-        public override void OnAwake() {
-            _rigidbody = _player.Rigidbody;
+        private void Awake() {
+            _player = GetComponent<PlayerController>();
+            _rigidbody = GetComponent<Rigidbody>();
             _originalScale = _player.transform.localScale;
 
             if (!_unlimitedSprint) {
@@ -69,24 +88,25 @@ namespace FifthSemester.Player.Components {
             ChangeState(new PlayerWalkingState(this));
         }
 
-        public override void OnEnable() {
+        private void OnEnable() {
+            _playerEvents = _player.PlayerEvents;
             _playerEvents.OnMoveInput += HandleMove;
             _playerEvents.OnSprintInput += HandleSprint;
             _playerEvents.OnCrouchInput += HandleCrouch;
         }
 
-        public override void OnDisable() {
+        private void OnDisable() {
             _playerEvents.OnMoveInput -= HandleMove;
             _playerEvents.OnSprintInput -= HandleSprint;
             _playerEvents.OnCrouchInput -= HandleCrouch;
         }
 
-        public override void OnUpdate() {
+        private void Update() {
             HandleSprintStamina();
             _currentState?.Tick();
         }
 
-        public override void OnFixedUpdate() {
+        private void FixedUpdate() {
             if (!PlayerCanMove || Rigidbody == null) return;
 
             Vector2 moveInput = MoveInput;
@@ -108,7 +128,7 @@ namespace FifthSemester.Player.Components {
         }
 
         public void UpdateFootsteps() {
-            if (Rigidbody == null || _footstepClips.Length == 0 || !_player.PlayerJumpComponent.IsGrounded) return;
+            if (Rigidbody == null || _footstepClips.Length == 0 || !_player.IsGrounded) return;
 
             Vector3 horizontalVelocity = new Vector3(Rigidbody.linearVelocity.x, 0f, Rigidbody.linearVelocity.z);
             float speed = horizontalVelocity.magnitude;

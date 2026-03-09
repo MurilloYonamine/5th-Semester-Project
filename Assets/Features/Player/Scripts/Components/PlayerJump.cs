@@ -2,16 +2,17 @@
 // Data: 15/02/2026
 
 using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
-    [Serializable]
-    public class PlayerJump : PlayerComponent {
+    public class PlayerJump : MonoBehaviour {
         [Header("Jump")]
+        [FoldoutGroup("Jump")]
         [SerializeField] private bool _enableJump = true;
 
-        [SerializeField, Range(1f, 20f), Tooltip("Velocidade inicial do pulo")] 
-        private float _jumpUpVelocity = 5f;
+        [FoldoutGroup("Jump"), ShowIf("_enableJump"), Range(1f, 20f)]
+        [SerializeField] private float _jumpUpVelocity = 5f;
 
         [SerializeField, Range(0f, 1f), Tooltip("Tempo que o jogador 'flutua' no topo do pulo, antes de começar a cair")] 
         private float _hangTime = 0.2f;    
@@ -23,30 +24,33 @@ namespace FifthSemester.Player.Components {
 
         private Rigidbody _rigidbody;
         private PlayerMovement _movement;
+        private PlayerController _player;
+        private PlayerEvents _playerEvents;
 
         private bool _isGrounded;
         private bool _isJumping;
         private float _airTime;
 
-        public override void OnAwake() {
-            _rigidbody = _player.Rigidbody;
-            _playerEvents = _player.InputEvents;
-            _movement = _player.PlayerMovement;
+        private void Awake() {
+            _player = GetComponent<PlayerController>();
+            _rigidbody = _player.GetComponent<Rigidbody>();
+            _movement = _player.GetComponent<PlayerMovement>();
         }
 
-        public override void OnEnable() {
+        private void OnEnable() {
+            _playerEvents = _player.PlayerEvents;
             if (_playerEvents != null) {
                 _playerEvents.OnJumpInput += HandleJump;
             }
         }
 
-        public override void OnDisable() {
+        private void OnDisable() {
             if (_playerEvents != null) {
                 _playerEvents.OnJumpInput -= HandleJump;
             }
         }
 
-        public override void OnFixedUpdate() {
+        private void FixedUpdate() {
             CheckGround();
             if (_rigidbody == null) return;
 
@@ -122,7 +126,7 @@ namespace FifthSemester.Player.Components {
             _isGrounded = false;
         }
 
-        public override void OnDrawGizmos() {
+        private void OnDrawGizmos() {
             if (_movement == null) return;
 
             Transform playerTransform = _movement.PlayerTransform;

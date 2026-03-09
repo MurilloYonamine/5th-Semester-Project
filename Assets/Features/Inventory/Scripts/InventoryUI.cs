@@ -132,7 +132,7 @@ namespace FifthSemester.Inventory {
         }
 
         private IEnumerator HideAfterAnimation() {
-            yield return new WaitForSeconds(_AnimationDuration);
+            yield return new WaitForSeconds(_animationDuration);
 
             _inventoryCanvasGroup.alpha = 0f;
             _inventoryCanvasGroup.interactable = false;

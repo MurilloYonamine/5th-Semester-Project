@@ -4,6 +4,7 @@ using UnityEngine;
 using FifthSemester.Player.Components;
 using FifthSemester.Items;
 using FifthSemester.Inventory;
+using FifthSemester.Shared.AudioSystem;
 
 namespace FifthSemester.Player {
     public class PlayerInteraction : MonoBehaviour {
@@ -17,6 +18,8 @@ namespace FifthSemester.Player {
 
         private InventoryController _inventory;
         [SerializeField] private InventoryUI _inventoryUI;
+
+        [SerializeField] private AudioClip _pickupSound;
 
         private void Awake() {
             _player = GetComponent<PlayerController>();
@@ -82,6 +85,7 @@ namespace FifthSemester.Player {
                     itemAdded = true;
                 }
             }
+            AudioManager.Instance.PlaySFX(_pickupSound);
 
             if (itemAdded && !_inventory.IsInventoryOpen) {
                 _inventory.ToggleInventory();

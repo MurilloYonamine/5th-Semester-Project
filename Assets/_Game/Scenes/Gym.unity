@@ -762,6 +762,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4500086095445992044, guid: 73010c1f2c9ca2e48abca745d7bf681a, type: 3}
+      propertyPath: _outline
+      value: 
+      objectReference: {fileID: 1264784892}
     - target: {fileID: 5705532146935654871, guid: 73010c1f2c9ca2e48abca745d7bf681a, type: 3}
       propertyPath: m_Name
       value: Photo Camera
@@ -3642,7 +3646,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _itemDisplay: {fileID: 1700586552}
-  _renderTexture: {fileID: 8400000, guid: d479a7626f99b814dac93003de0f6b4a, type: 2}
+  _renderTexture: {fileID: 0}
   _previewCamera: {fileID: 212066925}
   _itemContainer: {fileID: 1654671757}
   _itemScale: {x: 70, y: 70, z: 70}
@@ -13460,7 +13464,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   outlineMode: 0
   outlineColor: {r: 1, g: 1, b: 1, a: 1}
-  outlineWidth: 5
+  outlineWidth: 3
   precomputeOutline: 1
   bakeKeys:
   - {fileID: 1352376809394258544, guid: dc13878ecf5b0d74e88eb9251c0f9995, type: 3}

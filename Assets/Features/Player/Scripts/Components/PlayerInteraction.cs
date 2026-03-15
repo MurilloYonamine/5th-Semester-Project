@@ -60,16 +60,18 @@ namespace FifthSemester.Player {
         }
 
         private void HandleTriggerEnter(Collider other) {
-            if (other.TryGetComponent<IInteractable>(out var interactable)) {
+            if (other.TryGetComponent<Item>(out var interactable)) {
                 if (!_itemsNearby.Contains(other.gameObject)) {
                     _itemsNearby.Add(other.gameObject);
+                    interactable.Highlight();
                 }
             }
         }
 
         private void HandleTriggerExit(Collider other) {
-            if (other.TryGetComponent<IInteractable>(out var interactable)) {
+            if (other.TryGetComponent<Item>(out var interactable)) {
                 _itemsNearby.Remove(other.gameObject);
+                interactable.Unhighlight();
             }
         }
 

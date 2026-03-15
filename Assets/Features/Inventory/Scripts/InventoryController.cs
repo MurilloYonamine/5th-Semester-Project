@@ -1,3 +1,6 @@
+// autor: Murillo Gomes Yonamine
+// data: 08/03/2026
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;

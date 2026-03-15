@@ -60,65 +60,31 @@ namespace FifthSemester.Inventory {
             }
         }
 
-        private void CreateItemPreview(GameObject itemPrefab) {
-            if (_itemContainer == null || itemPrefab == null) return;
+        private void CreateItemPreview(GameObject itemInstance) {
+            if (_itemContainer == null || itemInstance == null) return;
 
-            _currentItem = new GameObject("ItemPreview");
+            _currentItem = itemInstance;
+
             _currentItem.transform.SetParent(_itemContainer);
-            _currentItem.transform.localPosition = Vector3.zero;
-            _currentItem.transform.localRotation = Quaternion.Euler(_itemRotation);
+            _currentItem.transform.SetLocalPositionAndRotation(
+                localPosition: Vector3.zero,
+                localRotation: Quaternion.Euler(_itemRotation)
+            );
             _currentItem.transform.localScale = _itemScale;
-            _currentItem.layer = LayerMask.NameToLayer("InventoryPreview");
 
-            CopyMeshesAndMaterials(itemPrefab, _currentItem);
+            SetLayerRecursively(_currentItem, LayerMask.NameToLayer("InventoryPreview"));
 
             PositionCamera();
             RenderPreview();
         }
+        private void SetLayerRecursively(GameObject obj, int newLayer) {
+            if (obj == null) return;
 
-        private void CopyMeshesAndMaterials(GameObject source, GameObject destination) {
-            MeshFilter[] meshFilters = source.GetComponentsInChildren<MeshFilter>();
-
-            foreach (MeshFilter meshFilter in meshFilters) {
-                if (meshFilter.sharedMesh == null) continue;
-
-                GameObject meshObj = new GameObject(meshFilter.gameObject.name);
-                meshObj.transform.SetParent(destination.transform);
-                meshObj.transform.localPosition = meshFilter.transform.localPosition;
-                meshObj.transform.localRotation = meshFilter.transform.localRotation;
-                meshObj.transform.localScale = meshFilter.transform.localScale;
-                meshObj.layer = LayerMask.NameToLayer("InventoryPreview");
-
-                MeshFilter newMeshFilter = meshObj.AddComponent<MeshFilter>();
-                newMeshFilter.sharedMesh = meshFilter.sharedMesh;
-
-                MeshRenderer sourceRenderer = meshFilter.GetComponent<MeshRenderer>();
-                if (sourceRenderer != null) {
-                    MeshRenderer newRenderer = meshObj.AddComponent<MeshRenderer>();
-                    newRenderer.sharedMaterials = sourceRenderer.sharedMaterials;
-                }
-            }
-
-            SkinnedMeshRenderer[] skinnedRenderers = source.GetComponentsInChildren<SkinnedMeshRenderer>();
-
-            foreach (SkinnedMeshRenderer skinnedRenderer in skinnedRenderers) {
-                if (skinnedRenderer.sharedMesh == null) continue;
-
-                GameObject meshObj = new GameObject(skinnedRenderer.gameObject.name);
-                meshObj.transform.SetParent(destination.transform);
-                meshObj.transform.localPosition = skinnedRenderer.transform.localPosition;
-                meshObj.transform.localRotation = skinnedRenderer.transform.localRotation;
-                meshObj.transform.localScale = skinnedRenderer.transform.localScale;
-                meshObj.layer = LayerMask.NameToLayer("InventoryPreview");
-
-                MeshFilter newMeshFilter = meshObj.AddComponent<MeshFilter>();
-                newMeshFilter.sharedMesh = skinnedRenderer.sharedMesh;
-
-                MeshRenderer newRenderer = meshObj.AddComponent<MeshRenderer>();
-                newRenderer.sharedMaterials = skinnedRenderer.sharedMaterials;
+            obj.layer = newLayer;
+            foreach (Transform child in obj.transform) {
+                SetLayerRecursively(child.gameObject, newLayer);
             }
         }
-
         private void PositionCamera() {
             if (_previewCamera == null || _currentItem == null) return;
 
@@ -132,12 +98,15 @@ namespace FifthSemester.Inventory {
 
         private Bounds CalculateBounds(GameObject obj) {
             Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
-            if (renderers.Length == 0) return new Bounds(obj.transform.position, Vector3.one);
+            if (renderers.Length == 0) {
+                return new Bounds(obj.transform.position, Vector3.one);
+            }
 
             Bounds bounds = renderers[0].bounds;
             for (int i = 1; i < renderers.Length; i++) {
                 bounds.Encapsulate(renderers[i].bounds);
             }
+
             return bounds;
         }
 

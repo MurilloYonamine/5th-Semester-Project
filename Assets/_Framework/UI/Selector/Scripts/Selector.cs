@@ -1,3 +1,6 @@
+// Autor: Murillo Gomes Yonamine
+// data: 15/03/2026
+
 using FifthSemester.Shared.AudioSystem;
 using TMPro;
 using UnityEngine;
@@ -12,45 +15,35 @@ namespace FifthSemester.Framework.UI {
         [Header("Selector Settings")]
         [SerializeField] protected int _currentIndex = 0;
         [SerializeField] protected T[] _items;
+        [SerializeField] protected bool _isFocused = false;
 
         [Header("Audio")]
         [SerializeField] private AudioClip _selectionSound;
 
-        [Header("Text Reference")]
-        [SerializeField] private TextMeshProUGUI _labelText;
-        [SerializeField] private TextMeshProUGUI _optionText;
-
         [Header("Colors Reference")]
-        [SerializeField] private Color _focusedColor = Color.yellow;
-        [SerializeField] private Color _unfocusedColor = Color.gray;
-        [SerializeField] private Color _hoverColor = Color.white;
+        [SerializeField] protected Color _focusedColor = Color.yellow;
+        [SerializeField] protected Color _unfocusedColor = Color.gray;
+        [SerializeField] protected Color _hoverColor = Color.white;
 
-        [SerializeField] private bool _isFocused = false;
-
-        private void Start() {
-            _labelText.color = _unfocusedColor;
-            _optionText.color = _unfocusedColor;
+        protected virtual void Start() {
+            OnLoad();   
+            UpdateUI();
+            UpdateVisualState();
+            OnHighlight(false);
         }
+
         protected abstract void OnItemSelected(T selectedItem);
         protected abstract void OnSave();
+        protected abstract void OnLoad();
+        protected abstract void UpdateUI();
+        protected virtual void OnHighlight(bool highlight) { }
+        protected virtual void UpdateVisualState() { }
 
         #region Selection Handlers
-        public void OnSelect(BaseEventData eventData) => Highlight();
-        public void OnDeselect(BaseEventData eventData) => Unhighlight();
-        public void OnPointerEnter(PointerEventData eventData) => Highlight();
-        public void OnPointerExit(PointerEventData eventData) => Unhighlight();
-        private void Highlight() {
-            if (_labelText != null) {
-                _optionText.color = _hoverColor;
-                _labelText.color = _hoverColor;
-            }
-        }
-        private void Unhighlight() {
-            if (_labelText != null) {
-                _optionText.color = _unfocusedColor;
-                _labelText.color = _unfocusedColor;
-            }
-        }
+        public void OnSelect(BaseEventData eventData) => OnHighlight(true);
+        public void OnDeselect(BaseEventData eventData) => OnHighlight(false);
+        public void OnPointerEnter(PointerEventData eventData) => OnHighlight(true);
+        public void OnPointerExit(PointerEventData eventData) => OnHighlight(false);
         #endregion
 
         #region Navigation Methods
@@ -73,7 +66,7 @@ namespace FifthSemester.Framework.UI {
             if (_selectionSound != null)
                 AudioManager.Instance.PlaySFX(_selectionSound);
 
-            UpdateText();
+            UpdateUI();
         }
         private void MovePrevious() {
             if (!_isFocused) return;
@@ -82,7 +75,7 @@ namespace FifthSemester.Framework.UI {
             if (_selectionSound != null)
                 AudioManager.Instance.PlaySFX(_selectionSound);
 
-            UpdateText();
+            UpdateUI();
         }
         #endregion
 
@@ -104,24 +97,16 @@ namespace FifthSemester.Framework.UI {
         }
         private void Focus() {
             _isFocused = true;
-            _optionText.color = _focusedColor;
+            UpdateVisualState();
         }
 
         private void Unfocus() {
             _isFocused = false;
-            _optionText.color = _unfocusedColor;
+            UpdateVisualState(); 
 
             OnItemSelected(_items[_currentIndex]);
+            OnSave();
         }
         #endregion
-        public void Reset() {
-            _currentIndex = 0;
-            UpdateText();
-        }
-        private void UpdateText() {
-            if (_optionText != null) {
-                _optionText.text = _items[_currentIndex].ToString();
-            }
-        }
     }
 }

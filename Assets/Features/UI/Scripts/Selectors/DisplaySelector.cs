@@ -2,6 +2,7 @@
 // data: 15/03/2026
 
 using FifthSemester.Framework.UI;
+using TMPro;
 using UnityEngine;
 
 namespace FifthSemester.UI {
@@ -10,8 +11,7 @@ namespace FifthSemester.UI {
         Windowed,
         Borderless
     }
-    public class DisplaySelector : Selector<DisplayMode> {
-
+    public class DisplaySelector : TextSelector<DisplayMode> {
         private void Awake() {
             _items = new DisplayMode[] {
                 DisplayMode.Fullscreen,
@@ -36,6 +36,13 @@ namespace FifthSemester.UI {
         protected override void OnSave() {
             PlayerPrefs.SetInt("DisplayMode", (int)_items[_currentIndex]);
             PlayerPrefs.Save();
+        }
+        protected override void OnLoad() {
+            int savedIndex = PlayerPrefs.GetInt("DisplayMode", 0);
+            if (savedIndex >= 0 && savedIndex < _items.Length) {
+                _currentIndex = savedIndex;
+                OnItemSelected(_items[_currentIndex]);
+            }
         }
     }
 }

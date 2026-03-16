@@ -2,6 +2,7 @@
 // data: 15/03/2026
 
 using FifthSemester.Framework.UI;
+using TMPro;
 using UnityEngine;
 
 namespace FifthSemester.UI {
@@ -12,7 +13,7 @@ namespace FifthSemester.UI {
         R1024x768,
         R1280x720
     }
-    public class Resolution : Selector<ResolutionOption> {
+    public class ResolutionSelector : TextSelector<ResolutionOption> {
         private void Awake() {
             _items = new ResolutionOption[] {
                 ResolutionOption.R320x240,
@@ -49,6 +50,21 @@ namespace FifthSemester.UI {
         protected override void OnSave() {
             PlayerPrefs.SetInt("Resolution", (int)_items[_currentIndex]);
             PlayerPrefs.Save();
+        }
+
+        protected override void OnLoad() {
+            int savedIndex = PlayerPrefs.GetInt("Resolution", 0);
+            if (savedIndex >= 0 && savedIndex < _items.Length) {
+                _currentIndex = savedIndex;
+                OnItemSelected(_items[_currentIndex]);
+            }
+        }
+        protected override void UpdateUI() {
+            if (_optionText != null) {
+                string currentItem = _items[_currentIndex].ToString();
+                string resolutionText = currentItem.Replace("R", "").Replace("x", " x ");
+                _optionText.text = resolutionText;
+            }
         }
     }
 }

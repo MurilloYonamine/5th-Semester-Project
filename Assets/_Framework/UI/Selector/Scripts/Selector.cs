@@ -7,6 +7,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI; 
 
 namespace FifthSemester.Framework.UI {
     public abstract class Selector<T> : MonoBehaviour,
@@ -28,12 +29,17 @@ namespace FifthSemester.Framework.UI {
 
         private Coroutine _navigationCoroutine;
         private bool _isMoving = false;
+        
+        private Selectable _selectable;
+        private Navigation _defaultNavigation;
 
         [Header("Hold Settings")]
         [SerializeField] private float _initialDelay = 0.4f;
         [SerializeField] private float _repeatRate = 0.08f;
 
         protected virtual void Start() {
+            _selectable = GetComponent<Selectable>(); 
+            
             OnLoad();   
             UpdateUI();
             UpdateVisualState();
@@ -76,15 +82,18 @@ namespace FifthSemester.Framework.UI {
 
         #region Navigation Methods
         public void OnMove(AxisEventData eventData) {
-            if (!_isFocused || _isMoving) return;
+            if (!_isFocused) return;
+
+            eventData.Use();
+
+            if (_isMoving) return;
 
             int direction = 0;
-            if (eventData.moveDir == MoveDirection.Right || eventData.moveDir == MoveDirection.Down) direction = 1;
-            else if (eventData.moveDir == MoveDirection.Left || eventData.moveDir == MoveDirection.Up) direction = -1;
+            if (eventData.moveDir == MoveDirection.Right) direction = 1;
+            else if (eventData.moveDir == MoveDirection.Left) direction = -1;
 
             if (direction != 0) {
                 _navigationCoroutine = StartCoroutine(HoldNavigationRoutine(direction));
-                eventData.Use();
             }
         }
         private IEnumerator HoldNavigationRoutine(int direction) {
@@ -150,11 +159,24 @@ namespace FifthSemester.Framework.UI {
         }
         private void Focus() {
             _isFocused = true;
+            
+            if (_selectable != null) {
+                _defaultNavigation = _selectable.navigation;
+                Navigation noneNav = _selectable.navigation;
+                noneNav.mode = Navigation.Mode.None;
+                _selectable.navigation = noneNav;
+            }
+
             UpdateVisualState();
         }
 
         private void Unfocus() {
             _isFocused = false;
+            
+            if (_selectable != null) {
+                _selectable.navigation = _defaultNavigation;
+            }
+
             UpdateVisualState(); 
 
             OnItemSelected(_items[_currentIndex]);

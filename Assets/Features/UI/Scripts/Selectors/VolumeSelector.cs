@@ -12,6 +12,7 @@ namespace FifthSemester.UI {
         V0, V25, V50, V75, V100
     }
     public class VolumeSelector : Selector<CurrentVolume> {
+
         [Header("Text References")]
         [SerializeField] protected TextMeshProUGUI _labelText;
 
@@ -20,7 +21,7 @@ namespace FifthSemester.UI {
         public enum AudioType { Master, Music, SFX }
 
         [Header("Volume Visuals")]
-        [SerializeField] private Color _filledUnfocusedColor = Color.white; // Cor de quando está preenchido, mas sem foco
+        [SerializeField] private Color _filledUnfocusedColor = Color.white;
 
         [SerializeField] private GameObject[] _stepIcons;
         private void Awake() {

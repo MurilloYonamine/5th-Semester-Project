@@ -2,6 +2,7 @@
 // data: 15/03/2026
 
 using FifthSemester.Shared.AudioSystem;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -25,6 +26,13 @@ namespace FifthSemester.Framework.UI {
         [SerializeField] protected Color _unfocusedColor = Color.gray;
         [SerializeField] protected Color _hoverColor = Color.white;
 
+        private Coroutine _navigationCoroutine;
+        private bool _isMoving = false;
+
+        [Header("Hold Settings")]
+        [SerializeField] private float _initialDelay = 0.4f;
+        [SerializeField] private float _repeatRate = 0.08f;
+
         protected virtual void Start() {
             OnLoad();   
             UpdateUI();
@@ -32,11 +40,31 @@ namespace FifthSemester.Framework.UI {
             OnHighlight(false);
         }
 
+        /// <summary>
+        /// Called when an item is successfully selected and focus is lost.
+        /// </summary>
+        /// <param name="selectedItem">The item that was selected.</param>
         protected abstract void OnItemSelected(T selectedItem);
+        /// <summary>
+        /// Called to save the state of the selected item.
+        /// </summary>
         protected abstract void OnSave();
+        /// <summary>
+        /// Called on start to load the initial selection state.
+        /// </summary>
         protected abstract void OnLoad();
+        /// <summary>
+        /// Called to update the UI elements representing the current item.
+        /// </summary>
         protected abstract void UpdateUI();
+        /// <summary>
+        /// Called when the selector gains or loses highlight (e.g., pointer enter/exit, selection).
+        /// </summary>
+        /// <param name="highlight">True if the selector is highlighted; otherwise, false.</param>
         protected virtual void OnHighlight(bool highlight) { }
+        /// <summary>
+        /// Called to update the visual presentation of the selector based on its focused state.
+        /// </summary>
         protected virtual void UpdateVisualState() { }
 
         #region Selection Handlers
@@ -48,16 +76,41 @@ namespace FifthSemester.Framework.UI {
 
         #region Navigation Methods
         public void OnMove(AxisEventData eventData) {
-            if (!_isFocused) return;
+            if (!_isFocused || _isMoving) return;
 
-            if (eventData.moveDir == MoveDirection.Left || eventData.moveDir == MoveDirection.Up) {
-                MovePrevious();
+            int direction = 0;
+            if (eventData.moveDir == MoveDirection.Right || eventData.moveDir == MoveDirection.Down) direction = 1;
+            else if (eventData.moveDir == MoveDirection.Left || eventData.moveDir == MoveDirection.Up) direction = -1;
+
+            if (direction != 0) {
+                _navigationCoroutine = StartCoroutine(HoldNavigationRoutine(direction));
                 eventData.Use();
             }
-            else if (eventData.moveDir == MoveDirection.Right || eventData.moveDir == MoveDirection.Down) {
-                MoveNext();
-                eventData.Use();
+        }
+        private IEnumerator HoldNavigationRoutine(int direction) {
+            _isMoving = true;
+
+            if (direction > 0) MoveNext(); else MovePrevious();
+
+            yield return new WaitForSecondsRealtime(_initialDelay);
+
+            while (_isFocused && IsInputActive(direction)) {
+                if (direction > 0) MoveNext(); else MovePrevious();
+                yield return new WaitForSecondsRealtime(_repeatRate);
             }
+
+            _isMoving = false;
+            _navigationCoroutine = null;
+        }
+        private bool IsInputActive(int direction) {
+            Vector2 moveVal = Vector2.zero;
+            if (Gamepad.current != null) moveVal = Gamepad.current.leftStick.ReadValue() + Gamepad.current.dpad.ReadValue();
+            else if (Keyboard.current != null) {
+                if (Keyboard.current.rightArrowKey.isPressed || Keyboard.current.dKey.isPressed) moveVal.x = 1;
+                if (Keyboard.current.leftArrowKey.isPressed || Keyboard.current.aKey.isPressed) moveVal.x = -1;
+            }
+
+            return direction > 0 ? moveVal.x > 0.5f : moveVal.x < -0.5f;
         }
         private void MoveNext() {
             if (!_isFocused) return;

@@ -12,5 +12,8 @@ namespace FifthSemester.UI {
         public void ExitState(MenuManager menuManager) {
             gameObject.SetActive(false);
         }
+        public override string ToString() {
+            return "Main Menu State";
+        }
     }
 }

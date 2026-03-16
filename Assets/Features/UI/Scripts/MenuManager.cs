@@ -51,7 +51,7 @@ namespace FifthSemester.UI {
         }
 
         public void ChangeState(IMenuState newState) {
-            Debug.Log($"Changing menu state to: {newState.GetType().Name}");
+            Debug.Log($"Changing menu state to: {newState.ToString()}");
 
             _currentMenuState?.ExitState(this);
 

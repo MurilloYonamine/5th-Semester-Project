@@ -12,7 +12,7 @@ namespace FifthSemester.UI {
         Borderless
     }
     public class DisplaySelector : TextSelector<DisplayMode> {
-        private void Awake() {
+        protected void Awake() {
             _items = new DisplayMode[] {
                 DisplayMode.Fullscreen,
                 DisplayMode.Windowed,

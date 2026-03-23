@@ -23,7 +23,16 @@ namespace FifthSemester.UI {
                 _buttonText.color = _defaultColor;
             }
         }
-
+        private void OnEnable() {
+            if (_buttonText != null) {
+                _buttonText.color = _defaultColor;
+            }
+        }
+        private void OnDisable() {
+            if (_buttonText != null) {
+                _buttonText.color = _defaultColor;
+            }
+        }
         public void OnPointerEnter(PointerEventData eventData) {
             if (_button != null && _buttonText != null) {
                 _buttonText.color = _hoverColor;

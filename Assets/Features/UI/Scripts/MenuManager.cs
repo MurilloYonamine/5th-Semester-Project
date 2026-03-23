@@ -1,6 +1,8 @@
 // autor: Murillo Gomes Yonamine
 // data: 15/03/2026
 
+using FifthSemester.Framework.UI;
+using FifthSemester.Shared.AudioSystem;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -16,24 +18,21 @@ namespace FifthSemester.UI {
         [SerializeField] private MenuType _currentMenu;
 
         [SerializeField] private IMenuState _currentMenuState;
+        [SerializeField] private IMenuState _previousMenuState;
 
         [SerializeField] private MainMenuState _mainMenuState;
         [SerializeField] private SettingsMenuState _settingsMenuState;
         [SerializeField] private CreditsMenuState _creditsMenuState;
 
         [Header("Buttons")]
+        [SerializeField] private Button _playButton;
         [SerializeField] private Button _settingsButton;
         [SerializeField] private Button _creditsButton;
         [SerializeField] private Button _exitButton;
 
+        [SerializeField] private AudioClip _returnSFX;
+
         [SerializeField] private InputActionReference _return;
-
-        private void Awake() {
-            _settingsButton.onClick.AddListener(OpenSettings);
-            _creditsButton.onClick.AddListener(OpenCredits);
-            _exitButton.onClick.AddListener(Exit);
-        }
-
         private void Start() {
             _mainMenuState.gameObject.SetActive(false);
             _settingsMenuState.gameObject.SetActive(false);
@@ -93,20 +92,12 @@ namespace FifthSemester.UI {
                         Application.Quit();
 #endif
         }
+        public void Return() {
+            OnReturn(new InputAction.CallbackContext());
+        }
         #endregion
-
         public void OnReturn(InputAction.CallbackContext context) {
-            if (_currentMenuState is not MainMenuState) {
-                switch(_currentMenuState) {
-                    case SettingsMenuState:
-                        EventSystem.current.SetSelectedGameObject(_settingsButton.gameObject);
-                        break;
-                    case CreditsMenuState:
-                        EventSystem.current.SetSelectedGameObject(_creditsButton.gameObject);
-                        break;
-                }
-                OpenMainMenu();
-            }
+            ChangeState(_mainMenuState);
         }
     }
 }

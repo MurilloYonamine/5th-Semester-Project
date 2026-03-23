@@ -14,7 +14,7 @@ namespace FifthSemester.UI {
         R1280x720
     }
     public class ResolutionSelector : TextSelector<ResolutionOption> {
-        private void Awake() {
+        protected void Awake() {
             _items = new ResolutionOption[] {
                 ResolutionOption.R320x240,
                 ResolutionOption.R640x480,

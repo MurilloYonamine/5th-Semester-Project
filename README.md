@@ -86,6 +86,8 @@ FeatureName/
 
 CI/CD powered by [GameCI](https://game.ci/) and GitHub Actions.
 
+Navigation menu SFX from [Fupi](https://opengameart.org/content/8bit-menu-highlight)
+Open and Close menu SFX from [Pedro Alegria](https://pabloalegria9.itch.io/psxhorrorpack)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

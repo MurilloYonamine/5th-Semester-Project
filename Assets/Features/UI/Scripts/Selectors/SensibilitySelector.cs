@@ -5,7 +5,7 @@ namespace FifthSemester.UI {
     public class SensibilitySelector : TextSelector<float> {
         private const string PREF_KEY = "MouseSensibility";
 
-        private void Awake() {
+        protected void Awake() {
             _items = new float[50];
             for (int i = 0; i < _items.Length; i++) {
                 _items[i] = (i + 1) * 0.1f;

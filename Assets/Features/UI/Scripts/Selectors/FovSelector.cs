@@ -9,7 +9,7 @@ namespace FifthSemester.UI
     public class FovSelector : TextSelector<int>
     {
         private int _defaultFov = 60;
-        private void Awake() {
+        protected void Awake() {
             _items = new int[] { 60, 65, 70, 75, 80, 85, 90, 95, 100, 105, 110 };
         }
 

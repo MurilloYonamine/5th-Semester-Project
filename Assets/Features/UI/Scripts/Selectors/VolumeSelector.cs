@@ -40,16 +40,20 @@ namespace FifthSemester.UI {
             ApplyToSystem(GetNormalizedVolume(_items[_currentIndex]));
         }
 
-        protected override void UpdateUI() { }
+        protected override void UpdateUI() {
+            if (_stepIcons == null || _stepIcons.Length == 0 || _items == null || _items.Length == 0)
+                return;
+            int active = _currentIndex;
+            Color activeColor = _isFocused ? Color.yellow : Color.white;
+            for (int i = 0; i < _stepIcons.Length; i++) {
+                if (_stepIcons[i] == null) continue;
+                _stepIcons[i].GetComponent<Image>().color = (i <= active) ? activeColor : Color.gray;
+            }
+        }
 
         protected override void UpdateVisualElements(Color targetColor) {
             if (_labelText != null) _labelText.color = targetColor;
-            if (_stepIcons == null) return;
-
-            for (int i = 0; i < _stepIcons.Length; i++) {
-                if (_stepIcons[i] == null) continue;
-                _stepIcons[i].GetComponent<Image>().color = (i <= _currentIndex) ? targetColor : _normalColor;
-            }
+            UpdateUI();
         }
         private float GetNormalizedVolume(CurrentVolume volume) => (int)volume * 0.25f;
     }

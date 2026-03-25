@@ -1,22 +1,10 @@
-using System.Collections;
-using FifthSemester.Framework.UI;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace FifthSemester.UI {
     public class SettingsMenuState : MonoBehaviour, IMenuState {
-        private enum SettingsSubState {
-            Choice,
-            Audio,
-            Video,
-            Controller,
-            PostProcessing
-        }
-
-        [SerializeField] private SettingsSubState _currentSettingsSubState;
+        public MenuManager MenuManager { get; private set; }
         private ISettingsState _currentSubState;
-
         [Header("Settings Panels")]
         [SerializeField] private SettingsChoiceState _settingsChoiceState;
         [SerializeField] private AudioState _audioState;
@@ -24,29 +12,42 @@ namespace FifthSemester.UI {
         [SerializeField] private ControllerState _controllerState;
         [SerializeField] private PostProcessingState _postProcessingState;
 
-
         public void EnterState(MenuManager menuManager) {
             gameObject.SetActive(true);
-            ChangeState(_currentSettingsSubState);
+            MenuManager = menuManager;
+
+            _currentSubState = _settingsChoiceState;
+            ChangeState(_currentSubState);
         }
+
         public void ExitState(MenuManager menuManager) {
             gameObject.SetActive(false);
         }
         #region Button Pressed Methods
-        public void OnAudioButtonPressed() {
-            ChangeState(SettingsSubState.Audio);
+        public void OnAudioButtonPressed(GameObject caller) {
+            if (caller != null)
+                EventSystem.current.SetSelectedGameObject(caller);
+            ChangeState(_audioState);
         }
-        public void OnVideoButtonPressed() {
-            ChangeState(SettingsSubState.Video);
+        public void OnVideoButtonPressed(GameObject caller) {
+            if (caller != null)
+                EventSystem.current.SetSelectedGameObject(caller);
+            ChangeState(_videoState);
         }
-        public void OnControllerButtonPressed() {
-            ChangeState(SettingsSubState.Controller);
+        public void OnControllerButtonPressed(GameObject caller) {
+            if (caller != null)
+                EventSystem.current.SetSelectedGameObject(caller);
+            ChangeState(_controllerState);
         }
-        public void OnPostProcessingButtonPressed() {
-            ChangeState(SettingsSubState.PostProcessing);
+        public void OnPostProcessingButtonPressed(GameObject caller) {
+            if (caller != null)
+                EventSystem.current.SetSelectedGameObject(caller);
+            ChangeState(_postProcessingState);
         }
-        public void OnBackReturnPressed() {
-            ChangeState(SettingsSubState.Choice);
+        public void OnBackReturnPressed(GameObject caller) {
+            if (caller != null)
+                EventSystem.current.SetSelectedGameObject(caller);
+            ChangeState(_settingsChoiceState);
         }
         #endregion
 
@@ -59,27 +60,14 @@ namespace FifthSemester.UI {
 
             _currentSubState?.EnterState(this);
         }
-        private void ChangeState(SettingsSubState subState) {
-            _currentSettingsSubState = subState;
-            switch (subState) {
-                case SettingsSubState.Choice:
-                    ChangeState(_settingsChoiceState);
-                    break;
-                case SettingsSubState.Audio:
-                    ChangeState(_audioState);
-                    break;
-                case SettingsSubState.Video:
-                    ChangeState(_videoState);
-                    break;
-                case SettingsSubState.Controller:
-                    ChangeState(_controllerState);
-                    break;
-                case SettingsSubState.PostProcessing:
-                    ChangeState(_postProcessingState);
-                    break;
-            }
-        }
 
+        public void OnReturn(GameObject caller) {
+            MenuManager.ChangeState(MenuManager.MainMenuState);
+            EventSystem.current.SetSelectedGameObject(caller);
+            
+            if (caller.TryGetComponent<ButtonHover>(out var hover))
+                hover.OnSelect(null);
+        }
         public override string ToString() {
             return "Settings Menu State";
         }

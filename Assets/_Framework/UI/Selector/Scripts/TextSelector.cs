@@ -8,7 +8,11 @@ namespace FifthSemester.Framework.UI {
 
         protected override void UpdateUI() {
             if (_optionText != null && _items != null && _items.Length > 0) {
-                _optionText.text = _items[_currentIndex].ToString().ToUpper();
+                string valueText = _items[_currentIndex].ToString().ToUpper();
+                _optionText.text = valueText;
+                Debug.Log($"[TextSelector] UpdateUI chamado: index={_currentIndex}, valor={valueText}");
+            } else {
+                Debug.LogWarning("[TextSelector] UpdateUI: _optionText ou _items não atribuídos corretamente.");
             }
         }
         protected override void UpdateVisualElements(Color targetColor) {

@@ -10,7 +10,6 @@ namespace FifthSemester.UI {
         public MenuManager MenuManager { get; private set; }
 
         public void EnterState(MenuManager menuManager) {
-            Debug.Log("Entering Main Menu State");
             MenuManager = menuManager;
             gameObject.SetActive(true);
         }

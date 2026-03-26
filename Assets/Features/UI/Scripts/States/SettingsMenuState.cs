@@ -26,34 +26,37 @@ namespace FifthSemester.UI {
         #region Button Pressed Methods
         public void OnAudioButtonPressed(GameObject caller) {
             if (caller != null)
+                EventSystem.current.SetSelectedGameObject(null);
                 EventSystem.current.SetSelectedGameObject(caller);
             ChangeState(_audioState);
         }
         public void OnVideoButtonPressed(GameObject caller) {
             if (caller != null)
+                EventSystem.current.SetSelectedGameObject(null);
                 EventSystem.current.SetSelectedGameObject(caller);
             ChangeState(_videoState);
         }
         public void OnControllerButtonPressed(GameObject caller) {
             if (caller != null)
+                EventSystem.current.SetSelectedGameObject(null);
                 EventSystem.current.SetSelectedGameObject(caller);
             ChangeState(_controllerState);
         }
         public void OnPostProcessingButtonPressed(GameObject caller) {
             if (caller != null)
+                EventSystem.current.SetSelectedGameObject(null);
                 EventSystem.current.SetSelectedGameObject(caller);
             ChangeState(_postProcessingState);
         }
         public void OnBackReturnPressed(GameObject caller) {
             if (caller != null)
+                EventSystem.current.SetSelectedGameObject(null);
                 EventSystem.current.SetSelectedGameObject(caller);
             ChangeState(_settingsChoiceState);
         }
         #endregion
 
         public void ChangeState(ISettingsState newState) {
-            Debug.Log($"Changing sub-menu state to: {newState.ToString()}");
-
             _currentSubState?.ExitState(this);
 
             _currentSubState = newState;
@@ -63,11 +66,9 @@ namespace FifthSemester.UI {
 
         public void OnReturn(GameObject caller) {
             MenuManager.ChangeState(MenuManager.MainMenuState);
+            EventSystem.current.SetSelectedGameObject(null);
             EventSystem.current.SetSelectedGameObject(caller);
-            
-            if (caller.TryGetComponent<ButtonHover>(out var hover))
-                hover.OnSelect(null);
-        }
+        }   
         public override string ToString() {
             return "Settings Menu State";
         }

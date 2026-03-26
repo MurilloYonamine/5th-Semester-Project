@@ -33,11 +33,10 @@ namespace FifthSemester.UI {
             ChangeState(_currentMenuState);
         }
         public void ChangeState(IMenuState newState) {
-            Debug.Log($"Changing menu state to: {newState.ToString()}");
-
             _currentMenuState?.ExitState(this);
 
             _currentMenuState = newState;
+            Debug.Log(EventSystem.current.currentSelectedGameObject);
 
             _currentMenuState?.EnterState(this);
         }
@@ -68,6 +67,7 @@ namespace FifthSemester.UI {
         #endregion
         public void OnReturn(GameObject caller) {
             ChangeState(MainMenuState);
+            EventSystem.current.SetSelectedGameObject(null);
             EventSystem.current.SetSelectedGameObject(caller);
         }
     }

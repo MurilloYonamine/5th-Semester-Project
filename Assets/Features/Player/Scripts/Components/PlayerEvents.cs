@@ -41,7 +41,18 @@ namespace FifthSemester.Player.Components {
         }
 
         public void OnDisable() {
-            _inputEvents?.Disable();
+            if (_inputEvents != null) {
+                _inputEvents.OnMove -= HandleMove;
+                _inputEvents.OnLook -= HandleLook;
+                _inputEvents.OnJump -= HandleJump;
+                _inputEvents.OnSprint -= HandleSprint;
+                _inputEvents.OnCrouch -= HandleCrouch;
+                _inputEvents.OnInteract -= HandleInteract;
+                _inputEvents.OnZoom -= HandleZoom;
+                _inputEvents.OnNext -= HandleNext;
+                _inputEvents.OnPrevious -= HandlePrevious;
+                _inputEvents.Disable();
+            }
         }
 
         private void HandleMove(Vector2 input) {

@@ -47,6 +47,7 @@ namespace FifthSemester.Inventory {
             _previewCamera.orthographic = true;
             _previewCamera.orthographicSize = 1f;
             _previewCamera.enabled = false;
+            _previewCamera.targetDisplay = 0;
 
             if (_itemDisplay != null) {
                 _itemDisplay.texture = _renderTexture;

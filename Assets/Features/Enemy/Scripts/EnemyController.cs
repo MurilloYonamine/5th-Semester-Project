@@ -1,3 +1,7 @@
+// Autor: Murillo Gomes Yonamine
+// Data: 28/03/2026
+
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,6 +15,18 @@ namespace FifthSemester.Enemy {
         [SerializeField, Range(0f, 10f)] private float _stoppingDistance = 1f;
         [SerializeField, Range(0f, 25f)] private float _range = 5f;
 
+        public static List<EnemyController> AllEnemies = new List<EnemyController>();
+
+        private void OnEnable() {
+            if (!AllEnemies.Contains(this)) {
+                AllEnemies.Add(this);
+            }
+        }
+        private void OnDisable() {
+            if (AllEnemies.Contains(this)) {
+                AllEnemies.Remove(this);
+            }
+        }
 
         private void Awake() {
             _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -44,6 +60,11 @@ namespace FifthSemester.Enemy {
             return distanceToPlayer <= _range;
         }
 
+        public void Freeze(bool isFrozen) {
+            _navMeshAgent.isStopped = isFrozen;
+        }
+
+        #region Gizmos
         private void OnDrawGizmos() {
             if (_playerTransform == null) return;
 
@@ -60,5 +81,6 @@ namespace FifthSemester.Enemy {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, _range);
         }
+        #endregion
     }
 }

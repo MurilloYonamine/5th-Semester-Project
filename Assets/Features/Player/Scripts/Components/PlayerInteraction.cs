@@ -83,13 +83,15 @@ namespace FifthSemester.Player {
 
             bool itemAdded = false;
 
-            foreach (var item in _itemsNearby) {
+            var itemsToInteract = new List<GameObject>(_itemsNearby);
+            foreach (var item in itemsToInteract) {
                 if (item.TryGetComponent<IInteractable>(out var interactable)) {
                     _inventory.AddItem(interactable);
                     interactable.Interact();
                     itemAdded = true;
                 }
             }
+            
             AudioManager.Instance.PlaySFX(_pickupSound);
 
             if (itemAdded && !_inventory.IsInventoryOpen) {

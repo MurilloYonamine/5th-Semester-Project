@@ -1,10 +1,12 @@
 // Autor: Murillo Gomes Yonamine
 // Data: 14/02/2026
 
-using System;
+using FifthSemester.Core;
 using FifthSemester.Shared.AudioSystem;
-using UnityEngine;
 using Sirenix.OdinInspector;
+using System;
+using Unity.VisualScripting.YamlDotNet.Core.Tokens;
+using UnityEngine;
 
 namespace FifthSemester.Player.Components {
     public class PlayerMovement : MonoBehaviour {
@@ -165,6 +167,7 @@ namespace FifthSemester.Player.Components {
 
         private void HandleSprint(bool isPressed) {
             _currentState?.HandleSprint(isPressed);
+            GlobalPlayerEvents.RaisePlayerSprint(isPressed);
         }
 
         private void HandleCrouch(bool isPressed) {

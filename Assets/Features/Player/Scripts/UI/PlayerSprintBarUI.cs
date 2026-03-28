@@ -23,14 +23,14 @@ namespace FifthSemester.Player.UI {
         }
 
         private void OnEnable() {
-            if (_playerController.InputEvents != null) {
-                _playerController.InputEvents.OnSprintInput += HandleSprintInput;
+            if (_playerController.PlayerEvents != null) {
+                _playerController.PlayerEvents.OnSprintInput += HandleSprintInput;
             }
         }
 
         private void OnDisable() {
-            if (_playerController.InputEvents != null) {
-                _playerController.InputEvents.OnSprintInput -= HandleSprintInput;
+            if (_playerController.PlayerEvents != null) {
+                _playerController.PlayerEvents.OnSprintInput -= HandleSprintInput;
             }
         }
 

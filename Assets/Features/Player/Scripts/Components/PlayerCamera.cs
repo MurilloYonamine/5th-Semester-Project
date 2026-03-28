@@ -4,10 +4,10 @@
 using System;
 using UnityEngine;
 using FifthSemester.Core.Events;
+using Sirenix.OdinInspector;
 
 namespace FifthSemester.Player.Components {
-    [Serializable]
-    public class PlayerCamera : PlayerComponent {
+    public class PlayerCamera : MonoBehaviour {
         [Header("Camera")]
         [SerializeField] private Camera _camera;
         [SerializeField] private bool _cameraCanMove = true;
@@ -17,14 +17,20 @@ namespace FifthSemester.Player.Components {
 
         [Header("Zoom")]
         [SerializeField] private bool _enableZoom = true;
+        [FoldoutGroup("Zoom"), ShowIf("_enableZoom")]
         [SerializeField] private bool _holdToZoom = false;
+        [FoldoutGroup("Zoom"), ShowIf("_enableZoom")]
         [SerializeField] private float _zoomFov = 30f;
+        [FoldoutGroup("Zoom"), ShowIf("_enableZoom")]
         [SerializeField] private float _zoomStepTime = 5f;
 
         [Header("Head Bob")]
         [SerializeField] private bool _enableHeadBob = true;
+        [FoldoutGroup("Head Bob"), ShowIf("_enableHeadBob")]
         [SerializeField] private Transform _joint;
+        [FoldoutGroup("Head Bob"), ShowIf("_enableHeadBob")]
         [SerializeField] private float _bobSpeed = 10f;
+        [FoldoutGroup("Head Bob"), ShowIf("_enableHeadBob")]
         [SerializeField] private Vector3 _bobAmount = new Vector3(0.15f, 0.05f, 0f);
 
         private float _yaw;
@@ -39,8 +45,13 @@ namespace FifthSemester.Player.Components {
         private Vector3 _jointOriginalPos;
         private float _bobTimer;
         private PlayerMovement _movement;
+        private PlayerController _player;
+        private PlayerEvents _playerEvents;
 
-        public override void OnAwake() {
+        private void Awake() {
+            _player = GetComponent<PlayerController>();
+            _movement = _player != null ? _player.GetComponent<PlayerMovement>() : null;
+
             if (_camera != null) {
                 Vector3 euler = _camera.transform.localEulerAngles;
                 _pitch = euler.x;
@@ -49,30 +60,27 @@ namespace FifthSemester.Player.Components {
                 _defaultFov = _camera.fieldOfView;
             }
 
-            if (_player is PlayerController player) {
-                _movement = player.PlayerMovement;
-            }
-
             if (_joint != null) {
                 _jointOriginalPos = _joint.localPosition;
             }
         }
 
-        public override void OnEnable() {
-            if (_player != null && _player.InputEvents != null) {
-                _player.InputEvents.OnLookInput += HandleLookInput;
-                _player.InputEvents.OnZoomInput += HandleZoomInput;
+        private void OnEnable() {
+            _playerEvents = _player.PlayerEvents;
+            if (_player != null && _player.PlayerEvents != null) {
+                _playerEvents.OnLookInput += HandleLookInput;
+                _playerEvents.OnZoomInput += HandleZoomInput;
             }
         }
 
-        public override void OnDisable() {
-            if (_player != null && _player.InputEvents != null) {
-                _player.InputEvents.OnLookInput -= HandleLookInput;
-                _player.InputEvents.OnZoomInput -= HandleZoomInput;
+        private void OnDisable() {
+            if (_player != null && _player.PlayerEvents != null) {
+                _playerEvents.OnLookInput -= HandleLookInput;
+                _playerEvents.OnZoomInput -= HandleZoomInput;
             }
         }
 
-        public override void OnUpdate() {
+        private void Update() {
             if (!_cameraCanMove || _camera == null || _player == null) return;
 
             _yaw = _player.transform.localEulerAngles.y + _lookInput.x * _mouseSensitivity;

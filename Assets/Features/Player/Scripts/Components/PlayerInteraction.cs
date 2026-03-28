@@ -5,14 +5,20 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using FifthSemester.Player.Components;
-using FifthSemester.Items;
+using FifthSemester.Framework;
 using FifthSemester.Inventory;
 using FifthSemester.Shared.AudioSystem;
+using FifthSemester.Items;
+using FifthSemester.Characters;
 
 namespace FifthSemester.Player {
     public class PlayerInteraction : MonoBehaviour {
         [SerializeField, Range(1f, 5f)] private float _interactionRange = 3f;
+
+        [Header("Lists")]
         [SerializeField] private List<GameObject> _itemsNearby;
+        [SerializeField] private List<GameObject> _charactersNearby;
+
         [SerializeField] private SphereCollider _interactionCollider;
 
         private PlayerInteractionTrigger _interactionTrigger;
@@ -69,12 +75,22 @@ namespace FifthSemester.Player {
                     interactable.Highlight();
                 }
             }
+            else if (other.TryGetComponent<Character>(out var character)) {
+                if (!_charactersNearby.Contains(other.gameObject)) {
+                    _charactersNearby.Add(other.gameObject);
+                    character.Highlight();
+                }
+            }   
         }
 
         private void HandleTriggerExit(Collider other) {
             if (other.TryGetComponent<Item>(out var interactable)) {
                 _itemsNearby.Remove(other.gameObject);
                 interactable.Unhighlight();
+            }
+            else if (other.TryGetComponent<Character>(out var character)) {
+                _charactersNearby.Remove(other.gameObject);
+                character.Unhighlight();
             }
         }
 

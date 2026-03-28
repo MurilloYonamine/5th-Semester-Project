@@ -3,25 +3,28 @@
 
 using UnityEngine;
 using ThirdParty.QuickOutline;
+using FifthSemester.Framework;
 
 namespace FifthSemester.Items {
+    [RequireComponent(typeof(Outline))]
+    [RequireComponent(typeof(BoxCollider))]
     public class Item : MonoBehaviour, IInteractable {
         public bool IsInteractable => true;
-        [SerializeField] private Outline _outline;
-        [SerializeField] private BoxCollider _collider;
+        public Outline Outline { get; private set; }
+        public Collider Collider { get; private set; }
 
         private void Awake() {
-            _outline = GetComponent<Outline>();
-            _collider = GetComponent<BoxCollider>();
+            Outline = GetComponent<Outline>();
+            Collider = GetComponent<BoxCollider>();
 
-            _outline.enabled = false;
-            _collider.enabled = true;
+            Outline.enabled = false;
+            Collider.enabled = true;
         }
 
         public void Interact() {
             Debug.Log("Interagiu com o item!");
-            _outline.enabled = false;
-            _collider.enabled = false;
+            Outline.enabled = false;
+            Collider.enabled = false;
         }
 
         public void StopInteract() {
@@ -29,13 +32,13 @@ namespace FifthSemester.Items {
         }
 
         public void Highlight() {
-            if (_outline != null) {
-                _outline.enabled = true;
+            if (Outline != null) {
+                Outline.enabled = true;
             }
         }
         public void Unhighlight() {
-            if (_outline != null) {
-                _outline.enabled = false;
+            if (Outline != null) {
+                Outline.enabled = false;
             }
         }
         public override string ToString() {

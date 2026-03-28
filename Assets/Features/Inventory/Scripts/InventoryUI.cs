@@ -4,7 +4,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using FifthSemester.Items;
+using FifthSemester.Framework;
 
 namespace FifthSemester.Inventory {
     public class InventoryUI : MonoBehaviour {

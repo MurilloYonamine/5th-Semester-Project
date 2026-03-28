@@ -3,7 +3,7 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using FifthSemester.Items;
+using FifthSemester.Framework;
 
 namespace FifthSemester.Inventory {
     public class InventorySlot : MonoBehaviour {

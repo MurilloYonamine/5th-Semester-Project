@@ -66,8 +66,8 @@ namespace FifthSemester.Player.Components {
         }
 
         private void OnEnable() {
-            _playerEvents = _player.PlayerEvents;
             if (_player != null && _player.PlayerEvents != null) {
+                _playerEvents = _player.PlayerEvents;
                 _playerEvents.OnLookInput += HandleLookInput;
                 _playerEvents.OnZoomInput += HandleZoomInput;
             }

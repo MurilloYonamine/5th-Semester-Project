@@ -1,6 +1,8 @@
 // Autor: Murillo Gomes Yonamine
 // Data: 28/03/2026
 
+using FifthSemester.Core;
+using FifthSemester.Core.Events;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -12,6 +14,8 @@ namespace FifthSemester.Enemy {
         private Transform _playerTransform;
 
         [SerializeField, Range(0f, 10f)] private float _speed = 1.5f;
+        [SerializeField, Range(0f, 10f)] private float _sprint = 3f;
+
         [SerializeField, Range(0f, 10f)] private float _stoppingDistance = 1f;
         [SerializeField, Range(0f, 25f)] private float _range = 5f;
 
@@ -21,12 +25,15 @@ namespace FifthSemester.Enemy {
             if (!AllEnemies.Contains(this)) {
                 AllEnemies.Add(this);
             }
+            GlobalPlayerEvents.OnPlayerSprint += HandleSprint;
         }
         private void OnDisable() {
             if (AllEnemies.Contains(this)) {
                 AllEnemies.Remove(this);
             }
+            GlobalPlayerEvents.OnPlayerSprint -= HandleSprint;
         }
+
 
         private void Awake() {
             _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -58,6 +65,9 @@ namespace FifthSemester.Enemy {
 
             float distanceToPlayer = Vector3.Distance(transform.position, _playerTransform.position);
             return distanceToPlayer <= _range;
+        }
+        private void HandleSprint(bool isSprinting) {
+            _navMeshAgent.speed = isSprinting ? _sprint : _speed;
         }
 
         public void Freeze(bool isFrozen) {

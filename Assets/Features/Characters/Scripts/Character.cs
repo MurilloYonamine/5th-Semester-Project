@@ -17,13 +17,7 @@ namespace FifthSemester.Characters {
             Outline = GetComponent<Outline>();
             IsInteractable = true;
         }
-        private void OnEnable() {
-            DialogueSystem.Instance.OnDialogueStarted += HandleDialogueStarted;
-        }
 
-        private void OnDisable() {
-            DialogueSystem.Instance.OnDialogueStarted -= HandleDialogueStarted;
-        }
 
         private void HandleDialogueStarted(DialogueContainer dialogueContainer) {
         }

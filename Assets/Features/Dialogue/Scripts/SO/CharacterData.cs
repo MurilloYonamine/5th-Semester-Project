@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace FifthSemester.Dialogue {
     [CreateAssetMenu(fileName = "New Character", menuName = "Dialogue/Character")]
-    public class Character : ScriptableObject {
+    public class CharacterData : ScriptableObject {
         [field: SerializeField] public string Name { get; private set; }
         [field: SerializeField] public Sprite Portrait { get; private set; }
 

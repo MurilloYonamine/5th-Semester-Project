@@ -21,7 +21,6 @@ namespace FifthSemester.Core.Events {
         private InputAction _next;
         private InputAction _previous;
 
-
         public event Action<Vector2> OnMove;
         public event Action<Vector2> OnLook;
         public event Action OnJump;
@@ -47,10 +46,6 @@ namespace FifthSemester.Core.Events {
             _next = _gameInput.Player.Next;
             _previous = _gameInput.Player.Previous;
 
-            SubscribeToActions();
-        }
-
-        private void SubscribeToActions() {
             _move.performed += HandleMovement;
             _move.canceled += HandleMovement;
             _look.performed += HandleLook;
@@ -65,25 +60,6 @@ namespace FifthSemester.Core.Events {
             _zoom.canceled += HandleZoom;
             _next.performed += HandleNext;
             _previous.performed += HandlePrevious;
-        }
-
-        private void UnsubscribeFromActions() {
-            if (_gameInput == null) return;
-
-            _move.performed -= HandleMovement;
-            _move.canceled -= HandleMovement;
-            _look.performed -= HandleLook;
-            _look.canceled -= HandleLook;
-            _jump.performed -= HandleJump;
-            _crouch.performed -= HandleCrouch;
-            _crouch.canceled -= HandleCrouch;
-            _sprint.performed -= HandleSprint;
-            _sprint.canceled -= HandleSprint;
-            _interact.started -= HandleInteract;
-            _zoom.performed -= HandleZoom;
-            _zoom.canceled -= HandleZoom;
-            _next.performed -= HandleNext;
-            _previous.performed -= HandlePrevious;
         }
         public void Enable() {
             Initialize();
@@ -144,7 +120,23 @@ namespace FifthSemester.Core.Events {
             }
         }
         public void Dispose() {
-            UnsubscribeFromActions();
+            if (_gameInput == null) return;
+
+            _move.performed -= HandleMovement;
+            _move.canceled -= HandleMovement;
+            _look.performed -= HandleLook;
+            _look.canceled -= HandleLook;
+            _jump.performed -= HandleJump;
+            _crouch.performed -= HandleCrouch;
+            _crouch.canceled -= HandleCrouch;
+            _sprint.performed -= HandleSprint;
+            _sprint.canceled -= HandleSprint;
+            _interact.started -= HandleInteract;
+            _zoom.performed -= HandleZoom;
+            _zoom.canceled -= HandleZoom;
+            _next.performed -= HandleNext;
+            _previous.performed -= HandlePrevious;
+
             Disable();
 
             OnMove = null;

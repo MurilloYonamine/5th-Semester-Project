@@ -7,6 +7,7 @@ using UnityEngine;
 using FifthSemester.Items;
 
 namespace FifthSemester.Inventory {
+    [Serializable]
     public class InventoryController {
         private List<IInteractable> _items;
         private bool _isInventoryOpen = false;

@@ -21,22 +21,19 @@ namespace FifthSemester.UI {
         [SerializeField] private Button _creditsButton;
         [SerializeField] private Button _exitButton;
 
-        [SerializeField] private AudioClip _returnSFX;
-
         private void Start() {
             MainMenuState.gameObject.SetActive(false);
             SettingsMenuState.gameObject.SetActive(false);
             CreditsMenuState.gameObject.SetActive(false);
 
-            _currentMenuState = MainMenuState;
-
-            ChangeState(_currentMenuState);
+            ChangeState(MainMenuState);
         }
         public void ChangeState(IMenuState newState) {
+            if (_currentMenuState == newState) return; 
+
             _currentMenuState?.ExitState(this);
 
             _currentMenuState = newState;
-            Debug.Log(EventSystem.current.currentSelectedGameObject);
 
             _currentMenuState?.EnterState(this);
         }
@@ -66,9 +63,9 @@ namespace FifthSemester.UI {
         }
         #endregion
         public void OnReturn(GameObject caller) {
-            ChangeState(MainMenuState);
-            EventSystem.current.SetSelectedGameObject(null);
-            EventSystem.current.SetSelectedGameObject(caller);
+            if (caller != null && caller.activeInHierarchy) {
+                EventSystem.current.SetSelectedGameObject(caller);
+            }
         }
     }
 }

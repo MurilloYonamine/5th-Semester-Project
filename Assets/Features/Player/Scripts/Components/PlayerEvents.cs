@@ -9,6 +9,7 @@ namespace FifthSemester.Player.Components {
     [Serializable]
     public class PlayerEvents {
         [SerializeField] private InputEvents _inputEvents;
+
         public event Action<Vector2> OnMoveInput;
         public event Action<Vector2> OnLookInput;
         public event Action OnJumpInput;

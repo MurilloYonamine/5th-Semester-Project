@@ -5,6 +5,8 @@ using FifthSemester.Player.Components;
 using FifthSemester.Inventory;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using FifthSemester.Core.Managers;
+using FifthSemester.Core.States;
 
 namespace FifthSemester.Player {
     [RequireComponent(typeof(PlayerMovement))]

@@ -3,6 +3,7 @@
 
 using FifthSemester.Core.Managers;
 using Sirenix.OdinInspector;
+using Sirenix.Serialization;
 using System.Collections;
 using System.Linq;
 using UnityEditor;
@@ -13,16 +14,22 @@ using UnityEngine.UI;
 namespace FifthSemester.UI {
     public class MainMenuState : MonoBehaviour, IMenuState {
 
+        [SerializeField] private bool _isMainMenu = false;
+
+        [ShowIf("_isMainMenu")]
         [Title("Configurações de Carregamento")]
         [SerializeField, ValueDropdown("GetSceneNames")]
         private string _gameplayLevelName;
 
-        [field: SerializeField] public MenuManager MenuManager { get; private set; }
+        [SerializeField] private Button _playButton;
 
-        public void EnterState(MenuManager menuManager) {
+        public void EnterState() {
             gameObject.SetActive(true);
+
+            if(_playButton != null)
+                EventSystem.current.SetSelectedGameObject(_playButton.gameObject);
         }
-        public void ExitState(MenuManager menuManager) {
+        public void ExitState() {
             gameObject.SetActive(false);
         }
 
@@ -33,17 +40,17 @@ namespace FifthSemester.UI {
         public void OpenMainMenu(GameObject caller) {
             if (caller != null)
                 EventSystem.current.SetSelectedGameObject(caller);
-            MenuManager.ChangeState(MenuManager.MainMenuState);
+            MenuManager.Instance.ChangeState(MenuManager.Instance.MainMenuState);
         }
         public void OpenSettings(GameObject caller) {
             if (caller != null)
                 EventSystem.current.SetSelectedGameObject(caller);
-            MenuManager.ChangeState(MenuManager.SettingsMenuState);
+            MenuManager.Instance.ChangeState(MenuManager.Instance.SettingsMenuState);
         }
         public void OpenCredits(GameObject caller) {
             if (caller != null)
                 EventSystem.current.SetSelectedGameObject(caller);
-            MenuManager.ChangeState(MenuManager.CreditsMenuState);
+            MenuManager.Instance.ChangeState(MenuManager.Instance.CreditsMenuState);
         }
         public void Exit() {
 #if UNITY_EDITOR
@@ -55,7 +62,7 @@ namespace FifthSemester.UI {
         #endregion
 
         public void OnReturn(GameObject caller) {
-            MenuManager.ChangeState(MenuManager.MainMenuState);
+            MenuManager.Instance.ChangeState(MenuManager.Instance.MainMenuState);
             EventSystem.current.SetSelectedGameObject(caller);
         }
         public override string ToString() {

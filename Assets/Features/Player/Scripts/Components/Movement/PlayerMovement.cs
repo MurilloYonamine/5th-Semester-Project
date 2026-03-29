@@ -1,10 +1,11 @@
 // Autor: Murillo Gomes Yonamine
 // Data: 14/02/2026
 
-using System;
-using FifthSemester.Shared.AudioSystem;
-using UnityEngine;
+using FifthSemester.Core.Managers;
+using FifthSemester.Core.States;
 using Sirenix.OdinInspector;
+using System;
+using UnityEngine;
 
 namespace FifthSemester.Player.Components {
     public class PlayerMovement : MonoBehaviour {
@@ -109,15 +110,18 @@ namespace FifthSemester.Player.Components {
         private void FixedUpdate() {
             if (!PlayerCanMove || Rigidbody == null) return;
 
-            Vector2 moveInput = MoveInput;
-            Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y);
-
-            bool isActuallyMoving = _rigidbody.linearVelocity.sqrMagnitude > 0.1f;
-            if (isActuallyMoving) {
-                UpdateFootsteps();
+            if (GameStateManager.Instance.CurrentState != GameState.Gameplay) {
+                _rigidbody.linearVelocity = Vector3.zero;
+                return;
             }
 
-            if (inputDirection.sqrMagnitude > 0.0001f) {
+            Vector2 moveInput = MoveInput;
+            Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
+            UpdateFootsteps();
+
+            bool isActuallyMoving = _rigidbody.linearVelocity.sqrMagnitude > 0.1f;
+
+            if (input.sqrMagnitude > 0.0001f) {
                 SetIsWalking(true);
             }
             else {
@@ -126,7 +130,7 @@ namespace FifthSemester.Player.Components {
             }
 
             float currentSpeed = _currentState?.GetCurrentSpeed() ?? 0f;
-            Vector3 targetVelocity = PlayerTransform.TransformDirection(inputDirection) * currentSpeed;
+            Vector3 targetVelocity = PlayerTransform.TransformDirection(input) * currentSpeed;
 
             ApplyVelocity(targetVelocity);
         }
@@ -144,7 +148,6 @@ namespace FifthSemester.Player.Components {
             }
 
             float interval = _isSprinting ? _sprintFootstepInterval : (_isCrouched ? _crouchFootstepInterval : _walkFootstepInterval);
-
             _footstepTimer += Time.fixedDeltaTime;
 
             if (_footstepTimer >= interval) {

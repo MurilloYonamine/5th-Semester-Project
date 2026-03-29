@@ -6,9 +6,8 @@ using FifthSemester.Core.Events;
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
-    [Serializable]
-    public class PlayerEvents {
-        [SerializeField] private InputEvents _inputEvents;
+    public class PlayerEvents : MonoBehaviour {
+        private InputEvents _inputEvents => InputEvents.Instance;
 
         public event Action<Vector2> OnMoveInput;
         public event Action<Vector2> OnLookInput;
@@ -20,11 +19,7 @@ namespace FifthSemester.Player.Components {
         public event Action OnNext;
         public event Action OnPrevious;
 
-        private void Initialize() {
-            if (_inputEvents != null) return;
-
-            _inputEvents = new InputEvents();
-
+        private void OnEnable() {
             _inputEvents.OnMove += HandleMove;
             _inputEvents.OnLook += HandleLook;
             _inputEvents.OnJump += HandleJump;
@@ -36,12 +31,7 @@ namespace FifthSemester.Player.Components {
             _inputEvents.OnPrevious += HandlePrevious;
         }
 
-        public void OnEnable() {
-            Initialize();
-            _inputEvents?.Enable();
-        }
-
-        public void OnDisable() {
+        private void OnDisable() {
             if (_inputEvents != null) {
                 _inputEvents.OnMove -= HandleMove;
                 _inputEvents.OnLook -= HandleLook;
@@ -52,7 +42,6 @@ namespace FifthSemester.Player.Components {
                 _inputEvents.OnZoom -= HandleZoom;
                 _inputEvents.OnNext -= HandleNext;
                 _inputEvents.OnPrevious -= HandlePrevious;
-                _inputEvents.Disable();
             }
         }
 

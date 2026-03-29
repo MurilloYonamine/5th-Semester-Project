@@ -14,6 +14,7 @@ namespace FifthSemester.Player {
     [RequireComponent(typeof(PlayerCamera))]
     [RequireComponent(typeof(PlayerInteraction))]
     [RequireComponent(typeof(PlayerEvents))]
+    [RequireComponent(typeof(InventoryController))]
     public class PlayerController : MonoBehaviour {
         [Header("Player Unity Components")]
         public Rigidbody Rigidbody { get; private set; }
@@ -33,7 +34,7 @@ namespace FifthSemester.Player {
 
         private void Awake() {
             PlayerEvents = GetComponent<PlayerEvents>();
-            Inventory = new InventoryController();
+            Inventory = GetComponent<InventoryController>();
 
             Rigidbody = GetComponent<Rigidbody>();
             PlayerMovement = GetComponent<PlayerMovement>();

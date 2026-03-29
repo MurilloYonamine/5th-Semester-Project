@@ -118,6 +118,15 @@ namespace FifthSemester.Core.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Open Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""436625cb-ece4-43ac-abc7-7630e71545e1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -258,7 +267,7 @@ namespace FifthSemester.Core.Input
                     ""id"": ""c1f7a91b-d0fd-4a62-997e-7fb9b69bf235"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""ScaleVector2(x=6,y=6)"",
                     ""groups"": "";Gamepad"",
                     ""action"": ""Look"",
                     ""isComposite"": false,
@@ -536,6 +545,28 @@ namespace FifthSemester.Core.Input
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""Zoom"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e583c501-4784-4179-89b8-65f75c894529"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Open Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""45c59a6c-2ae8-44a2-9ac7-ee8178a9e648"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Open Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1175,6 +1206,7 @@ namespace FifthSemester.Core.Input
             m_Player_Next = m_Player.FindAction("Next", throwIfNotFound: true);
             m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
             m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
+            m_Player_OpenPause = m_Player.FindAction("Open Pause", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1265,6 +1297,7 @@ namespace FifthSemester.Core.Input
         private readonly InputAction m_Player_Next;
         private readonly InputAction m_Player_Sprint;
         private readonly InputAction m_Player_Zoom;
+        private readonly InputAction m_Player_OpenPause;
         public struct PlayerActions
         {
             private @GameInput m_Wrapper;
@@ -1279,6 +1312,7 @@ namespace FifthSemester.Core.Input
             public InputAction @Next => m_Wrapper.m_Player_Next;
             public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
             public InputAction @Zoom => m_Wrapper.m_Player_Zoom;
+            public InputAction @OpenPause => m_Wrapper.m_Player_OpenPause;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1318,6 +1352,9 @@ namespace FifthSemester.Core.Input
                 @Zoom.started += instance.OnZoom;
                 @Zoom.performed += instance.OnZoom;
                 @Zoom.canceled += instance.OnZoom;
+                @OpenPause.started += instance.OnOpenPause;
+                @OpenPause.performed += instance.OnOpenPause;
+                @OpenPause.canceled += instance.OnOpenPause;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -1352,6 +1389,9 @@ namespace FifthSemester.Core.Input
                 @Zoom.started -= instance.OnZoom;
                 @Zoom.performed -= instance.OnZoom;
                 @Zoom.canceled -= instance.OnZoom;
+                @OpenPause.started -= instance.OnOpenPause;
+                @OpenPause.performed -= instance.OnOpenPause;
+                @OpenPause.canceled -= instance.OnOpenPause;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -1552,6 +1592,7 @@ namespace FifthSemester.Core.Input
             void OnNext(InputAction.CallbackContext context);
             void OnSprint(InputAction.CallbackContext context);
             void OnZoom(InputAction.CallbackContext context);
+            void OnOpenPause(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {

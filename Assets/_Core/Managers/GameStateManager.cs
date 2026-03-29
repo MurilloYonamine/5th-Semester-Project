@@ -1,3 +1,6 @@
+// autor: Murillo Gomes Yonamine
+// data: 29/03/2026
+
 using FifthSemester.Core.States;
 using Sirenix.OdinInspector;
 using System;
@@ -23,7 +26,7 @@ namespace FifthSemester.Core.Managers {
             }
         }
 
-        public void SetState(GameState newState) {
+        public void ChangeState(GameState newState) {
             if (CurrentState == newState) return;
 
             CurrentState = newState;

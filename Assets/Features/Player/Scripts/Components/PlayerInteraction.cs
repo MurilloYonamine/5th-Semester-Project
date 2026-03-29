@@ -89,6 +89,7 @@ namespace FifthSemester.Player {
                     _inventory.AddItem(interactable);
                     interactable.Interact();
                     itemAdded = true;
+                    _itemsNearby.Remove(item);
                 }
             }
             

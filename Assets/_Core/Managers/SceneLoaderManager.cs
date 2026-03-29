@@ -70,12 +70,12 @@ namespace FifthSemester.Core.Managers {
                 yield return SceneManager.UnloadSceneAsync(extraSceneToUnload);
             }
 
-            GameStateManager.Instance.SetState(GameState.Gameplay);
+            GameStateManager.Instance.ChangeState(GameState.Gameplay);
             Debug.Log($"{SCENE_LOADER_TAG} Inicialização concluída: {levelToLoad}");
         }
 
         private IEnumerator LoadSequence(string levelName) {
-            GameStateManager.Instance.SetState(GameState.Pause);
+            GameStateManager.Instance.ChangeState(GameState.Pause);
 
             AsyncOperation loadOp = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
             while (!loadOp.isDone) yield return null;
@@ -97,7 +97,7 @@ namespace FifthSemester.Core.Managers {
 
             _currentLoadedLevel = levelName;
 
-            GameStateManager.Instance.SetState(GameState.Gameplay);
+            GameStateManager.Instance.ChangeState(GameState.Gameplay);
             Debug.Log($"{SCENE_LOADER_TAG} {levelName} carregado com sucesso!");
         }
 

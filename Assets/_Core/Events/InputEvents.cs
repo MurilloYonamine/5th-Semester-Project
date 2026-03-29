@@ -23,6 +23,7 @@ namespace FifthSemester.Core.Events {
         private InputAction _zoom;
         private InputAction _next;
         private InputAction _previous;
+        private InputAction _openPause;
 
         public event Action<Vector2> OnMove;
         public event Action<Vector2> OnLook;
@@ -33,6 +34,7 @@ namespace FifthSemester.Core.Events {
         public event Action<bool> OnZoom;
         public event Action OnNext;
         public event Action OnPrevious;
+        public event Action OnOpenPause;
 
         private void Awake() {
             if (Instance == null) Instance = this;
@@ -75,6 +77,7 @@ namespace FifthSemester.Core.Events {
             _zoom = _gameInput.Player.Zoom;
             _next = _gameInput.Player.Next;
             _previous = _gameInput.Player.Previous;
+            _openPause = _gameInput.Player.OpenPause;
 
             _move.performed += HandleMovement;
             _move.canceled += HandleMovement;
@@ -90,15 +93,16 @@ namespace FifthSemester.Core.Events {
             _zoom.canceled += HandleZoom;
             _next.performed += HandleNext;
             _previous.performed += HandlePrevious;
+            _openPause.performed += HandleOpenPause;
         }
 
         private void HandleStateChange(GameState newState) {
             if (newState == GameState.Gameplay) {
-                _gameInput.Player.Enable();
+                EnablePlayerInput();
                 _gameInput.UI.Disable();
             }
             else {
-                _gameInput.Player.Disable();
+                DisablePlayerInput();
                 _gameInput.UI.Enable();
             }
         }
@@ -159,6 +163,34 @@ namespace FifthSemester.Core.Events {
                 OnPrevious?.Invoke();
             }
         }
+        public void HandleOpenPause(InputAction.CallbackContext context) {
+            if (context.performed) {
+                OnOpenPause?.Invoke();
+            }
+        }
+
+        private void DisablePlayerInput() {
+            _move.Disable();
+            _look.Disable();
+            _jump.Disable();
+            _crouch.Disable();
+            _sprint.Disable();
+            _interact.Disable();
+            _zoom.Disable();
+            _next.Disable();
+            _previous.Disable();
+        }
+        private void EnablePlayerInput() {
+            _move.Enable();
+            _look.Enable();
+            _jump.Enable();
+            _crouch.Enable();
+            _sprint.Enable();
+            _interact.Enable();
+            _zoom.Enable();
+            _next.Enable();
+            _previous.Enable();
+        }
 
         public void Dispose() {
             if (_gameInput == null) return;
@@ -177,6 +209,7 @@ namespace FifthSemester.Core.Events {
             _zoom.canceled -= HandleZoom;
             _next.performed -= HandleNext;
             _previous.performed -= HandlePrevious;
+            _openPause.performed -= HandleOpenPause;
 
             OnMove = null;
             OnLook = null;

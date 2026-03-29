@@ -7,7 +7,9 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace FifthSemester.UI {
-    public class MenuManager : MonoBehaviour {
+    public class MenuManager : MonoBehaviour, IManagerUI {
+        public static MenuManager Instance { get; private set; }
+
         [SerializeField] private IMenuState _currentMenuState;
         [SerializeField] private IMenuState _previousMenuState;
 
@@ -21,6 +23,15 @@ namespace FifthSemester.UI {
         [SerializeField] private Button _creditsButton;
         [SerializeField] private Button _exitButton;
 
+
+        private void Awake() {
+            if (Instance != null) {
+                Destroy(gameObject);
+                return;
+            }
+            Instance = this;
+        }
+
         private void Start() {
             MainMenuState.gameObject.SetActive(false);
             SettingsMenuState.gameObject.SetActive(false);
@@ -33,11 +44,11 @@ namespace FifthSemester.UI {
         public void ChangeState(IMenuState newState) {
             if (_currentMenuState == newState) return; 
 
-            _currentMenuState?.ExitState(this);
+            _currentMenuState?.ExitState();
 
             _currentMenuState = newState;
 
-            _currentMenuState?.EnterState(this);
+            _currentMenuState?.EnterState();
         }
         public void OnReturn(GameObject caller) {
             if (caller != null && caller.activeInHierarchy) {

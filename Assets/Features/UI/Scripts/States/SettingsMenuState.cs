@@ -3,7 +3,6 @@ using UnityEngine.EventSystems;
 
 namespace FifthSemester.UI {
     public class SettingsMenuState : MonoBehaviour, IMenuState {
-        public MenuManager MenuManager { get; private set; }
         private ISettingsState _currentSubState;
         [Header("Settings Panels")]
         [SerializeField] private SettingsChoiceState _settingsChoiceState;
@@ -12,15 +11,14 @@ namespace FifthSemester.UI {
         [SerializeField] private ControllerState _controllerState;
         [SerializeField] private PostProcessingState _postProcessingState;
 
-        public void EnterState(MenuManager menuManager) {
+        public void EnterState() {
             gameObject.SetActive(true);
-            MenuManager = menuManager;
 
             _currentSubState = _settingsChoiceState;
             ChangeState(_currentSubState);
         }
 
-        public void ExitState(MenuManager menuManager) {
+        public void ExitState() {
             gameObject.SetActive(false);
         }
         #region Button Pressed Methods
@@ -65,7 +63,7 @@ namespace FifthSemester.UI {
         }
 
         public void OnReturn(GameObject caller) {
-            MenuManager.ChangeState(MenuManager.MainMenuState);
+            MenuManager.Instance.ChangeState(MenuManager.Instance.MainMenuState);
             EventSystem.current.SetSelectedGameObject(null);
             EventSystem.current.SetSelectedGameObject(caller);
         }   

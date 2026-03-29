@@ -80,6 +80,8 @@ namespace FifthSemester.Player.Components {
         private void Awake() {
             _player = GetComponent<PlayerController>();
             _rigidbody = GetComponent<Rigidbody>();
+            _playerEvents = GetComponent<PlayerEvents>();
+
             _originalScale = _player.transform.localScale;
 
             if (!_unlimitedSprint) {
@@ -89,7 +91,9 @@ namespace FifthSemester.Player.Components {
             ChangeState(new PlayerWalkingState(this));
         }
 
-        private void OnEnable() {
+        private void Start() {
+            if(_playerEvents == null) return;
+
             _playerEvents = _player.PlayerEvents;
             _playerEvents.OnMoveInput += HandleMove;
             _playerEvents.OnSprintInput += HandleSprint;

@@ -65,19 +65,19 @@ namespace FifthSemester.Player.Components {
             }
         }
 
-        private void OnEnable() {
-            if (_player != null && _player.PlayerEvents != null) {
-                _playerEvents = _player.PlayerEvents;
-                _playerEvents.OnLookInput += HandleLookInput;
-                _playerEvents.OnZoomInput += HandleZoomInput;
-            }
-        }
+        private void Start() {
+            if (_player == null) _player = GetComponent<PlayerController>();
+            if (_player == null || _player.PlayerEvents == null) return;
 
+            _playerEvents = _player.PlayerEvents;
+            _playerEvents.OnLookInput += HandleLookInput;
+            _playerEvents.OnZoomInput += HandleZoomInput;
+        }
         private void OnDisable() {
-            if (_player != null && _player.PlayerEvents != null) {
-                _playerEvents.OnLookInput -= HandleLookInput;
-                _playerEvents.OnZoomInput -= HandleZoomInput;
-            }
+            if (_playerEvents == null) return;
+
+            _playerEvents.OnLookInput -= HandleLookInput;
+            _playerEvents.OnZoomInput -= HandleZoomInput;
         }
 
         private void Update() {

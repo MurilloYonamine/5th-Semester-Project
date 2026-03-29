@@ -110,10 +110,14 @@ namespace FifthSemester.Player.Components {
             if (!PlayerCanMove || Rigidbody == null) return;
 
             Vector2 moveInput = MoveInput;
-            Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
-            UpdateFootsteps();
+            Vector3 inputDirection = new Vector3(moveInput.x, 0f, moveInput.y);
 
-            if (input.sqrMagnitude > 0.0001f) {
+            bool isActuallyMoving = _rigidbody.linearVelocity.sqrMagnitude > 0.1f;
+            if (isActuallyMoving) {
+                UpdateFootsteps();
+            }
+
+            if (inputDirection.sqrMagnitude > 0.0001f) {
                 SetIsWalking(true);
             }
             else {
@@ -122,7 +126,7 @@ namespace FifthSemester.Player.Components {
             }
 
             float currentSpeed = _currentState?.GetCurrentSpeed() ?? 0f;
-            Vector3 targetVelocity = PlayerTransform.TransformDirection(input) * currentSpeed;
+            Vector3 targetVelocity = PlayerTransform.TransformDirection(inputDirection) * currentSpeed;
 
             ApplyVelocity(targetVelocity);
         }
@@ -140,7 +144,8 @@ namespace FifthSemester.Player.Components {
             }
 
             float interval = _isSprinting ? _sprintFootstepInterval : (_isCrouched ? _crouchFootstepInterval : _walkFootstepInterval);
-            _footstepTimer += Time.deltaTime;
+
+            _footstepTimer += Time.fixedDeltaTime;
 
             if (_footstepTimer >= interval) {
                 _footstepTimer -= interval;

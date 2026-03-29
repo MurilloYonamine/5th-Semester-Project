@@ -11,7 +11,7 @@ namespace FifthSemester.Player {
     [RequireComponent(typeof(PlayerJump))]
     [RequireComponent(typeof(PlayerCamera))]
     [RequireComponent(typeof(PlayerInteraction))]
-    [DefaultExecutionOrder(-100)]
+    [RequireComponent(typeof(PlayerEvents))]
     public class PlayerController : MonoBehaviour {
         [Header("Player Unity Components")]
         public Rigidbody Rigidbody { get; private set; }
@@ -30,7 +30,7 @@ namespace FifthSemester.Player {
         public bool IsGrounded => PlayerJump.IsGrounded;
 
         private void Awake() {
-            PlayerEvents = new PlayerEvents();
+            PlayerEvents = GetComponent<PlayerEvents>();
             Inventory = new InventoryController();
 
             Rigidbody = GetComponent<Rigidbody>();
@@ -39,19 +39,10 @@ namespace FifthSemester.Player {
             PlayerCamera = GetComponent<PlayerCamera>();
             PlayerInteraction = GetComponent<PlayerInteraction>();
         }
-        
-        private void OnEnable() {
-            PlayerEvents?.OnEnable();
-        }
-        
         private void Start() {
             if (lockCursor) {
                 Cursor.lockState = CursorLockMode.Locked;
             }
-        }
-        
-        private void OnDisable() {
-            PlayerEvents?.OnDisable();
         }
     }
 }

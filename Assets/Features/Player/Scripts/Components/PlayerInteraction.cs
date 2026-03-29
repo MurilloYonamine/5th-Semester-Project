@@ -7,7 +7,7 @@ using UnityEngine;
 using FifthSemester.Player.Components;
 using FifthSemester.Items;
 using FifthSemester.Inventory;
-using FifthSemester.Shared.AudioSystem;
+using FifthSemester.Core.Managers;
 
 namespace FifthSemester.Player {
     public class PlayerInteraction : MonoBehaviour {

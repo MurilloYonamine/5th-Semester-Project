@@ -26,6 +26,7 @@ namespace FifthSemester.Player {
 
         private void Awake() {
             _player = GetComponent<PlayerController>();
+
             _inventory = _player.Inventory;
 
             _interactionCollider = GetComponentInChildren<SphereCollider>();
@@ -41,7 +42,7 @@ namespace FifthSemester.Player {
                 _inventoryUI.SetInventory(_inventory);
             }
         }
-        private void OnEnable() {
+        private void Start() {
             _playerEvents = _player.PlayerEvents;
 
             _playerEvents.OnInteractInput += Interact;
@@ -51,6 +52,7 @@ namespace FifthSemester.Player {
             _interactionTrigger.OnObjectEntered += HandleTriggerEnter;
             _interactionTrigger.OnObjectExited += HandleTriggerExit;
         }
+
         private void OnDisable() {
             if (_playerEvents == null) return;
 

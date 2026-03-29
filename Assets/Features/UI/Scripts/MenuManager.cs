@@ -26,6 +26,8 @@ namespace FifthSemester.UI {
             SettingsMenuState.gameObject.SetActive(false);
             CreditsMenuState.gameObject.SetActive(false);
 
+            EventSystem.current.SetSelectedGameObject(_playButton.gameObject);
+
             ChangeState(MainMenuState);
         }
         public void ChangeState(IMenuState newState) {
@@ -37,35 +39,11 @@ namespace FifthSemester.UI {
 
             _currentMenuState?.EnterState(this);
         }
-
-        #region Button Callbacks
-        public void OpenMainMenu(GameObject caller) {
-            if (caller != null)
-                EventSystem.current.SetSelectedGameObject(caller);
-            ChangeState(MainMenuState);
-        }
-        public void OpenSettings(GameObject caller) {
-            if (caller != null)
-                EventSystem.current.SetSelectedGameObject(caller);
-            ChangeState(SettingsMenuState);
-        }
-        public void OpenCredits(GameObject caller) {
-            if (caller != null)
-                EventSystem.current.SetSelectedGameObject(caller);
-            ChangeState(CreditsMenuState);
-        }
-        public void Exit() {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-                        Application.Quit();
-#endif
-        }
-        #endregion
         public void OnReturn(GameObject caller) {
             if (caller != null && caller.activeInHierarchy) {
                 EventSystem.current.SetSelectedGameObject(caller);
             }
+            ChangeState(MainMenuState);
         }
     }
 }

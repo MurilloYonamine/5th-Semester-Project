@@ -9,6 +9,7 @@ using FifthSemester.Items;
 using FifthSemester.Inventory;
 using FifthSemester.Core.Managers;
 using FifthSemester.Delivery;
+using FifthSemester.DialogueSystem;
 using System.Reflection;
 
 namespace FifthSemester.Player {
@@ -16,8 +17,9 @@ namespace FifthSemester.Player {
         [SerializeField, Range(1f, 5f)] private float _interactionRange = 3f;
         [SerializeField] private List<GameObject> _itemsNearby;
         [SerializeField] private List<DeliveryPoint> _deliveryPointsNearby;
-        [SerializeField] private SphereCollider _interactionCollider;
+        [SerializeField] private List<DialogueTrigger> _dialogueTriggersNearby = new List<DialogueTrigger>();
 
+        [SerializeField] private SphereCollider _interactionCollider;
         private PlayerInteractionTrigger _interactionTrigger;
         private PlayerController _player;
         private PlayerEvents _playerEvents;
@@ -90,6 +92,12 @@ namespace FifthSemester.Player {
                     _deliveryPointsNearby.Add(deliveryPoint);
                 }
             }
+            if (other.TryGetComponent<DialogueTrigger>(out var dialogueTrigger)) {
+                if (!_dialogueTriggersNearby.Contains(dialogueTrigger)) {
+                    _dialogueTriggersNearby.Add(dialogueTrigger);
+                    dialogueTrigger.TurnOutline(true);
+                }
+            }
         }
 
         private void HandleTriggerExit(Collider other) {
@@ -100,6 +108,10 @@ namespace FifthSemester.Player {
             if (other.TryGetComponent<DeliveryPoint>(out var deliveryPoint)) {
                 _deliveryPointsNearby.Remove(deliveryPoint);
             }
+            if (other.TryGetComponent<DialogueTrigger>(out var dialogueTrigger)) {
+                _dialogueTriggersNearby.Remove(dialogueTrigger);
+                dialogueTrigger.TurnOutline(false);
+            }
         }
         public void TryDeliverToNearestPoint() {
             if (_deliveryPointsNearby.Count == 0 || _inventory == null) return;
@@ -109,6 +121,16 @@ namespace FifthSemester.Player {
         }
 
         private void Interact() {
+            if (DialogueManager.Instance != null && DialogueManager.Instance.IsPanelActive()) {
+                DialogueManager.Instance.DisplayNextLine();
+                return;
+            }
+
+            if (_dialogueTriggersNearby != null && _dialogueTriggersNearby.Count > 0) {
+                _dialogueTriggersNearby[0].TriggerDialogue();
+                return;
+            }
+
             if (_deliveryPointsNearby != null && _deliveryPointsNearby.Count > 0) {
                 TryDeliverToNearestPoint();
                 return;

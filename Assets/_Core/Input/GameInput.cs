@@ -674,6 +674,15 @@ namespace FifthSemester.Core.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""d3d98257-1cd7-4353-b8e2-2294f4db08ea"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1127,6 +1136,28 @@ namespace FifthSemester.Core.Input
                     ""action"": ""Return"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1356c4b1-bec7-4e7f-a1d2-a27cd7595bd6"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b5d03821-4c79-49a3-872a-b21386dbf303"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -1220,6 +1251,7 @@ namespace FifthSemester.Core.Input
             m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
             m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
             m_UI_Return = m_UI.FindAction("Return", throwIfNotFound: true);
+            m_UI_Interact = m_UI.FindAction("Interact", throwIfNotFound: true);
         }
 
         ~@GameInput()
@@ -1424,6 +1456,7 @@ namespace FifthSemester.Core.Input
         private readonly InputAction m_UI_TrackedDevicePosition;
         private readonly InputAction m_UI_TrackedDeviceOrientation;
         private readonly InputAction m_UI_Return;
+        private readonly InputAction m_UI_Interact;
         public struct UIActions
         {
             private @GameInput m_Wrapper;
@@ -1439,6 +1472,7 @@ namespace FifthSemester.Core.Input
             public InputAction @TrackedDevicePosition => m_Wrapper.m_UI_TrackedDevicePosition;
             public InputAction @TrackedDeviceOrientation => m_Wrapper.m_UI_TrackedDeviceOrientation;
             public InputAction @Return => m_Wrapper.m_UI_Return;
+            public InputAction @Interact => m_Wrapper.m_UI_Interact;
             public InputActionMap Get() { return m_Wrapper.m_UI; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1481,6 +1515,9 @@ namespace FifthSemester.Core.Input
                 @Return.started += instance.OnReturn;
                 @Return.performed += instance.OnReturn;
                 @Return.canceled += instance.OnReturn;
+                @Interact.started += instance.OnInteract;
+                @Interact.performed += instance.OnInteract;
+                @Interact.canceled += instance.OnInteract;
             }
 
             private void UnregisterCallbacks(IUIActions instance)
@@ -1518,6 +1555,9 @@ namespace FifthSemester.Core.Input
                 @Return.started -= instance.OnReturn;
                 @Return.performed -= instance.OnReturn;
                 @Return.canceled -= instance.OnReturn;
+                @Interact.started -= instance.OnInteract;
+                @Interact.performed -= instance.OnInteract;
+                @Interact.canceled -= instance.OnInteract;
             }
 
             public void RemoveCallbacks(IUIActions instance)
@@ -1607,6 +1647,7 @@ namespace FifthSemester.Core.Input
             void OnTrackedDevicePosition(InputAction.CallbackContext context);
             void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
             void OnReturn(InputAction.CallbackContext context);
+            void OnInteract(InputAction.CallbackContext context);
         }
     }
 }

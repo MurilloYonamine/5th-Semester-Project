@@ -14,6 +14,9 @@ namespace FifthSemester.Core.Events {
 
         private GameInput _gameInput;
 
+        // Flag para ignorar o primeiro avanço de diálogo
+        private bool _ignoreNextDialogueAdvance = false;
+
         private InputAction _move;
         private InputAction _look;
         private InputAction _jump;
@@ -24,6 +27,7 @@ namespace FifthSemester.Core.Events {
         private InputAction _next;
         private InputAction _previous;
         private InputAction _openPause;
+        private InputAction _dialogueAdvance;
 
         public event Action<Vector2> OnMove;
         public event Action<Vector2> OnLook;
@@ -35,6 +39,7 @@ namespace FifthSemester.Core.Events {
         public event Action OnNext;
         public event Action OnPrevious;
         public event Action OnOpenPause;
+        public event Action OnDialogueAdvance;
 
         private void Awake() {
             if (Instance == null) Instance = this;
@@ -78,6 +83,9 @@ namespace FifthSemester.Core.Events {
             _next = _gameInput.Player.Next;
             _previous = _gameInput.Player.Previous;
             _openPause = _gameInput.Player.OpenPause;
+            _dialogueAdvance = _gameInput.UI.Interact;
+
+            _dialogueAdvance.started += HandleDialogueAdvance;
 
             _move.performed += HandleMovement;
             _move.canceled += HandleMovement;
@@ -100,10 +108,18 @@ namespace FifthSemester.Core.Events {
             if (newState == GameState.Gameplay) {
                 EnablePlayerInput();
                 _gameInput.UI.Disable();
+                _dialogueAdvance.Disable();
+            }
+            else if (newState == GameState.Dialogue) {
+                DisablePlayerInput();
+                _gameInput.UI.Enable();
+                _dialogueAdvance.Enable();
+                _ignoreNextDialogueAdvance = true; // Ativa flag ao entrar no diálogo
             }
             else {
                 DisablePlayerInput();
                 _gameInput.UI.Enable();
+                _dialogueAdvance.Disable();
             }
         }
 
@@ -169,6 +185,16 @@ namespace FifthSemester.Core.Events {
             }
         }
 
+        private void HandleDialogueAdvance(InputAction.CallbackContext context) {
+            if (context.started) {
+                if (_ignoreNextDialogueAdvance) {
+                    _ignoreNextDialogueAdvance = false;
+                    return;
+                }
+                OnDialogueAdvance?.Invoke();
+            }
+        }
+
         private void DisablePlayerInput() {
             _move.Disable();
             _look.Disable();
@@ -210,6 +236,7 @@ namespace FifthSemester.Core.Events {
             _next.performed -= HandleNext;
             _previous.performed -= HandlePrevious;
             _openPause.performed -= HandleOpenPause;
+            _dialogueAdvance.started -= HandleDialogueAdvance;
 
             OnMove = null;
             OnLook = null;
@@ -218,6 +245,7 @@ namespace FifthSemester.Core.Events {
             OnSprint = null;
             OnInteract = null;
             OnZoom = null;
+            OnDialogueAdvance = null;
         }
     }
 }

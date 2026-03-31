@@ -85,6 +85,15 @@ namespace FifthSemester.Inventory {
 
         private void HandleItemRemoved(int index) {
             if (index >= 0 && index < _slots.Length) {
+                ShowInventory();
+                HighlightSlot(index);
+                StartCoroutine(RemoveSlotAfterDelay(index, 1f));
+            }
+        }
+
+        private IEnumerator RemoveSlotAfterDelay(int index, float delay) {
+            yield return new WaitForSeconds(delay);
+            if (_slots != null && index >= 0 && index < _slots.Length && _slots[index] != null) {
                 _slots[index].ClearItem();
             }
         }

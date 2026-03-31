@@ -7,8 +7,9 @@ using UnityEngine;
 using FifthSemester.Items;
 
 namespace FifthSemester.Inventory {
-    public class InventoryController {
-        private List<IInteractable> _items;
+    public class InventoryController : MonoBehaviour {
+        [SerializeField] private List<IInteractable> _items = new List<IInteractable>();
+        public IReadOnlyList<IInteractable> Items => _items;
         private bool _isInventoryOpen = false;
 
         public bool IsInventoryOpen => _isInventoryOpen;
@@ -16,8 +17,9 @@ namespace FifthSemester.Inventory {
         public event Action<IInteractable, int> OnItemAdded;
         public event Action<int> OnItemRemoved;
 
-        public InventoryController() {
-            _items = new List<IInteractable>();
+        private void Awake() {
+            if (_items == null)
+                _items = new List<IInteractable>();
         }
 
         public void AddItem(IInteractable item) {

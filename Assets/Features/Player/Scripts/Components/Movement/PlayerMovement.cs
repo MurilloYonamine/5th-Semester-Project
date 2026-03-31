@@ -1,11 +1,10 @@
 // Autor: Murillo Gomes Yonamine
 // Data: 14/02/2026
 
-using FifthSemester.Core;
-using FifthSemester.Shared.AudioSystem;
+using FifthSemester.Core.Managers;
+using FifthSemester.Core.States;
 using Sirenix.OdinInspector;
 using System;
-using Unity.VisualScripting.YamlDotNet.Core.Tokens;
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
@@ -81,6 +80,8 @@ namespace FifthSemester.Player.Components {
         private void Awake() {
             _player = GetComponent<PlayerController>();
             _rigidbody = GetComponent<Rigidbody>();
+            _playerEvents = GetComponent<PlayerEvents>();
+
             _originalScale = _player.transform.localScale;
 
             if (!_unlimitedSprint) {
@@ -90,7 +91,9 @@ namespace FifthSemester.Player.Components {
             ChangeState(new PlayerWalkingState(this));
         }
 
-        private void OnEnable() {
+        private void Start() {
+            if(_playerEvents == null) return;
+
             _playerEvents = _player.PlayerEvents;
             _playerEvents.OnMoveInput += HandleMove;
             _playerEvents.OnSprintInput += HandleSprint;
@@ -111,9 +114,16 @@ namespace FifthSemester.Player.Components {
         private void FixedUpdate() {
             if (!PlayerCanMove || Rigidbody == null) return;
 
+            if (GameStateManager.Instance.CurrentState != GameState.Gameplay) {
+                _rigidbody.linearVelocity = Vector3.zero;
+                return;
+            }
+
             Vector2 moveInput = MoveInput;
             Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
             UpdateFootsteps();
+
+            bool isActuallyMoving = _rigidbody.linearVelocity.sqrMagnitude > 0.1f;
 
             if (input.sqrMagnitude > 0.0001f) {
                 SetIsWalking(true);
@@ -142,7 +152,7 @@ namespace FifthSemester.Player.Components {
             }
 
             float interval = _isSprinting ? _sprintFootstepInterval : (_isCrouched ? _crouchFootstepInterval : _walkFootstepInterval);
-            _footstepTimer += Time.deltaTime;
+            _footstepTimer += Time.fixedDeltaTime;
 
             if (_footstepTimer >= interval) {
                 _footstepTimer -= interval;

@@ -7,14 +7,19 @@ using UnityEngine;
 using FifthSemester.Player.Components;
 using FifthSemester.Items;
 using FifthSemester.Inventory;
-using FifthSemester.Shared.AudioSystem;
+using FifthSemester.Core.Managers;
+using FifthSemester.Delivery;
+using FifthSemester.DialogueSystem;
+using System.Reflection;
 
 namespace FifthSemester.Player {
     public class PlayerInteraction : MonoBehaviour {
         [SerializeField, Range(1f, 5f)] private float _interactionRange = 3f;
         [SerializeField] private List<GameObject> _itemsNearby;
-        [SerializeField] private SphereCollider _interactionCollider;
+        [SerializeField] private List<DeliveryPoint> _deliveryPointsNearby;
+        [SerializeField] private List<DialogueTrigger> _dialogueTriggersNearby = new List<DialogueTrigger>();
 
+        [SerializeField] private SphereCollider _interactionCollider;
         private PlayerInteractionTrigger _interactionTrigger;
         private PlayerController _player;
         private PlayerEvents _playerEvents;
@@ -24,9 +29,12 @@ namespace FifthSemester.Player {
 
         [SerializeField] private AudioClip _pickupSound;
 
+        public event Action<IInteractable, DeliveryPoint> OnItemDelivered;
+
         private void Awake() {
+            _deliveryPointsNearby = new List<DeliveryPoint>();
             _player = GetComponent<PlayerController>();
-            _inventory = _player.Inventory;
+            _inventory = GetComponent<InventoryController>();
 
             _interactionCollider = GetComponentInChildren<SphereCollider>();
             _interactionCollider.radius = _interactionRange;
@@ -41,7 +49,16 @@ namespace FifthSemester.Player {
                 _inventoryUI.SetInventory(_inventory);
             }
         }
-        private void OnEnable() {
+        public void DeliverItemToCurrentPoint(IInteractable item, DeliveryPoint deliveryPoint) {
+            if (item == null || deliveryPoint == null) return;
+            deliveryPoint.ReceiveItem(item);
+        }
+
+        private void HandleItemDelivered(IInteractable item, DeliveryPoint deliveryPoint) {
+            _inventory.RemoveItem(item);
+            OnItemDelivered?.Invoke(item, deliveryPoint);
+        }
+        private void Start() {
             _playerEvents = _player.PlayerEvents;
 
             _playerEvents.OnInteractInput += Interact;
@@ -51,6 +68,7 @@ namespace FifthSemester.Player {
             _interactionTrigger.OnObjectEntered += HandleTriggerEnter;
             _interactionTrigger.OnObjectExited += HandleTriggerExit;
         }
+
         private void OnDisable() {
             if (_playerEvents == null) return;
 
@@ -69,6 +87,17 @@ namespace FifthSemester.Player {
                     interactable.Highlight();
                 }
             }
+            if (other.TryGetComponent<DeliveryPoint>(out var deliveryPoint)) {
+                if (!_deliveryPointsNearby.Contains(deliveryPoint)) {
+                    _deliveryPointsNearby.Add(deliveryPoint);
+                }
+            }
+            if (other.TryGetComponent<DialogueTrigger>(out var dialogueTrigger)) {
+                if (!_dialogueTriggersNearby.Contains(dialogueTrigger)) {
+                    _dialogueTriggersNearby.Add(dialogueTrigger);
+                    dialogueTrigger.TurnOutline(true);
+                }
+            }
         }
 
         private void HandleTriggerExit(Collider other) {
@@ -76,9 +105,37 @@ namespace FifthSemester.Player {
                 _itemsNearby.Remove(other.gameObject);
                 interactable.Unhighlight();
             }
+            if (other.TryGetComponent<DeliveryPoint>(out var deliveryPoint)) {
+                _deliveryPointsNearby.Remove(deliveryPoint);
+            }
+            if (other.TryGetComponent<DialogueTrigger>(out var dialogueTrigger)) {
+                _dialogueTriggersNearby.Remove(dialogueTrigger);
+                dialogueTrigger.TurnOutline(false);
+            }
+        }
+        public void TryDeliverToNearestPoint() {
+            if (_deliveryPointsNearby.Count == 0 || _inventory == null) return;
+            var deliveryPoint = _deliveryPointsNearby[0];
+            if (_inventory.IsInventoryOpen) return;
+            deliveryPoint.TryDeliverFromInventory(_inventory);
         }
 
         private void Interact() {
+            if (DialogueManager.Instance != null && DialogueManager.Instance.IsPanelActive()) {
+                DialogueManager.Instance.DisplayNextLine();
+                return;
+            }
+
+            if (_dialogueTriggersNearby != null && _dialogueTriggersNearby.Count > 0) {
+                _dialogueTriggersNearby[0].TriggerDialogue();
+                return;
+            }
+
+            if (_deliveryPointsNearby != null && _deliveryPointsNearby.Count > 0) {
+                TryDeliverToNearestPoint();
+                return;
+            }
+
             if (_itemsNearby.Count == 0) return;
 
             bool itemAdded = false;
@@ -89,9 +146,10 @@ namespace FifthSemester.Player {
                     _inventory.AddItem(interactable);
                     interactable.Interact();
                     itemAdded = true;
+                    _itemsNearby.Remove(item);
                 }
             }
-            
+
             AudioManager.Instance.PlaySFX(_pickupSound);
 
             if (itemAdded && !_inventory.IsInventoryOpen) {

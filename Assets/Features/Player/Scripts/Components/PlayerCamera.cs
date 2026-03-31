@@ -4,6 +4,8 @@
 using System;
 using UnityEngine;
 using FifthSemester.Core.Events;
+using FifthSemester.Core.Managers;
+using FifthSemester.Core.States;
 using Sirenix.OdinInspector;
 
 namespace FifthSemester.Player.Components {
@@ -65,19 +67,24 @@ namespace FifthSemester.Player.Components {
             }
         }
 
+        private void Start() {
+            if (_player == null) _player = GetComponent<PlayerController>();
+            if (_player == null || _player.PlayerEvents == null) return;
+
+            _playerEvents = _player.PlayerEvents;
+            _playerEvents.OnLookInput += HandleLookInput;
+            _playerEvents.OnZoomInput += HandleZoomInput;
+        }
         private void OnEnable() {
-            if (_player != null && _player.PlayerEvents != null) {
-                _playerEvents = _player.PlayerEvents;
-                _playerEvents.OnLookInput += HandleLookInput;
-                _playerEvents.OnZoomInput += HandleZoomInput;
-            }
+            GameStateManager.OnStateChanged += HandleGameStateChanged;
         }
 
         private void OnDisable() {
-            if (_player != null && _player.PlayerEvents != null) {
+            if (_playerEvents != null) {
                 _playerEvents.OnLookInput -= HandleLookInput;
                 _playerEvents.OnZoomInput -= HandleZoomInput;
             }
+            GameStateManager.OnStateChanged -= HandleGameStateChanged;
         }
 
         private void Update() {
@@ -164,6 +171,12 @@ namespace FifthSemester.Player.Components {
             }
         }
 
+        private void HandleGameStateChanged(GameState state) {
+            if (state == GameState.Dialogue) {
+                ResetHeadBob();
+            }
+        }
+
         #region Dev Tuning API
 
         public bool CameraCanMove => _cameraCanMove;
@@ -228,6 +241,12 @@ namespace FifthSemester.Player.Components {
 
         public void SetBobAmount(Vector3 value) {
             _bobAmount = value;
+        }
+
+        public void ResetHeadBob() {
+            _bobTimer = 0f;
+            if (_joint != null)
+                _joint.localPosition = _jointOriginalPos;
         }
 
         #endregion

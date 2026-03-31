@@ -5,9 +5,8 @@ using UnityEngine;
 
 namespace FifthSemester.UI {
     public interface IMenuState {
-        public MenuManager MenuManager { get; }
-        void EnterState(MenuManager menuManager);
-        void ExitState(MenuManager menuManager);
+        void EnterState();
+        void ExitState();
         void OnReturn(GameObject caller);
     }
 }

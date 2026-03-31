@@ -1,3 +1,12 @@
+## [0.3.1](https://github.com/MurilloYonamine/5th-Semester-Project/compare/v0.3.0...v0.3.1) (2026-03-31)
+
+
+### Bug Fixes
+
+* teste com lit ([00abe78](https://github.com/MurilloYonamine/5th-Semester-Project/commit/00abe781775f4a6f9e7e52f9f88e02580ad1d7a9))
+
+
+
 # [0.3.0](https://github.com/MurilloYonamine/5th-Semester-Project/compare/v0.2.0...v0.3.0) (2026-03-31)
 
 

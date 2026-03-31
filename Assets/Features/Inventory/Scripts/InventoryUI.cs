@@ -78,22 +78,16 @@ namespace FifthSemester.Inventory {
         }
 
         private void HandleItemAdded(IInteractable item, int index) {
-            RefreshUI();
+            if (index >= 0 && index < _slots.Length) {
+                _slots[index].SetItem(item);
+            }
         }
 
         private void HandleItemRemoved(int index) {
-            RefreshUI();
-        }
-        private void RefreshUI() {
-            if (_inventory == null || _slots == null) return;
-
-            for (int i = 0; i < _slots.Length; i++) {
-                if (i < _inventory.Items.Count) {
-                    _slots[i].SetItem(_inventory.Items[i]);
-                }
-                else {
-                    _slots[i].ClearItem();
-                }
+            if (index >= 0 && index < _slots.Length) {
+                ShowInventory();
+                HighlightSlot(index);
+                _slots[index].ClearItem();
             }
         }
 

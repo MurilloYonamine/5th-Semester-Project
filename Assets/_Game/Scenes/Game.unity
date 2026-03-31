@@ -16615,7 +16615,7 @@ MonoBehaviour:
   priority: 0
   blendDistance: 0
   weight: 1
-  sharedProfile: {fileID: 11400000, guid: 10fc4df2da32a41aaa32d77bc913491c, type: 2}
+  sharedProfile: {fileID: 11400000, guid: 95672bf742e06cf4284f41d3c4985af5, type: 2}
 --- !u!208 &1640911507
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -19577,6 +19577,10 @@ PrefabInstance:
     - target: {fileID: 1264738499897855125, guid: 50e963c186ef9404e9af142058d8db01, type: 3}
       propertyPath: _sprintDuration
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1925673066314660537, guid: 50e963c186ef9404e9af142058d8db01, type: 3}
+      propertyPath: m_RendererIndex
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 5348556779026223557, guid: 50e963c186ef9404e9af142058d8db01, type: 3}
       propertyPath: m_LocalPosition.y

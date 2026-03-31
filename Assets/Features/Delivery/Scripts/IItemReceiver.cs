@@ -6,7 +6,7 @@ using FifthSemester.Items;
 
 namespace FifthSemester.Delivery {
     public interface IItemReceiver {
-        event Action<IInteractable> OnItemReceived;
+        event Action<DeliveryPoint, IInteractable> OnItemReceived;
         void ReceiveItem(IInteractable item);
     }
 }

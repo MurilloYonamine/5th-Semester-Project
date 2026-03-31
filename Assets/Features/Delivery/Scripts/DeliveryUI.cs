@@ -21,8 +21,8 @@ namespace FifthSemester.UI {
             }
         }
 
-        private void HandleItemReceived(IInteractable item) {
-            Debug.Log($"Item received: {item}");
+        private void HandleItemReceived(DeliveryPoint deliveryPoint, IInteractable item) {
+            Debug.Log($"Item received: {item} at {deliveryPoint.name}");
         }
     }
 }

@@ -6,6 +6,7 @@ namespace FifthSemester.Core.States {
         Gameplay,
         Pause,
         Dialogue,
+        Cutscene,
         MainMenu
     }
 }

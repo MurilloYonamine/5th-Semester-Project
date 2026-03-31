@@ -6,9 +6,9 @@ using FifthSemester.Core.Events;
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
-    [Serializable]
-    public class PlayerEvents : PlayerComponent {
-        [SerializeField] private InputEvents _inputEvents;
+    public class PlayerEvents : MonoBehaviour {
+        private InputEvents _inputEvents => InputEvents.Instance;
+
         public event Action<Vector2> OnMoveInput;
         public event Action<Vector2> OnLookInput;
         public event Action OnJumpInput;
@@ -16,31 +16,33 @@ namespace FifthSemester.Player.Components {
         public event Action<bool> OnCrouchInput;
         public event Action OnInteractInput;
         public event Action<bool> OnZoomInput;
+        public event Action OnNext;
+        public event Action OnPrevious;
 
-        public override void OnAwake() {
-            _inputEvents = new InputEvents();
+        private void OnEnable() {
+            _inputEvents.OnMove += HandleMove;
+            _inputEvents.OnLook += HandleLook;
+            _inputEvents.OnJump += HandleJump;
+            _inputEvents.OnSprint += HandleSprint;
+            _inputEvents.OnCrouch += HandleCrouch;
+            _inputEvents.OnInteract += HandleInteract;
+            _inputEvents.OnZoom += HandleZoom;
+            _inputEvents.OnNext += HandleNext;
+            _inputEvents.OnPrevious += HandlePrevious;
         }
-        public override void OnEnable() {
-            _inputEvents.Enable();
 
-            InputEvents.OnMove += HandleMove;
-            InputEvents.OnLook += HandleLook;
-            InputEvents.OnJump += HandleJump;
-            InputEvents.OnSprint += HandleSprint;
-            InputEvents.OnCrouch += HandleCrouch;
-            InputEvents.OnInteract += HandleInteract;
-            InputEvents.OnZoom += HandleZoom;
-        }
-        public override void OnDisable() {
-            _inputEvents.Disable();
-
-            InputEvents.OnMove -= HandleMove;
-            InputEvents.OnLook -= HandleLook;
-            InputEvents.OnJump -= HandleJump;
-            InputEvents.OnSprint -= HandleSprint;
-            InputEvents.OnCrouch -= HandleCrouch;
-            InputEvents.OnInteract -= HandleInteract;
-            InputEvents.OnZoom -= HandleZoom;
+        private void OnDisable() {
+            if (_inputEvents != null) {
+                _inputEvents.OnMove -= HandleMove;
+                _inputEvents.OnLook -= HandleLook;
+                _inputEvents.OnJump -= HandleJump;
+                _inputEvents.OnSprint -= HandleSprint;
+                _inputEvents.OnCrouch -= HandleCrouch;
+                _inputEvents.OnInteract -= HandleInteract;
+                _inputEvents.OnZoom -= HandleZoom;
+                _inputEvents.OnNext -= HandleNext;
+                _inputEvents.OnPrevious -= HandlePrevious;
+            }
         }
 
         private void HandleMove(Vector2 input) {
@@ -69,6 +71,13 @@ namespace FifthSemester.Player.Components {
 
         private void HandleZoom(bool isPressed) {
             OnZoomInput?.Invoke(isPressed);
+        }
+
+        private void HandleNext() {
+            OnNext?.Invoke();
+        }
+        private void HandlePrevious() {
+            OnPrevious?.Invoke();
         }
     }
 }

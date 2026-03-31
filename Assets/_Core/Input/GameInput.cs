@@ -60,7 +60,7 @@ namespace FifthSemester.Core.Input
                     ""name"": ""Interact"",
                     ""type"": ""Button"",
                     ""id"": ""852140f2-7766-474d-8707-702459ba45f3"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": ""Hold"",
                     ""initialStateCheck"": false
@@ -69,7 +69,7 @@ namespace FifthSemester.Core.Input
                     ""name"": ""Crouch"",
                     ""type"": ""Button"",
                     ""id"": ""27c5f898-bc57-4ee1-8800-db469aca5fe3"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -78,7 +78,7 @@ namespace FifthSemester.Core.Input
                     ""name"": ""Jump"",
                     ""type"": ""Button"",
                     ""id"": ""f1ba0d36-48eb-4cd5-b651-1c94a6531f70"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -87,7 +87,7 @@ namespace FifthSemester.Core.Input
                     ""name"": ""Previous"",
                     ""type"": ""Button"",
                     ""id"": ""2776c80d-3c14-4091-8c56-d04ced07a2b0"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -96,7 +96,7 @@ namespace FifthSemester.Core.Input
                     ""name"": ""Next"",
                     ""type"": ""Button"",
                     ""id"": ""b7230bb6-fc9b-4f52-8b25-f5e19cb2c2ba"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -105,7 +105,7 @@ namespace FifthSemester.Core.Input
                     ""name"": ""Sprint"",
                     ""type"": ""Button"",
                     ""id"": ""641cd816-40e6-41b4-8c3d-04687c349290"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -114,6 +114,15 @@ namespace FifthSemester.Core.Input
                     ""name"": ""Zoom"",
                     ""type"": ""Button"",
                     ""id"": ""bd9603af-85ff-44da-8f60-85269b4b2b81"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Open Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""436625cb-ece4-43ac-abc7-7630e71545e1"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -258,7 +267,7 @@ namespace FifthSemester.Core.Input
                     ""id"": ""c1f7a91b-d0fd-4a62-997e-7fb9b69bf235"",
                     ""path"": ""<Gamepad>/rightStick"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""ScaleVector2(x=6,y=6)"",
                     ""groups"": "";Gamepad"",
                     ""action"": ""Look"",
                     ""isComposite"": false,
@@ -354,17 +363,6 @@ namespace FifthSemester.Core.Input
                 },
                 {
                     ""name"": """",
-                    ""id"": ""cbac6039-9c09-46a1-b5f2-4e5124ccb5ed"",
-                    ""path"": ""<Keyboard>/2"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""Next"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""e15ca19d-e649-4852-97d5-7fe8ccc44e94"",
                     ""path"": ""<Gamepad>/dpad/right"",
                     ""interactions"": """",
@@ -373,6 +371,28 @@ namespace FifthSemester.Core.Input
                     ""action"": ""Next"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Scroll"",
+                    ""id"": ""3ad82110-7dd0-49c3-b8b6-ebcaf7559816"",
+                    ""path"": ""1DAxis(whichSideWins=1)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Next"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""96902e05-9bbb-47a3-92f1-eb3693b92c64"",
+                    ""path"": ""<Mouse>/scroll/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Next"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": """",
@@ -442,17 +462,6 @@ namespace FifthSemester.Core.Input
                 },
                 {
                     ""name"": """",
-                    ""id"": ""1534dc16-a6aa-499d-9c3a-22b47347b52a"",
-                    ""path"": ""<Keyboard>/1"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse"",
-                    ""action"": ""Previous"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""25060bbd-a3a6-476e-8fba-45ae484aad05"",
                     ""path"": ""<Gamepad>/dpad/left"",
                     ""interactions"": """",
@@ -461,6 +470,28 @@ namespace FifthSemester.Core.Input
                     ""action"": ""Previous"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Scroll"",
+                    ""id"": ""72feb67c-d3f9-40b1-ad04-9be1787dad7b"",
+                    ""path"": ""1DAxis(whichSideWins=2)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Previous"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""c48f0002-539c-4dc6-8e8d-c5a681e6ab84"",
+                    ""path"": ""<Mouse>/scroll/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Previous"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": """",
@@ -516,6 +547,28 @@ namespace FifthSemester.Core.Input
                     ""action"": ""Zoom"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e583c501-4784-4179-89b8-65f75c894529"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Open Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""45c59a6c-2ae8-44a2-9ac7-ee8178a9e648"",
+                    ""path"": ""<Gamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Open Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -536,7 +589,7 @@ namespace FifthSemester.Core.Input
                     ""name"": ""Submit"",
                     ""type"": ""Button"",
                     ""id"": ""7607c7b6-cd76-4816-beef-bd0341cfe950"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -545,7 +598,7 @@ namespace FifthSemester.Core.Input
                     ""name"": ""Cancel"",
                     ""type"": ""Button"",
                     ""id"": ""15cef263-9014-4fd5-94d9-4e4a6234a6ef"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -609,6 +662,24 @@ namespace FifthSemester.Core.Input
                     ""type"": ""PassThrough"",
                     ""id"": ""9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be"",
                     ""expectedControlType"": ""Quaternion"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Return"",
+                    ""type"": ""Button"",
+                    ""id"": ""eb73f00b-984e-4284-aea2-134e19c1256a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""d3d98257-1cd7-4353-b8e2-2294f4db08ea"",
+                    ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -881,22 +952,11 @@ namespace FifthSemester.Core.Input
                 },
                 {
                     ""name"": """",
-                    ""id"": ""9e92bb26-7e3b-4ec4-b06b-3c8f8e498ddc"",
-                    ""path"": ""*/{Submit}"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse;Gamepad;Touch;Joystick;XR"",
-                    ""action"": ""Submit"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""82627dcc-3b13-4ba9-841d-e4b746d6553e"",
+                    ""id"": ""e37e725c-afaa-4c97-bd21-f74e9b4347f1"",
                     ""path"": ""*/{Cancel}"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""Keyboard&Mouse;Gamepad;Touch;Joystick;XR"",
+                    ""groups"": "";Touch;Gamepad;Keyboard&Mouse;Joystick;XR"",
                     ""action"": ""Cancel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -936,17 +996,6 @@ namespace FifthSemester.Core.Input
                 },
                 {
                     ""name"": """",
-                    ""id"": ""4faf7dc9-b979-4210-aa8c-e808e1ef89f5"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";Keyboard&Mouse"",
-                    ""action"": ""Click"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""8d66d5ba-88d7-48e6-b1cd-198bbfef7ace"",
                     ""path"": ""<Pen>/tip"",
                     ""interactions"": """",
@@ -974,6 +1023,17 @@ namespace FifthSemester.Core.Input
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""XR"",
+                    ""action"": ""Click"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""87b5cb8b-44d9-4c74-8979-51def373fda3"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""Click"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1030,6 +1090,72 @@ namespace FifthSemester.Core.Input
                     ""processors"": """",
                     ""groups"": ""XR"",
                     ""action"": ""TrackedDeviceOrientation"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b9205143-52b9-413f-acd0-3d62b12fee91"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cca642f3-fcaf-41ec-a410-603a5529302c"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""515bb355-a9e3-4748-8430-6ccd4dc3d506"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Return"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""721fa29e-09df-4654-abff-0dca0b3f87e7"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Return"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1356c4b1-bec7-4e7f-a1d2-a27cd7595bd6"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b5d03821-4c79-49a3-872a-b21386dbf303"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1111,6 +1237,7 @@ namespace FifthSemester.Core.Input
             m_Player_Next = m_Player.FindAction("Next", throwIfNotFound: true);
             m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
             m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
+            m_Player_OpenPause = m_Player.FindAction("Open Pause", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1123,6 +1250,8 @@ namespace FifthSemester.Core.Input
             m_UI_ScrollWheel = m_UI.FindAction("ScrollWheel", throwIfNotFound: true);
             m_UI_TrackedDevicePosition = m_UI.FindAction("TrackedDevicePosition", throwIfNotFound: true);
             m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
+            m_UI_Return = m_UI.FindAction("Return", throwIfNotFound: true);
+            m_UI_Interact = m_UI.FindAction("Interact", throwIfNotFound: true);
         }
 
         ~@GameInput()
@@ -1200,6 +1329,7 @@ namespace FifthSemester.Core.Input
         private readonly InputAction m_Player_Next;
         private readonly InputAction m_Player_Sprint;
         private readonly InputAction m_Player_Zoom;
+        private readonly InputAction m_Player_OpenPause;
         public struct PlayerActions
         {
             private @GameInput m_Wrapper;
@@ -1214,6 +1344,7 @@ namespace FifthSemester.Core.Input
             public InputAction @Next => m_Wrapper.m_Player_Next;
             public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
             public InputAction @Zoom => m_Wrapper.m_Player_Zoom;
+            public InputAction @OpenPause => m_Wrapper.m_Player_OpenPause;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1253,6 +1384,9 @@ namespace FifthSemester.Core.Input
                 @Zoom.started += instance.OnZoom;
                 @Zoom.performed += instance.OnZoom;
                 @Zoom.canceled += instance.OnZoom;
+                @OpenPause.started += instance.OnOpenPause;
+                @OpenPause.performed += instance.OnOpenPause;
+                @OpenPause.canceled += instance.OnOpenPause;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -1287,6 +1421,9 @@ namespace FifthSemester.Core.Input
                 @Zoom.started -= instance.OnZoom;
                 @Zoom.performed -= instance.OnZoom;
                 @Zoom.canceled -= instance.OnZoom;
+                @OpenPause.started -= instance.OnOpenPause;
+                @OpenPause.performed -= instance.OnOpenPause;
+                @OpenPause.canceled -= instance.OnOpenPause;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -1318,6 +1455,8 @@ namespace FifthSemester.Core.Input
         private readonly InputAction m_UI_ScrollWheel;
         private readonly InputAction m_UI_TrackedDevicePosition;
         private readonly InputAction m_UI_TrackedDeviceOrientation;
+        private readonly InputAction m_UI_Return;
+        private readonly InputAction m_UI_Interact;
         public struct UIActions
         {
             private @GameInput m_Wrapper;
@@ -1332,6 +1471,8 @@ namespace FifthSemester.Core.Input
             public InputAction @ScrollWheel => m_Wrapper.m_UI_ScrollWheel;
             public InputAction @TrackedDevicePosition => m_Wrapper.m_UI_TrackedDevicePosition;
             public InputAction @TrackedDeviceOrientation => m_Wrapper.m_UI_TrackedDeviceOrientation;
+            public InputAction @Return => m_Wrapper.m_UI_Return;
+            public InputAction @Interact => m_Wrapper.m_UI_Interact;
             public InputActionMap Get() { return m_Wrapper.m_UI; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1371,6 +1512,12 @@ namespace FifthSemester.Core.Input
                 @TrackedDeviceOrientation.started += instance.OnTrackedDeviceOrientation;
                 @TrackedDeviceOrientation.performed += instance.OnTrackedDeviceOrientation;
                 @TrackedDeviceOrientation.canceled += instance.OnTrackedDeviceOrientation;
+                @Return.started += instance.OnReturn;
+                @Return.performed += instance.OnReturn;
+                @Return.canceled += instance.OnReturn;
+                @Interact.started += instance.OnInteract;
+                @Interact.performed += instance.OnInteract;
+                @Interact.canceled += instance.OnInteract;
             }
 
             private void UnregisterCallbacks(IUIActions instance)
@@ -1405,6 +1552,12 @@ namespace FifthSemester.Core.Input
                 @TrackedDeviceOrientation.started -= instance.OnTrackedDeviceOrientation;
                 @TrackedDeviceOrientation.performed -= instance.OnTrackedDeviceOrientation;
                 @TrackedDeviceOrientation.canceled -= instance.OnTrackedDeviceOrientation;
+                @Return.started -= instance.OnReturn;
+                @Return.performed -= instance.OnReturn;
+                @Return.canceled -= instance.OnReturn;
+                @Interact.started -= instance.OnInteract;
+                @Interact.performed -= instance.OnInteract;
+                @Interact.canceled -= instance.OnInteract;
             }
 
             public void RemoveCallbacks(IUIActions instance)
@@ -1479,6 +1632,7 @@ namespace FifthSemester.Core.Input
             void OnNext(InputAction.CallbackContext context);
             void OnSprint(InputAction.CallbackContext context);
             void OnZoom(InputAction.CallbackContext context);
+            void OnOpenPause(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {
@@ -1492,6 +1646,8 @@ namespace FifthSemester.Core.Input
             void OnScrollWheel(InputAction.CallbackContext context);
             void OnTrackedDevicePosition(InputAction.CallbackContext context);
             void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
+            void OnReturn(InputAction.CallbackContext context);
+            void OnInteract(InputAction.CallbackContext context);
         }
     }
 }

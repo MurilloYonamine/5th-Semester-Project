@@ -1,3 +1,18 @@
+# [0.3.0](https://github.com/MurilloYonamine/5th-Semester-Project/compare/v0.2.0...v0.3.0) (2026-03-31)
+
+
+### Bug Fixes
+
+* changed urp ([2b3aa9e](https://github.com/MurilloYonamine/5th-Semester-Project/commit/2b3aa9e27427769aedb5858a1cb103f81462480b))
+* shader options ([4e5546d](https://github.com/MurilloYonamine/5th-Semester-Project/commit/4e5546d7fd78c3d1cd36bfe4170655d0c733f0dd))
+
+
+### Features
+
+* add psx ([07b09f2](https://github.com/MurilloYonamine/5th-Semester-Project/commit/07b09f2293d0982eab02a345d0b1586be2a580db))
+
+
+
 # [0.2.0](https://github.com/MurilloYonamine/5th-Semester-Project/compare/v0.1.1...v0.2.0) (2026-03-31)
 
 

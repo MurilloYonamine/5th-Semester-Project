@@ -1,16 +1,17 @@
 // autor: Murillo Gomes Yonamine
 // data: 08/03/2026
 
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using FifthSemester.Player.Components;
-using FifthSemester.Items;
-using FifthSemester.Inventory;
 using FifthSemester.Core.Managers;
 using FifthSemester.Delivery;
 using FifthSemester.DialogueSystem;
-using System.Reflection;
+using FifthSemester.Doors;
+using FifthSemester.Inventory;
+using FifthSemester.Items;
+using FifthSemester.Player.Components;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 namespace FifthSemester.Player {
     public class PlayerInteraction : MonoBehaviour {
@@ -18,6 +19,7 @@ namespace FifthSemester.Player {
         [SerializeField] private List<GameObject> _itemsNearby;
         [SerializeField] private List<DeliveryPoint> _deliveryPointsNearby;
         [SerializeField] private List<DialogueTrigger> _dialogueTriggersNearby = new List<DialogueTrigger>();
+        [SerializeField] private List<Door> _doorsNearby = new List<Door>();
 
         [SerializeField] private SphereCollider _interactionCollider;
         private PlayerInteractionTrigger _interactionTrigger;
@@ -30,6 +32,7 @@ namespace FifthSemester.Player {
         [SerializeField] private AudioClip _pickupSound;
 
         public event Action<IInteractable, DeliveryPoint> OnItemDelivered;
+        public static event Action<IInteractable> OnItemPickedUp;
 
         private void Awake() {
             _deliveryPointsNearby = new List<DeliveryPoint>();
@@ -90,12 +93,19 @@ namespace FifthSemester.Player {
             if (other.TryGetComponent<DeliveryPoint>(out var deliveryPoint)) {
                 if (!_deliveryPointsNearby.Contains(deliveryPoint)) {
                     _deliveryPointsNearby.Add(deliveryPoint);
+                    deliveryPoint.EnableOutline(true);
                 }
             }
             if (other.TryGetComponent<DialogueTrigger>(out var dialogueTrigger)) {
                 if (!_dialogueTriggersNearby.Contains(dialogueTrigger)) {
                     _dialogueTriggersNearby.Add(dialogueTrigger);
                     dialogueTrigger.TurnOutline(true);
+                }
+            }
+            if (other.TryGetComponent<Door>(out var door)) {
+                if (!_doorsNearby.Contains(door)) {
+                    _doorsNearby.Add(door);
+                    door.EnableOutline(true);
                 }
             }
         }
@@ -107,10 +117,15 @@ namespace FifthSemester.Player {
             }
             if (other.TryGetComponent<DeliveryPoint>(out var deliveryPoint)) {
                 _deliveryPointsNearby.Remove(deliveryPoint);
+                deliveryPoint.EnableOutline(false);
             }
             if (other.TryGetComponent<DialogueTrigger>(out var dialogueTrigger)) {
                 _dialogueTriggersNearby.Remove(dialogueTrigger);
                 dialogueTrigger.TurnOutline(false);
+            }
+            if (other.TryGetComponent<Door>(out var door)) {
+                _doorsNearby.Remove(door);
+                door.EnableOutline(false);
             }
         }
         public void TryDeliverToNearestPoint() {
@@ -136,24 +151,62 @@ namespace FifthSemester.Player {
                 return;
             }
 
-            if (_itemsNearby.Count == 0) return;
+            if (_doorsNearby.Count > 0) {
+                Door closestDoor = null;
+                float minDistance = Mathf.Infinity;
+                Vector3 playerPoss = transform.position;
 
-            bool itemAdded = false;
+                for (int i = 0; i < _doorsNearby.Count; i++) {
+                    Door currentDoor = _doorsNearby[i];
 
-            var itemsToInteract = new List<GameObject>(_itemsNearby);
-            foreach (var item in itemsToInteract) {
-                if (item.TryGetComponent<IInteractable>(out var interactable)) {
-                    _inventory.AddItem(interactable);
-                    interactable.Interact();
-                    itemAdded = true;
-                    _itemsNearby.Remove(item);
+                    if (currentDoor == null) continue;
+
+                    float distance = Vector3.Distance(playerPoss, currentDoor.transform.position);
+
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestDoor = currentDoor;
+                    }
+                }
+
+                if (closestDoor != null) {
+                    Debug.Log($"[Interaction] Alvo selecionado: {closestDoor.gameObject.name}");
+                    closestDoor.Interact();
+                }
+                return;
+            }
+            GameObject bestItem = null;
+            float bestAlignment = -1f;
+
+            Vector3 playerForward = transform.forward;
+            Vector3 playerPos = transform.position;
+
+            foreach (var item in _itemsNearby) {
+                if (item == null) continue;
+
+                Vector3 directionToItem = (item.transform.position - playerPos).normalized;
+
+                float alignment = Vector3.Dot(playerForward, directionToItem);
+
+                if (alignment > bestAlignment) {
+                    bestAlignment = alignment;
+                    bestItem = item;
                 }
             }
 
-            AudioManager.Instance.PlaySFX(_pickupSound);
+            if (bestItem != null && bestItem.TryGetComponent<IInteractable>(out var interactable)) {
+                _inventory.AddItem(interactable);
+                interactable.Interact();
 
-            if (itemAdded && !_inventory.IsInventoryOpen) {
-                _inventory.ToggleInventory();
+                OnItemPickedUp?.Invoke(interactable); 
+
+                _itemsNearby.Remove(bestItem);
+
+                AudioManager.Instance.PlaySFX(_pickupSound);
+
+                if (!_inventory.IsInventoryOpen) {
+                    _inventory.ToggleInventory();
+                }
             }
         }
 

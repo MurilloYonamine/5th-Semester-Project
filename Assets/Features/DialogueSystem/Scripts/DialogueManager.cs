@@ -7,6 +7,7 @@ using TMPro;
 using FifthSemester.Core.Managers;
 using FifthSemester.Core.States;
 using FifthSemester.Core.Events;
+using System;
 
 namespace FifthSemester.DialogueSystem {
     public class DialogueManager : MonoBehaviour {
@@ -18,9 +19,18 @@ namespace FifthSemester.DialogueSystem {
 
         private Queue<DialogueLine> _linesQueue;
 
+        public Action OnDialogueEnd;
+
         private void Awake() {
-            Instance = this;
+            if(Instance == null) {
+                Instance = this;
+            }
+            else {
+                Destroy(gameObject);
+            }
             _linesQueue = new Queue<DialogueLine>();
+
+            Clear();
         }
 
         public void StartDialogue(DialogueSO dialogue) {
@@ -52,8 +62,6 @@ namespace FifthSemester.DialogueSystem {
 
             DialogueLine line = _linesQueue.Dequeue();
 
-            Debug.Log($"Displaying line: {line.text} by {line.speaker.characterName}");
-
             _nameText.text = line.speaker.characterName;
             _nameText.color = line.speaker.nameColor;
 
@@ -67,8 +75,19 @@ namespace FifthSemester.DialogueSystem {
                 InputEvents.Instance.OnDialogueAdvance -= DisplayNextLine;
             if (GameStateManager.Instance != null)
                 GameStateManager.Instance.ChangeState(GameState.Gameplay);
+
+            Clear();
+
+            OnDialogueEnd?.Invoke();
+        }
+
+        private void Clear() {
+            _nameText.text = "";
+            _dialogueText.text = "";
         }
 
         public bool IsPanelActive() => _dialoguePanel.activeSelf;
+
+
     }
 }

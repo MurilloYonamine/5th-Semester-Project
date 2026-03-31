@@ -1,6 +1,7 @@
 // Autor: Murillo Gomes Yonamine
 // Data: 14/02/2026
 
+using FifthSemester.Core;
 using FifthSemester.Core.Managers;
 using FifthSemester.Core.States;
 using Sirenix.OdinInspector;

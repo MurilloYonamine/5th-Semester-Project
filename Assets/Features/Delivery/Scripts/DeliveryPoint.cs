@@ -6,49 +6,60 @@ using UnityEngine;
 using FifthSemester.Items;
 using FifthSemester.Core.Managers;
 using System.Collections.Generic;
-
-namespace FifthSemester.Delivery
-{
-    public class DeliveryPoint : MonoBehaviour, IItemReceiver
-    {
+using FifthSemester.DialogueSystem;
+using ThirdParty.QuickOutline;
+namespace FifthSemester.Delivery {
+    public class DeliveryPoint : MonoBehaviour, IItemReceiver {
         [SerializeField] private bool _isActive = true;
         [SerializeField] private AudioClip _deliverySound;
-        [SerializeField] private List<string> _requiredItemNames = new List<string>();
+        [SerializeField] private int _requiredAmount = 1;
+        private int _receivedAmount = 0;
+        [SerializeField] private DialogueSO _onDeliveryDialogue;
 
-        public event Action<IInteractable> OnItemReceived;
+        public event Action<DeliveryPoint, IInteractable> OnItemReceived;
 
-        public void ReceiveItem(IInteractable item)
-        {
+        [SerializeField] private Outline _outline;
+
+        public void ReceiveItem(IInteractable item) {
             if (!_isActive) return;
             if (item == null) return;
 
-            if (_requiredItemNames.Contains(item.ToString()))
-            {
-                OnItemReceived?.Invoke(item);
-                Debug.Log($"Item '{item}' delivered to {gameObject.name}.");
-                _requiredItemNames.Remove(item.ToString());
-                if (_requiredItemNames.Count == 0) _isActive = false;
+            if (item is not MedicineItem) return;
 
-                if (_deliverySound != null)
-                {
-                    AudioManager.Instance.PlaySFX(_deliverySound);
-                }
+            _receivedAmount++;
+
+            if (_onDeliveryDialogue != null) {
+                DialogueManager.Instance.StartDialogue(_onDeliveryDialogue);
+            }
+
+            if (_receivedAmount >= _requiredAmount) {
+                _isActive = false;
+                OnItemReceived?.Invoke(this, item);
+            }
+
+            if (_deliverySound != null) {
+                AudioManager.Instance.PlaySFX(_deliverySound);
             }
         }
-
-        public bool TryDeliverFromInventory(Inventory.InventoryController inventory)
-        {
+        public bool TryDeliverFromInventory(Inventory.InventoryController inventory) {
             if (!_isActive || inventory == null) return false;
-            foreach (var item in inventory.Items)
-            {
-                if (_requiredItemNames.Contains(item.ToString()))
-                {
-                    ReceiveItem(item);
+
+            for (int i = 0; i < inventory.Items.Count; i++) {
+                var item = inventory.Items[i];
+
+                if (item is MedicineItem) {
                     inventory.RemoveItem(item);
+                    ReceiveItem(item);
                     return true;
                 }
             }
+
             return false;
+        }
+        public void EnableOutline(bool enable) {
+            if (_outline != null) {
+                _outline.enabled = enable;
+            }
         }
     }
 }

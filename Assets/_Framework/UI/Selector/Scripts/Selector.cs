@@ -1,7 +1,6 @@
-using FifthSemester.Shared.AudioSystem;
+using FifthSemester.Core.Managers;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 namespace FifthSemester.Framework.UI {
     /// <summary>
@@ -11,8 +10,7 @@ namespace FifthSemester.Framework.UI {
     public abstract class Selector<T> : MonoBehaviour,
         ISelectHandler, IDeselectHandler,
         IPointerEnterHandler, IPointerExitHandler,
-        IMoveHandler, ISubmitHandler, ICancelHandler, IPointerClickHandler
-    {
+        IMoveHandler, ISubmitHandler, ICancelHandler, IPointerClickHandler {
         [Header("Selector State")]
         [SerializeField] protected int _currentIndex = 0;
         [SerializeField] protected T[] _items;
@@ -30,8 +28,7 @@ namespace FifthSemester.Framework.UI {
         /// <summary>
         /// Inicialização padrão: carrega valor salvo e atualiza UI.
         /// </summary>
-        protected virtual void Start()
-        {
+        protected virtual void Start() {
             OnLoad();
             RefreshUI();
         }
@@ -39,8 +36,7 @@ namespace FifthSemester.Framework.UI {
         /// <summary>
         /// Avança para o próximo item.
         /// </summary>
-        public virtual void Next()
-        {
+        public virtual void Next() {
             if (_items == null || _items.Length == 0) return;
             _currentIndex = (_currentIndex + 1) % _items.Length;
             OnValueChanged();
@@ -49,8 +45,7 @@ namespace FifthSemester.Framework.UI {
         /// <summary>
         /// Volta para o item anterior.
         /// </summary>
-        public virtual void Previous()
-        {
+        public virtual void Previous() {
             if (_items == null || _items.Length == 0) return;
             _currentIndex = (_currentIndex - 1 + _items.Length) % _items.Length;
             OnValueChanged();
@@ -59,8 +54,7 @@ namespace FifthSemester.Framework.UI {
         /// <summary>
         /// Chama ciclo de atualização após mudança de valor.
         /// </summary>
-        protected virtual void OnValueChanged()
-        {
+        protected virtual void OnValueChanged() {
             //PlaySound(); // Som agora deve ser controlado externamente (ex: Event Trigger)
             UpdateUI();
             OnItemSelected(_items[_currentIndex]);
@@ -71,8 +65,7 @@ namespace FifthSemester.Framework.UI {
         /// <summary>
         /// Atualiza UI e visuais.
         /// </summary>
-        protected virtual void RefreshUI()
-        {
+        protected virtual void RefreshUI() {
             UpdateUI();
             ApplyVisuals();
         }
@@ -105,8 +98,7 @@ namespace FifthSemester.Framework.UI {
 
         // Evita duplo disparo de Next/PlaySound
 
-        public virtual void OnPointerClick(PointerEventData eventData)
-        {
+        public virtual void OnPointerClick(PointerEventData eventData) {
             if (_interactionLock) return;
             if (eventData.pointerId >= 0) {
                 _interactionLock = true;
@@ -114,8 +106,7 @@ namespace FifthSemester.Framework.UI {
             }
         }
 
-        public virtual void OnSubmit(BaseEventData eventData)
-        {
+        public virtual void OnSubmit(BaseEventData eventData) {
             if (_interactionLock) return;
             var pointer = eventData as PointerEventData;
             if (pointer == null || pointer.pointerId < 0) {
@@ -124,8 +115,7 @@ namespace FifthSemester.Framework.UI {
             }
         }
 
-        private void LateUpdate()
-        {
+        private void LateUpdate() {
             // Libera lock a cada frame
             _interactionLock = false;
         }
@@ -133,56 +123,46 @@ namespace FifthSemester.Framework.UI {
         /// <summary>
         /// Lógica de interação: foca ou avança.
         /// </summary>
-        protected virtual void HandleInteraction()
-        {
-            if (!_isFocused)
-            {
+        protected virtual void HandleInteraction() {
+            if (!_isFocused) {
                 _isFocused = true;
                 if (EventSystem.current.currentSelectedGameObject != gameObject)
                     EventSystem.current.SetSelectedGameObject(gameObject);
             }
-            else
-            {
+            else {
                 Next();
             }
             ApplyVisuals();
         }
 
-        public virtual void OnCancel(BaseEventData eventData)
-        {
-            if (_isFocused)
-            {
+        public virtual void OnCancel(BaseEventData eventData) {
+            if (_isFocused) {
                 _isFocused = false;
                 ApplyVisuals();
             }
         }
 
-        public virtual void OnMove(AxisEventData eventData)
-        {
+        public virtual void OnMove(AxisEventData eventData) {
             if (!_isFocused) return;
             if (eventData.moveDir == MoveDirection.Right) Next();
             else if (eventData.moveDir == MoveDirection.Left) Previous();
             eventData.Use();
         }
 
-        public virtual void OnSelect(BaseEventData eventData)
-        {
+        public virtual void OnSelect(BaseEventData eventData) {
             _isHovered = true;
             ApplyVisuals();
         }
-        public virtual void OnDeselect(BaseEventData eventData)
-        {
+        public virtual void OnDeselect(BaseEventData eventData) {
             _isHovered = false;
             _isFocused = false;
             ApplyVisuals();
         }
-        public virtual void OnPointerEnter(PointerEventData eventData)
-        {
+        public virtual void OnPointerEnter(PointerEventData eventData) {
             _isHovered = true;
             ApplyVisuals();
         }
-        public virtual void OnPointerExit(PointerEventData eventData)
-        {
+        public virtual void OnPointerExit(PointerEventData eventData) {
             _isHovered = false;
             ApplyVisuals();
         }
@@ -190,8 +170,7 @@ namespace FifthSemester.Framework.UI {
         /// <summary>
         /// Aplica cor de feedback visual.
         /// </summary>
-        protected virtual void ApplyVisuals()
-        {
+        protected virtual void ApplyVisuals() {
             // Prioriza highlight de foco
             Color targetColor = _normalColor;
             if (_isFocused)
@@ -204,8 +183,7 @@ namespace FifthSemester.Framework.UI {
         /// <summary>
         /// Toca som de seleção, se configurado.
         /// </summary>
-        protected virtual void PlaySound()
-        {
+        protected virtual void PlaySound() {
             if (_selectionSound != null && AudioManager.Instance != null)
                 AudioManager.Instance.PlaySFX(_selectionSound);
         }

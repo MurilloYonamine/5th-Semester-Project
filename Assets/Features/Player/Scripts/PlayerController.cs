@@ -5,13 +5,16 @@ using FifthSemester.Player.Components;
 using FifthSemester.Inventory;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using FifthSemester.Core.Managers;
+using FifthSemester.Core.States;
 
 namespace FifthSemester.Player {
     [RequireComponent(typeof(PlayerMovement))]
     [RequireComponent(typeof(PlayerJump))]
     [RequireComponent(typeof(PlayerCamera))]
     [RequireComponent(typeof(PlayerInteraction))]
-    [DefaultExecutionOrder(-100)]
+    [RequireComponent(typeof(PlayerEvents))]
+    [RequireComponent(typeof(InventoryController))]
     public class PlayerController : MonoBehaviour {
         [Header("Player Unity Components")]
         public Rigidbody Rigidbody { get; private set; }
@@ -30,8 +33,8 @@ namespace FifthSemester.Player {
         public bool IsGrounded => PlayerJump.IsGrounded;
 
         private void Awake() {
-            PlayerEvents = new PlayerEvents();
-            Inventory = new InventoryController();
+            PlayerEvents = GetComponent<PlayerEvents>();
+            Inventory = GetComponent<InventoryController>();
 
             Rigidbody = GetComponent<Rigidbody>();
             PlayerMovement = GetComponent<PlayerMovement>();
@@ -39,19 +42,10 @@ namespace FifthSemester.Player {
             PlayerCamera = GetComponent<PlayerCamera>();
             PlayerInteraction = GetComponent<PlayerInteraction>();
         }
-        
-        private void OnEnable() {
-            PlayerEvents?.OnEnable();
-        }
-        
         private void Start() {
             if (lockCursor) {
                 Cursor.lockState = CursorLockMode.Locked;
             }
-        }
-        
-        private void OnDisable() {
-            PlayerEvents?.OnDisable();
         }
     }
 }

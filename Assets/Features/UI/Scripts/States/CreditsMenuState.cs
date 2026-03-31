@@ -7,17 +7,14 @@ using UnityEngine.UI;
 
 namespace FifthSemester.UI {
     public class CreditsMenuState : MonoBehaviour, IMenuState {
-        public MenuManager MenuManager { get; private set; }
-
-        public void EnterState(MenuManager menuManager) {
-            MenuManager = menuManager;
+        public void EnterState() {
             gameObject.SetActive(true);
         }
-        public void ExitState(MenuManager menuManager) {
+        public void ExitState() {
             gameObject.SetActive(false);
         }
         public void OnReturn(GameObject caller) {
-            MenuManager.ChangeState(MenuManager.MainMenuState);
+            MenuManager.Instance.ChangeState(MenuManager.Instance.MainMenuState);
             EventSystem.current.SetSelectedGameObject(caller);
         }
         public override string ToString() {

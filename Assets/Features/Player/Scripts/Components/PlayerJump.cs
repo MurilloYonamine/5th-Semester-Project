@@ -37,7 +37,7 @@ namespace FifthSemester.Player.Components {
             _movement = _player.GetComponent<PlayerMovement>();
         }
 
-        private void OnEnable() {
+        private void Start() {
             _playerEvents = _player.PlayerEvents;
             if (_playerEvents != null) {
                 _playerEvents.OnJumpInput += HandleJump;

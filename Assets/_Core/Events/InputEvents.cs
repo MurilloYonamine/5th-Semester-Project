@@ -2,34 +2,75 @@
 // Data: 14/02/2026
 
 using FifthSemester.Core.Input;
+using FifthSemester.Core.Managers;
+using FifthSemester.Core.States;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace FifthSemester.Core.Events {
-    public class InputEvents {
-        private readonly GameInput _gameInput;
+    public class InputEvents : MonoBehaviour {
+        public static InputEvents Instance { get; private set; }
 
-        [Header("Input Actions")]
-        private readonly InputAction _move;
-        private readonly InputAction _look;
-        private readonly InputAction _jump;
-        private readonly InputAction _crouch;
-        private readonly InputAction _sprint;
-        private readonly InputAction _interact;
-        private readonly InputAction _zoom;
+        private GameInput _gameInput;
 
+        // Flag para ignorar o primeiro avanço de diálogo
+        private bool _ignoreNextDialogueAdvance = false;
 
-        public static event Action<Vector2> OnMove;
-        public static event Action<Vector2> OnLook;
-        public static event Action OnJump;
-        public static event Action<bool> OnCrouch; 
-        public static event Action<bool> OnSprint;
-        public static event Action OnInteract;
-        public static event Action<bool> OnZoom;
+        private InputAction _move;
+        private InputAction _look;
+        private InputAction _jump;
+        private InputAction _crouch;
+        private InputAction _sprint;
+        private InputAction _interact;
+        private InputAction _zoom;
+        private InputAction _next;
+        private InputAction _previous;
+        private InputAction _openPause;
+        private InputAction _dialogueAdvance;
 
+        public event Action<Vector2> OnMove;
+        public event Action<Vector2> OnLook;
+        public event Action OnJump;
+        public event Action<bool> OnCrouch;
+        public event Action<bool> OnSprint;
+        public event Action OnInteract;
+        public event Action<bool> OnZoom;
+        public event Action OnNext;
+        public event Action OnPrevious;
+        public event Action OnOpenPause;
+        public event Action OnDialogueAdvance;
 
-        public InputEvents() {
+        private void Awake() {
+            if (Instance == null) Instance = this;
+            else Destroy(gameObject);
+
+            Initialize();
+        }
+
+        private void OnEnable() {
+            GameStateManager.OnStateChanged += HandleStateChange;
+
+            if (GameStateManager.Instance != null) {
+                HandleStateChange(GameStateManager.Instance.CurrentState);
+            }
+            else {
+                _gameInput?.Enable();
+            }
+        }
+
+        private void OnDisable() {
+            GameStateManager.OnStateChanged -= HandleStateChange;
+            _gameInput?.Disable();
+        }
+
+        private void OnDestroy() {
+            Dispose();
+        }
+
+        private void Initialize() {
+            if (_gameInput != null) return;
+
             _gameInput = new GameInput();
 
             _move = _gameInput.Player.Move;
@@ -39,11 +80,13 @@ namespace FifthSemester.Core.Events {
             _sprint = _gameInput.Player.Sprint;
             _interact = _gameInput.Player.Interact;
             _zoom = _gameInput.Player.Zoom;
+            _next = _gameInput.Player.Next;
+            _previous = _gameInput.Player.Previous;
+            _openPause = _gameInput.Player.OpenPause;
+            _dialogueAdvance = _gameInput.UI.Interact;
 
-            SubscribeToActions();
-            Enable();
-        }
-        private void SubscribeToActions() {
+            _dialogueAdvance.started += HandleDialogueAdvance;
+
             _move.performed += HandleMovement;
             _move.canceled += HandleMovement;
             _look.performed += HandleLook;
@@ -53,31 +96,33 @@ namespace FifthSemester.Core.Events {
             _crouch.canceled += HandleCrouch;
             _sprint.performed += HandleSprint;
             _sprint.canceled += HandleSprint;
-            _interact.performed += HandleInteract;
+            _interact.started += HandleInteract;
             _zoom.performed += HandleZoom;
             _zoom.canceled += HandleZoom;
+            _next.performed += HandleNext;
+            _previous.performed += HandlePrevious;
+            _openPause.performed += HandleOpenPause;
         }
 
-        private void UnsubscribeFromActions() {
-            _move.performed -= HandleMovement;
-            _move.canceled -= HandleMovement;
-            _look.performed -= HandleLook;
-            _look.canceled -= HandleLook;
-            _jump.performed -= HandleJump;
-            _crouch.performed -= HandleCrouch;
-            _crouch.canceled -= HandleCrouch;
-            _sprint.performed -= HandleSprint;
-            _sprint.canceled -= HandleSprint;
-            _interact.performed -= HandleInteract;
-            _zoom.performed -= HandleZoom;
-            _zoom.canceled -= HandleZoom;
+        private void HandleStateChange(GameState newState) {
+            if (newState == GameState.Gameplay) {
+                EnablePlayerInput();
+                _gameInput.UI.Disable();
+                _dialogueAdvance.Disable();
+            }
+            else if (newState == GameState.Dialogue) {
+                DisablePlayerInput();
+                _gameInput.UI.Enable();
+                _dialogueAdvance.Enable();
+                _ignoreNextDialogueAdvance = true; // Ativa flag ao entrar no diálogo
+            }
+            else {
+                DisablePlayerInput();
+                _gameInput.UI.Enable();
+                _dialogueAdvance.Disable();
+            }
         }
-        public void Enable() {
-            _gameInput.Enable();
-        }
-        public void Disable() {
-            _gameInput.Disable();
-        }
+
         public void HandleMovement(InputAction.CallbackContext context) {
             OnMove?.Invoke(context.ReadValue<Vector2>());
         }
@@ -100,6 +145,7 @@ namespace FifthSemester.Core.Events {
                 OnCrouch?.Invoke(false);
             }
         }
+
         public void HandleSprint(InputAction.CallbackContext context) {
             if (context.performed) {
                 OnSprint?.Invoke(true);
@@ -108,11 +154,11 @@ namespace FifthSemester.Core.Events {
                 OnSprint?.Invoke(false);
             }
         }
+
         public void HandleInteract(InputAction.CallbackContext context) {
-            if (context.performed) {
-                OnInteract?.Invoke();
-            }
+            OnInteract?.Invoke();
         }
+
         public void HandleZoom(InputAction.CallbackContext context) {
             if (context.performed) {
                 OnZoom?.Invoke(true);
@@ -121,9 +167,76 @@ namespace FifthSemester.Core.Events {
                 OnZoom?.Invoke(false);
             }
         }
+
+        public void HandleNext(InputAction.CallbackContext context) {
+            if (context.performed) {
+                OnNext?.Invoke();
+            }
+        }
+
+        public void HandlePrevious(InputAction.CallbackContext context) {
+            if (context.performed) {
+                OnPrevious?.Invoke();
+            }
+        }
+        public void HandleOpenPause(InputAction.CallbackContext context) {
+            if (context.performed) {
+                OnOpenPause?.Invoke();
+            }
+        }
+
+        private void HandleDialogueAdvance(InputAction.CallbackContext context) {
+            if (context.started) {
+                if (_ignoreNextDialogueAdvance) {
+                    _ignoreNextDialogueAdvance = false;
+                    return;
+                }
+                OnDialogueAdvance?.Invoke();
+            }
+        }
+
+        private void DisablePlayerInput() {
+            _move.Disable();
+            _look.Disable();
+            _jump.Disable();
+            _crouch.Disable();
+            _sprint.Disable();
+            _interact.Disable();
+            _zoom.Disable();
+            _next.Disable();
+            _previous.Disable();
+        }
+        private void EnablePlayerInput() {
+            _move.Enable();
+            _look.Enable();
+            _jump.Enable();
+            _crouch.Enable();
+            _sprint.Enable();
+            _interact.Enable();
+            _zoom.Enable();
+            _next.Enable();
+            _previous.Enable();
+        }
+
         public void Dispose() {
-            UnsubscribeFromActions();
-            Disable();
+            if (_gameInput == null) return;
+
+            _move.performed -= HandleMovement;
+            _move.canceled -= HandleMovement;
+            _look.performed -= HandleLook;
+            _look.canceled -= HandleLook;
+            _jump.performed -= HandleJump;
+            _crouch.performed -= HandleCrouch;
+            _crouch.canceled -= HandleCrouch;
+            _sprint.performed -= HandleSprint;
+            _sprint.canceled -= HandleSprint;
+            _interact.started -= HandleInteract;
+            _zoom.performed -= HandleZoom;
+            _zoom.canceled -= HandleZoom;
+            _next.performed -= HandleNext;
+            _previous.performed -= HandlePrevious;
+            _openPause.performed -= HandleOpenPause;
+            _dialogueAdvance.started -= HandleDialogueAdvance;
 
             OnMove = null;
             OnLook = null;
@@ -132,6 +245,7 @@ namespace FifthSemester.Core.Events {
             OnSprint = null;
             OnInteract = null;
             OnZoom = null;
+            OnDialogueAdvance = null;
         }
     }
 }

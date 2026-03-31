@@ -85,7 +85,12 @@ FeatureName/
 ## Credits
 
 CI/CD powered by [GameCI](https://game.ci/) and GitHub Actions.
+Quick Outline powered by [Chris Nolet](https://assetstore.unity.com/packages/tools/particles-effects/quick-outline-115488?aid=1101l9Bhe)
+PSX footsteps provided by [Hazard Play](https://hazardpay.itch.io/40-free-psx-crunchy-footsteps)
+Item Pickup SFX provided by [Lamoot](https://opengameart.org/content/positive-item-pickup-yo-frankie)
 
+Navigation menu SFX from [Fupi](https://opengameart.org/content/8bit-menu-highlight)
+Open and Close menu SFX from [Pedro Alegria](https://pabloalegria9.itch.io/psxhorrorpack)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

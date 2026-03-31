@@ -19,7 +19,7 @@ namespace FifthSemester.Player.Tuning {
 
         private void Awake() {
             if (_playerController != null) {
-                _jump = _playerController.PlayerJumpComponent;
+                _jump = _playerController.PlayerJump;
             }
         }
 

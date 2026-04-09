@@ -63,7 +63,7 @@ namespace FifthSemester.Systems.Audio {
         /// <param name="pitch">Audio pitch.</param>
         /// <param name="loop">Whether the audio should loop.</param>
         /// <returns>AudioSource created for the SFX.</returns>
-        public AudioSource PlaySFX(string filePath, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false) {
+        public AudioSource PlaySFX(string filePath, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false, int spatialBlend = 1) {
             AudioClip clip = Resources.Load<AudioClip>(filePath);
 
             if (clip == null) {
@@ -71,7 +71,7 @@ namespace FifthSemester.Systems.Audio {
                 return null;
             }
 
-            return PlaySFX(clip, mixer, volume, pitch, loop, filePath);
+            return PlaySFX(clip, mixer, volume, pitch, loop, spatialBlend, filePath);
         }
         /// <summary>
         /// Plays a sound effect (SFX) from an AudioClip.
@@ -83,7 +83,7 @@ namespace FifthSemester.Systems.Audio {
         /// <param name="loop">Whether the audio should loop.</param>
         /// <param name="filePath">File name or path (optional).</param>
         /// <returns>AudioSource created for the SFX.</returns>
-        public AudioSource PlaySFX(AudioClip clip, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false, string filePath = "") {
+        public AudioSource PlaySFX(AudioClip clip, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false, int spatialBlend = 1, string filePath = "") {
             string fileName = clip != null ? clip.name : "NULL_CLIP";
 
             if (filePath != string.Empty) {
@@ -103,7 +103,7 @@ namespace FifthSemester.Systems.Audio {
             audioSource.outputAudioMixerGroup = mixer;
             audioSource.volume = volume;
             audioSource.pitch = pitch;
-            audioSource.spatialBlend = 0; // 2D sound
+            audioSource.spatialBlend = spatialBlend;
             audioSource.loop = loop;
 
             audioSource.Play();

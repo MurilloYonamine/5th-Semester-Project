@@ -1,189 +1,81 @@
-name: Unity Build and Test
-
-on: 
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
+name: Build & Release 🚀
 permissions:
   contents: write
-  checks: write
-  pull-requests: write
+
+on:
+  push:
+    branches: [main]
+
+env:
+  PROJECT_NAME: 5th-Semester-Project
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  buildAndTestForLinuxBasedPlatforms:
-    name: Build for ${{ matrix.targetPlatform }}
+  build:
+    name: Build Unity 🎮
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        projectPath:
-          - ./
-        unityVersion:
-          - 6000.0.30f1
-        targetPlatform:
-          - StandaloneLinux64 # Build a Linux 64-bit standalone.
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
           lfs: true
-          submodules: recursive
-      - uses: actions/cache@v3
-        with:
-          path: ${{ matrix.projectPath }}/Library
-          key:
-            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{
-            hashFiles(matrix.projectPath) }}
-          restore-keys: |
-            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
-            Library-${{ matrix.projectPath }}-
-            Library-
-      - uses: game-ci/unity-test-runner@v4
-        id: testRunner
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: Test results (${{ matrix.targetPlatform }})
-          path: ${{ steps.testRunner.outputs.artifactsPath }}
-      - if: matrix.targetPlatform == 'Android'
-        uses: jlumbroso/free-disk-space@v1.2.0
-      - uses: game-ci/unity-builder@v4
-        env:
-          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
-          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
-          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
-        with:
-          projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
-          targetPlatform: ${{ matrix.targetPlatform }}
-          customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
-          allowDirtyBuild: true
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Build-${{ matrix.targetPlatform }}
-          path: build
+          fetch-depth: 0 
 
-  buildForWindowsBasedPlatforms:
-    name: Build for ${{ matrix.targetPlatform }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        projectPath:
-          - ./
-        unityVersion:
-          - 6000.0.30f1
-        targetPlatform:
-          - StandaloneWindows # Build a Windows 32-bit standalone.
-          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+      - uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
 
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          lfs: true
-          submodules: recursive
-      - uses: actions/cache@v3
-        with:
-          path: ${{ matrix.projectPath }}/Library
-          key:
-            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-${{
-            hashFiles(matrix.projectPath) }}
-          restore-keys: |
-            Library-${{ matrix.projectPath }}-${{ matrix.targetPlatform }}-
-            Library-${{ matrix.projectPath }}-
-            Library-
-      - uses: game-ci/unity-builder@v4
+      - name: Build Unity Project
+        uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
           UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
-          projectPath: ${{ matrix.projectPath }}
-          unityVersion: ${{ matrix.unityVersion }}
-          targetPlatform: ${{ matrix.targetPlatform }}
-          customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
-          allowDirtyBuild: true
-      - uses: actions/upload-artifact@v4
+          targetPlatform: StandaloneWindows64
+          buildName: Build
+
+      - name: Zip Build
+        run: |
+          cd build
+          zip -r "../${PROJECT_NAME}_Windows_temp.zip" .
+          cd ..
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: Build-${{ matrix.targetPlatform }}
-          path: build
+          name: build-zip
+          path: ${{ env.PROJECT_NAME }}_Windows_temp.zip          
 
   release:
-    name: Create Release and Upload Artifacts
+    name: Semantic Release 🧠
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: 
-      - buildAndTestForLinuxBasedPlatforms
-      - buildForWindowsBasedPlatforms
+    needs: build 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Compute version tag
-        id: version
-        run: |
-          DATE=$(date +"%y.%m.%d")
-          echo "value=v.${DATE}-${GITHUB_RUN_NUMBER}" >> "$GITHUB_OUTPUT"
-
-      - name: Download All Build Artifacts
+      - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
-          path: build_artifacts
+          name: build-zip
 
-      - name: Package build artifacts (Linux .tar.gz, others .zip)
+      - name: Run Semantic Release
+        id: semantic
+        uses: cycjimmy/semantic-release-action@v4
         env:
-          VERSION: ${{ steps.version.outputs.value }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          branches: main
+
+      - name: Rename & Upload Release Asset
+        if: steps.semantic.outputs.new_release_published == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SEMVER: ${{ steps.semantic.outputs.new_release_version }}
         run: |
-          mkdir -p packaged
-
-          repo="${GITHUB_REPOSITORY##*/}"
-          version="${VERSION}"
-
-          for dir in build_artifacts/*; do
-            name="$(basename "$dir")"
-
-            # only build artifacts
-            [[ "$name" != Build-* ]] && continue
-
-            platform="${name#Build-}"
-
-            case "$platform" in
-              StandaloneLinux64)
-                out="${repo}-Linux-x86_64-${version}.tar.gz"
-                tar -czf "packaged/$out" -C "$dir" .
-                ;;
-              StandaloneWindows)
-                out="${repo}-Windows-x86-${version}.zip"
-                zip -r "packaged/$out" "$dir"
-                ;;
-              StandaloneWindows64)
-                out="${repo}-Windows-x86_64-${version}.zip"
-                zip -r "packaged/$out" "$dir"
-                ;;
-            esac
-          done
-
-      - name: Generate changelog from conventional commits
-        id: changelog
-        uses: TriPSs/conventional-changelog-action@v5
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          skip-on-empty: false
-
-      - name: Create GitHub Release and upload assets
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.version.outputs.value }}
-          name: Release ${{ steps.version.outputs.value }}
-          body: ${{ steps.changelog.outputs.clean_changelog }}
-          files: packaged/*
+          mv ${PROJECT_NAME}_Windows_temp.zip ${PROJECT_NAME}_Windows_${SEMVER}.zip
+          gh release upload v${SEMVER} ${PROJECT_NAME}_Windows_${SEMVER}.zip

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d4f92d5a920d194fa46df25f3a964e8, type: 3}
+  m_Name: PacienteC_dialogo
+  m_EditorClassIdentifier: 
+  lines:
+  - speaker: {fileID: 11400000, guid: 6e0cb24cb54eee344a544a15cabe4569, type: 2}
+    text: Bom dia Ellie!
+  - speaker: {fileID: 11400000, guid: 6e0cb24cb54eee344a544a15cabe4569, type: 2}
+    text: "Voc\xEAs est\xE3o deslumbrante e hoje\u2026"
+  - speaker: {fileID: 11400000, guid: 6e0cb24cb54eee344a544a15cabe4569, type: 2}
+    text: "Olha n\xE3o quero parecer louca\u2026 "
+  - speaker: {fileID: 11400000, guid: 6e0cb24cb54eee344a544a15cabe4569, type: 2}
+    text: "Mas eu juro que vi algo no jardim ontem \xE0 noite"

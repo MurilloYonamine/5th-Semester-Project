@@ -3,7 +3,6 @@
 
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
-using FifthSemester.Systems.Audio;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -14,6 +13,7 @@ namespace FifthSemester.Player.Components {
         private MovementState _currentState;
         private PlayerController _player;
         private PlayerEvents _playerEvents;
+        private IAudioService _audioService;
 
         [Header("Movement")]
         [FoldoutGroup("Movement")]
@@ -91,23 +91,21 @@ namespace FifthSemester.Player.Components {
             ChangeState(new PlayerWalkingState(this));
         }
 
-        private void OnEnable() {
-            if (_playerEvents == null) {
-                _playerEvents = GetComponent<PlayerEvents>();
-            }
-            if (_playerEvents != null) {
-                _playerEvents.OnMoveInput += HandleMove;
-                _playerEvents.OnSprintInput += HandleSprint;
-                _playerEvents.OnCrouchInput += HandleCrouch;
-            }
+        private void Start() {
+            _audioService = ServiceLocator.Get<IAudioService>();
+
+            if(_playerEvents == null) return;
+
+            _playerEvents = _player.PlayerEvents;
+            _playerEvents.OnMoveInput += HandleMove;
+            _playerEvents.OnSprintInput += HandleSprint;
+            _playerEvents.OnCrouchInput += HandleCrouch;
         }
 
         private void OnDisable() {
-            if (_playerEvents != null) {
-                _playerEvents.OnMoveInput -= HandleMove;
-                _playerEvents.OnSprintInput -= HandleSprint;
-                _playerEvents.OnCrouchInput -= HandleCrouch;
-            }
+            _playerEvents.OnMoveInput -= HandleMove;
+            _playerEvents.OnSprintInput -= HandleSprint;
+            _playerEvents.OnCrouchInput -= HandleCrouch;
         }
 
         private void Update() {
@@ -156,7 +154,7 @@ namespace FifthSemester.Player.Components {
             if (_footstepTimer >= interval) {
                 _footstepTimer -= interval;
                 AudioClip clip = _footstepClips[UnityEngine.Random.Range(0, _footstepClips.Length)];
-                AudioManager.Instance.PlaySFX(clip, volume: 0.5f);
+                _audioService?.PlaySFX(clip, volume: 0.5f);
             }
         }
 

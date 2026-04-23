@@ -1,6 +1,7 @@
-using FifthSemester.Systems.Audio;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using FifthSemester.Core.Services;
+using FifthSemester.Core.Audio;
 
 namespace FifthSemester.Framework.UI {
     /// <summary>
@@ -11,6 +12,9 @@ namespace FifthSemester.Framework.UI {
         ISelectHandler, IDeselectHandler,
         IPointerEnterHandler, IPointerExitHandler,
         IMoveHandler, ISubmitHandler, ICancelHandler, IPointerClickHandler {
+
+        private IAudioService _audioService;
+
         [Header("Selector State")]
         [SerializeField] protected int _currentIndex = 0;
         [SerializeField] protected T[] _items;
@@ -31,6 +35,7 @@ namespace FifthSemester.Framework.UI {
         protected virtual void Start() {
             OnLoad();
             RefreshUI();
+            _audioService = ServiceLocator.Get<IAudioService>();
         }
 
         /// <summary>
@@ -184,8 +189,8 @@ namespace FifthSemester.Framework.UI {
         /// Toca som de seleção, se configurado.
         /// </summary>
         protected virtual void PlaySound() {
-            if (_selectionSound != null && AudioManager.Instance != null)
-                AudioManager.Instance.PlaySFX(_selectionSound);
+            if (_selectionSound != null)
+                _audioService.PlaySFX(_selectionSound);
         }
     }
 }

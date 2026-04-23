@@ -2,14 +2,12 @@
 // Data: 14/02/2026
 
 using FifthSemester.Core.Input;
-using System;
+using FifthSemester.Core.Services;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace FifthSemester.Core.Events {
-    public class InputEvents : MonoBehaviour {
-        public static InputEvents Instance { get; private set; }
-
+    public class InputService : MonoBehaviour {
         private GameInput _gameInput;
 
         // Flag para ignorar o primeiro avanço de diálogo
@@ -27,22 +25,7 @@ namespace FifthSemester.Core.Events {
         private InputAction _openPause;
         private InputAction _dialogueAdvance;
 
-        public event Action<Vector2> OnMove;
-        public event Action<Vector2> OnLook;
-        public event Action OnJump;
-        public event Action<bool> OnCrouch;
-        public event Action<bool> OnSprint;
-        public event Action OnInteract;
-        public event Action<bool> OnZoom;
-        public event Action OnNext;
-        public event Action OnPrevious;
-        public event Action OnOpenPause;
-        public event Action OnDialogueAdvance;
-
         private void Awake() {
-            if (Instance == null) Instance = this;
-            else Destroy(gameObject);
-
             Initialize();
         }
 
@@ -94,65 +77,70 @@ namespace FifthSemester.Core.Events {
             _openPause.performed += HandleOpenPause;
         }
 
+        private void PublishEvent<T>(T evtStruct) {
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Publish(evtStruct);
+        }
+
         public void HandleMovement(InputAction.CallbackContext context) {
-            OnMove?.Invoke(context.ReadValue<Vector2>());
+            PublishEvent(new MoveInputEvent(context.ReadValue<Vector2>()));
         }
 
         public void HandleLook(InputAction.CallbackContext context) {
-            OnLook?.Invoke(context.ReadValue<Vector2>());
+            PublishEvent(new LookInputEvent(context.ReadValue<Vector2>()));
         }
 
         public void HandleJump(InputAction.CallbackContext context) {
             if (context.performed) {
-                OnJump?.Invoke();
+                PublishEvent(new JumpInputEvent());
             }
         }
 
         public void HandleCrouch(InputAction.CallbackContext context) {
             if (context.performed) {
-                OnCrouch?.Invoke(true);
+                PublishEvent(new CrouchInputEvent(true));
             }
             else if (context.canceled) {
-                OnCrouch?.Invoke(false);
+                PublishEvent(new CrouchInputEvent(false));
             }
         }
 
         public void HandleSprint(InputAction.CallbackContext context) {
             if (context.performed) {
-                OnSprint?.Invoke(true);
+                PublishEvent(new SprintInputEvent(true));
             }
             else if (context.canceled) {
-                OnSprint?.Invoke(false);
+                PublishEvent(new SprintInputEvent(false));
             }
         }
 
         public void HandleInteract(InputAction.CallbackContext context) {
-            OnInteract?.Invoke();
+            PublishEvent(new InteractInputEvent());
         }
 
         public void HandleZoom(InputAction.CallbackContext context) {
             if (context.performed) {
-                OnZoom?.Invoke(true);
+                PublishEvent(new ZoomInputEvent(true));
             }
             else if (context.canceled) {
-                OnZoom?.Invoke(false);
+                PublishEvent(new ZoomInputEvent(false));
             }
         }
 
         public void HandleNext(InputAction.CallbackContext context) {
             if (context.performed) {
-                OnNext?.Invoke();
+                PublishEvent(new NextInputEvent());
             }
         }
 
         public void HandlePrevious(InputAction.CallbackContext context) {
             if (context.performed) {
-                OnPrevious?.Invoke();
+                PublishEvent(new PreviousInputEvent());
             }
         }
         public void HandleOpenPause(InputAction.CallbackContext context) {
             if (context.performed) {
-                OnOpenPause?.Invoke();
+                PublishEvent(new PauseToggleRequestedEvent());
             }
         }
 
@@ -162,7 +150,7 @@ namespace FifthSemester.Core.Events {
                     _ignoreNextDialogueAdvance = false;
                     return;
                 }
-                OnDialogueAdvance?.Invoke();
+                PublishEvent(new DialogueAdvanceRequestedEvent());
             }
         }
 
@@ -208,15 +196,6 @@ namespace FifthSemester.Core.Events {
             _previous.performed -= HandlePrevious;
             _openPause.performed -= HandleOpenPause;
             _dialogueAdvance.started -= HandleDialogueAdvance;
-
-            OnMove = null;
-            OnLook = null;
-            OnJump = null;
-            OnCrouch = null;
-            OnSprint = null;
-            OnInteract = null;
-            OnZoom = null;
-            OnDialogueAdvance = null;
         }
     }
 }

@@ -4,6 +4,7 @@
 using FifthSemester.Core.Events;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using FifthSemester.Core.Services;
 
 namespace FifthSemester.UI {
     public class PauseMenuManager : MonoBehaviour, IManagerUI {
@@ -18,11 +19,13 @@ namespace FifthSemester.UI {
         [field: SerializeField] public CreditsMenuState CreditsMenuState { get; private set; }
 
         private void OnEnable() {
-            InputEvents.Instance.OnOpenPause += TogglePause;
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Subscribe<PauseToggleRequestedEvent>(TogglePause);
         }
 
         private void OnDisable() {
-            InputEvents.Instance.OnOpenPause -= TogglePause;
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Unsubscribe<PauseToggleRequestedEvent>(TogglePause);
         }
 
         public void ChangeState(IMenuState newState) {
@@ -35,7 +38,7 @@ namespace FifthSemester.UI {
             CurrentMenuState?.EnterState();
         }
 
-        private void TogglePause() {
+        private void TogglePause(PauseToggleRequestedEvent evt) {
             ChangeState(MainMenuState);
         }
 

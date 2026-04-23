@@ -3,12 +3,11 @@
 
 using System;
 using FifthSemester.Core.Events;
+using FifthSemester.Core.Services;
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
     public class PlayerEvents : MonoBehaviour {
-        private InputEvents _inputEvents => InputEvents.Instance;
-
         public event Action<Vector2> OnMoveInput;
         public event Action<Vector2> OnLookInput;
         public event Action OnJumpInput;
@@ -20,63 +19,67 @@ namespace FifthSemester.Player.Components {
         public event Action OnPrevious;
 
         private void OnEnable() {
-            _inputEvents.OnMove += HandleMove;
-            _inputEvents.OnLook += HandleLook;
-            _inputEvents.OnJump += HandleJump;
-            _inputEvents.OnSprint += HandleSprint;
-            _inputEvents.OnCrouch += HandleCrouch;
-            _inputEvents.OnInteract += HandleInteract;
-            _inputEvents.OnZoom += HandleZoom;
-            _inputEvents.OnNext += HandleNext;
-            _inputEvents.OnPrevious += HandlePrevious;
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            if (eventBus == null) return;
+
+            eventBus.Subscribe<MoveInputEvent>(HandleMove);
+            eventBus.Subscribe<LookInputEvent>(HandleLook);
+            eventBus.Subscribe<JumpInputEvent>(HandleJump);
+            eventBus.Subscribe<SprintInputEvent>(HandleSprint);
+            eventBus.Subscribe<CrouchInputEvent>(HandleCrouch);
+            eventBus.Subscribe<InteractInputEvent>(HandleInteract);
+            eventBus.Subscribe<ZoomInputEvent>(HandleZoom);
+            eventBus.Subscribe<NextInputEvent>(HandleNext);
+            eventBus.Subscribe<PreviousInputEvent>(HandlePrevious);
         }
 
         private void OnDisable() {
-            if (_inputEvents != null) {
-                _inputEvents.OnMove -= HandleMove;
-                _inputEvents.OnLook -= HandleLook;
-                _inputEvents.OnJump -= HandleJump;
-                _inputEvents.OnSprint -= HandleSprint;
-                _inputEvents.OnCrouch -= HandleCrouch;
-                _inputEvents.OnInteract -= HandleInteract;
-                _inputEvents.OnZoom -= HandleZoom;
-                _inputEvents.OnNext -= HandleNext;
-                _inputEvents.OnPrevious -= HandlePrevious;
-            }
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            if (eventBus == null) return;
+
+            eventBus.Unsubscribe<MoveInputEvent>(HandleMove);
+            eventBus.Unsubscribe<LookInputEvent>(HandleLook);
+            eventBus.Unsubscribe<JumpInputEvent>(HandleJump);
+            eventBus.Unsubscribe<SprintInputEvent>(HandleSprint);
+            eventBus.Unsubscribe<CrouchInputEvent>(HandleCrouch);
+            eventBus.Unsubscribe<InteractInputEvent>(HandleInteract);
+            eventBus.Unsubscribe<ZoomInputEvent>(HandleZoom);
+            eventBus.Unsubscribe<NextInputEvent>(HandleNext);
+            eventBus.Unsubscribe<PreviousInputEvent>(HandlePrevious);
         }
 
-        private void HandleMove(Vector2 input) {
-            OnMoveInput?.Invoke(input);
+        private void HandleMove(MoveInputEvent evt) {
+            OnMoveInput?.Invoke(evt.Value);
         }
 
-        private void HandleLook(Vector2 input) {
-            OnLookInput?.Invoke(input);
+        private void HandleLook(LookInputEvent evt) {
+            OnLookInput?.Invoke(evt.Value);
         }
 
-        private void HandleJump() {
+        private void HandleJump(JumpInputEvent evt) {
             OnJumpInput?.Invoke();
         }
 
-        private void HandleSprint(bool isSprinting) {
-            OnSprintInput?.Invoke(isSprinting);
+        private void HandleSprint(SprintInputEvent evt) {
+            OnSprintInput?.Invoke(evt.IsPressed);
         }
 
-        private void HandleCrouch(bool isPressed) {
-            OnCrouchInput?.Invoke(isPressed);
+        private void HandleCrouch(CrouchInputEvent evt) {
+            OnCrouchInput?.Invoke(evt.IsPressed);
         }
 
-        private void HandleInteract() {
+        private void HandleInteract(InteractInputEvent evt) {
             OnInteractInput?.Invoke();
         }
 
-        private void HandleZoom(bool isPressed) {
-            OnZoomInput?.Invoke(isPressed);
+        private void HandleZoom(ZoomInputEvent evt) {
+            OnZoomInput?.Invoke(evt.IsPressed);
         }
 
-        private void HandleNext() {
+        private void HandleNext(NextInputEvent evt) {
             OnNext?.Invoke();
         }
-        private void HandlePrevious() {
+        private void HandlePrevious(PreviousInputEvent evt) {
             OnPrevious?.Invoke();
         }
     }

@@ -1,10 +1,10 @@
 // Autor: Murillo Gomes Yonamine
 // Data: 14/02/2026
 
-using FifthSemester.Core;
+using FifthSemester.Core.Events;
+using FifthSemester.Core.Services;
 using FifthSemester.Systems.Audio;
 using Sirenix.OdinInspector;
-using System;
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
@@ -91,19 +91,23 @@ namespace FifthSemester.Player.Components {
             ChangeState(new PlayerWalkingState(this));
         }
 
-        private void Start() {
-            if(_playerEvents == null) return;
-
-            _playerEvents = _player.PlayerEvents;
-            _playerEvents.OnMoveInput += HandleMove;
-            _playerEvents.OnSprintInput += HandleSprint;
-            _playerEvents.OnCrouchInput += HandleCrouch;
+        private void OnEnable() {
+            if (_playerEvents == null) {
+                _playerEvents = GetComponent<PlayerEvents>();
+            }
+            if (_playerEvents != null) {
+                _playerEvents.OnMoveInput += HandleMove;
+                _playerEvents.OnSprintInput += HandleSprint;
+                _playerEvents.OnCrouchInput += HandleCrouch;
+            }
         }
 
         private void OnDisable() {
-            _playerEvents.OnMoveInput -= HandleMove;
-            _playerEvents.OnSprintInput -= HandleSprint;
-            _playerEvents.OnCrouchInput -= HandleCrouch;
+            if (_playerEvents != null) {
+                _playerEvents.OnMoveInput -= HandleMove;
+                _playerEvents.OnSprintInput -= HandleSprint;
+                _playerEvents.OnCrouchInput -= HandleCrouch;
+            }
         }
 
         private void Update() {
@@ -172,7 +176,9 @@ namespace FifthSemester.Player.Components {
 
         private void HandleSprint(bool isPressed) {
             _currentState?.HandleSprint(isPressed);
-            GlobalPlayerEvents.RaisePlayerSprint(isPressed);
+            
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Publish(new PlayerSprintChangedEvent(isPressed));
         }
 
         private void HandleCrouch(bool isPressed) {

@@ -3,6 +3,7 @@
 
 using FifthSemester.Core;
 using FifthSemester.Core.Events;
+using FifthSemester.Core.Services;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -25,13 +26,17 @@ namespace FifthSemester.Enemy {
             if (!AllEnemies.Contains(this)) {
                 AllEnemies.Add(this);
             }
-            GlobalPlayerEvents.OnPlayerSprint += HandleSprint;
+
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Subscribe<PlayerSprintChangedEvent>(HandleSprint);
         }
         private void OnDisable() {
             if (AllEnemies.Contains(this)) {
                 AllEnemies.Remove(this);
             }
-            GlobalPlayerEvents.OnPlayerSprint -= HandleSprint;
+
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Unsubscribe<PlayerSprintChangedEvent>(HandleSprint);
         }
 
 
@@ -66,8 +71,8 @@ namespace FifthSemester.Enemy {
             float distanceToPlayer = Vector3.Distance(transform.position, _playerTransform.position);
             return distanceToPlayer <= _range;
         }
-        private void HandleSprint(bool isSprinting) {
-            _navMeshAgent.speed = isSprinting ? _sprint : _speed;
+        private void HandleSprint(PlayerSprintChangedEvent evt) {
+            _navMeshAgent.speed = evt.IsSprinting ? _sprint : _speed;
         }
 
         public void Freeze(bool isFrozen) {

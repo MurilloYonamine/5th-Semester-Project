@@ -9,7 +9,5 @@ namespace FifthSemester.Core.Services
         void TogglePause();
 
         bool IsPaused { get; }
-
-        event Action<bool> OnPauseStateChanged;
     }
 }

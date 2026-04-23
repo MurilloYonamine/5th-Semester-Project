@@ -10,8 +10,5 @@ namespace FifthSemester.Core.Services
         bool HasItem(TItem item);
 
         IReadOnlyList<TItem> GetItems();
-
-        event Action<TItem> OnItemAdded;
-        event Action<TItem> OnItemRemoved;
     }
 }

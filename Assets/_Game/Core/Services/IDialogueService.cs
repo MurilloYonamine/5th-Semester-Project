@@ -10,8 +10,5 @@ namespace FifthSemester.Core.Services
         void EndDialogue();
 
         bool IsDialogueActive { get; }
-
-        event Action OnDialogueStarted;
-        event Action OnDialogueEnded;
     }
 }

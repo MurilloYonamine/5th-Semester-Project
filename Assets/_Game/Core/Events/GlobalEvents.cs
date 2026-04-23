@@ -1,6 +1,7 @@
 using UnityEngine;
 
 namespace FifthSemester.Core.Events {
+    /// ============= Input Events =============
     public readonly struct MoveInputEvent {
         public readonly Vector2 Value;
 
@@ -49,10 +50,25 @@ namespace FifthSemester.Core.Events {
 
     public readonly struct PreviousInputEvent { }
 
+    /// ============= Pause Events =============
     public readonly struct PauseToggleRequestedEvent { }
 
+    public readonly struct PauseStateChangedEvent {
+        public readonly bool IsPaused;
+
+        public PauseStateChangedEvent(bool isPaused) {
+            IsPaused = isPaused;
+        }
+    }
+
+    /// ============= Dialogue Events =============
     public readonly struct DialogueAdvanceRequestedEvent { }
 
+    public readonly struct DialogueStartedEvent { }
+
+    public readonly struct DialogueEndedEvent { }
+
+    /// ============= Player Events =============
     public readonly struct PlayerSprintChangedEvent {
         public readonly bool IsSprinting;
 
@@ -61,6 +77,7 @@ namespace FifthSemester.Core.Events {
         }
     }
 
+    /// ============= Inventory & Item Events =============
     public readonly struct InventoryToggledEvent {
         public readonly bool IsOpen;
 

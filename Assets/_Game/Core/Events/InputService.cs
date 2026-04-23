@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace FifthSemester.Core.Events {
-    public class InputService : IDisposable {
+    public class InputService : IInputService, IDisposable {
         private GameInput _gameInput;
 
         // Flag para ignorar o primeiro avanço de diálogo

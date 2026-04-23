@@ -3,6 +3,7 @@ using FifthSemester.Core.Services;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Audio;
 using FifthSemester.Gameplay.Inventory;
+using FifthSemester.Core.Input;
 
 namespace FifthSemester.Gameplay.Bootstrap {
     public static class GameBootstrapper {
@@ -21,7 +22,7 @@ namespace FifthSemester.Gameplay.Bootstrap {
 
             var inputService = new InputService();
             inputService.Enable();
-            ServiceLocator.Register<InputService>(inputService);
+            ServiceLocator.Register<IInputService>(inputService);
 
             var inventoryService = new InventoryService(maxCapacity: 6);
             ServiceLocator.Register<IInventoryService<Item>>(inventoryService);

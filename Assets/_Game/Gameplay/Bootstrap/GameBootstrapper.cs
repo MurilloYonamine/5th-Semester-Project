@@ -1,9 +1,9 @@
 using UnityEngine;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.Events;
-using FifthSemester.Core.Audio;
-using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Core.Input;
+using FifthSemester.Gameplay.Inventory;
+using FifthSemester.Gameplay.Dialogue;
 
 namespace FifthSemester.Gameplay.Bootstrap {
     public static class GameBootstrapper {

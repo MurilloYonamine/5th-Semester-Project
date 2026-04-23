@@ -3,11 +3,12 @@
 
 using FifthSemester.Core.Input;
 using FifthSemester.Core.Services;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace FifthSemester.Core.Events {
-    public class InputService : MonoBehaviour {
+    public class InputService : IDisposable {
         private GameInput _gameInput;
 
         // Flag para ignorar o primeiro avanço de diálogo
@@ -25,20 +26,16 @@ namespace FifthSemester.Core.Events {
         private InputAction _openPause;
         private InputAction _dialogueAdvance;
 
-        private void Awake() {
+        public InputService() {
             Initialize();
         }
 
-        private void OnEnable() {
+        public void Enable() {
             _gameInput?.Enable();
         }
 
-        private void OnDisable() {
+        public void Disable() {
             _gameInput?.Disable();
-        }
-
-        private void OnDestroy() {
-            Dispose();
         }
 
         private void Initialize() {

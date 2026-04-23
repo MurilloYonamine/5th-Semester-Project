@@ -3,7 +3,6 @@
 
 using FifthSemester.Doors;
 using FifthSemester.Player.Components;
-using FifthSemester.Systems.DialogueSystem;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,7 +11,6 @@ namespace FifthSemester.Player {
     public class PlayerInteraction : MonoBehaviour {
         [SerializeField, Range(1f, 5f)] private float _interactionRange = 3f;
         [SerializeField] private List<GameObject> _itemsNearby;
-        [SerializeField] private List<DialogueTrigger> _dialogueTriggersNearby = new List<DialogueTrigger>();
         [SerializeField] private List<Door> _doorsNearby = new List<Door>();
 
         [SerializeField] private SphereCollider _interactionCollider;
@@ -54,12 +52,6 @@ namespace FifthSemester.Player {
         }
 
         private void HandleTriggerEnter(Collider other) {
-            if (other.TryGetComponent<DialogueTrigger>(out var dialogueTrigger)) {
-                if (!_dialogueTriggersNearby.Contains(dialogueTrigger)) {
-                    _dialogueTriggersNearby.Add(dialogueTrigger);
-                    dialogueTrigger.TurnOutline(true);
-                }
-            }
             if (other.TryGetComponent<Door>(out var door)) {
                 if (!_doorsNearby.Contains(door)) {
                     _doorsNearby.Add(door);
@@ -69,10 +61,6 @@ namespace FifthSemester.Player {
         }
 
         private void HandleTriggerExit(Collider other) {
-            if (other.TryGetComponent<DialogueTrigger>(out var dialogueTrigger)) {
-                _dialogueTriggersNearby.Remove(dialogueTrigger);
-                dialogueTrigger.TurnOutline(false);
-            }
             if (other.TryGetComponent<Door>(out var door)) {
                 _doorsNearby.Remove(door);
                 door.EnableOutline(false);
@@ -80,16 +68,6 @@ namespace FifthSemester.Player {
         }
 
         private void Interact() {
-            if (DialogueManager.Instance != null && DialogueManager.Instance.IsPanelActive()) {
-                DialogueManager.Instance.DisplayNextLine();
-                return;
-            }
-
-            if (_dialogueTriggersNearby != null && _dialogueTriggersNearby.Count > 0) {
-                _dialogueTriggersNearby[0].TriggerDialogue();
-                return;
-            }
-
             if (_doorsNearby.Count > 0) {
                 Door closestDoor = null;
                 float minDistance = Mathf.Infinity;

@@ -1,7 +1,6 @@
 // autor: Murillo Gomes Yonamine
 // data: 15/03/2026
 
-using FifthSemester.Core.Managers;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using System.Collections;
@@ -34,9 +33,7 @@ namespace FifthSemester.UI {
         }
 
         #region Button Callbacks
-        public void OpenPlay() {
-            SceneLoaderManager.Instance.LoadNewLevel(_gameplayLevelName);
-        }
+
         public void OpenMainMenu(GameObject caller) {
             if (caller != null)
                 EventSystem.current.SetSelectedGameObject(caller);

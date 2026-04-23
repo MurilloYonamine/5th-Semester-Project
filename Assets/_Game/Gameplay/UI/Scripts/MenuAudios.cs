@@ -1,7 +1,6 @@
 // autor: Murillo Gomes Yonamine
 // data: 16/03/2026
 
-using FifthSemester.Core.Managers;
 using FifthSemester.Systems.Audio;
 using System;
 using UnityEngine;

@@ -4,8 +4,6 @@
 using System;
 using UnityEngine;
 using FifthSemester.Core.Events;
-using FifthSemester.Core.Managers;
-using FifthSemester.Core.States;
 using Sirenix.OdinInspector;
 
 namespace FifthSemester.Player.Components {
@@ -75,16 +73,12 @@ namespace FifthSemester.Player.Components {
             _playerEvents.OnLookInput += HandleLookInput;
             _playerEvents.OnZoomInput += HandleZoomInput;
         }
-        private void OnEnable() {
-            GameStateManager.OnStateChanged += HandleGameStateChanged;
-        }
 
         private void OnDisable() {
             if (_playerEvents != null) {
                 _playerEvents.OnLookInput -= HandleLookInput;
                 _playerEvents.OnZoomInput -= HandleZoomInput;
             }
-            GameStateManager.OnStateChanged -= HandleGameStateChanged;
         }
 
         private void Update() {
@@ -168,12 +162,6 @@ namespace FifthSemester.Player.Components {
                     Mathf.Lerp(_joint.localPosition.y, _jointOriginalPos.y, Time.deltaTime * _bobSpeed),
                     Mathf.Lerp(_joint.localPosition.z, _jointOriginalPos.z, Time.deltaTime * _bobSpeed)
                 );
-            }
-        }
-
-        private void HandleGameStateChanged(GameState state) {
-            if (state == GameState.Dialogue) {
-                ResetHeadBob();
             }
         }
 

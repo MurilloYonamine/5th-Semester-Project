@@ -2,8 +2,6 @@
 // Data: 14/02/2026
 
 using FifthSemester.Core.Input;
-using FifthSemester.Core.Managers;
-using FifthSemester.Core.States;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -49,18 +47,10 @@ namespace FifthSemester.Core.Events {
         }
 
         private void OnEnable() {
-            GameStateManager.OnStateChanged += HandleStateChange;
-
-            if (GameStateManager.Instance != null) {
-                HandleStateChange(GameStateManager.Instance.CurrentState);
-            }
-            else {
-                _gameInput?.Enable();
-            }
+            _gameInput?.Enable();
         }
 
         private void OnDisable() {
-            GameStateManager.OnStateChanged -= HandleStateChange;
             _gameInput?.Disable();
         }
 
@@ -102,25 +92,6 @@ namespace FifthSemester.Core.Events {
             _next.performed += HandleNext;
             _previous.performed += HandlePrevious;
             _openPause.performed += HandleOpenPause;
-        }
-
-        private void HandleStateChange(GameState newState) {
-            if (newState == GameState.Gameplay) {
-                EnablePlayerInput();
-                _gameInput.UI.Disable();
-                _dialogueAdvance.Disable();
-            }
-            else if (newState == GameState.Dialogue) {
-                DisablePlayerInput();
-                _gameInput.UI.Enable();
-                _dialogueAdvance.Enable();
-                _ignoreNextDialogueAdvance = true; // Ativa flag ao entrar no diálogo
-            }
-            else {
-                DisablePlayerInput();
-                _gameInput.UI.Enable();
-                _dialogueAdvance.Disable();
-            }
         }
 
         public void HandleMovement(InputAction.CallbackContext context) {

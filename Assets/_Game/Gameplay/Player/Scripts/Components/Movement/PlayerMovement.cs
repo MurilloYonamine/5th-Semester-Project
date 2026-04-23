@@ -2,8 +2,6 @@
 // Data: 14/02/2026
 
 using FifthSemester.Core;
-using FifthSemester.Core.Managers;
-using FifthSemester.Core.States;
 using FifthSemester.Systems.Audio;
 using Sirenix.OdinInspector;
 using System;
@@ -115,11 +113,6 @@ namespace FifthSemester.Player.Components {
 
         private void FixedUpdate() {
             if (!PlayerCanMove || Rigidbody == null) return;
-
-            if (GameStateManager.Instance.CurrentState != GameState.Gameplay) {
-                _rigidbody.linearVelocity = Vector3.zero;
-                return;
-            }
 
             Vector2 moveInput = MoveInput;
             Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);

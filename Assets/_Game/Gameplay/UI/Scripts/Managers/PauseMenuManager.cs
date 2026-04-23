@@ -2,8 +2,6 @@
 // data: 29/03/2026
 
 using FifthSemester.Core.Events;
-using FifthSemester.Core.Managers;
-using FifthSemester.Core.States;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -20,12 +18,10 @@ namespace FifthSemester.UI {
         [field: SerializeField] public CreditsMenuState CreditsMenuState { get; private set; }
 
         private void OnEnable() {
-            GameStateManager.OnStateChanged += HandleGameStateChanged;
             InputEvents.Instance.OnOpenPause += TogglePause;
         }
 
         private void OnDisable() {
-            GameStateManager.OnStateChanged -= HandleGameStateChanged;
             InputEvents.Instance.OnOpenPause -= TogglePause;
         }
 
@@ -40,45 +36,18 @@ namespace FifthSemester.UI {
         }
 
         private void TogglePause() {
-            if (GameStateManager.Instance.CurrentState == GameState.Pause) {
-                if (!Equals(CurrentMenuState, MainMenuState)) {
-                    ChangeState(MainMenuState);
-                    return;
-                }
-                GameStateManager.Instance.ChangeState(GameState.Gameplay);
-            }
-            else if (GameStateManager.Instance.CurrentState == GameState.Gameplay) {
-                ChangeState(MainMenuState);
-                GameStateManager.Instance.ChangeState(GameState.Pause);
-            }
+            ChangeState(MainMenuState);
         }
 
-        private void HandleGameStateChanged(GameState newState) {
-            if (newState == GameState.Pause) {
-                pauseCanvas.SetActive(true);
-                Time.timeScale = 0f;
-                Cursor.lockState = CursorLockMode.None;
-                Cursor.visible = true;
-            }
-            else if (newState == GameState.Gameplay) {
-                pauseCanvas.SetActive(false);
-                Time.timeScale = 1f;
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-            }
-        }
 
         public void Resume() {
-            GameStateManager.Instance.ChangeState(GameState.Gameplay);
         }
 
         public void Pause() {
-            GameStateManager.Instance.ChangeState(GameState.Pause);
         }
 
         public void QuitToMainMenu() {
             Time.timeScale = 1f;
-            SceneLoaderManager.Instance.LoadNewLevel("MainMenu");
         }
 
         public void OnReturn(GameObject caller) {

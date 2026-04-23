@@ -2,7 +2,6 @@
 // Data: 14/02/2026
 
 using FifthSemester.Player.Components;
-using FifthSemester.Inventory;
 using UnityEngine;
 
 namespace FifthSemester.Player {
@@ -11,7 +10,6 @@ namespace FifthSemester.Player {
     [RequireComponent(typeof(PlayerCamera))]
     [RequireComponent(typeof(PlayerInteraction))]
     [RequireComponent(typeof(PlayerEvents))]
-    [RequireComponent(typeof(InventoryController))]
     public class PlayerController : MonoBehaviour {
         [Header("Player Unity Components")]
         public Rigidbody Rigidbody { get; private set; }
@@ -23,16 +21,12 @@ namespace FifthSemester.Player {
         public PlayerCamera PlayerCamera { get; private set; }
         public PlayerInteraction PlayerInteraction { get; private set; }
 
-        public InventoryController Inventory { get; private set; }
-
         [Header("Settings")]
         [SerializeField] private bool lockCursor = true;
         public bool IsGrounded => PlayerJump.IsGrounded;
 
         private void Awake() {
             PlayerEvents = GetComponent<PlayerEvents>();
-            Inventory = GetComponent<InventoryController>();
-
             Rigidbody = GetComponent<Rigidbody>();
             PlayerMovement = GetComponent<PlayerMovement>();
             PlayerJump = GetComponent<PlayerJump>();

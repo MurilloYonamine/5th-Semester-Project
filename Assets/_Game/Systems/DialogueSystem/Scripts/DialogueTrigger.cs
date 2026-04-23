@@ -2,7 +2,6 @@
 // data: 30/03/2026
 
 using UnityEngine;
-using FifthSemester.Core.Managers;
 using ThirdParty.QuickOutline;
 
 namespace FifthSemester.Systems.DialogueSystem {
@@ -32,10 +31,5 @@ namespace FifthSemester.Systems.DialogueSystem {
         }
 
         public bool goBackToMenuOnEnd = false;
-        public void GoBackToMenu() {
-            if (goBackToMenuOnEnd) {
-                SceneLoaderManager.Instance.LoadNewLevel("MainMenu");
-            }
-        }
     }
 }

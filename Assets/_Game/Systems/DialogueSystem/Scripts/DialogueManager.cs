@@ -5,9 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System;
-using FifthSemester.Core.Managers;
 using FifthSemester.Core.Events;
-using FifthSemester.Core.States;
 
 namespace FifthSemester.Systems.DialogueSystem {
     public class DialogueManager : MonoBehaviour {
@@ -34,9 +32,6 @@ namespace FifthSemester.Systems.DialogueSystem {
         }
 
         public void StartDialogue(DialogueSO dialogue) {
-            if (GameStateManager.Instance != null)
-                GameStateManager.Instance.ChangeState(GameState.Dialogue);
-
             if (InputEvents.Instance != null) {
                 InputEvents.Instance.OnDialogueAdvance -= DisplayNextLine;
                 InputEvents.Instance.OnDialogueAdvance += DisplayNextLine;
@@ -73,8 +68,6 @@ namespace FifthSemester.Systems.DialogueSystem {
             _dialoguePanel.SetActive(false);
             if (InputEvents.Instance != null)
                 InputEvents.Instance.OnDialogueAdvance -= DisplayNextLine;
-            if (GameStateManager.Instance != null)
-                GameStateManager.Instance.ChangeState(GameState.Gameplay);
 
             Clear();
 
@@ -87,7 +80,5 @@ namespace FifthSemester.Systems.DialogueSystem {
         }
 
         public bool IsPanelActive() => _dialoguePanel.activeSelf;
-
-
     }
 }

@@ -1,24 +1,26 @@
-// autor: Murillo Gomes Yonamine
-// data: 08/03/2026
-
-using FifthSemester.Doors;
+using FifthSemester.Core.Services;
+using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Player.Components;
-using System;
 using System.Collections.Generic;
+using ThirdParty.QuickOutline;
 using UnityEngine;
 
 namespace FifthSemester.Player {
     public class PlayerInteraction : MonoBehaviour {
+        [Header("Settings")]
         [SerializeField, Range(1f, 5f)] private float _interactionRange = 3f;
-        [SerializeField] private List<GameObject> _itemsNearby;
-        [SerializeField] private List<Door> _doorsNearby = new List<Door>();
 
-        [SerializeField] private SphereCollider _interactionCollider;
+        [Header("Debug / Runtime")]
+        [SerializeField] private List<IInteractable> _interactablesNearby = new();
+
+        private SphereCollider _interactionCollider;
         private PlayerInteractionTrigger _interactionTrigger;
         private PlayerController _player;
         private PlayerEvents _playerEvents;
 
+        private IInventoryService<Item> _inventoryService;
 
+        private IAudioService _audioService;
         [SerializeField] private AudioClip _pickupSound;
 
         private void Awake() {
@@ -33,9 +35,12 @@ namespace FifthSemester.Player {
                 _interactionTrigger = _interactionCollider.gameObject.AddComponent<PlayerInteractionTrigger>();
             }
         }
-        private void Start() {
-            _playerEvents = _player.PlayerEvents;
 
+        private void Start() {
+            _audioService = ServiceLocator.Get<IAudioService>();
+            _inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
+
+            _playerEvents = _player.PlayerEvents;
             _playerEvents.OnInteractInput += Interact;
 
             _interactionTrigger.OnObjectEntered += HandleTriggerEnter;
@@ -43,72 +48,88 @@ namespace FifthSemester.Player {
         }
 
         private void OnDisable() {
-            if (_playerEvents == null) return;
+            if (_playerEvents != null)
+                _playerEvents.OnInteractInput -= Interact;
 
-            _playerEvents.OnInteractInput -= Interact;
-
-            _interactionTrigger.OnObjectEntered -= HandleTriggerEnter;
-            _interactionTrigger.OnObjectExited -= HandleTriggerExit;
+            if (_interactionTrigger != null) {
+                _interactionTrigger.OnObjectEntered -= HandleTriggerEnter;
+                _interactionTrigger.OnObjectExited -= HandleTriggerExit;
+            }
         }
 
         private void HandleTriggerEnter(Collider other) {
-            if (other.TryGetComponent<Door>(out var door)) {
-                if (!_doorsNearby.Contains(door)) {
-                    _doorsNearby.Add(door);
-                    door.EnableOutline(true);
+            if (other.TryGetComponent<IInteractable>(out var interactable)) {
+                if (!_interactablesNearby.Contains(interactable)) {
+                    _interactablesNearby.Add(interactable);
+                    interactable.Highlight();
                 }
             }
         }
 
         private void HandleTriggerExit(Collider other) {
-            if (other.TryGetComponent<Door>(out var door)) {
-                _doorsNearby.Remove(door);
-                door.EnableOutline(false);
+            if (other.TryGetComponent<IInteractable>(out var interactable)) {
+                if (_interactablesNearby.Contains(interactable)) {
+                    _interactablesNearby.Remove(interactable);
+                    interactable.Unhighlight();
+                }
             }
         }
 
         private void Interact() {
-            if (_doorsNearby.Count > 0) {
-                Door closestDoor = null;
-                float minDistance = Mathf.Infinity;
-                Vector3 playerPoss = transform.position;
+            var best = GetBestInteractable();
 
-                for (int i = 0; i < _doorsNearby.Count; i++) {
-                    Door currentDoor = _doorsNearby[i];
+            if (best == null || !best.IsInteractable)
+                return;
 
-                    if (currentDoor == null) continue;
+            if (best is Item item) {
+                bool added = _inventoryService.AddItem(item);
 
-                    float distance = Vector3.Distance(playerPoss, currentDoor.transform.position);
+                if (!added) return;
 
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        closestDoor = currentDoor;
-                    }
-                }
+                PlayPickupFeedback();
 
-                if (closestDoor != null) {
-                    Debug.Log($"[Interaction] Alvo selecionado: {closestDoor.gameObject.name}");
-                    closestDoor.Interact();
-                }
+                _interactablesNearby.Remove(best);
                 return;
             }
-            GameObject bestItem = null;
-            float bestAlignment = -1f;
 
-            Vector3 playerForward = transform.forward;
+            best.Interact(this);
+        }
+
+        private IInteractable GetBestInteractable() {
+            if (_interactablesNearby.Count == 0) return null;
+
+            IInteractable best = null;
+            float bestScore = -Mathf.Infinity;
+
             Vector3 playerPos = transform.position;
+            Vector3 forward = transform.forward;
 
-            foreach (var item in _itemsNearby) {
-                if (item == null) continue;
+            foreach (var interactable in _interactablesNearby) {
+                if (interactable == null || !interactable.IsInteractable)
+                    continue;
 
-                Vector3 directionToItem = (item.transform.position - playerPos).normalized;
+                var mono = interactable as MonoBehaviour;
+                if (mono == null) continue;
 
-                float alignment = Vector3.Dot(playerForward, directionToItem);
+                Vector3 dir = (mono.transform.position - playerPos).normalized;
 
-                if (alignment > bestAlignment) {
-                    bestAlignment = alignment;
-                    bestItem = item;
+                float alignment = Vector3.Dot(forward, dir);
+                float distance = Vector3.Distance(playerPos, mono.transform.position);
+
+                float score = alignment - (distance * 0.2f);
+
+                if (score > bestScore) {
+                    bestScore = score;
+                    best = interactable;
                 }
+            }
+
+            return best;
+        }
+
+        private void PlayPickupFeedback() {
+            if (_pickupSound != null) {
+                _audioService.PlaySFX(_pickupSound);
             }
         }
     }

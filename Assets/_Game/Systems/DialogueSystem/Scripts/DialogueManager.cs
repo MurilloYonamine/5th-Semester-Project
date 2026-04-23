@@ -6,6 +6,7 @@ using UnityEngine;
 using TMPro;
 using System;
 using FifthSemester.Core.Events;
+using FifthSemester.Core.Services;
 
 namespace FifthSemester.Systems.DialogueSystem {
     public class DialogueManager : MonoBehaviour {
@@ -32,10 +33,9 @@ namespace FifthSemester.Systems.DialogueSystem {
         }
 
         public void StartDialogue(DialogueSO dialogue) {
-            if (InputEvents.Instance != null) {
-                InputEvents.Instance.OnDialogueAdvance -= DisplayNextLine;
-                InputEvents.Instance.OnDialogueAdvance += DisplayNextLine;
-            }
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Unsubscribe<DialogueAdvanceRequestedEvent>(OnDialogueAdvanceRequested);
+            eventBus?.Subscribe<DialogueAdvanceRequestedEvent>(OnDialogueAdvanceRequested);
 
             Debug.Log("Starting dialogue...");
 
@@ -46,6 +46,10 @@ namespace FifthSemester.Systems.DialogueSystem {
                 _linesQueue.Enqueue(line);
             }
 
+            DisplayNextLine();
+        }
+
+        private void OnDialogueAdvanceRequested(DialogueAdvanceRequestedEvent evt) {
             DisplayNextLine();
         }
 
@@ -66,8 +70,8 @@ namespace FifthSemester.Systems.DialogueSystem {
 
         private void EndDialogue() {
             _dialoguePanel.SetActive(false);
-            if (InputEvents.Instance != null)
-                InputEvents.Instance.OnDialogueAdvance -= DisplayNextLine;
+            
+            ServiceLocator.Get<IEventBus>()?.Unsubscribe<DialogueAdvanceRequestedEvent>(OnDialogueAdvanceRequested);
 
             Clear();
 

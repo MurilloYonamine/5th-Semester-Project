@@ -10,6 +10,7 @@ namespace FifthSemester.Player {
     [RequireComponent(typeof(PlayerCamera))]
     [RequireComponent(typeof(PlayerInteraction))]
     [RequireComponent(typeof(PlayerEvents))]
+    [RequireComponent(typeof(Rigidbody))]
     public class PlayerController : MonoBehaviour {
         [Header("Player Unity Components")]
         public Rigidbody Rigidbody { get; private set; }

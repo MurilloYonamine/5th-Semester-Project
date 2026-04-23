@@ -1,9 +1,9 @@
 // autor: Murillo Gomes Yonamine
 // data: 16/03/2026
 
-using FifthSemester.Systems.Audio;
 using System;
 using UnityEngine;
+using FifthSemester.Core.Services;
 
 namespace FifthSemester.UI {
     [Serializable]
@@ -15,25 +15,30 @@ namespace FifthSemester.UI {
 
         private float _lastOpenTime;
         private const float NAVIGATION_BLOCK_DURATION = 0.1f;
+        private IAudioService _audioService;
+
+        private void Start() {
+            _audioService = ServiceLocator.Get<IAudioService>();
+        }
 
         public void PlayNavigationSFX() {
             if (Time.unscaledTime - _lastOpenTime < NAVIGATION_BLOCK_DURATION) return;
             
-            AudioManager.Instance.PlaySFX(_navigateClip, volume: 0.25f);
+            _audioService?.PlaySFX(_navigateClip, volume: 0.25f);
         }
         
         public void PlayOpenSFX() {
             _lastOpenTime = Time.unscaledTime;
-            AudioManager.Instance.StopSFX(_navigateClip);
+            _audioService?.StopSFX(_navigateClip);
             
-            AudioManager.Instance.PlaySFX(_openClip, volume: 0.25f);
+            _audioService?.PlaySFX(_openClip, volume: 0.25f);
         }
         
         public void PlayCloseSFX() {
             _lastOpenTime = Time.unscaledTime;
-            AudioManager.Instance.StopSFX(_navigateClip);
+            _audioService?.StopSFX(_navigateClip);
 
-            AudioManager.Instance.PlaySFX(_closeClip, volume: 0.25f);
+            _audioService?.PlaySFX(_closeClip, volume: 0.25f);
         }
     }
 }

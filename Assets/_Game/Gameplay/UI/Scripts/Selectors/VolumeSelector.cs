@@ -1,8 +1,8 @@
 using FifthSemester.Framework.UI;
 using TMPro;
+using FifthSemester.Core.Services;
 using UnityEngine;
 using UnityEngine.UI;
-using FifthSemester.Systems.Audio;
 
 namespace FifthSemester.UI {
     public enum CurrentVolume { V0 = 0, V25, V50, V75, V100 }
@@ -14,19 +14,27 @@ namespace FifthSemester.UI {
 
         public enum AudioType { Master, Music, SFX }
 
+        private IAudioService _audioService;
+
         protected void Awake() {
             _items = new CurrentVolume[] {
                 CurrentVolume.V0, CurrentVolume.V25, CurrentVolume.V50, CurrentVolume.V75, CurrentVolume.V100
             };
         }
+        protected override void Start() {
+            base.Start();
+            UpdateUI();
+            _audioService = ServiceLocator.Get<IAudioService>();
+        }
 
         protected override void OnItemSelected(CurrentVolume selectedItem) => ApplyToSystem(GetNormalizedVolume(selectedItem));
 
         private void ApplyToSystem(float volume) {
+
             switch (_audioType) {
-                case AudioType.Master: AudioManager.Instance.SetMasterVolume(volume); break;
-                case AudioType.Music: AudioManager.Instance.SetMusicVolume(volume); break;
-                case AudioType.SFX: AudioManager.Instance.SetSFXVolume(volume); break;
+                case AudioType.Master: _audioService.SetMasterVolume(volume); break;
+                case AudioType.Music: _audioService.SetMusicVolume(volume); break;
+                case AudioType.SFX: _audioService.SetSFXVolume(volume); break;
             }
         }
 

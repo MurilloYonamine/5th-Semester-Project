@@ -1,8 +1,11 @@
 using FifthSemester.Core.Services;
+using FifthSemester.Gameplay.Dialogue;
 using FifthSemester.Gameplay.Inventory;
+
+// using FifthSemester.Gameplay.Inventory; // Removido, agora usa Shared
+using FifthSemester.Gameplay.Shared;
 using FifthSemester.Player.Components;
 using System.Collections.Generic;
-using ThirdParty.QuickOutline;
 using UnityEngine;
 
 namespace FifthSemester.Player {
@@ -17,9 +20,7 @@ namespace FifthSemester.Player {
         private PlayerInteractionTrigger _interactionTrigger;
         private PlayerController _player;
         private PlayerEvents _playerEvents;
-
-        private IInventoryService<Item> _inventoryService;
-
+        
         private IAudioService _audioService;
         [SerializeField] private AudioClip _pickupSound;
 
@@ -38,7 +39,6 @@ namespace FifthSemester.Player {
 
         private void Start() {
             _audioService = ServiceLocator.Get<IAudioService>();
-            _inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
 
             _playerEvents = _player.PlayerEvents;
             _playerEvents.OnInteractInput += Interact;
@@ -61,7 +61,7 @@ namespace FifthSemester.Player {
             if (other.TryGetComponent<IInteractable>(out var interactable)) {
                 if (!_interactablesNearby.Contains(interactable)) {
                     _interactablesNearby.Add(interactable);
-                    interactable.Highlight();
+                    interactable.Highlight(true);
                 }
             }
         }
@@ -70,10 +70,11 @@ namespace FifthSemester.Player {
             if (other.TryGetComponent<IInteractable>(out var interactable)) {
                 if (_interactablesNearby.Contains(interactable)) {
                     _interactablesNearby.Remove(interactable);
-                    interactable.Unhighlight();
+                    interactable.Highlight(false);
                 }
             }
         }
+
 
         private void Interact() {
             var best = GetBestInteractable();
@@ -81,18 +82,7 @@ namespace FifthSemester.Player {
             if (best == null || !best.IsInteractable)
                 return;
 
-            if (best is Item item) {
-                bool added = _inventoryService.AddItem(item);
-
-                if (!added) return;
-
-                PlayPickupFeedback();
-
-                _interactablesNearby.Remove(best);
-                return;
-            }
-
-            best.Interact(this);
+            best.Interact();
         }
 
         private IInteractable GetBestInteractable() {

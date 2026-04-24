@@ -3,6 +3,7 @@
 
 using FifthSemester.Core.Input;
 using FifthSemester.Core.Services;
+using FifthSemester.Core.States;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,6 +11,8 @@ using UnityEngine.InputSystem;
 namespace FifthSemester.Core.Events {
     public class InputService : IInputService, IDisposable {
         private GameInput _gameInput;
+        public GameState CurrentGameState { get; set; } = GameState.Gameplay;
+
 
         // Flag para ignorar o primeiro avanço de diálogo
         private bool _ignoreNextDialogueAdvance = false;
@@ -25,6 +28,7 @@ namespace FifthSemester.Core.Events {
         private InputAction _previous;
         private InputAction _openPause;
         private InputAction _dialogueAdvance;
+
 
         public InputService() {
             Initialize();
@@ -72,6 +76,8 @@ namespace FifthSemester.Core.Events {
             _next.performed += HandleNext;
             _previous.performed += HandlePrevious;
             _openPause.performed += HandleOpenPause;
+
+            ServiceLocator.Get<IEventBus>()?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
         }
 
         private void PublishEvent<T>(T evtStruct) {
@@ -80,20 +86,28 @@ namespace FifthSemester.Core.Events {
         }
 
         public void HandleMovement(InputAction.CallbackContext context) {
+            if (CurrentGameState != GameState.Gameplay) return;
+
             PublishEvent(new MoveInputEvent(context.ReadValue<Vector2>()));
         }
 
         public void HandleLook(InputAction.CallbackContext context) {
+            if (CurrentGameState != GameState.Gameplay) return;
+
             PublishEvent(new LookInputEvent(context.ReadValue<Vector2>()));
         }
 
         public void HandleJump(InputAction.CallbackContext context) {
+            if (CurrentGameState != GameState.Gameplay) return;
+
             if (context.performed) {
                 PublishEvent(new JumpInputEvent());
             }
         }
 
         public void HandleCrouch(InputAction.CallbackContext context) {
+            if (CurrentGameState != GameState.Gameplay) return;
+
             if (context.performed) {
                 PublishEvent(new CrouchInputEvent(true));
             }
@@ -103,6 +117,8 @@ namespace FifthSemester.Core.Events {
         }
 
         public void HandleSprint(InputAction.CallbackContext context) {
+            if (CurrentGameState != GameState.Gameplay) return;
+
             if (context.performed) {
                 PublishEvent(new SprintInputEvent(true));
             }
@@ -116,6 +132,8 @@ namespace FifthSemester.Core.Events {
         }
 
         public void HandleZoom(InputAction.CallbackContext context) {
+            if (CurrentGameState != GameState.Gameplay) return;
+
             if (context.performed) {
                 PublishEvent(new ZoomInputEvent(true));
             }
@@ -151,30 +169,12 @@ namespace FifthSemester.Core.Events {
             }
         }
 
-        private void DisablePlayerInput() {
-            _move.Disable();
-            _look.Disable();
-            _jump.Disable();
-            _crouch.Disable();
-            _sprint.Disable();
-            _interact.Disable();
-            _zoom.Disable();
-            _next.Disable();
-            _previous.Disable();
+        protected void OnGameStateChanged(GameStateChangedEvent evt) {
+            CurrentGameState = evt.CurrentState;
         }
-        private void EnablePlayerInput() {
-            _move.Enable();
-            _look.Enable();
-            _jump.Enable();
-            _crouch.Enable();
-            _sprint.Enable();
-            _interact.Enable();
-            _zoom.Enable();
-            _next.Enable();
-            _previous.Enable();
-        }
-
         public void Dispose() {
+            ServiceLocator.Get<IEventBus>()?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
+
             if (_gameInput == null) return;
 
             _move.performed -= HandleMovement;
@@ -193,6 +193,10 @@ namespace FifthSemester.Core.Events {
             _previous.performed -= HandlePrevious;
             _openPause.performed -= HandleOpenPause;
             _dialogueAdvance.started -= HandleDialogueAdvance;
+        }
+
+        void IInputService.OnGameStateChanged(GameStateChangedEvent evt) {
+            throw new NotImplementedException();
         }
     }
 }

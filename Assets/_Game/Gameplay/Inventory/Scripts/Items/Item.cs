@@ -4,6 +4,7 @@
 using UnityEngine;
 using ThirdParty.QuickOutline;
 using FifthSemester.Player;
+using FifthSemester.Gameplay.Shared;
 
 namespace FifthSemester.Gameplay.Inventory {
     [RequireComponent(typeof(Outline))]
@@ -20,7 +21,7 @@ namespace FifthSemester.Gameplay.Inventory {
             _collider.enabled = true;
         }
 
-        public void Interact(PlayerInteraction player) {
+        public void Interact() {
             Debug.Log("Interagiu com o item!");
             _outline.enabled = false;
             _collider.enabled = false;
@@ -30,15 +31,8 @@ namespace FifthSemester.Gameplay.Inventory {
             Debug.Log("Não pode interagir com o Item!");
         }
 
-        public void Highlight() {
-            if (_outline != null) {
-                _outline.enabled = true;
-            }
-        }
-        public void Unhighlight() {
-            if (_outline != null) {
-                _outline.enabled = false;
-            }
+        public void Highlight(bool value) {
+            _outline.enabled = value;
         }
         public override string ToString() {
             var itemName = gameObject.name ?? "Unnamed Item";

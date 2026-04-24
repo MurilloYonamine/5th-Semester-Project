@@ -1,6 +1,18 @@
 using UnityEngine;
+using FifthSemester.Core.States;
 
 namespace FifthSemester.Core.Events {
+    public readonly struct GameStateChangedEvent {
+        public readonly GameState PreviousState;
+        public readonly GameState CurrentState;
+
+        public GameStateChangedEvent(GameState previous, GameState current) {
+            PreviousState = previous;
+            CurrentState = current;
+        }
+    }
+
+
     /// ============= Input Events =============
     public readonly struct MoveInputEvent {
         public readonly Vector2 Value;

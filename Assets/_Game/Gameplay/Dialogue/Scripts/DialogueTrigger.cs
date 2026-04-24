@@ -4,41 +4,37 @@
 using UnityEngine;
 using ThirdParty.QuickOutline;
 using FifthSemester.Core.Services;
+using FifthSemester.Gameplay.Shared;
 
 namespace FifthSemester.Gameplay.Dialogue {
     [RequireComponent(typeof(Outline))]
-    public class DialogueTrigger : MonoBehaviour {
+    public class DialogueTrigger : MonoBehaviour, IInteractable {
         [SerializeField] private DialogueSO _dialogue;
         private Outline _outline;
 
         private IDialogueService<DialogueSO> _dialogueService;
 
+        public bool IsInteractable => _dialogue != null;
+
         private void Awake() {
             _outline = GetComponent<Outline>();
+            _outline.enabled = false;
         }
         private void Start() {
             _dialogueService = ServiceLocator.Get<IDialogueService<DialogueSO>>();
         }
-
-        public void TriggerDialogue() {
+        public void Interact() {
             if (_dialogue != null) {
                 _dialogueService.StartDialogue(_dialogue);
             }
         }
 
-        public void TurnOutline(bool enable) {
-            if (_outline != null) {
-                _outline.enabled = enable;
-            }
+        public void StopInteract() {
+            _dialogueService.EndDialogue();
         }
 
-        public void SetDialogue(DialogueSO newDialogue) {
-            _dialogue = newDialogue;
-        }
-
-        public bool goBackToMenuOnEnd = false;
-        public void GoBackToMenu() {
-
+        public void Highlight(bool value) {
+            _outline.enabled = value;
         }
     }
 }

@@ -33,7 +33,6 @@ namespace FifthSemester.Core.Audio {
 
         private void Awake() {
             ServiceLocator.Register<IAudioService>(this);
-            DontDestroyOnLoad(gameObject);
 
             _sfxRoot = new GameObject(SFX_PARENT_NAME).transform;
             _sfxRoot.SetParent(transform);

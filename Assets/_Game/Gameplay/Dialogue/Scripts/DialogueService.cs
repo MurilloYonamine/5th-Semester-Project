@@ -1,65 +1,83 @@
-//// autor: Murillo Gomes Yonamine
-//// data: 30/03/2026
+// autor: Murillo Gomes Yonamine
+// data: 30/03/2026
 
-//using System.Collections.Generic;
-//using FifthSemester.Core.Services;
-//using TMPro;
-//using UnityEngine;
-//using UnityEngine.UIElements;
+using System.Collections.Generic;
+using FifthSemester.Core.Services;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UIElements;
 
-//namespace FifthSemester.Gameplay.Dialogue {
-//    public class DialogueService : MonoBehaviour, IDialogueService<DialogueSO> {
-//        public bool IsDialogueActive { get; set; }
+using FifthSemester.Core.Events;
+using FifthSemester.Core.States;
 
-//        private IEventBus _eventBus;
+namespace FifthSemester.Gameplay.Dialogue {
+    public class DialogueService : MonoBehaviour, IDialogueService<DialogueSO> {
+        public GameState CurrentState { get; set; } = GameState.Gameplay;
 
-//        [SerializeField] private GameObject _dialoguePanel;
-//        [SerializeField] private TextMeshProUGUI _nameText;
-//        [SerializeField] private TextMeshProUGUI _dialogueText;
-
-
-//        private Queue<DialogueLine> _linesQueue;
+        public bool IsDialogueActive { get; private set; } = false;
 
 
-//        private void Start() {
-//            ServiceLocator.Register<IDialogueService<DialogueSO>>(this);
-//            _eventBus = ServiceLocator.Get<IEventBus>();
-//        }
+        private IEventBus _eventBus;
 
-//        public void DisplayNextLine() {
-//            if (_linesQueue.Count == 0) {
-//                EndDialogue();
-//                return;
-//            }
+        [SerializeField] private GameObject _dialoguePanel;
+        [SerializeField] private TextMeshProUGUI _nameText;
+        [SerializeField] private TextMeshProUGUI _dialogueText;
 
-//            DialogueLine line = _linesQueue.Dequeue();
+        private Queue<DialogueLine> _linesQueue;
 
-//            _nameText.text = line.speaker.characterName;
-//            _nameText.color = line.speaker.nameColor;
 
-//            _dialogueText.text = line.text;
-//            _dialogueText.color = line.speaker.textColor;
-//        }
+        private void Start() {
+            ServiceLocator.Register<IDialogueService<DialogueSO>>(this);
+            _eventBus = ServiceLocator.Get<IEventBus>();
 
-//        //public void EndDialogue() {
-//        //    ToggleDialogue(false);
-//        //    _eventBus.Publish(new DialogueEndedEvent());
-//        //}
-//        //public void StartDialogue(DialogueSO dialogue) {
-//        //    ToggleDialogue(true);
+            _eventBus.Subscribe<DialogueAdvanceRequestedEvent>(OnDialogueAdvanceRequested);
+            _eventBus.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
+        }
+        private void OnDisable() {
+            _eventBus?.Unsubscribe<DialogueAdvanceRequestedEvent>(OnDialogueAdvanceRequested);
+            _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
+        }
 
-//        //    _eventBus.Publish(new DialogueStartedEvent(dialogue));
+        public void ToggleDialogue(bool enable) {
+            IsDialogueActive = enable;
+            _dialoguePanel.SetActive(enable);
+        }
+        private void Clear() {
+            _nameText.text = "";
+            _dialogueText.text = "";
+        }
+        private void OnDialogueAdvanceRequested(DialogueAdvanceRequestedEvent evt) {
+            DisplayNextLine();
+        }
+        public void StartDialogue(DialogueSO dialogue) {
+            ToggleDialogue(true);
+            _eventBus?.Publish(new DialogueStartedEvent());
 
-//        //    DisplayNextLine();
-//        //}
-//        private void Clear() {
-//            _nameText.text = "";
-//            _dialogueText.text = "";
-//        }
+            _linesQueue = new Queue<DialogueLine>(dialogue.lines);
+        }
 
-//        public void ToggleDialogue(bool enable) {
-//            IsDialogueActive = enable;
-//            _dialoguePanel.SetActive(enable);
-//        }
-//    }
-//}
+        public void DisplayNextLine() {
+            if (_linesQueue == null || _linesQueue.Count == 0) {
+                EndDialogue();
+                return;
+            }
+
+            DialogueLine line = _linesQueue.Dequeue();
+            _nameText.text = line.speaker.characterName;
+            _nameText.color = line.speaker.nameColor;
+
+            _dialogueText.text = line.text;
+            _dialogueText.color = line.speaker.textColor;
+        }
+
+        public void EndDialogue() {
+            ToggleDialogue(false);
+            _eventBus?.Publish(new DialogueEndedEvent());
+            Clear();
+        }
+
+        public void OnGameStateChanged(GameStateChangedEvent evt) {
+            CurrentState = evt.CurrentState;
+        }
+    }
+}

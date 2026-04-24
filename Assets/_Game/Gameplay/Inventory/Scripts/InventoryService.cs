@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.Events;
+using FifthSemester.Core.States;
 
 namespace FifthSemester.Gameplay.Inventory {
     public class InventoryService : IInventoryService<Item>, IDisposable {
+        public GameState CurrentState { get; set; } = GameState.Gameplay;
         private int _maxCapacity;
         private List<Item> _items = new List<Item>();
 
@@ -17,11 +19,13 @@ namespace FifthSemester.Gameplay.Inventory {
         public InventoryService(int maxCapacity = 6) {
             _maxCapacity = maxCapacity;
             _eventBus = ServiceLocator.Get<IEventBus>();
+            _eventBus.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
         }
 
         public void Dispose() {
             _items.Clear();
             _eventBus = null;
+            _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
         }
 
         public bool AddItem(Item item) {
@@ -60,7 +64,31 @@ namespace FifthSemester.Gameplay.Inventory {
             return false;
         }
 
+        protected void OnGameStateChanged(GameStateChangedEvent evt) {
+            CurrentState = evt.CurrentState;
+        }
+
         public bool HasItem(Item item) => _items.Contains(item);
         public IReadOnlyList<Item> GetItems() => _items.AsReadOnly();
+
+        bool IInventoryService<Item>.AddItem(Item item) {
+            throw new NotImplementedException();
+        }
+
+        bool IInventoryService<Item>.RemoveItem(Item item) {
+            throw new NotImplementedException();
+        }
+
+        bool IInventoryService<Item>.HasItem(Item item) {
+            throw new NotImplementedException();
+        }
+
+        IReadOnlyList<Item> IInventoryService<Item>.GetItems() {
+            throw new NotImplementedException();
+        }
+
+        void IInventoryService<Item>.OnGameStateChanged(GameStateChangedEvent evt) {
+            throw new NotImplementedException();
+        }
     }
 }

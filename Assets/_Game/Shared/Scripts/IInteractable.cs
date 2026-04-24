@@ -1,16 +1,14 @@
 // Autor: Murillo Gomes Yonamine
 // Data: 08/03/2026
 
-using FifthSemester.Player;
 using UnityEngine;
 
-namespace FifthSemester.Gameplay.Inventory {
+namespace FifthSemester.Gameplay.Shared {
     public interface IInteractable {
         bool IsInteractable { get; }
-        public void Interact(PlayerInteraction player);
+        public void Interact();
         public void StopInteract();
 
-        void Highlight();
-        void Unhighlight();
+        void Highlight(bool value);
     }
 }

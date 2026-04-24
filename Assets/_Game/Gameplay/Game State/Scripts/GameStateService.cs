@@ -5,6 +5,7 @@ using FifthSemester.Core.States;
 
 namespace FifthSemester.Gameplay {
     public class GameStateService : MonoBehaviour, IGameStateService {
+        private const string TAG = "<color=yellow>[GameStateService]</color>";
         public GameState CurrentState { get; set; } = GameState.Gameplay;
         private GameState _previousState;
 
@@ -27,7 +28,7 @@ namespace FifthSemester.Gameplay {
             _previousState = CurrentState;
             CurrentState = newState;
 
-            Debug.Log($"[GameStateService] Mudou de {_previousState} para {CurrentState}");
+            Debug.Log($"{TAG} Mudou de {_previousState} para {CurrentState}");
 
             _eventBus.Publish(new GameStateChangedEvent(_previousState, CurrentState));
         }
@@ -47,7 +48,6 @@ namespace FifthSemester.Gameplay {
                 ChangeState(_previousState);
                 Time.timeScale = 1f; 
             } else {
-                // Se não estava pausado, pausa
                 ChangeState(GameState.Paused);
                 Time.timeScale = 0f;
             }

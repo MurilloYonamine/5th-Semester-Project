@@ -64,31 +64,11 @@ namespace FifthSemester.Gameplay.Inventory {
             return false;
         }
 
-        protected void OnGameStateChanged(GameStateChangedEvent evt) {
+        public void OnGameStateChanged(GameStateChangedEvent evt) {
             CurrentState = evt.CurrentState;
         }
 
         public bool HasItem(Item item) => _items.Contains(item);
         public IReadOnlyList<Item> GetItems() => _items.AsReadOnly();
-
-        bool IInventoryService<Item>.AddItem(Item item) {
-            throw new NotImplementedException();
-        }
-
-        bool IInventoryService<Item>.RemoveItem(Item item) {
-            throw new NotImplementedException();
-        }
-
-        bool IInventoryService<Item>.HasItem(Item item) {
-            throw new NotImplementedException();
-        }
-
-        IReadOnlyList<Item> IInventoryService<Item>.GetItems() {
-            throw new NotImplementedException();
-        }
-
-        void IInventoryService<Item>.OnGameStateChanged(GameStateChangedEvent evt) {
-            throw new NotImplementedException();
-        }
     }
 }

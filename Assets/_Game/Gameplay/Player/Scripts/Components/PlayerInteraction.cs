@@ -82,6 +82,19 @@ namespace FifthSemester.Player {
             if (best == null || !best.IsInteractable)
                 return;
 
+            // Se for Item, adiciona ao inventário e mostra feedback
+            if (best is Item item) {
+                var inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
+                bool added = inventoryService?.AddItem(item) ?? false;
+                if (added) {
+                    PlayPickupFeedback();
+                    _interactablesNearby.Remove(best);
+                    item.Interact(); // feedback visual
+                }
+                return;
+            }
+
+            // Caso contrário, interação padrão
             best.Interact();
         }
 

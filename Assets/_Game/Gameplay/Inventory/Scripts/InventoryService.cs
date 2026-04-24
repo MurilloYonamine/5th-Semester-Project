@@ -11,9 +11,6 @@ namespace FifthSemester.Gameplay.Inventory {
         private int _maxCapacity;
         private List<Item> _items = new List<Item>();
 
-        public event Action<Item> OnItemAdded;
-        public event Action<Item> OnItemRemoved;
-
         private IEventBus _eventBus;
 
         public InventoryService(int maxCapacity = 6) {
@@ -40,7 +37,6 @@ namespace FifthSemester.Gameplay.Inventory {
                 mono.gameObject.SetActive(false);
             }
 
-            OnItemAdded?.Invoke(item);
             _eventBus?.Publish(new InventoryItemAddedEvent(_items.Count - 1, _items.Count));
 
             return true;
@@ -55,7 +51,6 @@ namespace FifthSemester.Gameplay.Inventory {
                     mono.gameObject.SetActive(true);
                 }
 
-                OnItemRemoved?.Invoke(item);
                 _eventBus?.Publish(new InventoryItemRemovedEvent(index, _items.Count));
 
                 return true;

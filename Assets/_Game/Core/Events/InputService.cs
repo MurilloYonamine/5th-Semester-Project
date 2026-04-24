@@ -86,15 +86,25 @@ namespace FifthSemester.Core.Events {
         }
 
         public void HandleMovement(InputAction.CallbackContext context) {
-            if (CurrentGameState != GameState.Gameplay) return;
 
-            PublishEvent(new MoveInputEvent(context.ReadValue<Vector2>()));
+            if (context.performed) {
+                if (CurrentGameState != GameState.Gameplay) return;
+                PublishEvent(new MoveInputEvent(context.ReadValue<Vector2>()));
+            }
+            else if (context.canceled) {
+                PublishEvent(new MoveInputEvent(Vector2.zero));
+            }
         }
 
         public void HandleLook(InputAction.CallbackContext context) {
-            if (CurrentGameState != GameState.Gameplay) return;
+            if (context.performed) {
+                if (CurrentGameState != GameState.Gameplay) return;
+                PublishEvent(new LookInputEvent(context.ReadValue<Vector2>()));
+            }
+            else if (context.canceled) {
+                PublishEvent(new LookInputEvent(Vector2.zero));
+            }
 
-            PublishEvent(new LookInputEvent(context.ReadValue<Vector2>()));
         }
 
         public void HandleJump(InputAction.CallbackContext context) {
@@ -106,9 +116,9 @@ namespace FifthSemester.Core.Events {
         }
 
         public void HandleCrouch(InputAction.CallbackContext context) {
-            if (CurrentGameState != GameState.Gameplay) return;
 
             if (context.performed) {
+                if (CurrentGameState != GameState.Gameplay) return;
                 PublishEvent(new CrouchInputEvent(true));
             }
             else if (context.canceled) {
@@ -117,9 +127,8 @@ namespace FifthSemester.Core.Events {
         }
 
         public void HandleSprint(InputAction.CallbackContext context) {
-            if (CurrentGameState != GameState.Gameplay) return;
-
             if (context.performed) {
+                if (CurrentGameState != GameState.Gameplay) return;
                 PublishEvent(new SprintInputEvent(true));
             }
             else if (context.canceled) {
@@ -134,9 +143,9 @@ namespace FifthSemester.Core.Events {
         }
 
         public void HandleZoom(InputAction.CallbackContext context) {
-            if (CurrentGameState != GameState.Gameplay) return;
 
             if (context.performed) {
+                if (CurrentGameState != GameState.Gameplay) return;
                 PublishEvent(new ZoomInputEvent(true));
             }
             else if (context.canceled) {
@@ -171,8 +180,29 @@ namespace FifthSemester.Core.Events {
             }
         }
 
-        protected void OnGameStateChanged(GameStateChangedEvent evt) {
+        public void OnGameStateChanged(GameStateChangedEvent evt) {
             CurrentGameState = evt.CurrentState;
+
+            bool isGameplay = CurrentGameState == GameState.Gameplay;
+
+            if (isGameplay) {
+                _move.Enable();
+                _look.Enable();
+                _jump.Enable();
+                _crouch.Enable();
+                _sprint.Enable();
+            }
+            else {
+                PublishEvent(new MoveInputEvent(Vector2.zero));
+                PublishEvent(new SprintInputEvent(false));
+                PublishEvent(new CrouchInputEvent(false));
+
+                _move.Disable();
+                _look.Disable();
+                _jump.Disable();
+                _crouch.Disable();
+                _sprint.Disable();
+            }
         }
         public void Dispose() {
             ServiceLocator.Get<IEventBus>()?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
@@ -195,10 +225,6 @@ namespace FifthSemester.Core.Events {
             _previous.performed -= HandlePrevious;
             _openPause.performed -= HandleOpenPause;
             _dialogueAdvance.started -= HandleDialogueAdvance;
-        }
-
-        void IInputService.OnGameStateChanged(GameStateChangedEvent evt) {
-            throw new NotImplementedException();
         }
     }
 }

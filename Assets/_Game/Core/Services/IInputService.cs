@@ -7,6 +7,6 @@ namespace FifthSemester.Core.Input {
         void Enable();
         void Disable();
 
-        protected void OnGameStateChanged(GameStateChangedEvent evt);
+        public void OnGameStateChanged(GameStateChangedEvent evt);
     }
 }

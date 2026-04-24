@@ -12,7 +12,7 @@ namespace FifthSemester.Player.Components {
         private Rigidbody _rigidbody;
         private MovementState _currentState;
         private PlayerController _player;
-        private PlayerEvents _playerEvents;
+        private IEventBus _eventBus;
         private IAudioService _audioService;
 
         [Header("Movement")]
@@ -80,7 +80,6 @@ namespace FifthSemester.Player.Components {
         private void Awake() {
             _player = GetComponent<PlayerController>();
             _rigidbody = GetComponent<Rigidbody>();
-            _playerEvents = GetComponent<PlayerEvents>();
 
             _originalScale = _player.transform.localScale;
 
@@ -94,18 +93,16 @@ namespace FifthSemester.Player.Components {
         private void Start() {
             _audioService = ServiceLocator.Get<IAudioService>();
 
-            if(_playerEvents == null) return;
-
-            _playerEvents = _player.PlayerEvents;
-            _playerEvents.OnMoveInput += HandleMove;
-            _playerEvents.OnSprintInput += HandleSprint;
-            _playerEvents.OnCrouchInput += HandleCrouch;
+            _eventBus = ServiceLocator.Get<IEventBus>();
+            _eventBus?.Subscribe<MoveInputEvent>(HandleMove);
+            _eventBus?.Subscribe<SprintInputEvent>(HandleSprint);
+            _eventBus?.Subscribe<CrouchInputEvent>(HandleCrouch);
         }
 
         private void OnDisable() {
-            _playerEvents.OnMoveInput -= HandleMove;
-            _playerEvents.OnSprintInput -= HandleSprint;
-            _playerEvents.OnCrouchInput -= HandleCrouch;
+            _eventBus?.Unsubscribe<MoveInputEvent>(HandleMove);
+            _eventBus?.Unsubscribe<SprintInputEvent>(HandleSprint);
+            _eventBus?.Unsubscribe<CrouchInputEvent>(HandleCrouch);
         }
 
         private void Update() {
@@ -167,20 +164,19 @@ namespace FifthSemester.Player.Components {
             _currentState?.Enter();
         }
 
-        private void HandleMove(Vector2 direction) {
-            _moveInput = direction;
-            _currentState?.HandleMove(direction);
+        private void HandleMove(MoveInputEvent evt) {
+            _moveInput = evt.Value;
+            _currentState?.HandleMove(evt.Value);
         }
 
-        private void HandleSprint(bool isPressed) {
-            _currentState?.HandleSprint(isPressed);
+        private void HandleSprint(SprintInputEvent evt) {
+            _currentState?.HandleSprint(evt.IsPressed);
             
-            var eventBus = ServiceLocator.Get<IEventBus>();
-            eventBus?.Publish(new PlayerSprintChangedEvent(isPressed));
+            _eventBus?.Publish(new PlayerSprintChangedEvent(evt.IsPressed));
         }
 
-        private void HandleCrouch(bool isPressed) {
-            _currentState?.HandleCrouch(isPressed);
+        private void HandleCrouch(CrouchInputEvent evt) {
+            _currentState?.HandleCrouch(evt.IsPressed);
         }
 
         #endregion

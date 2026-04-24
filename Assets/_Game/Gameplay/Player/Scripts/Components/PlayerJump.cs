@@ -4,6 +4,8 @@
 using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using FifthSemester.Core.Events;
+using FifthSemester.Core.Services;
 
 namespace FifthSemester.Player.Components {
     public class PlayerJump : MonoBehaviour {
@@ -25,7 +27,7 @@ namespace FifthSemester.Player.Components {
         private Rigidbody _rigidbody;
         private PlayerMovement _movement;
         private PlayerController _player;
-        private PlayerEvents _playerEvents;
+        private IEventBus _eventBus;
 
         private bool _isGrounded;
         private bool _isJumping;
@@ -38,16 +40,12 @@ namespace FifthSemester.Player.Components {
         }
 
         private void Start() {
-            _playerEvents = _player.PlayerEvents;
-            if (_playerEvents != null) {
-                _playerEvents.OnJumpInput += HandleJump;
-            }
+            _eventBus = ServiceLocator.Get<IEventBus>();
+            _eventBus?.Subscribe<JumpInputEvent>(HandleJump);
         }
 
         private void OnDisable() {
-            if (_playerEvents != null) {
-                _playerEvents.OnJumpInput -= HandleJump;
-            }
+            _eventBus?.Unsubscribe<JumpInputEvent>(HandleJump);
         }
 
         private void FixedUpdate() {
@@ -80,7 +78,7 @@ namespace FifthSemester.Player.Components {
             }
         }
 
-        private void HandleJump() {
+        private void HandleJump(JumpInputEvent evt) {
             if (!_enableJump) return;
             if (!_isGrounded) return;
 

@@ -1,40 +1,41 @@
+using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Gameplay.Dialogue;
 using FifthSemester.Gameplay.Inventory;
-
-// using FifthSemester.Gameplay.Inventory; // Removido, agora usa Shared
 using FifthSemester.Gameplay.Shared;
-using FifthSemester.Player.Components;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace FifthSemester.Player {
     public class PlayerInteraction : MonoBehaviour {
+        [SerializeField] private Camera _playerCamera;
+
         [Header("Settings")]
         [SerializeField, Range(1f, 5f)] private float _interactionRange = 3f;
         [SerializeField] private LayerMask _interactionLayer;
-        private IInteractable _currentInteractable;
 
-        private PlayerController _player;
-        private PlayerEvents _playerEvents;
-
-        private IAudioService _audioService;
+        [Header("Feedback")]
         [SerializeField] private AudioClip _pickupSound;
 
-        private void Awake() {
-            _player = GetComponent<PlayerController>();
-        }
+        private IInteractable _currentInteractable;
+        private IEventBus _eventBus;
+        private IAudioService _audioService;
+        private IInventoryService<Item> _inventoryService;
 
         private void Start() {
             _audioService = ServiceLocator.Get<IAudioService>();
+            _inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
+            _eventBus = ServiceLocator.Get<IEventBus>();
 
-            _playerEvents = _player.PlayerEvents;
-            _playerEvents.OnInteractInput += Interact;
+            _eventBus?.Subscribe<InteractInputEvent>(Interact);
         }
 
         private void OnDisable() {
-            if (_playerEvents != null)
-                _playerEvents.OnInteractInput -= Interact;
+            _eventBus?.Unsubscribe<InteractInputEvent>(Interact);
+
+            if (_currentInteractable != null) {
+                _currentInteractable.Highlight(false);
+                _currentInteractable = null;
+            }
         }
 
         private void Update() {
@@ -52,7 +53,7 @@ namespace FifthSemester.Player {
         }
 
         private IInteractable GetInteractableFromRay() {
-            Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+            Ray ray = _playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
             if (Physics.Raycast(ray, out RaycastHit hit, _interactionRange, _interactionLayer)) {
                 return hit.collider.GetComponent<IInteractable>();
@@ -61,27 +62,34 @@ namespace FifthSemester.Player {
             return null;
         }
 
-        private void Interact() {
-            var interactable = GetInteractableFromRay();
-
-            if (interactable == null || !interactable.IsInteractable)
-                return;
-
-            if (interactable is Item item) {
-                var inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
-                bool added = inventoryService?.AddItem(item) ?? false;
-
-                if (added) {
-                    PlayPickupFeedback();
-                    item.Interact();
-                }
+        private void Interact(InteractInputEvent evt) {
+            if (_currentInteractable == null || !_currentInteractable.IsInteractable) {
                 return;
             }
 
-            interactable.Interact();
+            if (_currentInteractable is Item item) {
+                HandleItemPickup(item);
+            } else {
+                _currentInteractable.Interact();
+            }
         }
+
+        private void HandleItemPickup(Item item) {
+            if (_inventoryService == null) {
+                Debug.LogError("IInventoryService não encontrado. Não é possível pegar o item.");
+                return;
+            }
+
+            bool wasAdded = _inventoryService.AddItem(item);
+
+            if (wasAdded) {
+                PlayPickupFeedback();
+                item.Interact();
+            }
+        }
+
         private void PlayPickupFeedback() {
-            if (_pickupSound != null) {
+            if (_pickupSound != null && _audioService != null) {
                 _audioService.PlaySFX(_pickupSound);
             }
         }

@@ -13,6 +13,6 @@ namespace FifthSemester.Core.Services {
 
         IReadOnlyList<TItem> GetItems();
 
-        protected void OnGameStateChanged(GameStateChangedEvent evt);
+        void OnGameStateChanged(GameStateChangedEvent evt);
     }
 }

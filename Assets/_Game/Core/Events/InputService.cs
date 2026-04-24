@@ -128,6 +128,8 @@ namespace FifthSemester.Core.Events {
         }
 
         public void HandleInteract(InputAction.CallbackContext context) {
+            if (CurrentGameState != GameState.Gameplay) return;
+
             PublishEvent(new InteractInputEvent());
         }
 

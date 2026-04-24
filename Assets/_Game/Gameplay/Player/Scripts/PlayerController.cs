@@ -9,14 +9,12 @@ namespace FifthSemester.Player {
     [RequireComponent(typeof(PlayerJump))]
     [RequireComponent(typeof(PlayerCamera))]
     [RequireComponent(typeof(PlayerInteraction))]
-    [RequireComponent(typeof(PlayerEvents))]
     [RequireComponent(typeof(Rigidbody))]
     public class PlayerController : MonoBehaviour {
         [Header("Player Unity Components")]
         public Rigidbody Rigidbody { get; private set; }
 
         [Header("Player Components")]
-        public PlayerEvents PlayerEvents { get; private set; }
         public PlayerMovement PlayerMovement { get; private set; }
         public PlayerJump PlayerJump { get; private set; }
         public PlayerCamera PlayerCamera { get; private set; }
@@ -27,7 +25,6 @@ namespace FifthSemester.Player {
         public bool IsGrounded => PlayerJump.IsGrounded;
 
         private void Awake() {
-            PlayerEvents = GetComponent<PlayerEvents>();
             Rigidbody = GetComponent<Rigidbody>();
             PlayerMovement = GetComponent<PlayerMovement>();
             PlayerJump = GetComponent<PlayerJump>();

@@ -3,6 +3,7 @@
 
 using System;
 using UnityEngine;
+using FifthSemester.Core.Services;
 using FifthSemester.Core.Events;
 using Sirenix.OdinInspector;
 
@@ -46,7 +47,7 @@ namespace FifthSemester.Player.Components {
         private float _bobTimer;
         private PlayerMovement _movement;
         private PlayerController _player;
-        private PlayerEvents _playerEvents;
+        private IEventBus _eventBus;
 
         private void Awake() {
             _player = GetComponent<PlayerController>();
@@ -67,18 +68,15 @@ namespace FifthSemester.Player.Components {
 
         private void Start() {
             if (_player == null) _player = GetComponent<PlayerController>();
-            if (_player == null || _player.PlayerEvents == null) return;
 
-            _playerEvents = _player.PlayerEvents;
-            _playerEvents.OnLookInput += HandleLookInput;
-            _playerEvents.OnZoomInput += HandleZoomInput;
+            _eventBus = ServiceLocator.Get<IEventBus>();
+            _eventBus?.Subscribe<LookInputEvent>(HandleLookInput);
+            _eventBus?.Subscribe<ZoomInputEvent>(HandleZoomInput);
         }
 
         private void OnDisable() {
-            if (_playerEvents != null) {
-                _playerEvents.OnLookInput -= HandleLookInput;
-                _playerEvents.OnZoomInput -= HandleZoomInput;
-            }
+            _eventBus?.Unsubscribe<LookInputEvent>(HandleLookInput);
+            _eventBus?.Unsubscribe<ZoomInputEvent>(HandleZoomInput);
         }
 
         private void Update() {
@@ -102,12 +100,12 @@ namespace FifthSemester.Player.Components {
             HandleHeadBob();
         }
 
-        private void HandleLookInput(Vector2 look) {
-            _lookInput = look;
+        private void HandleLookInput(LookInputEvent evt) {
+            _lookInput = evt.Value;
         }
 
-        private void HandleZoomInput(bool isPressed) {
-            _zoomPressed = isPressed;
+        private void HandleZoomInput(ZoomInputEvent evt) {
+            _zoomPressed = evt.IsPressed;
         }
 
         private void HandleZoom() {

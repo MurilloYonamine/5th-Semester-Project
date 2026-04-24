@@ -9,6 +9,8 @@ using FifthSemester.Gameplay.Shared;
 namespace FifthSemester.Gameplay.Inventory {
     [RequireComponent(typeof(Outline))]
     public class Item : MonoBehaviour, IInteractable {
+        [field: SerializeField] public string Id { get; private set; }
+
         public bool IsInteractable => true;
         private Outline _outline;
         private BoxCollider _collider;

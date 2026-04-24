@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace FifthSemester.Gameplay.Shared {
     public interface IInteractable {
+        string Id { get; }
+
         bool IsInteractable { get; }
         public void Interact();
         public void StopInteract();

@@ -146,11 +146,20 @@ namespace FifthSemester.Gameplay.Inventory {
             if (_currentItem != null) {
                 Destroy(_currentItem);
                 _currentItem = null;
+                _itemDisplay.texture = null;
             }
 
             _item = null;
-        }
 
+            ClearRenderTexture();
+        }
+        private void ClearRenderTexture() {
+            if (_previewCamera == null || _renderTexture == null) return;
+
+            _previewCamera.enabled = true;
+            _previewCamera.Render();
+            _previewCamera.enabled = false;
+        }
         private void OnDestroy() {
             ClearItem();
 

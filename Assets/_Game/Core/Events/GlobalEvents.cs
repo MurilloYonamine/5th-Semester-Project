@@ -127,4 +127,14 @@ namespace FifthSemester.Core.Events {
             ItemGameObject = itemGameObject;
         }
     }
+
+    public readonly struct ItemDeliveredEvent {
+        public readonly string DeliveryPointId;
+        public readonly string DeliveredItemId;
+
+        public ItemDeliveredEvent(string deliveryPointId, string deliveredItemId) {
+            DeliveryPointId = deliveryPointId;
+            DeliveredItemId = deliveredItemId;
+        }
+    }
 }

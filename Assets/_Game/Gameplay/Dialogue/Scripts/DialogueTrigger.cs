@@ -9,6 +9,8 @@ using FifthSemester.Gameplay.Shared;
 namespace FifthSemester.Gameplay.Dialogue {
     [RequireComponent(typeof(Outline))]
     public class DialogueTrigger : MonoBehaviour, IInteractable {
+        [field: SerializeField] public string Id { get; private set; }
+
         [SerializeField] private DialogueSO _dialogue;
         private Outline _outline;
 

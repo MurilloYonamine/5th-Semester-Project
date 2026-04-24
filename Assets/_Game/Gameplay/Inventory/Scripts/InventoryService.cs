@@ -50,7 +50,6 @@ namespace FifthSemester.Gameplay.Inventory {
                 if (item is MonoBehaviour mono) {
                     mono.gameObject.SetActive(true);
                 }
-
                 _eventBus?.Publish(new InventoryItemRemovedEvent(index, _items.Count));
 
                 return true;

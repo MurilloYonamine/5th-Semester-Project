@@ -318,7 +318,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3427202824949240612}
   - component: {fileID: 9124929168941009513}
-  - component: {fileID: 7096691607551600050}
   - component: {fileID: 2360116003508506739}
   m_Layer: 5
   m_Name: Text Selector
@@ -374,26 +373,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!114 &7096691607551600050
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5364872063769050282}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afdf87cfd57cffa4ca255af3f102937c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _currentIndex: 0
-  _selectionSound: {fileID: 0}
-  _labelText: {fileID: 6581133602681089983}
-  _optionText: {fileID: 6677381882273837319}
-  _focusedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _unfocusedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  _hoverColor: {r: 1, g: 1, b: 1, a: 1}
-  _isFocused: 0
 --- !u!114 &2360116003508506739
 MonoBehaviour:
   m_ObjectHideFlags: 0

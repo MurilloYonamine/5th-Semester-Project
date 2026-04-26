@@ -13,9 +13,8 @@ namespace FifthSemester.Core.Events {
         private GameInput _gameInput;
         public GameState CurrentGameState { get; set; } = GameState.Gameplay;
 
-
-        // Flag para ignorar o primeiro avanço de diálogo
         private bool _ignoreNextDialogueAdvance = false;
+        private bool _isInventoryOpen = false;
 
         private InputAction _move;
         private InputAction _look;
@@ -78,6 +77,7 @@ namespace FifthSemester.Core.Events {
             _openPause.performed += HandleOpenPause;
 
             ServiceLocator.Get<IEventBus>()?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
+            ServiceLocator.Get<IEventBus>()?.Subscribe<InventoryToggledEvent>(OnInventoryToggled);
         }
 
         private void PublishEvent<T>(T evtStruct) {
@@ -154,15 +154,26 @@ namespace FifthSemester.Core.Events {
         }
 
         public void HandleNext(InputAction.CallbackContext context) {
-            if (context.performed) {
-                PublishEvent(new NextInputEvent());
+            if (!context.performed) return;
+
+            if (!_isInventoryOpen) {
+                PublishEvent(new InventoryToggledEvent(true)); // abre inventário
+                return;
             }
+            PublishEvent(new NextInputEvent()); // navega
         }
 
         public void HandlePrevious(InputAction.CallbackContext context) {
-            if (context.performed) {
-                PublishEvent(new PreviousInputEvent());
+            if (!context.performed) return;
+
+            if (!_isInventoryOpen) {
+                PublishEvent(new InventoryToggledEvent(true)); // abre inventário
+                return;
             }
+            PublishEvent(new PreviousInputEvent()); // navega
+        }
+        private void OnInventoryToggled(InventoryToggledEvent evt) {
+            _isInventoryOpen = evt.IsOpen;
         }
         public void HandleOpenPause(InputAction.CallbackContext context) {
             if (context.performed) {

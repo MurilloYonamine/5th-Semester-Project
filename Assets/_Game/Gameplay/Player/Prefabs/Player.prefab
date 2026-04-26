@@ -252,7 +252,7 @@ MonoBehaviour:
   _sprintDuration: 5
   _sprintCooldownSeconds: 0.5
   _enableCrouch: 1
-  _holdToCrouch: 0
+  _holdToCrouch: 1
   _crouchHeight: 0.75
   _speedReduction: 0.5
   _footstepClips:
@@ -356,7 +356,7 @@ Camera:
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 55
+    m_Bits: 447
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0

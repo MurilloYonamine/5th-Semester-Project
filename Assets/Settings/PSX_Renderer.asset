@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Name: BarrelDistortionFeature
   m_EditorClassIdentifier: 
   m_Active: 1
-  injectionPoint: 550
+  injectionPoint: 600
   fetchColorBuffer: 1
   requirements: 0
   passMaterial: {fileID: 2100000, guid: 2a35f89d5923c9547afc0490faa92fe4, type: 2}
@@ -127,12 +127,12 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: 7833122117494664109}
   - {fileID: -2144291060005951880}
+  - {fileID: -555640494524697787}
   - {fileID: -3054315545171704922}
   - {fileID: -3727017411173756394}
   - {fileID: -8663911430653622191}
   - {fileID: 84873706099977528}
-  - {fileID: -555640494524697787}
-  m_RendererFeatureMap: ad6b866f10d7b46c78a64c51a4f23de2a64316b231e49cd516d24a3f69f946cc51c8710a759ac387382ddc9e2f882d0145730805eaf749f8
+  m_RendererFeatureMap: ad6b866f10d7b46c78a64c51a4f23de245730805eaf749f8a64316b231e49cd516d24a3f69f946cc51c8710a759ac387382ddc9e2f882d01
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}

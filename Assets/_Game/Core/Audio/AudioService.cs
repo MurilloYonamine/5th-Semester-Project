@@ -13,11 +13,13 @@ namespace FifthSemester.Core.Audio {
         public const string MASTER_VOLUME_PARAMETER_NAME = "MasterVolume";
         public const string MUSIC_VOLUME_PARAMETER_NAME = "MusicVolume";
         public const string SFX_VOLUME_PARAMETER_NAME = "SFXVolume";
+        public const string AMBIENCE_VOLUME_PARAMETER_NAME = "AmbienceVolume";
 
         [Header("Audio Mixers")]
         [field: SerializeField] public AudioMixerGroup MasterMixer { get; private set; }
         [field: SerializeField] public AudioMixerGroup MusicMixer { get; private set; }
         [field: SerializeField] public AudioMixerGroup SFXMixer { get; private set; }
+        [field: SerializeField] public AudioMixerGroup AmbienceMixer { get; private set; }
 
         [Header("Audio Settings")]
         public const float TRACK_TRANSITION_SPEED = 1f;
@@ -43,13 +45,13 @@ namespace FifthSemester.Core.Audio {
         }
 
         private void Start() {
-            int masterLevel = PlayerPrefs.GetInt("MasterVolume", 4);
-            int musicLevel = PlayerPrefs.GetInt("MusicVolume", 4);
-            int sfxLevel = PlayerPrefs.GetInt("SFXVolume", 4);
-
-            SetMasterVolume(masterLevel * 0.25f);
-            SetMusicVolume(musicLevel * 0.25f);
-            SetSFXVolume(sfxLevel * 0.25f);
+            ISettingsService settings = ServiceLocator.Get<ISettingsService>();
+            if (settings != null) {
+                SetMasterVolume(settings.MasterVolume);
+                SetMusicVolume(settings.MusicVolume);
+                SetSFXVolume(settings.SFXVolume);
+                SetAmbienceVolume(settings.AmbienceVolume);
+            }
         }
         #region Play Audio
         /// <summary>
@@ -154,6 +156,28 @@ namespace FifthSemester.Core.Audio {
 
             return audioChannel.PlayTrack(clip, loop, startingVolume, volumeCap, pitch, filePath);
         }
+
+        public AudioTrack PlayAmbience(string filePath, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f) {
+            AudioClip clip = Resources.Load<AudioClip>(filePath);
+
+            if (clip == null) {
+                Debug.LogError($"Could not load audio file '{filePath}'. Please make sure this exists in the Resources directory!");
+                return null;
+            }
+
+            return PlayAmbience(clip, 0, loop, startingVolume, volumeCap, pitch, filePath);
+        }
+
+        public AudioTrack PlayAmbience(AudioClip clip, int channel = 0, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f, string filePath = "") {
+            AudioChannel audioChannel = TryGetChannel(
+              channelNumber: channel,
+              createIfDoesNotExist: true
+            );
+
+            AudioTrack audioTrack = audioChannel.PlayTrack(clip, loop, startingVolume, volumeCap, pitch, filePath);
+
+            return audioChannel.PlayTrack(clip, loop, startingVolume, volumeCap, pitch, filePath);
+        }
         #endregion
         #region Stop Audio
         /// <summary>
@@ -222,6 +246,29 @@ namespace FifthSemester.Core.Audio {
                 Destroy(child.gameObject);
             }
         }
+
+        public void StopAmbience(AudioClip clip) {
+            if (clip == null) return;
+
+            StopAmbience(clip.name);
+        }
+        public void StopAmbience(string ambienceName) {
+            ambienceName = ambienceName.ToLower();
+
+            foreach (Transform child in transform) {
+                if (child.name.ToLower().Contains("ambience") && child.name.ToLower().Contains(ambienceName)) {
+                    Destroy(child.gameObject);
+                    return;
+                }
+            }
+        }
+        public void StopAllAmbience() {
+            foreach (Transform child in transform) {
+                if (child.name.ToLower().Contains("ambience")) {
+                    Destroy(child.gameObject);
+                }
+            }
+        }
         #endregion
         #region Set Volumes
         /// <summary>
@@ -253,6 +300,16 @@ namespace FifthSemester.Core.Audio {
             float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : Mathf.Log10(volume) * 20f;
             SFXMixer.audioMixer.SetFloat(SFX_VOLUME_PARAMETER_NAME, dbVolume);
         }
+        /// <summary>
+        /// Sets the ambience volume of the mixer.
+        /// </summary>
+        /// <param name="volume">Volume value (0 to 1).</param>
+        /// <param name="muted">Whether to mute the audio.</param>
+        public void SetAmbienceVolume(float volume, bool muted = false) {
+            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : Mathf.Log10(volume) * 20f;
+            AmbienceMixer.audioMixer.SetFloat(AMBIENCE_VOLUME_PARAMETER_NAME, dbVolume);
+        }
+
         #endregion
 
         /// <summary>

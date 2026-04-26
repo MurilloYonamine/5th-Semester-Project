@@ -4,6 +4,7 @@ using FifthSemester.Core.Events;
 using FifthSemester.Core.Input;
 using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Gameplay.Dialogue;
+using FifthSemester.Gameplay.Menu;
 
 namespace FifthSemester.Gameplay.Bootstrap {
     public static class GameBootstrapper {
@@ -27,6 +28,9 @@ namespace FifthSemester.Gameplay.Bootstrap {
             var inventoryService = new InventoryService(maxCapacity: 6);
             ServiceLocator.Register<IInventoryService<Item>>(inventoryService);
 
+            var settingsService = new SettingsService();
+            ServiceLocator.Register<ISettingsService>(settingsService);
+
             GameObject coreSystems = Resources.Load<GameObject>(CORE_SYSTEMS);
             if (coreSystems != null) {
                 Object.Instantiate(coreSystems);
@@ -35,6 +39,9 @@ namespace FifthSemester.Gameplay.Bootstrap {
             else {
                 Debug.LogError($"{TAG} Failed to load core systems prefab at path: {CORE_SYSTEMS}");
             }
+
+            var menuService = new MenuService();
+            ServiceLocator.Register<IMenuService>(menuService);
         }
     }
 }

@@ -23,12 +23,6 @@ namespace FifthSemester.Framework.UI {
         protected bool _isHovered = false;
         private bool _interactionLock = false;
 
-        [Header("Feedback")]
-        [SerializeField] private AudioClip _selectionSound;
-        [SerializeField] protected Color _normalColor = Color.gray;
-        [SerializeField] protected Color _highlightColor = Color.white;
-        [SerializeField] protected Color _activeColor = Color.yellow;
-
         /// <summary>
         /// Inicialização padrão: carrega valor salvo e atualiza UI.
         /// </summary>
@@ -64,7 +58,6 @@ namespace FifthSemester.Framework.UI {
             UpdateUI();
             OnItemSelected(_items[_currentIndex]);
             OnSave();
-            ApplyVisuals();
         }
 
         /// <summary>
@@ -72,7 +65,6 @@ namespace FifthSemester.Framework.UI {
         /// </summary>
         protected virtual void RefreshUI() {
             UpdateUI();
-            ApplyVisuals();
         }
 
         // --- Métodos a serem implementados pelas subclasses ---
@@ -137,13 +129,11 @@ namespace FifthSemester.Framework.UI {
             else {
                 Next();
             }
-            ApplyVisuals();
         }
 
         public virtual void OnCancel(BaseEventData eventData) {
             if (_isFocused) {
                 _isFocused = false;
-                ApplyVisuals();
             }
         }
 
@@ -156,41 +146,16 @@ namespace FifthSemester.Framework.UI {
 
         public virtual void OnSelect(BaseEventData eventData) {
             _isHovered = true;
-            ApplyVisuals();
         }
         public virtual void OnDeselect(BaseEventData eventData) {
             _isHovered = false;
             _isFocused = false;
-            ApplyVisuals();
         }
         public virtual void OnPointerEnter(PointerEventData eventData) {
             _isHovered = true;
-            ApplyVisuals();
         }
         public virtual void OnPointerExit(PointerEventData eventData) {
             _isHovered = false;
-            ApplyVisuals();
-        }
-
-        /// <summary>
-        /// Aplica cor de feedback visual.
-        /// </summary>
-        protected virtual void ApplyVisuals() {
-            // Prioriza highlight de foco
-            Color targetColor = _normalColor;
-            if (_isFocused)
-                targetColor = _activeColor;
-            else if (_isHovered)
-                targetColor = _highlightColor;
-            UpdateVisualElements(targetColor);
-        }
-
-        /// <summary>
-        /// Toca som de seleção, se configurado.
-        /// </summary>
-        protected virtual void PlaySound() {
-            if (_selectionSound != null)
-                _audioService.PlaySFX(_selectionSound);
         }
     }
 }

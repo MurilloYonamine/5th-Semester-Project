@@ -589,7 +589,6 @@ GameObject:
   - component: {fileID: 3969652737891826528}
   - component: {fileID: 7370384192974829352}
   - component: {fileID: 3396416832391346274}
-  - component: {fileID: 1393153125488975447}
   m_Layer: 5
   m_Name: Icon Selector
   m_TagString: Untagged
@@ -685,31 +684,3 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 0}
---- !u!114 &1393153125488975447
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7948986353180011453}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 378d3958dd34fc545b8f3bf3f08f1ad1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _currentIndex: 0
-  _items: 
-  _isFocused: 0
-  _selectionSound: {fileID: 0}
-  _focusedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  _unfocusedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  _hoverColor: {r: 1, g: 1, b: 1, a: 1}
-  _labelText: {fileID: 7134657232451375916}
-  _audioType: 0
-  _filledUnfocusedColor: {r: 1, g: 1, b: 1, a: 1}
-  _stepIcons:
-  - {fileID: 872736279215409644}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}

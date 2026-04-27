@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace FifthSemester.Gameplay.Menu {
@@ -52,6 +53,7 @@ namespace FifthSemester.Gameplay.Menu {
 
         public void OnPlay() {
             _gameState.ChangeState(GameState.Gameplay);
+            SceneManager.LoadScene("Gym");
         }
 
         public void OnSettings() {

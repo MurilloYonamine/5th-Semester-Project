@@ -1033,8 +1033,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecdf613229560e94dbda5bedefc7ee94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _defaultsScreen: {fileID: 11400000, guid: fd8d4b2ef51f6bc4494c1c00060762ff, type: 2}
   _focusFirstElement: {fileID: 129493339133662119}
+  _defaultsScreen: {fileID: 11400000, guid: fd8d4b2ef51f6bc4494c1c00060762ff, type: 2}
   _resolutionSelector: {fileID: 395469916156448667}
   _fpsSelector: {fileID: 2118212839}
   _fullscreenToggle: {fileID: 1256630088}
@@ -4752,7 +4752,7 @@ MonoBehaviour:
     m_Mode: 4
     m_WrapAround: 1
     m_SelectOnUp: {fileID: 506402098}
-    m_SelectOnDown: {fileID: 10778755}
+    m_SelectOnDown: {fileID: 1607143003}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -6266,10 +6266,10 @@ MonoBehaviour:
   m_Navigation:
     m_Mode: 4
     m_WrapAround: 1
-    m_SelectOnUp: {fileID: 988351611}
-    m_SelectOnDown: {fileID: 1010343401}
+    m_SelectOnUp: {fileID: 1985126133}
+    m_SelectOnDown: {fileID: 988351611}
     m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 988351611}
+    m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
@@ -7995,9 +7995,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d225ff17b4fb99f4e99a08deb7fe09a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _focusFirstElement: {fileID: 100422276}
   _defaultsShaders: {fileID: 11400000, guid: 72d72d65bfca0b346af3147e0fe52ff7, type: 2}
   _rendererData: {fileID: 11400000, guid: 8e72a3612507ead4f8ddabe114cbee79, type: 2}
-  _focusFirstElement: {fileID: 100422276}
   _mainCamera: {fileID: 1444178087}
   _graphicsCamera: {fileID: 245383680}
   _mainCanvas: {fileID: 667960290}
@@ -8807,8 +8807,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d323ea4b68a83844b901bbeda70ec8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _defaultsAudio: {fileID: 11400000, guid: 32da45376fc4b9c46bbabd053779402a, type: 2}
   _focusFirstElement: {fileID: 1010343399}
+  _defaultsAudio: {fileID: 11400000, guid: 32da45376fc4b9c46bbabd053779402a, type: 2}
   _masterVolumeSlider: {fileID: 1010343401}
   _musicVolumeSlider: {fileID: 1691644285}
   _sfxVolumeSlider: {fileID: 156400478}
@@ -10017,8 +10017,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d48c952ca02c5b84498c1d21b583d3f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _defaultsGameplay: {fileID: 11400000, guid: af48ea9a1e09d5644bbf6f318f4dfab9, type: 2}
   _focusFirstElement: {fileID: 331092905}
+  _defaultsGameplay: {fileID: 11400000, guid: af48ea9a1e09d5644bbf6f318f4dfab9, type: 2}
   _backButton: {fileID: 10778755}
   _resetDefaultsButton: {fileID: 1607143003}
   _invertYAxisToggle: {fileID: 480479806}
@@ -10781,10 +10781,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 2
+    m_Mode: 4
     m_WrapAround: 1
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnUp: {fileID: 2118212839}
+    m_SelectOnDown: {fileID: 404594809}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -13034,10 +13034,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 2
+    m_Mode: 4
     m_WrapAround: 1
-    m_SelectOnUp: {fileID: 1839946205}
-    m_SelectOnDown: {fileID: 659191460}
+    m_SelectOnUp: {fileID: 480479806}
+    m_SelectOnDown: {fileID: 10778755}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -15448,10 +15448,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 2
+    m_Mode: 4
     m_WrapAround: 1
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnUp: {fileID: 927715527}
+    m_SelectOnDown: {fileID: 659246348}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
@@ -15881,10 +15881,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
-    m_Mode: 2
+    m_Mode: 4
     m_WrapAround: 1
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
+    m_SelectOnUp: {fileID: 1806966805}
+    m_SelectOnDown: {fileID: 1431873950}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1

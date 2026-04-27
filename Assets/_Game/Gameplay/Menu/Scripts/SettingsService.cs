@@ -69,7 +69,7 @@ namespace FifthSemester.Gameplay.Menu {
 
         // ===== Screen & Window ======
         public int FrameRate {
-            get => PlayerPrefs.GetInt("Settings_FrameRate", 60);
+            get => PlayerPrefs.GetInt("Settings_FrameRate", 24);
             set {
                 PlayerPrefs.SetInt("Settings_FrameRate", value);
                 Application.targetFrameRate = value;

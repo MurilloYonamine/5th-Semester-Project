@@ -56,9 +56,10 @@ namespace FifthSemester.Gameplay.Menu {
             _settingsService.ResolutionIndex = _defaultsScreen.ResolutionIndex;
 
             _screenService.SetResolution(
-            _settingsService.AvailableResolutions[_settingsService.ResolutionIndex].x,
-            _settingsService.AvailableResolutions[_settingsService.ResolutionIndex].y,
-            _settingsService.IsFullscreen);
+                _settingsService.AvailableResolutions[_settingsService.ResolutionIndex].x,
+                _settingsService.AvailableResolutions[_settingsService.ResolutionIndex].y
+            );
+
             _screenService.SetFrameRate(_settingsService.FrameRate);
             _screenService.SetFullscreen(_settingsService.IsFullscreen);
 
@@ -67,7 +68,7 @@ namespace FifthSemester.Gameplay.Menu {
         public void OnResolutionChanged(int index) {
             var resolution = _settingsService.AvailableResolutions[index];
             _settingsService.ResolutionIndex = index;
-            _screenService.SetResolution(resolution.x, resolution.y, _settingsService.IsFullscreen);
+            _screenService.SetResolution(resolution.x, resolution.y);
         }
         public void OnFPSChanged(int index) {
             int fps = _fpsValues[index];
@@ -95,9 +96,9 @@ namespace FifthSemester.Gameplay.Menu {
             _menuService.Show(MenuScreen.Settings);
         }
 
-        // OnAnyInput herdado da base
         public void RefreshUI() {
             if (_settingsService == null) _settingsService = ServiceLocator.Get<ISettingsService>();
+
             _fullscreenToggle.isOn = _settingsService.IsFullscreen;
             _fullscreenValue.text = _settingsService.IsFullscreen ? "Yes" : "No";
             _resolutionSelector.SetValue(_settingsService.ResolutionIndex);

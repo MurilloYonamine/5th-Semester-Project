@@ -1,11 +1,8 @@
-// autor: Murillo Gomes Yonamine
-// data: 08/03/2026
-
+using FifthSemester.Gameplay.Shared;
 using UnityEngine;
 using UnityEngine.UI;
-using FifthSemester.Items;
 
-namespace FifthSemester.Inventory {
+namespace FifthSemester.Gameplay.Inventory {
     public class InventorySlot : MonoBehaviour {
         [Header("UI References")]
         [SerializeField] private RawImage _itemDisplay;
@@ -45,9 +42,7 @@ namespace FifthSemester.Inventory {
             _previewCamera.backgroundColor = _backgroundColor;
             _previewCamera.cullingMask = 1 << LayerMask.NameToLayer("InventoryPreview");
             _previewCamera.orthographic = true;
-            _previewCamera.orthographicSize = 1f;
             _previewCamera.enabled = false;
-            _previewCamera.targetDisplay = 0;
 
             if (_itemDisplay != null) {
                 _itemDisplay.texture = _renderTexture;
@@ -59,54 +54,70 @@ namespace FifthSemester.Inventory {
 
             _item = item;
 
-            if (_item != null && _item is MonoBehaviour itemMono) {
-                CreateItemPreview(itemMono.gameObject);
+            if (_item is MonoBehaviour mono) {
+                CreateItemPreview(mono.gameObject);
             }
         }
 
-        private void CreateItemPreview(GameObject itemInstance) {
-            if (_itemContainer == null || itemInstance == null) return;
+        private void CreateItemPreview(GameObject original) {
+            if (_itemContainer == null || original == null) return;
 
-            _currentItem = itemInstance;
+            _currentItem = Instantiate(original, _itemContainer);
+            _currentItem.SetActive(true);
 
-            _currentItem.transform.SetParent(_itemContainer);
-            _currentItem.transform.SetLocalPositionAndRotation(
-                localPosition: Vector3.zero,
-                localRotation: Quaternion.Euler(_itemRotation)
-            );
+            _currentItem.transform.localPosition = Vector3.zero;
+            _currentItem.transform.localRotation = Quaternion.Euler(_itemRotation);
             _currentItem.transform.localScale = _itemScale;
 
             SetLayerRecursively(_currentItem, LayerMask.NameToLayer("InventoryPreview"));
+            DisableGameplayComponents(_currentItem);
 
             PositionCamera();
             RenderPreview();
         }
-        private void SetLayerRecursively(GameObject obj, int newLayer) {
-            if (obj == null) return;
 
+        private void DisableGameplayComponents(GameObject obj) {
+            foreach (var mono in obj.GetComponentsInChildren<MonoBehaviour>()) {
+                mono.enabled = false;
+            }
+
+            foreach (var col in obj.GetComponentsInChildren<Collider>()) {
+                col.enabled = false;
+            }
+
+            foreach (var rb in obj.GetComponentsInChildren<Rigidbody>()) {
+                rb.isKinematic = true;
+            }
+        }
+
+        private void SetLayerRecursively(GameObject obj, int newLayer) {
             obj.layer = newLayer;
             foreach (Transform child in obj.transform) {
                 SetLayerRecursively(child.gameObject, newLayer);
             }
         }
+
         private void PositionCamera() {
             if (_previewCamera == null || _currentItem == null) return;
 
             Bounds bounds = CalculateBounds(_currentItem);
             float maxSize = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
 
-            _previewCamera.transform.position = _itemContainer.position + Vector3.back * (_cameraDistance + maxSize);
-            _previewCamera.transform.LookAt(_itemContainer.position + bounds.center);
+            _previewCamera.transform.position =
+                _itemContainer.position + Vector3.back * (_cameraDistance + maxSize);
+
+            _previewCamera.transform.LookAt(bounds.center);
             _previewCamera.orthographicSize = maxSize * 0.6f;
         }
 
         private Bounds CalculateBounds(GameObject obj) {
-            Renderer[] renderers = obj.GetComponentsInChildren<Renderer>();
-            if (renderers.Length == 0) {
+            var renderers = obj.GetComponentsInChildren<Renderer>();
+
+            if (renderers.Length == 0)
                 return new Bounds(obj.transform.position, Vector3.one);
-            }
 
             Bounds bounds = renderers[0].bounds;
+
             for (int i = 1; i < renderers.Length; i++) {
                 bounds.Encapsulate(renderers[i].bounds);
             }
@@ -120,14 +131,14 @@ namespace FifthSemester.Inventory {
             _previewCamera.enabled = true;
             _previewCamera.Render();
 
-            if (!_autoRotate) {
+            if (!_autoRotate)
                 _previewCamera.enabled = false;
-            }
         }
 
         private void Update() {
             if (_autoRotate && _currentItem != null) {
                 _currentItem.transform.Rotate(Vector3.up, _rotationSpeed * Time.deltaTime);
+                _previewCamera.Render();
             }
         }
 
@@ -135,14 +146,25 @@ namespace FifthSemester.Inventory {
             if (_currentItem != null) {
                 Destroy(_currentItem);
                 _currentItem = null;
+                _itemDisplay.texture = null;
             }
-            _item = null;
-        }
 
+            _item = null;
+
+            ClearRenderTexture();
+        }
+        private void ClearRenderTexture() {
+            if (_previewCamera == null || _renderTexture == null) return;
+
+            _previewCamera.enabled = true;
+            _previewCamera.Render();
+            _previewCamera.enabled = false;
+        }
         private void OnDestroy() {
             ClearItem();
 
             if (_renderTexture != null) {
+                _previewCamera.targetTexture = null;
                 _renderTexture.Release();
             }
         }

@@ -1,12 +1,9 @@
 // Autor: Murillo Gomes Yonamine
 // Data: 14/02/2026
 
-using FifthSemester.Core;
-using FifthSemester.Core.Managers;
-using FifthSemester.Core.States;
-using FifthSemester.Systems.Audio;
+using FifthSemester.Core.Events;
+using FifthSemester.Core.Services;
 using Sirenix.OdinInspector;
-using System;
 using UnityEngine;
 
 namespace FifthSemester.Player.Components {
@@ -15,7 +12,8 @@ namespace FifthSemester.Player.Components {
         private Rigidbody _rigidbody;
         private MovementState _currentState;
         private PlayerController _player;
-        private PlayerEvents _playerEvents;
+        private IEventBus _eventBus;
+        private IAudioService _audioService;
 
         [Header("Movement")]
         [FoldoutGroup("Movement")]
@@ -82,7 +80,6 @@ namespace FifthSemester.Player.Components {
         private void Awake() {
             _player = GetComponent<PlayerController>();
             _rigidbody = GetComponent<Rigidbody>();
-            _playerEvents = GetComponent<PlayerEvents>();
 
             _originalScale = _player.transform.localScale;
 
@@ -94,18 +91,18 @@ namespace FifthSemester.Player.Components {
         }
 
         private void Start() {
-            if(_playerEvents == null) return;
+            _audioService = ServiceLocator.Get<IAudioService>();
 
-            _playerEvents = _player.PlayerEvents;
-            _playerEvents.OnMoveInput += HandleMove;
-            _playerEvents.OnSprintInput += HandleSprint;
-            _playerEvents.OnCrouchInput += HandleCrouch;
+            _eventBus = ServiceLocator.Get<IEventBus>();
+            _eventBus?.Subscribe<MoveInputEvent>(HandleMove);
+            _eventBus?.Subscribe<SprintInputEvent>(HandleSprint);
+            _eventBus?.Subscribe<CrouchInputEvent>(HandleCrouch);
         }
 
         private void OnDisable() {
-            _playerEvents.OnMoveInput -= HandleMove;
-            _playerEvents.OnSprintInput -= HandleSprint;
-            _playerEvents.OnCrouchInput -= HandleCrouch;
+            _eventBus?.Unsubscribe<MoveInputEvent>(HandleMove);
+            _eventBus?.Unsubscribe<SprintInputEvent>(HandleSprint);
+            _eventBus?.Unsubscribe<CrouchInputEvent>(HandleCrouch);
         }
 
         private void Update() {
@@ -115,11 +112,6 @@ namespace FifthSemester.Player.Components {
 
         private void FixedUpdate() {
             if (!PlayerCanMove || Rigidbody == null) return;
-
-            if (GameStateManager.Instance.CurrentState != GameState.Gameplay) {
-                _rigidbody.linearVelocity = Vector3.zero;
-                return;
-            }
 
             Vector2 moveInput = MoveInput;
             Vector3 input = new Vector3(moveInput.x, 0f, moveInput.y);
@@ -159,7 +151,7 @@ namespace FifthSemester.Player.Components {
             if (_footstepTimer >= interval) {
                 _footstepTimer -= interval;
                 AudioClip clip = _footstepClips[UnityEngine.Random.Range(0, _footstepClips.Length)];
-                AudioManager.Instance.PlaySFX(clip, volume: 0.5f);
+                _audioService?.PlaySFX(clip, volume: 0.5f);
             }
         }
 
@@ -172,18 +164,19 @@ namespace FifthSemester.Player.Components {
             _currentState?.Enter();
         }
 
-        private void HandleMove(Vector2 direction) {
-            _moveInput = direction;
-            _currentState?.HandleMove(direction);
+        private void HandleMove(MoveInputEvent evt) {
+            _moveInput = evt.Value;
+            _currentState?.HandleMove(evt.Value);
         }
 
-        private void HandleSprint(bool isPressed) {
-            _currentState?.HandleSprint(isPressed);
-            GlobalPlayerEvents.RaisePlayerSprint(isPressed);
+        private void HandleSprint(SprintInputEvent evt) {
+            _currentState?.HandleSprint(evt.IsPressed);
+            
+            _eventBus?.Publish(new PlayerSprintChangedEvent(evt.IsPressed));
         }
 
-        private void HandleCrouch(bool isPressed) {
-            _currentState?.HandleCrouch(isPressed);
+        private void HandleCrouch(CrouchInputEvent evt) {
+            _currentState?.HandleCrouch(evt.IsPressed);
         }
 
         #endregion
@@ -322,61 +315,6 @@ namespace FifthSemester.Player.Components {
         public float SprintPercent => _unlimitedSprint || _sprintDuration <= 0f
             ? 1f
             : Mathf.Clamp01(_sprintRemaining / _sprintDuration);
-
-        #endregion
-
-        #region Dev Tuning API
-
-        public void SetPlayerCanMove(bool value) {
-            _playerCanMove = value;
-        }
-
-        public void SetWalkSpeed(float value) {
-            _walkSpeed = Mathf.Max(0f, value);
-        }
-
-        public void SetMaxVelocityChange(float value) {
-            _maxVelocityChange = Mathf.Max(0f, value);
-        }
-
-        public void SetEnableSprint(bool value) {
-            _enableSprint = value;
-        }
-
-        public void SetUnlimitedSprint(bool value) {
-            _unlimitedSprint = value;
-        }
-
-        public void SetSprintSpeed(float value) {
-            _sprintSpeed = Mathf.Max(0f, value);
-        }
-
-        public void SetSprintDuration(float value) {
-            _sprintDuration = Mathf.Max(0f, value);
-            if (!_unlimitedSprint) {
-                _sprintRemaining = Mathf.Clamp(_sprintRemaining, 0f, _sprintDuration);
-            }
-        }
-
-        public void SetSprintCooldownSeconds(float value) {
-            _sprintCooldownSeconds = Mathf.Max(0f, value);
-        }
-
-        public void SetEnableCrouch(bool value) {
-            _enableCrouch = value;
-        }
-
-        public void SetHoldToCrouch(bool value) {
-            _holdToCrouch = value;
-        }
-
-        public void SetCrouchHeight(float value) {
-            _crouchHeight = Mathf.Max(0.1f, value);
-        }
-
-        public void SetSpeedReduction(float value) {
-            _speedReduction = Mathf.Clamp(value, 0.1f, 1f);
-        }
 
         #endregion
     }

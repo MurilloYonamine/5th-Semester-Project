@@ -1,65 +1,90 @@
-// Author: Murillo Gomes Yonamine
-// Date: 29/03/2026
+// Autor: Murillo Gomes Yonamine
+// Data: 24/04/2026
 
-using FifthSemester.Items;
-using FifthSemester.Systems.Audio;
-using FifthSemester.Systems.DialogueSystem;
-using System;
-using ThirdParty.QuickOutline;
 using UnityEngine;
+using UnityEngine.Events;
+using FifthSemester.Core.Events;
+using FifthSemester.Core.Services;
+using FifthSemester.Gameplay.Inventory;
+using FifthSemester.Gameplay.Shared;
+using ThirdParty.QuickOutline;
 
-namespace FifthSemester.Gameplay.Delivery {
-    public class DeliveryPoint : MonoBehaviour, IItemReceiver {
-        [SerializeField] private bool _isActive = true;
-        [SerializeField] private AudioClip _deliverySound;
-        [SerializeField] private int _requiredAmount = 1;
-        private int _receivedAmount = 0;
-        [SerializeField] private DialogueSO _onDeliveryDialogue;
+namespace FifthSemester.Gameplay.Interactables {
+    [RequireComponent(typeof(Outline))]
+    public class DeliveryPoint : MonoBehaviour, IInteractable {
+        private const string TAG = "<color=blue>[DeliveryPoint]</color>";
+        [field: SerializeField] public string Id { get; private set; }
 
-        public event Action<DeliveryPoint, IInteractable> OnItemReceived;
+        [Tooltip("ID ou nome do item necessário para concluir a entrega.")]
+        [SerializeField] private string _requiredItemId;
 
-        [SerializeField] private Outline _outline;
+        [Tooltip("O item deve ser removido do inventário após o uso?")]
+        [SerializeField] private bool _consumeItemOnDelivery = true;
 
-        public void ReceiveItem(IInteractable item) {
-            if (!_isActive) return;
-            if (item == null) return;
+        private IInventoryService<Item> _inventoryService;
+        private IEventBus _eventBus;
+        private bool _isCompleted = false;
 
-            if (item is not MedicineItem) return;
+        public bool IsInteractable => !_isCompleted;
 
-            _receivedAmount++;
+        private Outline _outline;
 
-            if (_onDeliveryDialogue != null) {
-                DialogueManager.Instance.StartDialogue(_onDeliveryDialogue);
+        private void Awake() {
+            _outline = GetComponent<Outline>();
+            Highlight(false);
+        }
+
+        private void Start() {
+            _inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
+            _eventBus = ServiceLocator.Get<IEventBus>();
+
+            Highlight(false);
+        }
+
+        public void Highlight(bool value) {
+            _outline.enabled = value;
+        }
+
+        public void Interact() {
+            if (!IsInteractable) return;
+
+            if (TryDeliverItem()) {
+                CompleteDelivery();
+                Debug.Log($"{TAG} Item '{_requiredItemId}' entregue com sucesso!");
             }
-
-            if (_receivedAmount >= _requiredAmount) {
-                _isActive = false;
-                OnItemReceived?.Invoke(this, item);
-            }
-
-            if (_deliverySound != null) {
-                AudioManager.Instance.PlaySFX(_deliverySound);
+            else {
+                Debug.Log($"{TAG} O item necessário '{_requiredItemId}' não está no inventário.");
             }
         }
-        public bool TryDeliverFromInventory(Inventory.InventoryController inventory) {
-            if (!_isActive || inventory == null) return false;
 
-            for (int i = 0; i < inventory.Items.Count; i++) {
-                var item = inventory.Items[i];
+        public void StopInteract() {
 
-                if (item is MedicineItem) {
-                    inventory.RemoveItem(item);
-                    ReceiveItem(item);
+        }
+
+        private bool TryDeliverItem() {
+            if (_inventoryService == null) {
+                Debug.LogError($"{TAG} IInventoryService não encontrado no Service Locator.");
+                return false;
+            }
+
+            var items = _inventoryService.GetItems();
+            foreach (var item in items) {
+                if (item.Id == _requiredItemId) {
+
+                    if (_consumeItemOnDelivery) {
+                        _inventoryService.RemoveItem(item);
+                    }
                     return true;
                 }
             }
 
             return false;
         }
-        public void EnableOutline(bool enable) {
-            if (_outline != null) {
-                _outline.enabled = enable;
-            }
+
+        private void CompleteDelivery() {
+            _isCompleted = true;
+
+            _eventBus?.Publish(new ItemDeliveredEvent(Id, _requiredItemId));
         }
     }
 }

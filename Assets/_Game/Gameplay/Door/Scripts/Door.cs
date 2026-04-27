@@ -1,9 +1,8 @@
 using UnityEngine;
-using FifthSemester.Items;
 using ThirdParty.QuickOutline;
 
 namespace FifthSemester.Doors {
-    public class Door : MonoBehaviour, IInteractable {
+    public class Door : MonoBehaviour {
         [Header("Configurações Visuais")]
         [SerializeField] private Outline _outline;
         [SerializeField] private Transform _doorMesh;

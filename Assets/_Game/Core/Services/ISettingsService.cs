@@ -27,6 +27,6 @@ namespace FifthSemester.Core.Services {
         // ===== Gameplay ======
         Language Language { get; set; }
         bool InvertYAxis { get; set; }
-        bool Sensibility { get; set; }
+        float Sensibility { get; set; }
     }
 }

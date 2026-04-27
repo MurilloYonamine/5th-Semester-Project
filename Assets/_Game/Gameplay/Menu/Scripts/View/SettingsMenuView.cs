@@ -2,6 +2,8 @@ using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 using UnityEngine.UI;
 
 namespace FifthSemester.Gameplay.Menu {
@@ -35,9 +37,13 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         private void OnEnable() {
+            EventSystem.current.SetSelectedGameObject(null);
+            
             if (_focusFirstElement != null) {
                 EventSystem.current.SetSelectedGameObject(_focusFirstElement);
             }
+
+            InputSystem.onAnyButtonPress.Call(OnAnyInput);
         }
 
         public void OpenAudioSettings() => _menuService.Show(MenuScreen.Settings_Audio);
@@ -47,6 +53,12 @@ namespace FifthSemester.Gameplay.Menu {
 
         public void OnBack() {
             _menuService.Show(MenuScreen.MainMenu);
+        }
+
+        private void OnAnyInput(InputControl control) {
+            if (control.device is Gamepad && EventSystem.current.currentSelectedGameObject == null) {
+                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
+            }
         }
     }
 }

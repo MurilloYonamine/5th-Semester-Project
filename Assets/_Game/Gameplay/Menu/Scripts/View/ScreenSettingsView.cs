@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using FifthSemester.Framework.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 
 namespace FifthSemester.Gameplay.Menu {
     public class ScreenSettingsView : MonoBehaviour {
@@ -48,9 +50,13 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         private void OnEnable() {
+            EventSystem.current.SetSelectedGameObject(null);
+            
             if (_focusFirstElement != null) {
                 EventSystem.current.SetSelectedGameObject(_focusFirstElement);
             }
+
+            InputSystem.onAnyButtonPress.Call(OnAnyInput);
         }
 
         private void OnDestroy() {
@@ -84,6 +90,12 @@ namespace FifthSemester.Gameplay.Menu {
         }
         private void OnBack() {
             _menuService.Show(MenuScreen.Settings);
+        }
+
+        private void OnAnyInput(InputControl control) {
+            if (control.device is Gamepad && EventSystem.current.currentSelectedGameObject == null) {
+                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
+            }
         }
     }
 }

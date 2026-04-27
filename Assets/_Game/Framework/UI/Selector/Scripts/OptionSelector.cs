@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using System.Collections;
 
 namespace FifthSemester.Framework.UI {
     public class OptionSelector : Selectable {
@@ -51,12 +52,26 @@ namespace FifthSemester.Framework.UI {
 
         private void HandleNextInput(InputAction.CallbackContext context) {
             if (!IsSelected()) return;
-            if (context.started) Next();
+            if (context.started) {
+                Next();
+                if (_rightButton != null) StartCoroutine(FlashButton(_rightButton));
+            }
         }
 
         private void HandlePreviousInput(InputAction.CallbackContext context) {
             if (!IsSelected()) return;
-            if (context.started) Previous();
+            if (context.started) {
+                Previous();
+                if (_leftButton != null) StartCoroutine(FlashButton(_leftButton));
+            }
+        }
+
+        private IEnumerator FlashButton(Button button) {
+            var colors = button.colors;
+            var originalColor = button.targetGraphic.color;
+            button.targetGraphic.color = colors.pressedColor;
+            yield return new WaitForSeconds(0.12f);
+            button.targetGraphic.color = originalColor;
         }
 
         public void Initialize(List<string> options, int startIndex = 0) {

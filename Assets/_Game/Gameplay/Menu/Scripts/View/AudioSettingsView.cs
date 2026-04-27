@@ -3,6 +3,8 @@ using FifthSemester.Core.Services;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 using UnityEngine.UI;
 
 namespace FifthSemester.Gameplay.Menu {
@@ -60,9 +62,13 @@ namespace FifthSemester.Gameplay.Menu {
             _backButton.onClick.AddListener(OnBack);
         }
         private void OnEnable() {
+            EventSystem.current.SetSelectedGameObject(null);
+
             if (_focusFirstElement != null) {
                 EventSystem.current.SetSelectedGameObject(_focusFirstElement);
             }
+
+            InputSystem.onAnyButtonPress.Call(OnAnyInput);
         }
         private void OnDestroy() {
             _menuService?.Unregister(MenuScreen.Settings_Audio);
@@ -95,6 +101,12 @@ namespace FifthSemester.Gameplay.Menu {
         public void OnForceMonoAudioChanged(bool value) {
             _settingsService.ForceMonoAudio = value;
             _forceMonoText.text = value ? "Yes" : "No";
+        }
+
+        private void OnAnyInput(InputControl control) {
+            if (control.device is Gamepad && EventSystem.current.currentSelectedGameObject == null) {
+                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
+            }
         }
     }
 }

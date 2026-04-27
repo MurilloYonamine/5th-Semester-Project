@@ -3,6 +3,8 @@ using FifthSemester.Core.Services;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
@@ -77,9 +79,13 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         private void OnEnable() {
+            EventSystem.current.SetSelectedGameObject(null);
+
             if (_focusFirstElement != null) {
                 EventSystem.current.SetSelectedGameObject(_focusFirstElement);
             }
+
+            InputSystem.onAnyButtonPress.Call(OnAnyInput);
             ChangeCamera(true);
         }
 
@@ -144,6 +150,12 @@ namespace FifthSemester.Gameplay.Menu {
         }
         private void OnToggleChanged(bool value, TextMeshProUGUI text) {
             text.text = value ? "On" : "Off";
+        }
+
+        private void OnAnyInput(InputControl control) {
+            if (control.device is Gamepad && EventSystem.current.currentSelectedGameObject == null) {
+                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
+            }
         }
     }
 }

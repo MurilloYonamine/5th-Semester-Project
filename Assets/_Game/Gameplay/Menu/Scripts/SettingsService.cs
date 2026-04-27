@@ -82,7 +82,7 @@ namespace FifthSemester.Gameplay.Menu {
                 PlayerPrefs.Save();
             }
         }
-        public bool Fullscreen {
+        public bool IsFullscreen {
             get => GetBool("Settings_Fullscreen", true);
             set {
                 SetBool("Settings_Fullscreen", value);
@@ -95,12 +95,18 @@ namespace FifthSemester.Gameplay.Menu {
                 PlayerPrefs.SetInt("Settings_ResolutionIndex", value);
                 if (value >= 0 && value < AvailableResolutions.Length) {
                     Vector2Int res = AvailableResolutions[value];
-                    Screen.SetResolution(res.x, res.y, Fullscreen); // Aplica a resolução dinamicamente
+                    Screen.SetResolution(res.x, res.y, IsFullscreen); // Aplica a resolução dinamicamente
                 }
                 PlayerPrefs.Save();
             }
         }
-        public Vector2Int[] AvailableResolutions { get; private set; }
+        public Vector2Int[] AvailableResolutions { get; private set; } = new Vector2Int[] {
+            new Vector2Int(320, 240),
+            new Vector2Int(640, 480),
+            new Vector2Int(800, 600),
+            new Vector2Int(1024, 768),
+            new Vector2Int(1280, 720)
+        };
 
         // ===== Gameplay ======
         public bool InvertYAxis {

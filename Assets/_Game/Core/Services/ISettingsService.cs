@@ -3,9 +3,6 @@ using UnityEngine;
 
 namespace FifthSemester.Core.Services {
     public interface ISettingsService {
-        // ====== General ======
-        Language Language { get; set; }
- 
         // ====== Audio ======
         float MasterVolume { get; set; }
         float MusicVolume { get; set; }
@@ -23,11 +20,12 @@ namespace FifthSemester.Core.Services {
 
         // ===== Screen & Window ======
         int FrameRate { get; set; }
-        bool Fullscreen { get; set; }
+        bool IsFullscreen { get; set; }
         int ResolutionIndex { get; set; }
         Vector2Int[] AvailableResolutions { get; }
 
         // ===== Gameplay ======
+        Language Language { get; set; }
         bool InvertYAxis { get; set; }
         bool Sensibility { get; set; }
     }

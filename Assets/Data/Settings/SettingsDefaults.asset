@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ab03661281208148a6398172de60472, type: 3}
+  m_Name: SettingsDefaults
+  m_EditorClassIdentifier: 
+  MasterVolume: 50
+  MusicVolume: 50
+  SFXVolume: 50
+  AmbienceVolume: 50
+  ForceMonoAudio: 0
+  BarrelDistortion: 1
+  Dithering: 1
+  Pixelation: 1
+  RollingBands: 1
+  Scanlines: 1
+  VHSEffect: 1
+  FrameRate: 24
+  IsFullscreen: 0
+  ResolutionIndex: 0
+  AvailableResolutions:
+  - {x: 320, y: 240}
+  - {x: 640, y: 480}
+  - {x: 800, y: 600}
+  - {x: 1024, y: 768}
+  - {x: 1280, y: 720}
+  Language: 1
+  InvertYAxis: 0
+  Sensibility: 1

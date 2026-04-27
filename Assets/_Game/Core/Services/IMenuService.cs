@@ -8,5 +8,7 @@ namespace FifthSemester.Core.Services {
 
         void Register(MenuScreen screen, GameObject view);
         void Unregister(MenuScreen screen);
+
+        GameObject GetView(MenuScreen screen);
     }
 }

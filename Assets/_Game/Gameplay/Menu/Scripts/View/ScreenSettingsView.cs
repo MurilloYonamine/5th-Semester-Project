@@ -97,5 +97,15 @@ namespace FifthSemester.Gameplay.Menu {
                 EventSystem.current.SetSelectedGameObject(_focusFirstElement);
             }
         }
+        public void RefreshUI()
+        {
+            if (_settingsService == null) _settingsService = ServiceLocator.Get<ISettingsService>();
+            _fullscreenToggle.isOn = _settingsService.IsFullscreen;
+            _fullscreenValue.text = _settingsService.IsFullscreen ? "Yes" : "No";
+            _resolutionSelector.SetValue(_settingsService.ResolutionIndex);
+            int fpsIdx = _fpsValues.IndexOf(_settingsService.FrameRate);
+            if (fpsIdx < 0) fpsIdx = 0;
+            _fpsSelector.SetValue(fpsIdx);
+        }
     }
 }

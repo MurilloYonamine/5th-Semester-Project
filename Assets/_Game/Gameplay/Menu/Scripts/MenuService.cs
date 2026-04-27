@@ -20,7 +20,10 @@ namespace FifthSemester.Gameplay.Menu {
                 _menus.Remove(screen);
             }
         }
-
+        public GameObject GetView(MenuScreen screen) {
+            _menus.TryGetValue(screen, out var view);
+            return view;
+        }
         public void Hide() {
             foreach (var menu in _menus.Values) {
                 if (menu != null) {

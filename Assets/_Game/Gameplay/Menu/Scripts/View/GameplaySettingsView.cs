@@ -89,5 +89,14 @@ namespace FifthSemester.Gameplay.Menu {
                 EventSystem.current.SetSelectedGameObject(_focusFirstElement);
             }
         }
+        public void RefreshUI()
+        {
+            if (_settingsService == null) _settingsService = ServiceLocator.Get<ISettingsService>();
+            _invertYAxisToggle.isOn = _settingsService.InvertYAxis;
+            _invertYAxisLabel.text = _settingsService.InvertYAxis ? "Yes" : "No";
+            _sensibilitySlider.value = _settingsService.Sensibility;
+            _sensibilityValueText.text = _settingsService.Sensibility.ToString("F2");
+            _language.SetValue((int)_settingsService.Language);
+        }
     }
 }

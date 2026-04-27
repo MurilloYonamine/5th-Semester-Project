@@ -2,23 +2,19 @@ using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 namespace FifthSemester.Gameplay.Menu {
-    public class GraphicsSettingsView : MonoBehaviour {
-        private IMenuService _menuService;
+    public class GraphicsSettingsView : MenuViewBase {
         private ISettingsService _settingsService;
         private IGraphicsService _graphicsService;
 
+        [Header("Defaults")]
+        [SerializeField] private SettingsDefaultsShaders _defaultsShaders;
+
         [Header("Renderer Data")]
         [SerializeField] private UniversalRendererData _rendererData;
-
-        [Header("Focus")]
-        [SerializeField] private GameObject _focusFirstElement;
 
         [Header("Cameras")]
         [SerializeField] private Camera _mainCamera;
@@ -45,14 +41,15 @@ namespace FifthSemester.Gameplay.Menu {
 
         [Header("Buttons")]
         [SerializeField] private Button _backButton;
+        [SerializeField] private Button _resetDefaultsButton;
 
 
-        private void Start() {
-            _menuService = ServiceLocator.Get<IMenuService>();
+        protected override MenuScreen MenuScreenType => MenuScreen.Settings_Graphics;
+
+        protected override void Start() {
+            base.Start();
             _settingsService = ServiceLocator.Get<ISettingsService>();
             _graphicsService = new GraphicsService(_rendererData);
-
-            _menuService.Register(MenuScreen.Settings_Graphics, gameObject);
 
             _barrelDistortionToggle.isOn = _settingsService.BarrelDistortion;
             _ditheringToggle.isOn = _settingsService.Dithering;
@@ -76,16 +73,29 @@ namespace FifthSemester.Gameplay.Menu {
             _vhsEffectToggle.onValueChanged.AddListener(OnVHSEffectToggle);
 
             _backButton.onClick.AddListener(OnBack);
+            _resetDefaultsButton.onClick.AddListener(ResetToDefaults);
+        }
+        public void ResetToDefaults() {
+            if (_defaultsShaders == null) return;
+            _settingsService.BarrelDistortion = _defaultsShaders.BarrelDistortion;
+            _settingsService.Dithering = _defaultsShaders.Dithering;
+            _settingsService.Pixelation = _defaultsShaders.Pixelation;
+            _settingsService.RollingBands = _defaultsShaders.RollingBands;
+            _settingsService.Scanlines = _defaultsShaders.Scanlines;
+            _settingsService.VHSEffect = _defaultsShaders.VHSEffect;
+
+            _graphicsService?.SetBarrelDistortion(_defaultsShaders.BarrelDistortion);
+            _graphicsService?.SetDithering(_defaultsShaders.Dithering);
+            _graphicsService?.SetPixelation(_defaultsShaders.Pixelation);
+            _graphicsService?.SetRollingBands(_defaultsShaders.RollingBands);
+            _graphicsService?.SetScanlines(_defaultsShaders.Scanlines);
+            _graphicsService?.SetVHSEffect(_defaultsShaders.VHSEffect);
+
+            RefreshUI();
         }
 
-        private void OnEnable() {
-            EventSystem.current.SetSelectedGameObject(null);
-
-            if (_focusFirstElement != null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-            }
-
-            InputSystem.onAnyButtonPress.Call(OnAnyInput);
+        protected override void OnEnable() {
+            base.OnEnable();
             ChangeCamera(true);
         }
 
@@ -93,7 +103,8 @@ namespace FifthSemester.Gameplay.Menu {
             ChangeCamera(false);
         }
 
-        private void OnDestroy() {
+        protected override void OnDestroy() {
+            base.OnDestroy();
             _menuService?.Unregister(MenuScreen.Settings_Graphics);
         }
 
@@ -152,15 +163,7 @@ namespace FifthSemester.Gameplay.Menu {
         private void OnToggleChanged(bool value, TextMeshProUGUI text) {
             text.text = value ? "On" : "Off";
         }
-
-        private void OnAnyInput(InputControl control) {
-            if (control.device is Gamepad && EventSystem.current.currentSelectedGameObject == null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-            }
-        }
-
-        public void RefreshUI()
-        {
+        public void RefreshUI() {
             if (_settingsService == null) _settingsService = ServiceLocator.Get<ISettingsService>();
             _barrelDistortionToggle.isOn = _settingsService.BarrelDistortion;
             _ditheringToggle.isOn = _settingsService.Dithering;

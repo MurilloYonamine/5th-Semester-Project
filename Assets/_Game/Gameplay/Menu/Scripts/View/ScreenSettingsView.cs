@@ -5,18 +5,15 @@ using UnityEngine;
 using UnityEngine.UI;
 using FifthSemester.Framework.UI;
 using TMPro;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Utilities;
 
 namespace FifthSemester.Gameplay.Menu {
-    public class ScreenSettingsView : MonoBehaviour {
-        private IMenuService _menuService;
+
+    public class ScreenSettingsView : MenuViewBase {
         private ISettingsService _settingsService;
         private IScreenService _screenService;
 
-        [Header("Focus")]
-        [SerializeField] private GameObject _focusFirstElement;
+        [Header("Defaults")]
+        [SerializeField] private SettingsDefaultsScreen _defaultsScreen;
 
         [Header("Selectors")]
         [SerializeField] private OptionSelector _resolutionSelector;
@@ -25,46 +22,52 @@ namespace FifthSemester.Gameplay.Menu {
 
         [Header("Buttons")]
         [SerializeField] private Button _backButton;
+        [SerializeField] private Button _resetDefaultsButton;
 
         [Header("TMP Values")]
         [SerializeField] private TextMeshProUGUI _fullscreenValue;
         private readonly List<int> _fpsValues = new() { 24, 30, 60, -1 };
 
-        private void Start() {
-            _menuService = ServiceLocator.Get<IMenuService>();
+        protected override MenuScreen MenuScreenType => MenuScreen.Settings_Screen;
+
+        protected override void Start() {
+            base.Start();
             _settingsService = ServiceLocator.Get<ISettingsService>();
             _screenService = new ScreenService();
-
-            _menuService.Register(MenuScreen.Settings_Screen, gameObject);
-
+            
             _fullscreenToggle.isOn = _settingsService.IsFullscreen;
             _fullscreenToggle.onValueChanged.AddListener(OnFullscreenToggled);
-
+            
             _resolutionSelector.Initialize(GetResolutionOptions(), _settingsService.ResolutionIndex);
             _resolutionSelector.OnValueChanged += OnResolutionChanged;
-
+            
             _fpsSelector.Initialize(GetFPSOptions(), _fpsValues.IndexOf(_settingsService.FrameRate));
             _fpsSelector.OnValueChanged += OnFPSChanged;
 
             _backButton.onClick.AddListener(OnBack);
+            _resetDefaultsButton.onClick.AddListener(ResetToDefaults);
         }
 
-        private void OnEnable() {
-            EventSystem.current.SetSelectedGameObject(null);
-            
-            if (_focusFirstElement != null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-            }
+        public void ResetToDefaults() {
+            if (_defaultsScreen == null) return;
 
-            InputSystem.onAnyButtonPress.Call(OnAnyInput);
-        }
+            _settingsService.FrameRate = _defaultsScreen.FrameRate;
+            _settingsService.IsFullscreen = _defaultsScreen.IsFullscreen;
+            _settingsService.ResolutionIndex = _defaultsScreen.ResolutionIndex;
 
-        private void OnDestroy() {
-            _menuService?.Unregister(MenuScreen.Settings_Screen);
+            _screenService.SetResolution(
+            _settingsService.AvailableResolutions[_settingsService.ResolutionIndex].x,
+            _settingsService.AvailableResolutions[_settingsService.ResolutionIndex].y,
+            _settingsService.IsFullscreen);
+            _screenService.SetFrameRate(_settingsService.FrameRate);
+            _screenService.SetFullscreen(_settingsService.IsFullscreen);
+
+            RefreshUI();
         }
         public void OnResolutionChanged(int index) {
-            var resolution = Screen.resolutions[index];
-            _screenService.SetResolution(resolution.width, resolution.height, _fullscreenToggle.isOn);
+            var resolution = _settingsService.AvailableResolutions[index];
+            _settingsService.ResolutionIndex = index;
+            _screenService.SetResolution(resolution.x, resolution.y, _settingsService.IsFullscreen);
         }
         public void OnFPSChanged(int index) {
             int fps = _fpsValues[index];
@@ -92,13 +95,8 @@ namespace FifthSemester.Gameplay.Menu {
             _menuService.Show(MenuScreen.Settings);
         }
 
-        private void OnAnyInput(InputControl control) {
-            if (control.device is Gamepad && EventSystem.current.currentSelectedGameObject == null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-            }
-        }
-        public void RefreshUI()
-        {
+        // OnAnyInput herdado da base
+        public void RefreshUI() {
             if (_settingsService == null) _settingsService = ServiceLocator.Get<ISettingsService>();
             _fullscreenToggle.isOn = _settingsService.IsFullscreen;
             _fullscreenValue.text = _settingsService.IsFullscreen ? "Yes" : "No";

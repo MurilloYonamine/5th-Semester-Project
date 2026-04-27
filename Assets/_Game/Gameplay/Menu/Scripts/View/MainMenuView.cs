@@ -2,16 +2,12 @@ using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.States;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Utilities;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace FifthSemester.Gameplay.Menu {
-    public class MainMenuView : MonoBehaviour {
-        [Header("Focus")]
-        [SerializeField] private GameObject _focusFirstElement;
+
+    public class MainMenuView : MenuViewBase {
 
         [Header("Buttons")]
         [SerializeField] private Button _playButton;
@@ -20,35 +16,17 @@ namespace FifthSemester.Gameplay.Menu {
         [SerializeField] private Button _quitButton;
 
         private IGameStateService _gameState;
-        private IMenuService _menuService;
 
-        private void Start() {
+        protected override MenuScreen MenuScreenType => MenuScreen.MainMenu;
+
+        protected override void Start() {
             _gameState = ServiceLocator.Get<IGameStateService>();
-            _menuService = ServiceLocator.Get<IMenuService>();
-
-            _menuService.Register(MenuScreen.MainMenu, gameObject);
+            base.Start();
             _menuService.Show(MenuScreen.MainMenu);
-
-            EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-
             _playButton.onClick.AddListener(OnPlay);
             _settingsButton.onClick.AddListener(OnSettings);
             _creditsButton.onClick.AddListener(OnCredits);
             _quitButton.onClick.AddListener(OnQuit);
-        }
-
-        private void OnEnable() {
-            EventSystem.current.SetSelectedGameObject(null);
-
-            if (_focusFirstElement != null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-            }
-
-            InputSystem.onAnyButtonPress.Call(OnAnyInput);
-        }
-
-        private void OnDestroy() {
-            _menuService?.Unregister(MenuScreen.MainMenu);
         }
 
         public void OnPlay() {
@@ -69,10 +47,6 @@ namespace FifthSemester.Gameplay.Menu {
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
         }
-        private void OnAnyInput(InputControl control) {
-            if (control.device is Gamepad && EventSystem.current.currentSelectedGameObject == null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-            }
-        }
+        // OnAnyInput herdado da base
     }
 }

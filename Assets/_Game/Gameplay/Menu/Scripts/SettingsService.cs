@@ -19,12 +19,6 @@ namespace FifthSemester.Gameplay.Menu {
             Application.targetFrameRate = FrameRate;
         }
 
-        // ====== General ======
-        public Language Language {
-            get => (Language)PlayerPrefs.GetInt("Settings_Language", 0);
-            set { PlayerPrefs.SetInt("Settings_Language", (int)value); PlayerPrefs.Save(); }
-        }
-
         // ====== Audio ======
         public float MasterVolume {
             get => PlayerPrefs.GetFloat("Settings_MasterVolume", 1f);
@@ -109,13 +103,17 @@ namespace FifthSemester.Gameplay.Menu {
         };
 
         // ===== Gameplay ======
+        public Language Language {
+            get => (Language)PlayerPrefs.GetInt("Settings_Language", 0);
+            set { PlayerPrefs.SetInt("Settings_Language", (int)value); PlayerPrefs.Save(); }
+        }
         public bool InvertYAxis {
             get => GetBool("Settings_InvertY", false);
             set => SetBool("Settings_InvertY", value);
         }
-        public bool Sensibility {
-            get => GetBool("Settings_Sensibility", false);
-            set => SetBool("Settings_Sensibility", value);
+        public float Sensibility {
+            get => PlayerPrefs.GetFloat("Settings_Sensibility", 1f);
+            set { PlayerPrefs.SetFloat("Settings_Sensibility", value); PlayerPrefs.Save(); }
         }
     }
 }

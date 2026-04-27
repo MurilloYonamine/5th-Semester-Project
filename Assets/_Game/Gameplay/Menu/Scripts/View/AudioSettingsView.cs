@@ -103,6 +103,20 @@ namespace FifthSemester.Gameplay.Menu {
             _forceMonoText.text = value ? "Yes" : "No";
         }
 
+        public void RefreshUI() {
+            if (_settingsService == null) _settingsService = ServiceLocator.Get<ISettingsService>();
+            _masterVolumeSlider.value = _settingsService.MasterVolume;
+            _masterVolumeText.text = Mathf.RoundToInt(_settingsService.MasterVolume).ToString();
+            _musicVolumeSlider.value = _settingsService.MusicVolume;
+            _musicVolumeText.text = Mathf.RoundToInt(_settingsService.MusicVolume).ToString();
+            _sfxVolumeSlider.value = _settingsService.SFXVolume;
+            _sfxVolumeText.text = Mathf.RoundToInt(_settingsService.SFXVolume).ToString();
+            _ambienceVolumeSlider.value = _settingsService.AmbienceVolume;
+            _ambienceVolumeText.text = Mathf.RoundToInt(_settingsService.AmbienceVolume).ToString();
+            _forceMonoToggle.isOn = _settingsService.ForceMonoAudio;
+            _forceMonoText.text = _settingsService.ForceMonoAudio ? "Yes" : "No";
+        }
+
         private void OnAnyInput(InputControl control) {
             if (control.device is Gamepad && EventSystem.current.currentSelectedGameObject == null) {
                 EventSystem.current.SetSelectedGameObject(_focusFirstElement);

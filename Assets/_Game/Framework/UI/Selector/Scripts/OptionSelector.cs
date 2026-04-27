@@ -117,6 +117,13 @@ namespace FifthSemester.Framework.UI {
                 _value.text = _options[_currentIndex];
         }
 
+        public void SetValue(int index) {
+            if (index < 0 || index >= _options.Count) return;
+
+            _currentIndex = index;
+            Refresh();
+        }
+
         public int GetIndex() => _currentIndex;
 
         public void SetIndex(int index) {

@@ -148,6 +148,7 @@ namespace FifthSemester.Gameplay.Menu {
             _graphicsService?.SetVHSEffect(value);
             OnToggleChanged(value, _vhsEffectText);
         }
+
         private void OnToggleChanged(bool value, TextMeshProUGUI text) {
             text.text = value ? "On" : "Off";
         }
@@ -156,6 +157,23 @@ namespace FifthSemester.Gameplay.Menu {
             if (control.device is Gamepad && EventSystem.current.currentSelectedGameObject == null) {
                 EventSystem.current.SetSelectedGameObject(_focusFirstElement);
             }
+        }
+
+        public void RefreshUI()
+        {
+            if (_settingsService == null) _settingsService = ServiceLocator.Get<ISettingsService>();
+            _barrelDistortionToggle.isOn = _settingsService.BarrelDistortion;
+            _ditheringToggle.isOn = _settingsService.Dithering;
+            _pixelationToggle.isOn = _settingsService.Pixelation;
+            _rollingBandsToggle.isOn = _settingsService.RollingBands;
+            _scanlinesToggle.isOn = _settingsService.Scanlines;
+            _vhsEffectToggle.isOn = _settingsService.VHSEffect;
+            OnToggleChanged(_settingsService.BarrelDistortion, _barrelDistortionText);
+            OnToggleChanged(_settingsService.Dithering, _ditheringText);
+            OnToggleChanged(_settingsService.Pixelation, _pixelationText);
+            OnToggleChanged(_settingsService.RollingBands, _rollingBandsText);
+            OnToggleChanged(_settingsService.Scanlines, _scanlinesText);
+            OnToggleChanged(_settingsService.VHSEffect, _vhsEffectText);
         }
     }
 }

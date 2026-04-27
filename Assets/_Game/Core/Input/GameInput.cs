@@ -683,6 +683,24 @@ namespace FifthSemester.Core.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Next"",
+                    ""type"": ""Button"",
+                    ""id"": ""4055293b-4465-4bb9-8541-b898391e7154"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Previous"",
+                    ""type"": ""Button"",
+                    ""id"": ""3f58edc7-d401-4bb4-9823-b55c78bbb4b1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1158,6 +1176,72 @@ namespace FifthSemester.Core.Input
                     ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0b3021a5-05a3-4071-9832-3444631b2a4f"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Next"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f370fe01-bae1-491f-8000-300ba0dd4359"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Next"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e1469a5e-b13e-4a2e-ac85-54a814101e73"",
+                    ""path"": ""<Gamepad>/leftStick/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Next"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f626c803-800a-4537-9fd1-fb7f2f35c87e"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Previous"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""061b7ff1-edef-476f-b5df-5a3bdfb23191"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Previous"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""466ad26a-9b14-41f3-9f0f-075985cbc9f6"",
+                    ""path"": ""<Gamepad>/leftStick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Previous"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -1252,6 +1336,8 @@ namespace FifthSemester.Core.Input
             m_UI_TrackedDeviceOrientation = m_UI.FindAction("TrackedDeviceOrientation", throwIfNotFound: true);
             m_UI_Return = m_UI.FindAction("Return", throwIfNotFound: true);
             m_UI_Interact = m_UI.FindAction("Interact", throwIfNotFound: true);
+            m_UI_Next = m_UI.FindAction("Next", throwIfNotFound: true);
+            m_UI_Previous = m_UI.FindAction("Previous", throwIfNotFound: true);
         }
 
         ~@GameInput()
@@ -1457,6 +1543,8 @@ namespace FifthSemester.Core.Input
         private readonly InputAction m_UI_TrackedDeviceOrientation;
         private readonly InputAction m_UI_Return;
         private readonly InputAction m_UI_Interact;
+        private readonly InputAction m_UI_Next;
+        private readonly InputAction m_UI_Previous;
         public struct UIActions
         {
             private @GameInput m_Wrapper;
@@ -1473,6 +1561,8 @@ namespace FifthSemester.Core.Input
             public InputAction @TrackedDeviceOrientation => m_Wrapper.m_UI_TrackedDeviceOrientation;
             public InputAction @Return => m_Wrapper.m_UI_Return;
             public InputAction @Interact => m_Wrapper.m_UI_Interact;
+            public InputAction @Next => m_Wrapper.m_UI_Next;
+            public InputAction @Previous => m_Wrapper.m_UI_Previous;
             public InputActionMap Get() { return m_Wrapper.m_UI; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1518,6 +1608,12 @@ namespace FifthSemester.Core.Input
                 @Interact.started += instance.OnInteract;
                 @Interact.performed += instance.OnInteract;
                 @Interact.canceled += instance.OnInteract;
+                @Next.started += instance.OnNext;
+                @Next.performed += instance.OnNext;
+                @Next.canceled += instance.OnNext;
+                @Previous.started += instance.OnPrevious;
+                @Previous.performed += instance.OnPrevious;
+                @Previous.canceled += instance.OnPrevious;
             }
 
             private void UnregisterCallbacks(IUIActions instance)
@@ -1558,6 +1654,12 @@ namespace FifthSemester.Core.Input
                 @Interact.started -= instance.OnInteract;
                 @Interact.performed -= instance.OnInteract;
                 @Interact.canceled -= instance.OnInteract;
+                @Next.started -= instance.OnNext;
+                @Next.performed -= instance.OnNext;
+                @Next.canceled -= instance.OnNext;
+                @Previous.started -= instance.OnPrevious;
+                @Previous.performed -= instance.OnPrevious;
+                @Previous.canceled -= instance.OnPrevious;
             }
 
             public void RemoveCallbacks(IUIActions instance)
@@ -1648,6 +1750,8 @@ namespace FifthSemester.Core.Input
             void OnTrackedDeviceOrientation(InputAction.CallbackContext context);
             void OnReturn(InputAction.CallbackContext context);
             void OnInteract(InputAction.CallbackContext context);
+            void OnNext(InputAction.CallbackContext context);
+            void OnPrevious(InputAction.CallbackContext context);
         }
     }
 }

@@ -7,6 +7,7 @@ namespace FifthSemester.Core.Enums {
         Credits,
         Settings_Audio,  
         Settings_Graphics,
+        Settings_Screen,
         Settings_Gameplay 
     }
 }

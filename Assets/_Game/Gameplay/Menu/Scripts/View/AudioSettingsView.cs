@@ -2,6 +2,7 @@ using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace FifthSemester.Gameplay.Menu {
@@ -9,6 +10,9 @@ namespace FifthSemester.Gameplay.Menu {
         private IMenuService _menuService;
         private ISettingsService _settingsService;
         private IAudioService _audioService;
+
+        [Header("Focus")]
+        [SerializeField] private GameObject _focusFirstElement;
 
         [Header("Sliders")]
         [SerializeField] private Slider _masterVolumeSlider;
@@ -55,7 +59,14 @@ namespace FifthSemester.Gameplay.Menu {
 
             _backButton.onClick.AddListener(OnBack);
         }
-
+        private void OnEnable() {
+            if (_focusFirstElement != null) {
+                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
+            }
+        }
+        private void OnDestroy() {
+            _menuService?.Unregister(MenuScreen.Settings_Audio);
+        }
         public void OnBack() {
             _menuService.Show(MenuScreen.Settings);
         }
@@ -78,12 +89,11 @@ namespace FifthSemester.Gameplay.Menu {
         }
         public void OnAmbienceVolumeChanged(float value) {
             _settingsService.AmbienceVolume = value;
-            _audioService?.SetAmbienceVolume(value); 
+            _audioService?.SetAmbienceVolume(value);
             _ambienceVolumeText.text = Mathf.RoundToInt(value).ToString();
         }
         public void OnForceMonoAudioChanged(bool value) {
             _settingsService.ForceMonoAudio = value;
-            _forceMonoToggle.isOn = value;
             _forceMonoText.text = value ? "Yes" : "No";
         }
     }

@@ -99,7 +99,8 @@ namespace FifthSemester.Gameplay.Menu {
             new Vector2Int(640, 480),
             new Vector2Int(800, 600),
             new Vector2Int(1024, 768),
-            new Vector2Int(1280, 720)
+            new Vector2Int(1280, 960),
+            new Vector2Int(1600, 1200),
         };
 
         // ===== Gameplay ======

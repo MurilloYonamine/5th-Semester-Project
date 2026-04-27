@@ -3,6 +3,8 @@
 
 using UnityEngine;
 using UnityEngine.UI;
+using FifthSemester.Core.Events;
+using FifthSemester.Core.Services;
 
 namespace FifthSemester.Player.UI {
     public class PlayerSprintBarUI : MonoBehaviour {
@@ -14,6 +16,7 @@ namespace FifthSemester.Player.UI {
         [SerializeField] private bool _hideBarWhenFull = true;
 
         private bool _sprintInputHeld;
+        private IEventBus _eventBus;
 
         private void Reset() {
             if(_playerController == null) {
@@ -21,16 +24,13 @@ namespace FifthSemester.Player.UI {
             }
         }
 
-        private void OnEnable() {
-            if (_playerController.PlayerEvents != null) {
-                _playerController.PlayerEvents.OnSprintInput += HandleSprintInput;
-            }
+        private void Start() {
+            _eventBus = ServiceLocator.Get<IEventBus>();
+            _eventBus?.Subscribe<SprintInputEvent>(HandleSprintInput);
         }
 
-        private void OnDisable() {
-            if (_playerController.PlayerEvents != null) {
-                _playerController.PlayerEvents.OnSprintInput -= HandleSprintInput;
-            }
+        private void OnDestroy() {
+            _eventBus?.Unsubscribe<SprintInputEvent>(HandleSprintInput);
         }
 
         private void Update() {
@@ -49,10 +49,10 @@ namespace FifthSemester.Player.UI {
             }
         }
 
-        private void HandleSprintInput(bool isSprinting) {
-            _sprintInputHeld = isSprinting;
+        private void HandleSprintInput(SprintInputEvent evt) {
+            _sprintInputHeld = evt.IsPressed;
 
-            if (_canvasGroup != null && isSprinting) {
+            if (_canvasGroup != null && evt.IsPressed) {
                 _canvasGroup.alpha = 1f;
             }
         }

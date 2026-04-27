@@ -3,9 +3,8 @@
 
 using System;
 using UnityEngine;
+using FifthSemester.Core.Services;
 using FifthSemester.Core.Events;
-using FifthSemester.Core.Managers;
-using FifthSemester.Core.States;
 using Sirenix.OdinInspector;
 
 namespace FifthSemester.Player.Components {
@@ -48,7 +47,7 @@ namespace FifthSemester.Player.Components {
         private float _bobTimer;
         private PlayerMovement _movement;
         private PlayerController _player;
-        private PlayerEvents _playerEvents;
+        private IEventBus _eventBus;
 
         private void Awake() {
             _player = GetComponent<PlayerController>();
@@ -69,22 +68,15 @@ namespace FifthSemester.Player.Components {
 
         private void Start() {
             if (_player == null) _player = GetComponent<PlayerController>();
-            if (_player == null || _player.PlayerEvents == null) return;
 
-            _playerEvents = _player.PlayerEvents;
-            _playerEvents.OnLookInput += HandleLookInput;
-            _playerEvents.OnZoomInput += HandleZoomInput;
-        }
-        private void OnEnable() {
-            GameStateManager.OnStateChanged += HandleGameStateChanged;
+            _eventBus = ServiceLocator.Get<IEventBus>();
+            _eventBus?.Subscribe<LookInputEvent>(HandleLookInput);
+            _eventBus?.Subscribe<ZoomInputEvent>(HandleZoomInput);
         }
 
         private void OnDisable() {
-            if (_playerEvents != null) {
-                _playerEvents.OnLookInput -= HandleLookInput;
-                _playerEvents.OnZoomInput -= HandleZoomInput;
-            }
-            GameStateManager.OnStateChanged -= HandleGameStateChanged;
+            _eventBus?.Unsubscribe<LookInputEvent>(HandleLookInput);
+            _eventBus?.Unsubscribe<ZoomInputEvent>(HandleZoomInput);
         }
 
         private void Update() {
@@ -108,12 +100,12 @@ namespace FifthSemester.Player.Components {
             HandleHeadBob();
         }
 
-        private void HandleLookInput(Vector2 look) {
-            _lookInput = look;
+        private void HandleLookInput(LookInputEvent evt) {
+            _lookInput = evt.Value;
         }
 
-        private void HandleZoomInput(bool isPressed) {
-            _zoomPressed = isPressed;
+        private void HandleZoomInput(ZoomInputEvent evt) {
+            _zoomPressed = evt.IsPressed;
         }
 
         private void HandleZoom() {
@@ -170,85 +162,5 @@ namespace FifthSemester.Player.Components {
                 );
             }
         }
-
-        private void HandleGameStateChanged(GameState state) {
-            if (state == GameState.Dialogue) {
-                ResetHeadBob();
-            }
-        }
-
-        #region Dev Tuning API
-
-        public bool CameraCanMove => _cameraCanMove;
-        public bool InvertY => _invertY;
-        public float MouseSensitivity => _mouseSensitivity;
-        public float MaxLookAngle => _maxLookAngle;
-        public bool EnableZoom => _enableZoom;
-        public bool HoldToZoom => _holdToZoom;
-        public float ZoomFov => _zoomFov;
-        public float ZoomStepTime => _zoomStepTime;
-        public bool EnableHeadBob => _enableHeadBob;
-        public float BobSpeed => _bobSpeed;
-        public Vector3 BobAmount => _bobAmount;
-
-        public void SetCameraCanMove(bool value) {
-            _cameraCanMove = value;
-        }
-
-        public void SetInvertY(bool value) {
-            _invertY = value;
-        }
-
-        public void SetMouseSensitivity(float value) {
-            _mouseSensitivity = Mathf.Clamp01(value);
-        }
-
-        public void SetMaxLookAngle(float value) {
-            _maxLookAngle = Mathf.Clamp(value, 1f, 89f);
-        }
-
-        public void SetEnableZoom(bool value) {
-            _enableZoom = value;
-        }
-
-        public void SetHoldToZoom(bool value) {
-            _holdToZoom = value;
-        }
-
-        public void SetZoomFov(float value) {
-            if (_camera == null) {
-                _zoomFov = Mathf.Clamp(value, 1f, 179f);
-                return;
-            }
-
-            _zoomFov = Mathf.Clamp(value, 1f, 179f);
-        }
-
-        public void SetZoomStepTime(float value) {
-            _zoomStepTime = Mathf.Max(0.01f, value);
-        }
-
-        public void SetEnableHeadBob(bool value) {
-            _enableHeadBob = value;
-            if (!value && _joint != null) {
-                _joint.localPosition = _jointOriginalPos;
-            }
-        }
-
-        public void SetBobSpeed(float value) {
-            _bobSpeed = Mathf.Max(0f, value);
-        }
-
-        public void SetBobAmount(Vector3 value) {
-            _bobAmount = value;
-        }
-
-        public void ResetHeadBob() {
-            _bobTimer = 0f;
-            if (_joint != null)
-                _joint.localPosition = _jointOriginalPos;
-        }
-
-        #endregion
     }
 }

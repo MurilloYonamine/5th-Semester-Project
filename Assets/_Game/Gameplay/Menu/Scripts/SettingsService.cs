@@ -22,19 +22,19 @@ namespace FifthSemester.Gameplay.Menu {
         // ====== Audio ======
         public float MasterVolume {
             get => PlayerPrefs.GetFloat("Settings_MasterVolume", 1f);
-            set { PlayerPrefs.SetFloat("Settings_MasterVolume", value); PlayerPrefs.Save(); }
+            set { PlayerPrefs.SetFloat("Settings_MasterVolume", value / 100f); PlayerPrefs.Save(); }
         }
         public float MusicVolume {
             get => PlayerPrefs.GetFloat("Settings_MusicVolume", 1f);
-            set { PlayerPrefs.SetFloat("Settings_MusicVolume", value); PlayerPrefs.Save(); }
+            set { PlayerPrefs.SetFloat("Settings_MusicVolume", value / 100f); PlayerPrefs.Save(); }
         }
         public float SFXVolume {
             get => PlayerPrefs.GetFloat("Settings_SFXVolume", 1f);
-            set { PlayerPrefs.SetFloat("Settings_SFXVolume", value); PlayerPrefs.Save(); }
+            set { PlayerPrefs.SetFloat("Settings_SFXVolume", value / 100f); PlayerPrefs.Save(); }
         }
         public float AmbienceVolume {
             get => PlayerPrefs.GetFloat("Settings_AmbienceVolume", 1f);
-            set { PlayerPrefs.SetFloat("Settings_AmbienceVolume", value); PlayerPrefs.Save(); }
+            set { PlayerPrefs.SetFloat("Settings_AmbienceVolume", value / 100f); PlayerPrefs.Save(); }
         }
         public bool ForceMonoAudio {
             get => GetBool("Settings_ForceMonoAudio", false);

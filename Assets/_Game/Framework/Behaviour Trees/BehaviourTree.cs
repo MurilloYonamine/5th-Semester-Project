@@ -1,3 +1,6 @@
+// Autor: Murillo Gomes Yonamine
+// Data: 28/04/2026
+
 namespace FifthSemester.Framework.BehaviourTrees {
     public class BehaviourTree {
         private string _name;

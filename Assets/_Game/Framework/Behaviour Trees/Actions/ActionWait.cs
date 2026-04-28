@@ -1,8 +1,11 @@
+// Autor: Murillo Gomes Yonamine
+// Data: 28/04/2026
+
 using UnityEngine;
 
 namespace FifthSemester.Framework.BehaviourTrees {
     public class ActionWait : Node {
-        
+
         private float waitTime;
         private float startTime;
         private bool isWaiting;
@@ -27,7 +30,7 @@ namespace FifthSemester.Framework.BehaviourTrees {
 
         public override void Reset() {
             base.Reset();
-            isWaiting = false; 
+            isWaiting = false;
         }
     }
 }

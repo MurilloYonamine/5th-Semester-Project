@@ -1,3 +1,6 @@
+// Autor: Murillo Gomes Yonamine
+// Data: 28/04/2026
+
 using System.Collections.Generic;
 
 namespace FifthSemester.Framework.BehaviourTrees {

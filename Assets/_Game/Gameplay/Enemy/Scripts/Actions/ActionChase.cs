@@ -1,36 +1,43 @@
+﻿// Autor: Murillo Gomes Yonamine
+// Data: 28/04/2026
+
 using UnityEngine;
 using UnityEngine.AI;
 using FifthSemester.Framework.BehaviourTrees;
 
-namespace FifthSemester.Gameplay.Enemy {
+namespace FifthSemester.Framework.BehaviourTrees {
     public class ActionChase : Node {
+        private Blackboard _blackboard;
         private NavMeshAgent _agent;
-        private float _stoppingDistance;
+        private Transform _target;
+        private Animator _animator;
 
-        public ActionChase(NavMeshAgent agent, float stoppingDistance = 1.5f, string name = "Chase Player") : base(name) {
-            this._agent = agent;
-            this._stoppingDistance = stoppingDistance;
+
+        public ActionChase(Blackboard blackboard, string name = "Chase") : base(name, blackboard) {
+            _blackboard = blackboard;
+        }
+
+        private void EnsureInitialized() {
+            if (_agent == null) _agent = _blackboard.GetData<NavMeshAgent>("NavAgent");
+            if (_animator == null) _animator = _blackboard.GetData<Animator>("Animator");
+            if (_target == null) _target = _blackboard.GetData<Transform>("PlayerTarget");
         }
 
         public override Status Process() {
-            // Recupera a referência do alvo no Blackboard!
-            Transform target = Blackboard.GetData<Transform>("PlayerTarget");
+            EnsureInitialized();
 
-            if (target == null) {
-                return Status.Failure; // Se por algum motivo não achar o alvo, a ação falha
-            }
+            if (_agent == null || _target == null) return Status.Failure;
 
-            // Manda o NavMeshAgent ir até o jogador
-            _agent.isStopped = false;
-            _agent.SetDestination(target.position);
+            // animator transitions are driven by Speed in LightSeeker.Update
 
-            // Verifica se o inimigo já chegou perto o suficiente
-            if (!_agent.pathPending && _agent.remainingDistance <= _stoppingDistance) {
-                return Status.Success; // Chegou no alvo!
-            }
+            _agent.SetDestination(_target.position);
 
-            // Se ainda não chegou, continua rodando no próximo frame
             return Status.Running;
+        }
+
+        public override void Reset() {
+            base.Reset();
         }
     }
 }
+

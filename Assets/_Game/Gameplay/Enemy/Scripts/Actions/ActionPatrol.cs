@@ -1,40 +1,67 @@
+﻿// Autor: Murillo Gomes Yonamine
+// Data: 28/04/2026
+
 using UnityEngine;
 using UnityEngine.AI;
 using FifthSemester.Framework.BehaviourTrees;
 
-namespace FifthSemester.Gameplay.Enemy {
+namespace FifthSemester.Framework.BehaviourTrees {
     public class ActionPatrol : Node {
+        private Blackboard _blackboard;
         private NavMeshAgent _agent;
         private Transform[] _waypoints;
-        private int _currentWaypointIndex = 0;
-        private float _stoppingDistance;
+        private Animator _animator;
 
-        public ActionPatrol(NavMeshAgent agent, Transform[] waypoints, float stoppingDistance = 1.0f, string name = "Patrol") : base(name) {
-            this._agent = agent;
-            this._waypoints = waypoints;
-            this._stoppingDistance = stoppingDistance;
+        private int _currentWaypoint = 0;
+        private bool _isWaiting = false;
+        private ActionWait _waitNode;
+        private float _waitTime = 1f;
+
+        public ActionPatrol(Blackboard blackboard, string name = "Patrol") : base(name, blackboard) {
+            this._blackboard = blackboard;
+            _waitNode = new ActionWait(0f);
         }
 
         public override Status Process() {
-            // Prevenção de erros caso não existam pontos de patrulha configurados
-            if (_waypoints == null || _waypoints.Length == 0) {
+            _agent = _blackboard.GetData<NavMeshAgent>("NavAgent");
+            _waypoints = _blackboard.GetData<Transform[]>("PatrolWaypoints");
+            _animator = _blackboard.GetData<Animator>("Animator");
+            _waitTime = _blackboard.GetData<float>("PatrolWaitTime");
+
+            if ( _waypoints.Length == 0) {
                 return Status.Failure;
             }
 
-            Transform target = _waypoints[_currentWaypointIndex];
+            Transform target = _waypoints[_currentWaypoint];
 
-            // Garante que o agente está livre para andar
-            _agent.isStopped = false;
-            _agent.SetDestination(target.position);
-            _agent.transform.LookAt(target);
+            if (!_isWaiting) {
+                _agent.SetDestination(target.position);
 
-            // Verifica se o agente chegou perto o suficiente do waypoint atual
-            if (!_agent.pathPending && _agent.remainingDistance <= _stoppingDistance) {
-                _currentWaypointIndex = (_currentWaypointIndex + 1) % _waypoints.Length;
+                if (_agent.pathPending) return Status.Running;
+
+                if (_agent.remainingDistance <= _agent.stoppingDistance) {
+                    _isWaiting = true;
+                    _waitNode = new ActionWait(_waitTime);
+                }
+
+                return Status.Running;
+            } else {
+                Status waitStatus = _waitNode.Process();
+                if (waitStatus == Status.Success) {
+                    _isWaiting = false;
+                    _currentWaypoint = (_currentWaypoint + 1) % _waypoints.Length;
+                }
+
+                return Status.Running;
             }
+        }
 
-            // Retorna Running para que a árvore continue executando a patrulha no próximo frame
-            return Status.Running;
+        public override void Reset() {
+            base.Reset();
+            _currentWaypoint = 0;
+            _isWaiting = false;
+            _waitNode?.Reset();
         }
     }
 }
+

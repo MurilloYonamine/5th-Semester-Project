@@ -1,6 +1,9 @@
+// Autor: Murillo Gomes Yonamine
+// Data: 28/04/2026
+
 namespace FifthSemester.Framework.BehaviourTrees {
     public class Parallel : Node {
-        
+
         public Parallel(string name = "Parallel") : base(name) {}
 
         public override Status Process() {

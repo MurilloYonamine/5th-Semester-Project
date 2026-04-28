@@ -1,3 +1,6 @@
+// Autor: Murillo Gomes Yonamine
+// Data: 28/04/2026
+
 using System;
 
 namespace FifthSemester.Framework.BehaviourTrees {
@@ -16,7 +19,7 @@ namespace FifthSemester.Framework.BehaviourTrees {
                 // Se a condição for atendida, precisamos abortar a ação imediatamente!
                 Reset();
 
-                // Retornar Failure faz com que o Sequence ou Parallel em que este nó 
+                // Retornar Failure faz com que o Sequence ou Parallel em que este nó
                 // estiver inserido também falhe e interrompa o fluxo.
                 return Status.Failure;
             }

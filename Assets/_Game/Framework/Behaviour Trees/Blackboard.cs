@@ -1,9 +1,12 @@
+// Autor: Murillo Gomes Yonamine
+// Data: 28/04/2026
+
 using System.Collections.Generic;
 
 namespace FifthSemester.Framework.BehaviourTrees {
     public class Blackboard {
-        
-        // O dicionário que guarda as memórias. 
+
+        // O dicionário que guarda as memórias.
         private Dictionary<string, object> _memory = new Dictionary<string, object>();
 
         // Salva ou atualiza um dado na memória
@@ -16,7 +19,7 @@ namespace FifthSemester.Framework.BehaviourTrees {
             if (_memory.TryGetValue(key, out object value)) {
                 return value;
             }
-            return null; 
+            return null;
         }
 
         // Método genérico avançado: Busca o dado já convertido para o tipo correto (ex: Vector3, Transform)
@@ -31,7 +34,7 @@ namespace FifthSemester.Framework.BehaviourTrees {
         public bool HasKey(string key) {
             return _memory.ContainsKey(key);
         }
-        
+
         public void ClearData(string key) {
             if (_memory.ContainsKey(key)) {
                 _memory.Remove(key);

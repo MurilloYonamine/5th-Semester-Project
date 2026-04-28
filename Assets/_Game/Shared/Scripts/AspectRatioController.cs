@@ -1,26 +1,21 @@
 using UnityEngine;
 
-namespace FifthSemester.Shared
-{
-    public class AspectRatioController : MonoBehaviour
-    {
-        public float targetAspect = 4f / 3f;
+namespace FifthSemester.Shared {
+    public class AspectRatioController : MonoBehaviour {
+        private readonly float targetAspect = 4f / 3f;
 
-        private void Start()
-        {
+        private void Start() {
             ApplyAspect();
         }
 
-        private void ApplyAspect()
-        {
+        private void ApplyAspect() {
             float windowAspect = (float)Screen.width / Screen.height;
             float scaleHeight = windowAspect / targetAspect;
 
             Camera cam = GetComponent<Camera>();
             cam.backgroundColor = Color.black;
 
-            if (scaleHeight < 1.0f)
-            {
+            if (scaleHeight < 1.0f) {
                 Rect rect = cam.rect;
                 rect.width = 1.0f;
                 rect.height = scaleHeight;
@@ -28,8 +23,7 @@ namespace FifthSemester.Shared
                 rect.y = (1.0f - scaleHeight) / 2.0f;
                 cam.rect = rect;
             }
-            else
-            {
+            else {
                 float scaleWidth = 1.0f / scaleHeight;
 
                 Rect rect = cam.rect;

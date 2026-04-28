@@ -24,7 +24,6 @@ namespace FifthSemester.Core.Audio {
         [Header("Audio Settings")]
         public const float TRACK_TRANSITION_SPEED = 1f;
         public const float MUTED_VOLUME_LEVEL = -80f;
-        [SerializeField] private AnimationCurve audioFalloffCurve = AnimationCurve.Linear(0, -80, 1, 0);
 
         [Header("SFX Settings")]
         private const string SFX_PARENT_NAME = "SFX";

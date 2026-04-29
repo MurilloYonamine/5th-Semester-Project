@@ -58,6 +58,14 @@ namespace FifthSemester.Core.Events {
         }
     }
 
+    public readonly struct FlashlightInputEvent {
+        public readonly bool IsPressed;
+
+        public FlashlightInputEvent(bool isPressed) {
+            IsPressed = isPressed;
+        }
+    }
+
     public readonly struct NextInputEvent { }
 
     public readonly struct PreviousInputEvent { }
@@ -135,6 +143,17 @@ namespace FifthSemester.Core.Events {
         public ItemDeliveredEvent(string deliveryPointId, string deliveredItemId) {
             DeliveryPointId = deliveryPointId;
             DeliveredItemId = deliveredItemId;
+        }
+    }
+
+    // Disparado quando a lanterna ilumina ou deixa de iluminar um objeto
+    public readonly struct FlashlightTargetedEvent {
+        public readonly GameObject Target;
+        public readonly bool IsIlluminated;
+
+        public FlashlightTargetedEvent(GameObject target, bool isIlluminated) {
+            Target = target;
+            IsIlluminated = isIlluminated;
         }
     }
 }

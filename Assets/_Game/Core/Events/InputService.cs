@@ -23,6 +23,7 @@ namespace FifthSemester.Core.Events {
         private InputAction _sprint;
         private InputAction _interact;
         private InputAction _zoom;
+        private InputAction _flash;
         private InputAction _next;
         private InputAction _previous;
         private InputAction _openPause;
@@ -53,6 +54,7 @@ namespace FifthSemester.Core.Events {
             _sprint = _gameInput.Player.Sprint;
             _interact = _gameInput.Player.Interact;
             _zoom = _gameInput.Player.Zoom;
+            _flash = _gameInput.Player.Flash;
             _next = _gameInput.Player.Next;
             _previous = _gameInput.Player.Previous;
             _openPause = _gameInput.Player.OpenPause;
@@ -72,6 +74,8 @@ namespace FifthSemester.Core.Events {
             _interact.started += HandleInteract;
             _zoom.performed += HandleZoom;
             _zoom.canceled += HandleZoom;
+            _flash.performed += HandleFlash;
+            _flash.canceled += HandleFlash;
             _next.performed += HandleNext;
             _previous.performed += HandlePrevious;
             _openPause.performed += HandleOpenPause;
@@ -153,6 +157,16 @@ namespace FifthSemester.Core.Events {
             }
         }
 
+        public void HandleFlash(InputAction.CallbackContext context) {
+            if (context.performed) {
+                if (CurrentGameState != GameState.Gameplay) return;
+                PublishEvent(new FifthSemester.Core.Events.FlashlightInputEvent(true));
+            }
+            else if (context.canceled) {
+                PublishEvent(new FifthSemester.Core.Events.FlashlightInputEvent(false));
+            }
+        }
+
         public void HandleNext(InputAction.CallbackContext context) {
             if (!context.performed) return;
 
@@ -202,6 +216,7 @@ namespace FifthSemester.Core.Events {
                 _jump.Enable();
                 _crouch.Enable();
                 _sprint.Enable();
+                _flash?.Enable();
             }
             else {
                 PublishEvent(new MoveInputEvent(Vector2.zero));
@@ -213,6 +228,7 @@ namespace FifthSemester.Core.Events {
                 _jump.Disable();
                 _crouch.Disable();
                 _sprint.Disable();
+                _flash?.Disable();
             }
         }
         public void Dispose() {
@@ -232,6 +248,8 @@ namespace FifthSemester.Core.Events {
             _interact.started -= HandleInteract;
             _zoom.performed -= HandleZoom;
             _zoom.canceled -= HandleZoom;
+            _flash.performed -= HandleFlash;
+            _flash.canceled -= HandleFlash;
             _next.performed -= HandleNext;
             _previous.performed -= HandlePrevious;
             _openPause.performed -= HandleOpenPause;

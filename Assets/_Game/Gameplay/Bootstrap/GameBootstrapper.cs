@@ -33,7 +33,9 @@ namespace FifthSemester.Gameplay.Bootstrap {
 
             GameObject coreSystems = Resources.Load<GameObject>(CORE_SYSTEMS);
             if (coreSystems != null) {
-                Object.Instantiate(coreSystems);
+                GameObject instantiateObject = Object.Instantiate(coreSystems);
+                instantiateObject.name = "[ CORE SYSTEMS ]";
+                Object.DontDestroyOnLoad(instantiateObject);
                 Debug.Log($"{TAG} Core systems initialized successfully.");
             }
             else {

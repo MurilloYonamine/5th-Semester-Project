@@ -6,6 +6,7 @@ using FifthSemester.Core.Events;
 using UnityEngine;
 using FifthSemester.Framework.BehaviourTrees;
 using UnityEngine.AI;
+using UnityEngine.Playables;
 
 
 namespace FifthSemester.Gameplay.Enemy {
@@ -33,6 +34,8 @@ namespace FifthSemester.Gameplay.Enemy {
         private NavMeshAgent _agent;
         private Animator _animator;
 
+        [Header("Timeline")] [SerializeField] private PlayableDirector _jumpscareDirector;
+
         [Header("Speed Settings")] [SerializeField, Range(0f, 10f)]
         private float _speed = 1.5f;
 
@@ -45,40 +48,30 @@ namespace FifthSemester.Gameplay.Enemy {
             _agent = GetComponent<NavMeshAgent>();
             _animator = GetComponentInChildren<Animator>();
             _agent.speed = _speed;
-        }
 
-        private void OnEnable() {
-            var eventBus = ServiceLocator.Get<IEventBus>();
-            eventBus?.Subscribe<PlayerSprintChangedEvent>(HandleSprint);
-        }
-
-        private void OnDisable() {
-            var eventBus = ServiceLocator.Get<IEventBus>();
-            eventBus?.Unsubscribe<PlayerSprintChangedEvent>(HandleSprint);
-        }
-
-        private void HandleSprint(PlayerSprintChangedEvent evt) {
-            if (_agent != null) {
-                _agent.speed = evt.IsSprinting ? _sprint : _speed;
-            }
-        }
-
-        private void Start() {
             _blackboard = new Blackboard();
             _blackboard.SetData("PlayerTarget", _target);
             _blackboard.SetData("NavAgent", _agent);
             _blackboard.SetData("PatrolWaypoints", _patrolWaypoints);
             _blackboard.SetData("Animator", _animator);
             _blackboard.SetData("PatrolWaitTime", _patrolWaitTime);
+            _blackboard.SetData("JumpscareDirector", _jumpscareDirector);
+        }
 
+        private void Start() {
             var abort = new Abort(() => IsPlayerInFOV(), "FOVAbort");
             abort.AddChild(new ActionPatrol(_blackboard));
 
             var chase = new ActionChase(_blackboard);
+            var playJumpscare = new ActionPlayJumpscare(_blackboard);
+
+            var chaseSequence = new Sequence("ChaseSequence");
+            chaseSequence.AddChild(chase);
+            chaseSequence.AddChild(playJumpscare);
 
             var root = new Selector("RootSelector");
             root.AddChild(abort);
-            root.AddChild(chase);
+            root.AddChild(chaseSequence);
 
             _tree = new BehaviourTree("LightSeeker Behaviour Tree", root);
         }
@@ -87,6 +80,43 @@ namespace FifthSemester.Gameplay.Enemy {
             _tree?.Process();
             _animator.SetFloat(_speedHash, _agent.velocity.magnitude);
         }
+        private void OnEnable() {
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Subscribe<PlayerSprintChangedEvent>(HandleSprint);
+            eventBus?.Subscribe<FlashlightTargetedEvent>(HandleFlashlightTargeted);
+        }
+
+        private void OnDisable() {
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Unsubscribe<PlayerSprintChangedEvent>(HandleSprint);
+            eventBus?.Unsubscribe<FlashlightTargetedEvent>(HandleFlashlightTargeted);
+        }
+
+        private void HandleSprint(PlayerSprintChangedEvent evt) {
+            if (_agent != null) {
+                _agent.speed = evt.IsSprinting ? _sprint : _speed;
+            }
+        }
+
+        private void HandleFlashlightTargeted(FlashlightTargetedEvent evt) {
+            if (_agent == null) return;
+
+            if (evt.Target == this.gameObject && evt.IsIlluminated) {
+                if (_agent.isOnNavMesh) {
+                    _agent.isStopped = true;
+                    _agent.velocity = Vector3.zero;
+                    _agent.ResetPath();
+                }
+                _blackboard?.SetData("IsStunnedByFlashlight", true);
+            }
+            else if (evt.Target == this.gameObject && !evt.IsIlluminated) {
+                if (_agent.isOnNavMesh) {
+                    _agent.isStopped = false;
+                }
+                _blackboard?.SetData("IsStunnedByFlashlight", false);
+            }
+        }
+
 
         private bool IsPlayerInFOV() {
             if (_target == null || _eyeTransform == null) return false;

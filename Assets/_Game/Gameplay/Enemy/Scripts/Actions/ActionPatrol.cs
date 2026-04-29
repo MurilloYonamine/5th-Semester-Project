@@ -28,6 +28,10 @@ namespace FifthSemester.Framework.BehaviourTrees {
             _animator = _blackboard.GetData<Animator>("Animator");
             _waitTime = _blackboard.GetData<float>("PatrolWaitTime");
 
+            if (_blackboard != null && _blackboard.HasKey("IsStunnedByFlashlight") && _blackboard.GetData<bool>("IsStunnedByFlashlight")) {
+                return Status.Failure;
+            }
+
             if ( _waypoints.Length == 0) {
                 return Status.Failure;
             }
@@ -64,4 +68,3 @@ namespace FifthSemester.Framework.BehaviourTrees {
         }
     }
 }
-

@@ -16,21 +16,26 @@ namespace FifthSemester.Framework.BehaviourTrees {
         public ActionChase(Blackboard blackboard, string name = "Chase") : base(name, blackboard) {
             _blackboard = blackboard;
         }
-
-        private void EnsureInitialized() {
+        public override Status Process() {
             if (_agent == null) _agent = _blackboard.GetData<NavMeshAgent>("NavAgent");
             if (_animator == null) _animator = _blackboard.GetData<Animator>("Animator");
             if (_target == null) _target = _blackboard.GetData<Transform>("PlayerTarget");
-        }
-
-        public override Status Process() {
-            EnsureInitialized();
 
             if (_agent == null || _target == null) return Status.Failure;
 
-            // animator transitions are driven by Speed in LightSeeker.Update
+            if (_blackboard != null && _blackboard.HasKey("IsStunnedByFlashlight") && _blackboard.GetData<bool>("IsStunnedByFlashlight")) {
+                return Status.Failure;
+            }
+
+            if (_agent.isStopped) {
+                _agent.isStopped = false;
+            }
 
             _agent.SetDestination(_target.position);
+
+            if (!_agent.pathPending && _agent.hasPath && _agent.remainingDistance <= _agent.stoppingDistance + 0.1f) {
+                return Status.Success;
+            }
 
             return Status.Running;
         }

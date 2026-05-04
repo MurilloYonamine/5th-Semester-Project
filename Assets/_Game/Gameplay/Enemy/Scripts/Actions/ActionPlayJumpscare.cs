@@ -11,7 +11,12 @@ using UnityEngine.SceneManagement;
 
 namespace FifthSemester.Framework.BehaviourTrees {
     public class ActionPlayJumpscare : Node {
-        private Blackboard _blackboard;
+        private const string NAV_AGENT_KEY = "NavAgent";
+        private const string JUMPSCARE_DIRECTOR_KEY = "JumpscareDirector";
+        private const string PLAYER_TARGET_KEY = "PlayerTarget";
+        private const string MAIN_MENU_SCENE_NAME = "MainMenu";
+
+        private readonly Blackboard _blackboard;
         private NavMeshAgent _agent;
         private PlayableDirector _director;
         private Transform _target;
@@ -27,18 +32,17 @@ namespace FifthSemester.Framework.BehaviourTrees {
         }
 
         public override Status Process() {
-            _agent ??= _blackboard.GetData<NavMeshAgent>("NavAgent");
-            _director ??= _blackboard.GetData<PlayableDirector>("JumpscareDirector");
-            _target ??= _blackboard.GetData<Transform>("PlayerTarget");
+            CacheReferences();
+
+            if (_agent == null || _director == null || _target == null) {
+                return Status.Failure;
+            }
 
             if (!_started) {
-                float distanceToPlayer = Vector3.Distance(_agent.transform.position, _target.position);
-
-                // Só inicia o jumpscare se estiver colado no player
-                if (distanceToPlayer <= _agent.stoppingDistance + 0.5f) {
+                if (CanStartJumpscare()) {
                     StartJumpscare();
-                    return Status.Running;
                 }
+
                 return Status.Running;
             }
 
@@ -50,6 +54,17 @@ namespace FifthSemester.Framework.BehaviourTrees {
             return Status.Running;
         }
 
+        private void CacheReferences() {
+            _agent ??= _blackboard.GetData<NavMeshAgent>(NAV_AGENT_KEY);
+            _director ??= _blackboard.GetData<PlayableDirector>(JUMPSCARE_DIRECTOR_KEY);
+            _target ??= _blackboard.GetData<Transform>(PLAYER_TARGET_KEY);
+        }
+
+        private bool CanStartJumpscare() {
+            float distanceToPlayer = Vector3.Distance(_agent.transform.position, _target.position);
+            return distanceToPlayer <= _agent.stoppingDistance + 0.5f;
+        }
+
         private void StartJumpscare() {
             if (_agent.isOnNavMesh) {
                 _agent.isStopped = true;
@@ -57,19 +72,23 @@ namespace FifthSemester.Framework.BehaviourTrees {
             }
 
             _director.stopped += OnDirectorStopped;
-            _gameStateService.ChangeState(GameState.Cutscene);
+            _gameStateService?.ChangeState(GameState.Cutscene);
             _director.Play();
             _started = true;
         }
 
         private void FinalizeJumpscare() {
             _director.stopped -= OnDirectorStopped;
-            _gameStateService.ChangeState(GameState.Gameplay);
+            _gameStateService?.ChangeState(GameState.Gameplay);
         }
 
         private void OnDirectorStopped(PlayableDirector pd) {
+            if (_director != null && pd != _director) {
+                return;
+            }
+
             _finished = true;
-            SceneManager.LoadScene("MainMenu");
+            SceneManager.LoadScene(MAIN_MENU_SCENE_NAME);
         }
 
         public override void Reset() {

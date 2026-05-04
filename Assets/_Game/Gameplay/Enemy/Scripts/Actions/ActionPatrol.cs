@@ -23,41 +23,35 @@ namespace FifthSemester.Framework.BehaviourTrees {
         }
 
         public override Status Process() {
+            // Atualiza referências do Blackboard (podem mudar se o inimigo for reciclado)
             _agent = _blackboard.GetData<NavMeshAgent>("NavAgent");
             _waypoints = _blackboard.GetData<Transform[]>("PatrolWaypoints");
-            _animator = _blackboard.GetData<Animator>("Animator");
             _waitTime = _blackboard.GetData<float>("PatrolWaitTime");
 
-            if (_blackboard != null && _blackboard.HasKey("IsStunnedByFlashlight") && _blackboard.GetData<bool>("IsStunnedByFlashlight")) {
-                return Status.Failure;
-            }
-
-            if ( _waypoints.Length == 0) {
-                return Status.Failure;
-            }
-
-            Transform target = _waypoints[_currentWaypoint];
+            // Se estiver stunado, a patrulha falha para dar vez ao nó de Stop
+            if (_blackboard.GetData<bool>("IsStunnedByFlashlight")) return Status.Failure;
+            if (_waypoints == null || _waypoints.Length == 0) return Status.Failure;
 
             if (!_isWaiting) {
-                _agent.SetDestination(target.position);
+                _agent.SetDestination(_waypoints[_currentWaypoint].position);
 
                 if (_agent.pathPending) return Status.Running;
 
+                // Chegou no waypoint? Inicia espera
                 if (_agent.remainingDistance <= _agent.stoppingDistance) {
                     _isWaiting = true;
                     _waitNode = new ActionWait(_waitTime);
                 }
-
                 return Status.Running;
-            } else {
-                Status waitStatus = _waitNode.Process();
-                if (waitStatus == Status.Success) {
-                    _isWaiting = false;
-                    _currentWaypoint = (_currentWaypoint + 1) % _waypoints.Length;
-                }
-
-                return Status.Running;
+            } 
+            
+            // Lógica de Espera
+            if (_waitNode.Process() == Status.Success) {
+                _isWaiting = false;
+                _currentWaypoint = (_currentWaypoint + 1) % _waypoints.Length;
             }
+
+            return Status.Running;
         }
 
         public override void Reset() {

@@ -17,22 +17,23 @@ namespace FifthSemester.Framework.BehaviourTrees {
             _blackboard = blackboard;
         }
         public override Status Process() {
-            if (_agent == null) _agent = _blackboard.GetData<NavMeshAgent>("NavAgent");
-            if (_animator == null) _animator = _blackboard.GetData<Animator>("Animator");
-            if (_target == null) _target = _blackboard.GetData<Transform>("PlayerTarget");
+            // Cache dos dados do Blackboard
+            _agent ??= _blackboard.GetData<NavMeshAgent>("NavAgent");
+            _target ??= _blackboard.GetData<Transform>("PlayerTarget");
 
             if (_agent == null || _target == null) return Status.Failure;
 
-            if (_blackboard != null && _blackboard.HasKey("IsStunnedByFlashlight") && _blackboard.GetData<bool>("IsStunnedByFlashlight")) {
+            // Bloqueio se estiver sob efeito da lanterna
+            if (_blackboard.GetData<bool>("IsStunnedByFlashlight")) {
                 return Status.Failure;
             }
 
-            if (_agent.isStopped) {
-                _agent.isStopped = false;
-            }
+            // Garante que o agente está se movendo
+            if (_agent.isStopped) _agent.isStopped = false;
 
             _agent.SetDestination(_target.position);
 
+            // Checa se chegou no destino
             if (!_agent.pathPending && _agent.hasPath && _agent.remainingDistance <= _agent.stoppingDistance + 0.1f) {
                 return Status.Success;
             }

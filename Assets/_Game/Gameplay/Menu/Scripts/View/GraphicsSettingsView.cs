@@ -94,12 +94,13 @@ namespace FifthSemester.Gameplay.Menu {
             RefreshUI();
         }
 
-        protected override void OnEnable() {
-            base.OnEnable();
+        public override void OnShow() {
+            base.OnShow();
             ChangeCamera(true);
         }
 
-        private void OnDisable() {
+        public override void OnHide() {
+            base.OnHide();
             ChangeCamera(false);
         }
 
@@ -109,7 +110,6 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public void OnBack() {
-            ChangeCamera(false);
             _menuService.Show(MenuScreen.Settings);
         }
 

@@ -27,38 +27,44 @@ namespace FifthSemester.Framework.BehaviourTrees {
         }
 
         public override Status Process() {
-            if (_agent == null) _agent = _blackboard.GetData<NavMeshAgent>("NavAgent");
-            if (_director == null) _director = _blackboard.GetData<PlayableDirector>("JumpscareDirector");
-            if (_target == null) _target = _blackboard.GetData<Transform>("PlayerTarget");
+            _agent ??= _blackboard.GetData<NavMeshAgent>("NavAgent");
+            _director ??= _blackboard.GetData<PlayableDirector>("JumpscareDirector");
+            _target ??= _blackboard.GetData<Transform>("PlayerTarget");
 
             if (!_started) {
                 float distanceToPlayer = Vector3.Distance(_agent.transform.position, _target.position);
 
+                // Só inicia o jumpscare se estiver colado no player
                 if (distanceToPlayer <= _agent.stoppingDistance + 0.5f) {
-
-                    if (_agent.isOnNavMesh) {
-                        _agent.isStopped = true;
-                        _agent.ResetPath();
-                    }
-
-                    _director.stopped += OnDirectorStopped;
-
-                    _gameStateService.ChangeState(GameState.Cutscene);
-                    _director.Play();
-                    _started = true;
+                    StartJumpscare();
                     return Status.Running;
                 }
-
                 return Status.Running;
             }
 
             if (_finished) {
-                _director.stopped -= OnDirectorStopped;
-                _gameStateService.ChangeState(GameState.Gameplay);
+                FinalizeJumpscare();
                 return Status.Success;
             }
 
             return Status.Running;
+        }
+
+        private void StartJumpscare() {
+            if (_agent.isOnNavMesh) {
+                _agent.isStopped = true;
+                _agent.ResetPath();
+            }
+
+            _director.stopped += OnDirectorStopped;
+            _gameStateService.ChangeState(GameState.Cutscene);
+            _director.Play();
+            _started = true;
+        }
+
+        private void FinalizeJumpscare() {
+            _director.stopped -= OnDirectorStopped;
+            _gameStateService.ChangeState(GameState.Gameplay);
         }
 
         private void OnDirectorStopped(PlayableDirector pd) {

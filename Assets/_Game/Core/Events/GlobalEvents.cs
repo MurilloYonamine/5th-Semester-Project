@@ -146,7 +146,6 @@ namespace FifthSemester.Core.Events {
         }
     }
 
-    // Disparado quando a lanterna ilumina ou deixa de iluminar um objeto
     public readonly struct FlashlightTargetedEvent {
         public readonly GameObject Target;
         public readonly bool IsIlluminated;

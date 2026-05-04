@@ -28,8 +28,13 @@ namespace FifthSemester.Gameplay {
             _previousState = CurrentState;
             CurrentState = newState;
 
-            Debug.Log($"{TAG} Mudou de {_previousState} para {CurrentState}");
+            if (CurrentState == GameState.Paused) {
+                Time.timeScale = 0f;
+            } else {
+                Time.timeScale = 1f;
+            }
 
+            Debug.Log($"{TAG} Mudou de {_previousState} para {CurrentState}");
             _eventBus.Publish(new GameStateChangedEvent(_previousState, CurrentState));
         }
 
@@ -40,16 +45,14 @@ namespace FifthSemester.Gameplay {
         }
 
         private void OnDialogueEnded(DialogueEndedEvent evt) {
-            ChangeState(GameState.Gameplay); 
+            ChangeState(GameState.Gameplay);
         }
 
         private void OnPauseToggled(PauseToggleRequestedEvent evt) {
             if (CurrentState == GameState.Paused) {
-                ChangeState(_previousState);
-                Time.timeScale = 1f; 
-            } else {
+                ChangeState(GameState.Gameplay);
+            } else if (CurrentState == GameState.Gameplay) {
                 ChangeState(GameState.Paused);
-                Time.timeScale = 0f;
             }
         }
 

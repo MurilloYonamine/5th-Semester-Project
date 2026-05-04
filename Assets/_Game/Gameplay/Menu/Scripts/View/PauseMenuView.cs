@@ -10,7 +10,8 @@ namespace FifthSemester.Gameplay.Menu {
         private IGameStateService _gameState;
         private IEventBus _eventBus;
 
-        [Header("Buttons")] [SerializeField] private Button _resumeButton;
+        [Header("Buttons")]
+        [SerializeField] private Button _resumeButton;
         [SerializeField] private Button _settingsButton;
         [SerializeField] private Button _creditsButton;
         [SerializeField] private Button _quitButton;
@@ -20,8 +21,11 @@ namespace FifthSemester.Gameplay.Menu {
         protected override void Start() {
             _gameState = ServiceLocator.Get<IGameStateService>();
             _eventBus = ServiceLocator.Get<IEventBus>();
-            _eventBus?.Subscribe<PauseToggleRequestedEvent>(OnPauseToggleRequested);
+
+            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
+
             base.Start();
+
             _resumeButton.onClick.AddListener(OnResume);
             _settingsButton.onClick.AddListener(OnSettings);
             _creditsButton.onClick.AddListener(OnCredits);
@@ -30,11 +34,23 @@ namespace FifthSemester.Gameplay.Menu {
 
         protected override void OnDestroy() {
             base.OnDestroy();
-            _eventBus?.Unsubscribe<PauseToggleRequestedEvent>(OnPauseToggleRequested);
+            _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
         }
 
-        private void OnPauseToggleRequested(PauseToggleRequestedEvent evt) {
-            _menuService.Show(MenuScreen.PauseMenu);
+        private void OnGameStateChanged(GameStateChangedEvent evt) {
+            if (evt.CurrentState == GameState.Paused) {
+                _menuService.Show(MenuScreen.PauseMenu);
+
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.None;
+            }
+            else if (evt.PreviousState == GameState.Paused) {
+                _menuService.Hide();
+
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+
+            }
         }
 
         public void OnResume() {

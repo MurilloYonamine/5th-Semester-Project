@@ -59,18 +59,25 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void Start() {
-            var abort = new Abort(() => IsPlayerInFOV(), "FOVAbort");
-            abort.AddChild(new ActionPatrol(_blackboard));
+            // --- Construção da Árvore de Comportamento ---
+            
+            // 1. Ramo de Stun (Se iluminado, para totalmente)
+            var isStunned = new Abort(() => _blackboard.GetData<bool>("IsStunnedByFlashlight"), "StunCheck");
+            isStunned.AddChild(new ActionStop(_agent));
 
-            var chase = new ActionChase(_blackboard);
-            var playJumpscare = new ActionPlayJumpscare(_blackboard);
+            // 2. Ramo de Patrulha (Com interrupção se vir o player)
+            var patrolBranch = new Abort(() => IsPlayerInFOV(), "FOVAbort");
+            patrolBranch.AddChild(new ActionPatrol(_blackboard));
 
+            // 3. Ramo de Perseguição
             var chaseSequence = new Sequence("ChaseSequence");
-            chaseSequence.AddChild(chase);
-            chaseSequence.AddChild(playJumpscare);
+            chaseSequence.AddChild(new ActionChase(_blackboard));
+            chaseSequence.AddChild(new ActionPlayJumpscare(_blackboard));
 
+            // Nó Raiz: Tenta parar se estiver em stun -> Tenta patrulhar -> Tenta perseguir
             var root = new Selector("RootSelector");
-            root.AddChild(abort);
+            root.AddChild(isStunned);
+            root.AddChild(patrolBranch);
             root.AddChild(chaseSequence);
 
             _tree = new BehaviourTree("LightSeeker Behaviour Tree", root);

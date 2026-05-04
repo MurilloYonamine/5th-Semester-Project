@@ -7,10 +7,14 @@ using FifthSemester.Framework.BehaviourTrees;
 
 namespace FifthSemester.Framework.BehaviourTrees {
     public class ActionPatrol : Node {
-        private Blackboard _blackboard;
+        private const string NAV_AGENT_KEY = "NavAgent";
+        private const string PATROL_WAYPOINTS_KEY = "PatrolWaypoints";
+        private const string PATROL_WAIT_TIME_KEY = "PatrolWaitTime";
+        private const string IS_STUNNED_KEY = "IsStunnedByFlashlight";
+
+        private readonly Blackboard _blackboard;
         private NavMeshAgent _agent;
         private Transform[] _waypoints;
-        private Animator _animator;
 
         private int _currentWaypoint = 0;
         private bool _isWaiting = false;
@@ -18,40 +22,62 @@ namespace FifthSemester.Framework.BehaviourTrees {
         private float _waitTime = 1f;
 
         public ActionPatrol(Blackboard blackboard, string name = "Patrol") : base(name, blackboard) {
-            this._blackboard = blackboard;
+            _blackboard = blackboard;
             _waitNode = new ActionWait(0f);
         }
 
         public override Status Process() {
-            // Atualiza referências do Blackboard (podem mudar se o inimigo for reciclado)
-            _agent = _blackboard.GetData<NavMeshAgent>("NavAgent");
-            _waypoints = _blackboard.GetData<Transform[]>("PatrolWaypoints");
-            _waitTime = _blackboard.GetData<float>("PatrolWaitTime");
+            RefreshDataFromBlackboard();
 
-            // Se estiver stunado, a patrulha falha para dar vez ao nó de Stop
-            if (_blackboard.GetData<bool>("IsStunnedByFlashlight")) return Status.Failure;
-            if (_waypoints == null || _waypoints.Length == 0) return Status.Failure;
-
-            if (!_isWaiting) {
-                _agent.SetDestination(_waypoints[_currentWaypoint].position);
-
-                if (_agent.pathPending) return Status.Running;
-
-                // Chegou no waypoint? Inicia espera
-                if (_agent.remainingDistance <= _agent.stoppingDistance) {
-                    _isWaiting = true;
-                    _waitNode = new ActionWait(_waitTime);
-                }
-                return Status.Running;
-            } 
-            
-            // Lógica de Espera
-            if (_waitNode.Process() == Status.Success) {
-                _isWaiting = false;
-                _currentWaypoint = (_currentWaypoint + 1) % _waypoints.Length;
+            if (_blackboard.GetData<bool>(IS_STUNNED_KEY)) {
+                return Status.Failure;
             }
 
+            if (_agent == null || _waypoints == null || _waypoints.Length == 0) {
+                return Status.Failure;
+            }
+
+            if (!_isWaiting) {
+                MoveToCurrentWaypoint();
+
+                if (_agent.pathPending) {
+                    return Status.Running;
+                }
+
+                BeginWaitIfReachedWaypoint();
+                return Status.Running;
+            }
+
+            ProcessWait();
             return Status.Running;
+        }
+
+        private void RefreshDataFromBlackboard() {
+            _agent = _blackboard.GetData<NavMeshAgent>(NAV_AGENT_KEY);
+            _waypoints = _blackboard.GetData<Transform[]>(PATROL_WAYPOINTS_KEY);
+            _waitTime = _blackboard.GetData<float>(PATROL_WAIT_TIME_KEY);
+        }
+
+        private void MoveToCurrentWaypoint() {
+            _agent.SetDestination(_waypoints[_currentWaypoint].position);
+        }
+
+        private void BeginWaitIfReachedWaypoint() {
+            if (_agent.remainingDistance > _agent.stoppingDistance) {
+                return;
+            }
+
+            _isWaiting = true;
+            _waitNode = new ActionWait(_waitTime);
+        }
+
+        private void ProcessWait() {
+            if (_waitNode.Process() != Status.Success) {
+                return;
+            }
+
+            _isWaiting = false;
+            _currentWaypoint = (_currentWaypoint + 1) % _waypoints.Length;
         }
 
         public override void Reset() {

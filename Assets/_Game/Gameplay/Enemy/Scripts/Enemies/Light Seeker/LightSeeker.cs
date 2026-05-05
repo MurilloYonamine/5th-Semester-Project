@@ -64,6 +64,12 @@ namespace FifthSemester.Gameplay.Enemy {
             _blackboard.SetData(PATROL_WAIT_TIME_KEY, _patrolWaitTime);
             _blackboard.SetData(JUMPSCARE_DIRECTOR_KEY, _jumpscareDirector);
             _blackboard.SetData(IS_STUNNED_KEY, false);
+            
+            // Vision parameters
+            _blackboard.SetData("EyeTransform", _eyeTransform);
+            _blackboard.SetData("ViewDistance", _viewDistance);
+            _blackboard.SetData("FovAngle", _fovAngle);
+            _blackboard.SetData("ObstacleMask", _obstacleMask);
         }
 
         private void Start() {
@@ -71,20 +77,29 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void BuildBehaviourTree() {
-            var isStunned = new Abort(() => _blackboard.GetData<bool>(IS_STUNNED_KEY), "StunCheck");
-            isStunned.AddChild(new ActionStop(_agent));
+            // Priority 1: React to Light (Conditional Abort Pattern)
+            // If illuminated, immediately stop all actions and freeze
+            var reactionToLightSequence = new Sequence("ReactionToLight");
+            reactionToLightSequence.AddChild(new ConditionIsIlluminated(_blackboard, "Illuminated Check"));
+            reactionToLightSequence.AddChild(new ActionStop(_agent, "Freeze Movement"));
 
-            var patrolBranch = new Abort(() => IsPlayerInFOV(), "FOVAbort");
-            patrolBranch.AddChild(new ActionPatrol(_blackboard));
+            // Priority 2: Aggressive Chase
+            // If player is in line of sight, chase and attempt jumpscare
+            var chaseSequence = new Sequence("AggressiveChase");
+            chaseSequence.AddChild(new ConditionLineOfSight(_blackboard, "Line of Sight Check"));
+            chaseSequence.AddChild(new ActionChase(_blackboard, "Chase Player"));
+            chaseSequence.AddChild(new ActionPlayJumpscare(_blackboard, "Jumpscare"));
 
-            var chaseSequence = new Sequence("ChaseSequence");
-            chaseSequence.AddChild(new ActionChase(_blackboard));
-            chaseSequence.AddChild(new ActionPlayJumpscare(_blackboard));
+            // Priority 3: Fallback Patrol
+            // If not illuminated and no line of sight, search by patrolling waypoints
+            var patrolSequence = new Sequence("SearchPatrol");
+            patrolSequence.AddChild(new ActionPatrol(_blackboard, "Patrol Waypoints"));
 
-            var root = new Selector("RootSelector");
-            root.AddChild(isStunned);
-            root.AddChild(patrolBranch);
+            // Root: Selector evaluates priorities left to right
+            var root = new Selector("RootBehavior");
+            root.AddChild(reactionToLightSequence);
             root.AddChild(chaseSequence);
+            root.AddChild(patrolSequence);
 
             _tree = new BehaviourTree("LightSeeker Behaviour Tree", root);
         }

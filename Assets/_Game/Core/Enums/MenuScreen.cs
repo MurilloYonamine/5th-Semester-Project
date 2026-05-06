@@ -2,6 +2,7 @@ namespace FifthSemester.Core.Enums {
     public enum MenuScreen {
         None = 0,
         MainMenu,
+        LoadGame,
         PauseMenu,
         Settings,
         Credits,

@@ -665,6 +665,55 @@ private void Start()
 
 ---
 
+### `ISaveService`
+
+Serviço centralizado de persistência usando `PlayerPrefs` (padrão Resident Evil checkpoints).
+
+```csharp
+public interface ISaveService {
+    void SaveToSlot(string slotId, SaveData data);
+    SaveData LoadFromSlot(string slotId);
+    void DeleteSlot(string slotId);
+    bool SlotExists(string slotId);
+    string[] ListSlots();
+    void SaveCheckpoint(string checkpointId, SaveData data);
+
+    event Action<string> OnSaveCompleted;
+}
+
+[System.Serializable]
+public class SaveData {
+    public int CurrentMissionIndex;
+    public Dictionary<string, int> MissionProgress;
+    public string LastCheckpointId;
+    public int SaveVersion;
+    public long Timestamp;
+}
+```
+
+#### Uso Típico
+
+```csharp
+// Salvar estado atual
+var saveService = ServiceLocator.Get<ISaveService>();
+var saveData = new SaveData { CurrentMissionIndex = 2 };
+saveService.SaveToSlot("default", saveData);
+
+// Carregar
+SaveData loaded = saveService.LoadFromSlot("default");
+Debug.Log($"Mission Index: {loaded.CurrentMissionIndex}");
+
+// Checkpoint
+saveService.SaveCheckpoint("library_save", saveData);
+```
+
+#### PlayerPrefs Storage
+- Keys: `save_{slotId}` → JSON serializado
+- Exemplo: `save_default`, `save_checkpoint_1`
+- Gerenciado automaticamente pelo `SaveService`
+
+---
+
 ## Summary
 
 The **Services** directory provides:

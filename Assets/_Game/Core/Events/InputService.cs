@@ -197,6 +197,8 @@ namespace FifthSemester.Core.Events {
 
         private void HandleDialogueAdvance(InputAction.CallbackContext context) {
             if (context.started) {
+                if (CurrentGameState != GameState.Dialogue) return;
+                
                 if (_ignoreNextDialogueAdvance) {
                     _ignoreNextDialogueAdvance = false;
                     return;

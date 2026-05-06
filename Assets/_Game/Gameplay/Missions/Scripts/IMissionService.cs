@@ -1,13 +1,13 @@
-// Autor: Generated
+// Autor: Murillo Gomes Yonamine
 // Data: 05/05/2026
 
 using System;
 
-namespace FifthSemester.Gameplay.Quests {
+namespace FifthSemester.Gameplay.Missions {
     public interface IMissionService {
-        MissionSO[] Missions { get; }
+        MissionDefinition[] Missions { get; }
         int CurrentIndex { get; }
-        MissionSO GetCurrentMission();
+        MissionDefinition GetCurrentMission();
         void SkipToMission(int missionIndex);
         void CompleteCurrentMission();
     }

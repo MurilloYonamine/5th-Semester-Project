@@ -33,11 +33,31 @@ namespace FifthSemester.UI {
                 DateTime dt = epoch.AddSeconds(data.Timestamp).ToLocalTime();
                 _dateText.text = dt.ToString("g");
 
-                // no screenshot field yet; show placeholder
                 if (_snapshotImage != null && _placeholderImageHolder != null) {
-                    _snapshotImage.gameObject.SetActive(false);
-                    _placeholderImageHolder.texture = placeholderSprite != null ? placeholderSprite.texture : null;
-                    _placeholderImageHolder.gameObject.SetActive(true);
+                    if (!string.IsNullOrEmpty(data.ScreenshotBase64)) {
+                        try {
+                            byte[] bytes = Convert.FromBase64String(data.ScreenshotBase64);
+                            Texture2D tex = new Texture2D(2, 2);
+                            if (tex.LoadImage(bytes)) {
+                                _snapshotImage.texture = tex;
+                                _snapshotImage.gameObject.SetActive(true);
+                                _placeholderImageHolder.gameObject.SetActive(false);
+                            } else {
+                                UnityEngine.Object.Destroy(tex);
+                                _snapshotImage.gameObject.SetActive(false);
+                                _placeholderImageHolder.texture = placeholderSprite != null ? placeholderSprite.texture : null;
+                                _placeholderImageHolder.gameObject.SetActive(true);
+                            }
+                        } catch (Exception) {
+                            _snapshotImage.gameObject.SetActive(false);
+                            _placeholderImageHolder.texture = placeholderSprite != null ? placeholderSprite.texture : null;
+                            _placeholderImageHolder.gameObject.SetActive(true);
+                        }
+                    } else {
+                        _snapshotImage.gameObject.SetActive(false);
+                        _placeholderImageHolder.texture = placeholderSprite != null ? placeholderSprite.texture : null;
+                        _placeholderImageHolder.gameObject.SetActive(true);
+                    }
                 }
 
                 _loadButton.interactable = true;

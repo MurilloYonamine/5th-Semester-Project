@@ -46,8 +46,9 @@ namespace FifthSemester.Core.Services {
         public string LastCheckpointId = "default";
         public int SaveVersion = 1;
         public long Timestamp;
-
-        // Player State
+        
+        public string ScreenshotBase64 = "";
+        
         public Vector3Data PlayerPosition = new();
         public QuaternionData PlayerRotation = new();
         

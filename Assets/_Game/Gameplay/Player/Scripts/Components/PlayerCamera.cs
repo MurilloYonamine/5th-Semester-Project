@@ -62,6 +62,8 @@ namespace FifthSemester.Player.Components {
             _eventBus?.Unsubscribe<ZoomInputEvent>(HandleZoomInput);
         }
 
+        public Transform GetCameraTarget() => _cameraTarget;
+
         private void Update() {
             if (!_cameraCanMove || _vCam == null || _player == null) return;
 

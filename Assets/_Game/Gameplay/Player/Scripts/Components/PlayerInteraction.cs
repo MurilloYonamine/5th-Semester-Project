@@ -2,11 +2,13 @@ using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Gameplay.Dialogue;
 using FifthSemester.Gameplay.Inventory;
+using FifthSemester.Gameplay.Save;
 using FifthSemester.Gameplay.Shared;
 using UnityEngine;
 
 namespace FifthSemester.Player {
     public class PlayerInteraction : MonoBehaviour {
+        private const string TAG = "<color=cyan>[PlayerInteraction]</color>";
         [SerializeField] private Camera _playerCamera;
 
         [Header("Settings")]
@@ -17,9 +19,14 @@ namespace FifthSemester.Player {
         [SerializeField] private AudioClip _pickupSound;
 
         private IInteractable _currentInteractable;
+        private PlayerController _playerController;
         private IEventBus _eventBus;
         private IAudioService _audioService;
         private IInventoryService<Item> _inventoryService;
+
+        private void Awake() {
+            _playerController = GetComponent<PlayerController>();
+        }
 
         private void Start() {
             _audioService = ServiceLocator.Get<IAudioService>();
@@ -56,6 +63,7 @@ namespace FifthSemester.Player {
             Ray ray = _playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
             if (Physics.Raycast(ray, out RaycastHit hit, _interactionRange, _interactionLayer)) {
+                Debug.Log($"{TAG} Raycast atingiu: {hit.collider.name}");
                 return hit.collider.GetComponent<IInteractable>();
             }
 
@@ -69,6 +77,9 @@ namespace FifthSemester.Player {
 
             if (_currentInteractable is Item item) {
                 HandleItemPickup(item);
+            } else if (_currentInteractable is SavePoint savePoint) {
+                savePoint.SetPlayerController(_playerController);
+                savePoint.Interact();
             } else {
                 _currentInteractable.Interact();
             }

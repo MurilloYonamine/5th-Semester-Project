@@ -155,4 +155,23 @@ namespace FifthSemester.Core.Events {
             IsIlluminated = isIlluminated;
         }
     }
+
+    /// ============= Save Events =============
+    public readonly struct SaveConfirmationRequestedEvent {
+        public readonly string CheckpointId;
+
+        public SaveConfirmationRequestedEvent(string checkpointId) {
+            CheckpointId = checkpointId;
+        }
+    }
+
+    public readonly struct SaveConfirmedEvent {
+        public readonly string CheckpointId;
+
+        public SaveConfirmedEvent(string checkpointId) {
+            CheckpointId = checkpointId;
+        }
+    }
+
+    public readonly struct SaveCancelledEvent { }
 }

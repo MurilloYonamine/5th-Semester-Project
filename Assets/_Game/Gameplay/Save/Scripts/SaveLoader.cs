@@ -28,11 +28,8 @@ namespace FifthSemester.Gameplay.Save {
 
         private static IEnumerator ApplySaveDelayed() {
             yield return null;
-
-            Debug.Log($"[SaveLoader] Procurando checkpoint: '{_pending.LastCheckpointId}'");
             
             SavePoint[] allPoints = Object.FindObjectsByType<SavePoint>(FindObjectsSortMode.None);
-            Debug.Log($"[SaveLoader] SavePoints na cena: {allPoints.Length}");
             for (int i = 0; i < allPoints.Length; i++) {
                 Debug.Log($"  [{i}] ID='{allPoints[i].Id}'");
             }
@@ -43,10 +40,7 @@ namespace FifthSemester.Gameplay.Save {
             if (target != null && player != null) {
                 target.SetPlayerController(player);
                 target.LoadGame(_pending);
-                Debug.Log($"[SaveLoader] ✓ Save aplicado!");
-            } else {
-                Debug.LogWarning($"[SaveLoader] ✗ SavePoint={target}, PlayerController={player}");
-            }
+            } 
 
             _pending = null;
             SceneManager.sceneLoaded -= OnSceneLoaded;

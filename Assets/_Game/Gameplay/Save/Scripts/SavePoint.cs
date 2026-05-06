@@ -2,6 +2,8 @@
 // Data: 05/05/2026
 
 using UnityEngine;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.Events;
@@ -14,6 +16,7 @@ using ThirdParty.QuickOutline;
 
 namespace FifthSemester.Gameplay.Save {
     public class SavePoint : MonoBehaviour, IInteractable {
+        private const string TAG = "<color=blue>[SavePoint]</color>";
         [SerializeField] private CheckpointSO _checkpoint;
         [SerializeField] private Outline _outline;
 
@@ -99,8 +102,33 @@ namespace FifthSemester.Gameplay.Save {
                 }
             }
 
+            // Capture screenshot and then save (thumbnail stored in SaveData.ScreenshotBase64)
+            StartCoroutine(CaptureAndSave(saveData));
+        }
+
+        private IEnumerator CaptureAndSave(SaveData saveData) {
+            yield return new WaitForEndOfFrame();
+
+            try {
+                Texture2D tex = ScreenCapture.CaptureScreenshotAsTexture();
+                if (tex != null) {
+                    try {
+                        byte[] png = tex.EncodeToPNG();
+                        if (png != null && png.Length > 0) {
+                            saveData.ScreenshotBase64 = Convert.ToBase64String(png);
+                        }
+                    } catch (Exception e) {
+                        Debug.LogWarning($"{TAG} Failed to encode screenshot: {e.Message}");
+                    } finally {
+                        Destroy(tex);
+                    }
+                }
+            } catch (Exception e) {
+                Debug.LogWarning($"{TAG} Screenshot capture failed: {e.Message}");
+            }
+
             _saveService.SaveCheckpoint(_checkpoint.Id, saveData);
-            Debug.Log($"[SavePoint] Game saved at checkpoint: {_checkpoint.DisplayName}");
+            Debug.Log($"{TAG} Game saved at checkpoint: {_checkpoint.DisplayName}");
         }
 
         public void LoadGame(SaveData saveData) {
@@ -130,13 +158,13 @@ namespace FifthSemester.Gameplay.Save {
                 LoadInventoryItems(saveData.InventoryItemIds);
             }
 
-            Debug.Log($"[SavePoint] Game loaded from checkpoint: {_checkpoint.DisplayName}");
+            Debug.Log($"{TAG} Game loaded from checkpoint: {_checkpoint.DisplayName}");
         }
 
         private void LoadInventoryItems(List<string> itemIds) {
             IItemRegistry<Item> itemRegistry = ServiceLocator.Get<IItemRegistry<Item>>();
             if (itemRegistry == null) {
-                Debug.LogWarning("[SavePoint] IItemRegistry<Item> not found. Cannot load inventory.");
+                Debug.LogWarning($"{TAG} IItemRegistry<Item> not found. Cannot load inventory.");
                 return;
             }
 
@@ -145,7 +173,7 @@ namespace FifthSemester.Gameplay.Save {
                 if (item != null) {
                     _inventoryService?.AddItem(item);
                 } else {
-                    Debug.LogWarning($"[SavePoint] Failed to instantiate item: {itemId}");
+                    Debug.LogWarning($"{TAG} Failed to instantiate item: {itemId}");
                 }
             }
         }

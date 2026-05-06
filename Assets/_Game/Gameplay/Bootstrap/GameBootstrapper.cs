@@ -5,6 +5,7 @@ using FifthSemester.Core.Input;
 using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Gameplay.Dialogue;
 using FifthSemester.Gameplay.Menu;
+using FifthSemester.Gameplay.Save;
 
 namespace FifthSemester.Gameplay.Bootstrap {
     public static class GameBootstrapper {
@@ -28,8 +29,14 @@ namespace FifthSemester.Gameplay.Bootstrap {
             var inventoryService = new InventoryService(maxCapacity: 6);
             ServiceLocator.Register<IInventoryService<Item>>(inventoryService);
 
+            var itemRegistry = new ItemRegistry<Item>();
+            ServiceLocator.Register<IItemRegistry<Item>>(itemRegistry);
+
             var settingsService = new SettingsService();
             ServiceLocator.Register<ISettingsService>(settingsService);
+
+            var saveService = new SaveService();
+            ServiceLocator.Register<ISaveService>(saveService);
 
             GameObject coreSystems = Resources.Load<GameObject>(CORE_SYSTEMS);
             if (coreSystems != null) {

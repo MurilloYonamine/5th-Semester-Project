@@ -8,5 +8,6 @@ namespace FifthSemester.Gameplay.Dialogue {
     [CreateAssetMenu(menuName = "Dialogue/Dialogue")]
     public class DialogueSO : ScriptableObject {
         public List<DialogueLine> lines;
+        public List<DialogueLine> aftertalkingLines;
     }
 }

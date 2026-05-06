@@ -127,6 +127,15 @@ namespace FifthSemester.Core.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Flash"",
+                    ""type"": ""Button"",
+                    ""id"": ""bc1268b1-1652-4fa3-9ee9-936fd20aaac4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -567,6 +576,28 @@ namespace FifthSemester.Core.Input
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""Open Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3932dc8d-932c-4319-9382-4908790e4fcf"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Flash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dacbbd98-0f27-49e8-bb8a-1ebbfb3de568"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Flash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1344,6 +1375,7 @@ namespace FifthSemester.Core.Input
             m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
             m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
             m_Player_OpenPause = m_Player.FindAction("Open Pause", throwIfNotFound: true);
+            m_Player_Flash = m_Player.FindAction("Flash", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1438,6 +1470,7 @@ namespace FifthSemester.Core.Input
         private readonly InputAction m_Player_Sprint;
         private readonly InputAction m_Player_Zoom;
         private readonly InputAction m_Player_OpenPause;
+        private readonly InputAction m_Player_Flash;
         public struct PlayerActions
         {
             private @GameInput m_Wrapper;
@@ -1453,6 +1486,7 @@ namespace FifthSemester.Core.Input
             public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
             public InputAction @Zoom => m_Wrapper.m_Player_Zoom;
             public InputAction @OpenPause => m_Wrapper.m_Player_OpenPause;
+            public InputAction @Flash => m_Wrapper.m_Player_Flash;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1495,6 +1529,9 @@ namespace FifthSemester.Core.Input
                 @OpenPause.started += instance.OnOpenPause;
                 @OpenPause.performed += instance.OnOpenPause;
                 @OpenPause.canceled += instance.OnOpenPause;
+                @Flash.started += instance.OnFlash;
+                @Flash.performed += instance.OnFlash;
+                @Flash.canceled += instance.OnFlash;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -1532,6 +1569,9 @@ namespace FifthSemester.Core.Input
                 @OpenPause.started -= instance.OnOpenPause;
                 @OpenPause.performed -= instance.OnOpenPause;
                 @OpenPause.canceled -= instance.OnOpenPause;
+                @Flash.started -= instance.OnFlash;
+                @Flash.performed -= instance.OnFlash;
+                @Flash.canceled -= instance.OnFlash;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -1757,6 +1797,7 @@ namespace FifthSemester.Core.Input
             void OnSprint(InputAction.CallbackContext context);
             void OnZoom(InputAction.CallbackContext context);
             void OnOpenPause(InputAction.CallbackContext context);
+            void OnFlash(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {

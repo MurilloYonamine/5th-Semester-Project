@@ -13,24 +13,15 @@ namespace FifthSemester.Gameplay.Menu {
         [SerializeField] private Button _screenSettingsButton;
         [SerializeField] private Button _backButton;
 
-
         protected override MenuScreen MenuScreenType => MenuScreen.Settings;
 
         protected override void Start() {
             base.Start();
             _audioSettingsButton.onClick.AddListener(OpenAudioSettings);
-            _graphicsSettingsButton.onClick.AddListener(OpenGraphicsSettings);
+            if(_graphicsSettingsButton != null) _graphicsSettingsButton.onClick.AddListener(OpenGraphicsSettings);
             _gameplaySettingsButton.onClick.AddListener(OpenGameplaySettings);
             _screenSettingsButton.onClick.AddListener(OpenScreenSettings);
             _backButton.onClick.AddListener(OnBack);
-        }
-
-        protected override void OnEnable() {
-            base.OnEnable();
-        }
-
-        protected override void OnDestroy() {
-            base.OnDestroy();
         }
 
         public void OpenAudioSettings() => _menuService.Show(MenuScreen.Settings_Audio);
@@ -39,9 +30,12 @@ namespace FifthSemester.Gameplay.Menu {
         public void OpenScreenSettings() => _menuService.Show(MenuScreen.Settings_Screen);
 
         public void OnBack() {
-            _menuService.Show(MenuScreen.MainMenu);
+            var pauseMenu = _menuService.GetView(MenuScreen.PauseMenu);
+            if (pauseMenu != null && pauseMenu.activeSelf) {
+                _menuService.Show(MenuScreen.PauseMenu);
+            } else {
+                _menuService.Show(MenuScreen.MainMenu);
+            }
         }
-
-        // OnAnyInput herdado da base
     }
 }

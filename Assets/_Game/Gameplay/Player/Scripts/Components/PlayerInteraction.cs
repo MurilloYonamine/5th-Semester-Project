@@ -84,6 +84,7 @@ namespace FifthSemester.Player {
 
             if (wasAdded) {
                 PlayPickupFeedback();
+                _eventBus?.Publish(new ItemPickedUpEvent(item.name, item.gameObject));
                 item.Interact();
             }
         }
@@ -92,6 +93,16 @@ namespace FifthSemester.Player {
             if (_pickupSound != null && _audioService != null) {
                 _audioService.PlaySFX(_pickupSound);
             }
+        }
+        private void OnDrawGizmos()
+        {
+            Camera cam = _playerCamera != null ? _playerCamera : Camera.main;
+            if (cam == null) return;
+
+            Gizmos.color = Color.yellow;
+            Vector3 origin = cam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0));
+            Vector3 direction = cam.transform.forward;
+            Gizmos.DrawLine(origin, origin + direction * _interactionRange);
         }
     }
 }

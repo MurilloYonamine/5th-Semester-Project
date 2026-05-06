@@ -22,7 +22,7 @@
 <h3 align="center">5th Semester Project</h3>
 
   <p align="center">
-    A project made in Unity for University of Senac Santo Amaor
+    A Unity project developed for Senac Santo Amaro University
     <br />
     <a href="https://github.com/MurilloYonamine/5th-Semester-Project"><strong>Explore the docs »</strong></a>
     <br />
@@ -37,50 +37,67 @@
 
 ## Project Architecture
 
-This project uses a simple **Feature-Based Architecture**.
+This project follows a **layered + feature-based architecture** inside `Assets/_Game`.
+
+### High-Level Layers
+
+* **Core**: global services and contracts (`EventBus`, `ServiceLocator`, `Input`, `Audio`, enums).
+* **Framework**: reusable systems (Behaviour Trees, generic UI components).
+* **Gameplay**: game-specific features (Player, Enemy, Dialogue, Menu, Inventory, Door, Delivery, etc.).
+* **Shared**: cross-cutting interfaces/utilities (`IInteractable`, helpers, physic materials).
+* **UI**: PSX shaders and VFX pipeline.
 
 ### Folder Structure
 
 ```
 Assets/
-│
-├── _Project/   → Project-level files (Readme, tutorial info, misc)
-├── _Core/      → Shared systems (EventBus, ServiceLocator, utilities)
-├── Features/   → Gameplay features (Player, Enemy, Combat, UI, etc.)
-└── _Game/      → Bootstrap, scenes, composition
+└── _Game/
+  ├── Core/
+  ├── Framework/
+  ├── Gameplay/
+  ├── Shared/
+  └── UI/
 ```
 
----
+### Dependency Rules
 
-### Rules
+* Core does not depend on Gameplay features.
+* Framework depends on Core.
+* Gameplay depends on Core + Framework.
+* Features communicate through `EventBus` and service interfaces.
+* Avoid direct feature-to-feature coupling when possible.
 
-* No global `Scripts` or `Prefabs` folders.
-* Each feature owns its own Scripts, Prefabs, Sprites, etc.
-* Features can depend on `_Core`.
-* Features should not directly depend on other features.
-* `_Game` references Core and Features and handles setup.
+### Runtime Initialization
 
----
+`Gameplay/Bootstrap/GameBootstrapper.cs` initializes global services before scene load using Unity runtime initialization attributes.
 
-### Feature Template
-
-```
-FeatureName/
-│
-├── Scripts/
-├── Prefabs/
-├── Models/
-├── Sprites/
-├── Animations/
-├── Audio/
-└── FeatureName.asmdef
-```
-
-### Layer Style
+### Architectural View
 
 <a href="https://github.com/MurilloYonamine/5th-Semester-Project">
-  <img src="Media/Diagrams/architecture.drawio.png" alt="Logo">
+  <img src="Media/folder-structure.png">
 </a>
+
+### Documentation Index
+
+* [Assets/_Game/Core/README.md](Assets/_Game/Core/README.md)
+* [Assets/_Game/Framework/README.md](Assets/_Game/Framework/README.md)
+* [Assets/_Game/Gameplay/README.md](Assets/_Game/Gameplay/README.md)
+* [Assets/_Game/Shared/README.md](Assets/_Game/Shared/README.md)
+* [Assets/_Game/UI/README.md](Assets/_Game/UI/README.md)
+
+#### Gameplay Feature Docs
+
+* [Assets/_Game/Gameplay/Bootstrap/README.md](Assets/_Game/Gameplay/Bootstrap/README.md)
+* [Assets/_Game/Gameplay/Game%20State/README.md](Assets/_Game/Gameplay/Game%20State/README.md)
+* [Assets/_Game/Gameplay/Player/README.md](Assets/_Game/Gameplay/Player/README.md)
+* [Assets/_Game/Gameplay/Enemy/README.md](Assets/_Game/Gameplay/Enemy/README.md)
+* [Assets/_Game/Gameplay/Dialogue/README.md](Assets/_Game/Gameplay/Dialogue/README.md)
+* [Assets/_Game/Gameplay/Menu/README.md](Assets/_Game/Gameplay/Menu/README.md)
+* [Assets/_Game/Gameplay/Inventory/README.md](Assets/_Game/Gameplay/Inventory/README.md)
+* [Assets/_Game/Gameplay/Door/README.md](Assets/_Game/Gameplay/Door/README.md)
+* [Assets/_Game/Gameplay/Delivery/README.md](Assets/_Game/Gameplay/Delivery/README.md)
+* [Assets/_Game/Gameplay/Environment/README.md](Assets/_Game/Gameplay/Environment/README.md)
+* [Assets/_Game/Gameplay/Props/README.md](Assets/_Game/Gameplay/Props/README.md)
 
 ## Credits
 

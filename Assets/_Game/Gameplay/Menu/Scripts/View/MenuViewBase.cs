@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
 namespace FifthSemester.Gameplay.Menu {
-    public abstract class MenuViewBase : MonoBehaviour {
+    public abstract class MenuViewBase : MonoBehaviour, IMenuView {
         protected IMenuService _menuService;
         [SerializeField] protected GameObject _focusFirstElement;
         protected abstract MenuScreen MenuScreenType { get; }
@@ -17,10 +17,6 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         protected virtual void OnEnable() {
-            EventSystem.current.SetSelectedGameObject(null);
-            if (_focusFirstElement != null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-            }
             InputSystem.onAnyButtonPress.Call(OnAnyInput);
         }
 
@@ -32,6 +28,17 @@ namespace FifthSemester.Gameplay.Menu {
             if (control.device is Gamepad && EventSystem.current.currentSelectedGameObject == null) {
                 EventSystem.current.SetSelectedGameObject(_focusFirstElement);
             }
+        }
+
+        public virtual void OnShow() {
+            EventSystem.current.SetSelectedGameObject(null);
+            if (_focusFirstElement != null) {
+                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
+            }
+        }
+
+        public virtual void OnHide() {
+            // Can be overridden by subclasses
         }
     }
 }

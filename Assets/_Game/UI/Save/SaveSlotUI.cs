@@ -9,10 +9,15 @@ using TMPro;
 
 namespace FifthSemester.UI {
     public class SaveSlotUI : MonoBehaviour {
+        [Header("Images")]
         [SerializeField] private RawImage _snapshotImage;
         [SerializeField] private RawImage _placeholderImageHolder;
+
+        [Header("Texts")]
         [SerializeField] private TextMeshProUGUI _titleText;
         [SerializeField] private TextMeshProUGUI _dateText;
+
+        [Header("Buttons")]
         [SerializeField] private Button _loadButton;
         [SerializeField] private Button _deleteButton;
 

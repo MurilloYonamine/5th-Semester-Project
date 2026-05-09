@@ -11,6 +11,10 @@ namespace FifthSemester.Gameplay.Enemy {
         private const string PLAYER_TRANSFORM_KEY = "PlayerTarget";
         private const string PATROL_WAIT_TIME_KEY = "PatrolWaitTime";
         private const string IS_STUNNED_KEY = "IsStunnedByFlashlight";
+        private const string EYE_TRANSFORM_KEY = "EyeTransform";
+        private const string VIEW_DISTANCE_KEY = "ViewDistance";
+        private const string FOV_ANGLE_KEY = "FovAngle";
+        private const string OBSTACLE_MASK_KEY = "ObstacleMask";
 
         private readonly Blackboard _blackboard;
         private NavMeshAgent _agent;
@@ -35,6 +39,10 @@ namespace FifthSemester.Gameplay.Enemy {
             RefreshDataFromBlackboard();
 
             if (_blackboard.GetData<bool>(IS_STUNNED_KEY)) {
+                return Status.Failure;
+            }
+
+            if (IsPlayerInLineOfSight()) {
                 return Status.Failure;
             }
 
@@ -66,6 +74,38 @@ namespace FifthSemester.Gameplay.Enemy {
             _agent = _blackboard.GetData<NavMeshAgent>(NAV_AGENT_KEY);
             _playerTransform = _blackboard.GetData<Transform>(PLAYER_TRANSFORM_KEY);
             _waitTime = _blackboard.GetData<float>(PATROL_WAIT_TIME_KEY);
+        }
+
+        private bool IsPlayerInLineOfSight() {
+            Transform eyeTransform = _blackboard.GetData<Transform>(EYE_TRANSFORM_KEY);
+
+            if (_playerTransform == null || eyeTransform == null) {
+                return false;
+            }
+
+            Vector3 eyePosition = eyeTransform.position;
+            Vector3 directionToPlayer = _playerTransform.position - eyePosition;
+            float distanceToPlayer = directionToPlayer.magnitude;
+            float viewDistance = _blackboard.GetData<float>(VIEW_DISTANCE_KEY);
+
+            if (distanceToPlayer > viewDistance) {
+                return false;
+            }
+
+            Vector3 directionToPlayerNormalized = directionToPlayer.normalized;
+            float fovAngle = _blackboard.GetData<float>(FOV_ANGLE_KEY);
+            float angle = Vector3.Angle(eyeTransform.forward, directionToPlayerNormalized);
+
+            if (angle > fovAngle * 0.5f) {
+                return false;
+            }
+
+            LayerMask obstacleMask = _blackboard.GetData<LayerMask>(OBSTACLE_MASK_KEY);
+            if (Physics.Raycast(eyePosition, directionToPlayerNormalized, distanceToPlayer, obstacleMask)) {
+                return false;
+            }
+
+            return true;
         }
 
         private void SetNewProceduralDestination() {

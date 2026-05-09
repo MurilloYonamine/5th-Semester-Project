@@ -41,6 +41,7 @@ namespace FifthSemester.Gameplay.Enemy {
             if (!_started) {
                 if (CanStartJumpscare()) {
                     StartJumpscare();
+                    return Status.Running;
                 }
 
                 return Status.Running;
@@ -61,8 +62,11 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private bool CanStartJumpscare() {
-            float distanceToPlayer = Vector3.Distance(_agent.transform.position, _target.position);
-            return distanceToPlayer <= _agent.stoppingDistance + 0.5f;
+            if (_agent.pathPending || !_agent.hasPath) {
+                return false;
+            }
+
+            return _agent.remainingDistance <= _agent.stoppingDistance;
         }
 
         private void StartJumpscare() {

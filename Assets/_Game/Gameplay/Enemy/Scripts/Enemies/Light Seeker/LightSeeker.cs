@@ -48,6 +48,9 @@ namespace FifthSemester.Gameplay.Enemy {
         private void Awake() {
             _agent = GetComponent<NavMeshAgent>();
             _animator = GetComponentInChildren<Animator>();
+            if (_jumpscareDirector == null) {
+                _jumpscareDirector = GetComponentInChildren<PlayableDirector>(true);
+            }
             _agent.speed = _speed;
 
             SetupBlackboard();

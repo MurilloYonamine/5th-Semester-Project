@@ -37,7 +37,7 @@ namespace FifthSemester.Gameplay.Enemy {
             Vector3 dirToTarget = target.position - eyePos;
             float distance = dirToTarget.magnitude;
 
-            if (distance > loseDistance) {
+            if (distance > viewDistance) {
                 _blackboard.SetData(HAS_LINE_OF_SIGHT_KEY, false);
                 return Status.Failure;
             }

@@ -17,6 +17,7 @@ namespace FifthSemester.Gameplay.Enemy {
         private const string PATROL_WAIT_TIME_KEY = "PatrolWaitTime";
         private const string JUMPSCARE_DIRECTOR_KEY = "JumpscareDirector";
         private const string IS_STUNNED_KEY = "IsStunnedByFlashlight";
+        private const string HAS_LINE_OF_SIGHT_KEY = "HasLineOfSight";
 
         [SerializeField] private Transform _target;
         [SerializeField] private float _patrolWaitTime = 2f;
@@ -24,6 +25,7 @@ namespace FifthSemester.Gameplay.Enemy {
         [Header("Vision Settings")]
         [SerializeField] private Transform _eyeTransform;
         [SerializeField, Range(0, 120)] private float _viewDistance = 15f;
+        [SerializeField] private float _loseTargetDistance = 25f;
         [SerializeField, Range(0, 360)] private float _fovAngle = 90f;
         [SerializeField] private LayerMask _obstacleMask;
 
@@ -34,6 +36,10 @@ namespace FifthSemester.Gameplay.Enemy {
 
         [Header("Timeline")]
         [SerializeField] private PlayableDirector _jumpscareDirector;
+
+        [Header("Audio")]
+        [SerializeField] private AudioClip _whiteNoiseClip;
+        [SerializeField, Range(0f, 1f)] private float _maxWhiteNoiseVolume = 0.5f;
 
         [Header("Speed Settings")]
         [SerializeField, Range(0f, 10f)] private float _speed = 1.5f;
@@ -48,14 +54,20 @@ namespace FifthSemester.Gameplay.Enemy {
         private void Awake() {
             _agent = GetComponent<NavMeshAgent>();
             _animator = GetComponentInChildren<Animator>();
+
+            Shader.SetGlobalFloat("_NoiseOpacity", 0);
+
             if (_jumpscareDirector == null) {
                 _jumpscareDirector = GetComponentInChildren<PlayableDirector>(true);
             }
+
             _agent.speed = _speed;
 
             SetupBlackboard();
         }
-
+        private void OnDestroy() {
+            Shader.SetGlobalFloat("_NoiseOpacity", 0f);
+        }
         private void SetupBlackboard() {
             _blackboard = new Blackboard();
             _blackboard.SetData(PLAYER_TARGET_KEY, _target);
@@ -64,12 +76,16 @@ namespace FifthSemester.Gameplay.Enemy {
             _blackboard.SetData(PATROL_WAIT_TIME_KEY, _patrolWaitTime);
             _blackboard.SetData(JUMPSCARE_DIRECTOR_KEY, _jumpscareDirector);
             _blackboard.SetData(IS_STUNNED_KEY, false);
+            _blackboard.SetData("WhiteNoiseClip", _whiteNoiseClip);
+            _blackboard.SetData("WhiteNoiseMaxVolume", _maxWhiteNoiseVolume);
 
             // Vision parameters
             _blackboard.SetData("EyeTransform", _eyeTransform);
             _blackboard.SetData("ViewDistance", _viewDistance);
             _blackboard.SetData("FovAngle", _fovAngle);
             _blackboard.SetData("ObstacleMask", _obstacleMask);
+            _blackboard.SetData("LoseTargetDistance", _loseTargetDistance);
+            _blackboard.SetData(HAS_LINE_OF_SIGHT_KEY, false);
         }
 
         private void Start() {
@@ -77,22 +93,22 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void BuildBehaviourTree() {
-           // If player is in line of sight, chase and attempt jumpscare
-           var chaseSequence = new Sequence("AggressiveChase");
-           chaseSequence.AddChild(new ConditionLineOfSight(_blackboard, "Line of Sight Check"));
-           chaseSequence.AddChild(new ActionChase(_blackboard, "Chase Player"));
-           chaseSequence.AddChild(new ActionPlayJumpscare(_blackboard, "Jumpscare"));
+            // If player is in line of sight, chase and attempt jumpscare
+            var chaseSequence = new Sequence("AggressiveChase");
+            chaseSequence.AddChild(new ConditionLineOfSight(_blackboard, "Line of Sight Check"));
+            chaseSequence.AddChild(new ActionChase(_blackboard, "Chase Player"));
+            chaseSequence.AddChild(new ActionPlayJumpscare(_blackboard, "Jumpscare"));
 
-           // If not illuminated and no line of sight, search by patrolling waypoints
-           var patrolSequence = new Sequence("SearchPatrol");
-           patrolSequence.AddChild(new ActionPatrol(_blackboard, "Patrol Waypoints"));
+            // If not illuminated and no line of sight, search by patrolling waypoints
+            var patrolSequence = new Sequence("SearchPatrol");
+            patrolSequence.AddChild(new ActionPatrol(_blackboard, "Patrol Waypoints"));
 
-           // Root: Selector evaluates priorities left to right
-           var root = new Selector("RootBehavior");
-           root.AddChild(chaseSequence); // Prioridade 1: Caçar (agora será lento se iluminado)
-           root.AddChild(patrolSequence); // Prioridade 2: Patrulhar
+            // Root: Selector evaluates priorities left to right
+            var root = new Selector("RootBehavior");
+            root.AddChild(chaseSequence); // Prioridade 1: Caçar (agora será lento se iluminado)
+            root.AddChild(patrolSequence); // Prioridade 2: Patrulhar
 
-           _tree = new BehaviourTree("LightSeeker Behaviour Tree", root);
+            _tree = new BehaviourTree("LightSeeker Behaviour Tree", root);
         }
 
         private void Update() {
@@ -117,7 +133,7 @@ namespace FifthSemester.Gameplay.Enemy {
 
         private void HandleSprint(PlayerSprintChangedEvent evt) {
             _isPlayerSprinting = evt.IsSprinting;
-            UpdateSpeed(); 
+            UpdateSpeed();
         }
 
         private void HandleFlashlightTargeted(FlashlightTargetedEvent evt) {
@@ -128,7 +144,7 @@ namespace FifthSemester.Gameplay.Enemy {
             _isIlluminated = evt.IsIlluminated;
             _blackboard?.SetData(IS_STUNNED_KEY, _isIlluminated);
 
-            UpdateSpeed(); 
+            UpdateSpeed();
         }
 
         // NOVO: Método centralizado que decide qual velocidade o NavMeshAgent deve usar

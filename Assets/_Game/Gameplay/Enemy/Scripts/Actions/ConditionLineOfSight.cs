@@ -11,6 +11,8 @@ namespace FifthSemester.Gameplay.Enemy {
         private const string VIEW_DISTANCE_KEY = "ViewDistance";
         private const string FOV_ANGLE_KEY = "FovAngle";
         private const string OBSTACLE_MASK_KEY = "ObstacleMask";
+        private const string LOSE_TARGET_DISTANCE_KEY = "LoseTargetDistance";
+        private const string HAS_LINE_OF_SIGHT_KEY = "HasLineOfSight";
 
         private readonly Blackboard _blackboard;
 
@@ -22,35 +24,38 @@ namespace FifthSemester.Gameplay.Enemy {
             Transform target = _blackboard.GetData<Transform>(PLAYER_TARGET_KEY);
             Transform eyeTransform = _blackboard.GetData<Transform>(EYE_TRANSFORM_KEY);
             float viewDistance = _blackboard.GetData<float>(VIEW_DISTANCE_KEY);
+            float loseDistance = _blackboard.GetData<float>(LOSE_TARGET_DISTANCE_KEY);
             float fovAngle = _blackboard.GetData<float>(FOV_ANGLE_KEY);
             LayerMask obstacleMask = _blackboard.GetData<LayerMask>(OBSTACLE_MASK_KEY);
 
             if (target == null || eyeTransform == null) {
+                _blackboard.SetData(HAS_LINE_OF_SIGHT_KEY, false);
                 return Status.Failure;
             }
 
-            // Check distance
             Vector3 eyePos = eyeTransform.position;
             Vector3 dirToTarget = target.position - eyePos;
             float distance = dirToTarget.magnitude;
 
-            if (distance > viewDistance) {
+            if (distance > loseDistance) {
+                _blackboard.SetData(HAS_LINE_OF_SIGHT_KEY, false);
                 return Status.Failure;
             }
 
-            // Check angle
             Vector3 dirToTargetNormalized = dirToTarget.normalized;
             float angle = Vector3.Angle(eyeTransform.forward, dirToTargetNormalized);
 
             if (angle > fovAngle * 0.5f) {
+                _blackboard.SetData(HAS_LINE_OF_SIGHT_KEY, false);
                 return Status.Failure;
             }
 
-            // Check line of sight
             if (Physics.Raycast(eyePos, dirToTargetNormalized, distance, obstacleMask)) {
+                _blackboard.SetData(HAS_LINE_OF_SIGHT_KEY, false);
                 return Status.Failure;
             }
 
+            _blackboard.SetData(HAS_LINE_OF_SIGHT_KEY, true);
             return Status.Success;
         }
     }

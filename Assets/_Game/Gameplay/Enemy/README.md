@@ -176,12 +176,13 @@ public class PatrolAction : Node {
 
 ### `Scripts/Enemies/LightSeeker.cs`
 
-Specific enemy type that hunts based on light/noise.
+Specific enemy type that hunts based on light/noise and drives a proximity-based white noise effect as it closes in on the player.
 
 ```csharp
 public class LightSeeker : EnemyController {
     [SerializeField] private float _lightSensitivity = 1f;
     [SerializeField] private float _noiseSensitivity = 1f;
+    [SerializeField] private AudioClip _whiteNoiseClip;
 
     protected override void Start() {
         base.Start();
@@ -213,6 +214,8 @@ public class LightSeeker : EnemyController {
     }
 }
 ```
+
+The chase action reads the white noise clip and max volume from the blackboard, then raises the loop volume as the player gets closer.
 
 ---
 

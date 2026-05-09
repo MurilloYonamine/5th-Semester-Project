@@ -2,6 +2,7 @@ using FifthSemester.Core.Services;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace FifthSemester.Core.Audio
 {
@@ -46,7 +47,7 @@ namespace FifthSemester.Core.Audio
         /// <param name="pitch">Pitch of the track.</param>
         /// <param name="filePath">File path of the audio clip.</param>
         /// <returns>The AudioTrack being played.</returns>
-        public AudioTrack PlayTrack(AudioClip clip, bool loop, float startingVolume, float volumeCap, float pitch, string filePath)
+        public AudioTrack PlayTrack(AudioClip clip, bool loop, float startingVolume, float volumeCap, float pitch, AudioMixerGroup mixer, string filePath)
         {
             if (TryGetTrack(clip.name, out AudioTrack existingTrack))
             {
@@ -60,7 +61,7 @@ namespace FifthSemester.Core.Audio
                 return existingTrack;
             }
 
-            AudioTrack track = new AudioTrack(clip, loop, startingVolume, volumeCap, pitch, this, _audioService.MusicMixer, filePath);
+            AudioTrack track = new AudioTrack(clip, loop, startingVolume, volumeCap, pitch, this, mixer, filePath);
             track.Play();
 
             SetAsActiveTrack(track);

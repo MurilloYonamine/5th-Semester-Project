@@ -30,6 +30,7 @@ namespace FifthSemester.Core.Audio {
         private const string SFX_NAME_FORMAT = "SFX - [{0}]";
         private Transform _sfxRoot;
 
+
         public Dictionary<int, AudioChannel> channels = new Dictionary<int, AudioChannel>();
 
         private void Awake() {
@@ -151,9 +152,7 @@ namespace FifthSemester.Core.Audio {
                 createIfDoesNotExist: true
             );
 
-            AudioTrack audioTrack = audioChannel.PlayTrack(clip, loop, startingVolume, volumeCap, pitch, filePath);
-
-            return audioChannel.PlayTrack(clip, loop, startingVolume, volumeCap, pitch, filePath);
+            return audioChannel.PlayTrack(clip, loop, startingVolume, volumeCap, pitch, MusicMixer, filePath);
         }
 
         public AudioTrack PlayAmbience(string filePath, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f) {
@@ -164,18 +163,16 @@ namespace FifthSemester.Core.Audio {
                 return null;
             }
 
-            return PlayAmbience(clip, 0, loop, startingVolume, volumeCap, pitch, filePath);
+            return PlayAmbience(clip, 10, loop, startingVolume, volumeCap, pitch, filePath);
         }
 
-        public AudioTrack PlayAmbience(AudioClip clip, int channel = 0, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f, string filePath = "") {
+        public AudioTrack PlayAmbience(AudioClip clip, int channel = 10, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f, string filePath = "") {
             AudioChannel audioChannel = TryGetChannel(
               channelNumber: channel,
               createIfDoesNotExist: true
             );
 
-            AudioTrack audioTrack = audioChannel.PlayTrack(clip, loop, startingVolume, volumeCap, pitch, filePath);
-
-            return audioChannel.PlayTrack(clip, loop, startingVolume, volumeCap, pitch, filePath);
+            return audioChannel.PlayTrack(clip, loop, startingVolume, volumeCap, pitch, AmbienceMixer, filePath);
         }
         #endregion
         #region Stop Audio
@@ -254,9 +251,9 @@ namespace FifthSemester.Core.Audio {
         public void StopAmbience(string ambienceName) {
             ambienceName = ambienceName.ToLower();
 
-            foreach (Transform child in transform) {
-                if (child.name.ToLower().Contains("ambience") && child.name.ToLower().Contains(ambienceName)) {
-                    Destroy(child.gameObject);
+            foreach (var channel in channels.Values) {
+                if (channel.TryGetTrack(ambienceName, out AudioTrack track)) {
+                    channel.StopTrack(); 
                     return;
                 }
             }

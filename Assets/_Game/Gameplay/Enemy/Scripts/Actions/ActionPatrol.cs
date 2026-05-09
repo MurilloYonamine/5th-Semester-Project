@@ -1,13 +1,14 @@
 ﻿// Autor: Murillo Gomes Yonamine
 // Data: 28/04/2026
+
 using UnityEngine;
 using UnityEngine.AI;
 using FifthSemester.Framework.BehaviourTrees;
 
-namespace FifthSemester.Framework.BehaviourTrees {
+namespace FifthSemester.Gameplay.Enemy {
     public class ActionPatrol : Node {
         private const string NAV_AGENT_KEY = "NavAgent";
-        private const string PLAYER_TRANSFORM_KEY = "PlayerTarget"; 
+        private const string PLAYER_TRANSFORM_KEY = "PlayerTarget";
         private const string PATROL_WAIT_TIME_KEY = "PatrolWaitTime";
         private const string IS_STUNNED_KEY = "IsStunnedByFlashlight";
 
@@ -68,32 +69,47 @@ namespace FifthSemester.Framework.BehaviourTrees {
         }
 
         private void SetNewProceduralDestination() {
-            int roll = Random.Range(0, 101); 
+            int roll = Random.Range(0, 101);
             Vector3 targetPosition = _agent.transform.position;
 
             if (roll >= _approachThreshold) {
                 // Pega a direção do inimigo para o jogador
                 Vector3 directionToPlayer = (_playerTransform.position - _agent.transform.position).normalized;
-                
+
                 // Define o ponto alvo andando X metros naquela direção
                 targetPosition = _agent.transform.position + (directionToPlayer * _approachDistance);
-            } 
+            }
             else {
-                // Sorteia um ponto dentro de uma esfera ao redor do inimigo
-                Vector3 randomDirection = Random.insideUnitSphere * _roamRadius;
-                randomDirection += _agent.transform.position;
-                targetPosition = randomDirection;
+                Vector2 random2D = Random.insideUnitCircle * _roamRadius;
+
+                Vector3 randomDirection = new Vector3(
+                    x: random2D.x,
+                    y: 0,
+                    z: random2D.y
+                );
+
+                targetPosition = _agent.transform.position + randomDirection;
             }
 
-            Debug.DrawLine(_agent.transform.position, targetPosition, Color.green, 2f);
+            Debug.DrawLine(_agent.transform.position, targetPosition, Color.red, 2f);
 
             // Valida o ponto no NavMesh para garantir que ele não tente andar para dentro de uma parede
             NavMeshHit hit;
             if (NavMesh.SamplePosition(targetPosition, out hit, _roamRadius, NavMesh.AllAreas)) {
+
+                NavMeshHit edgeHit;
+
+                if (NavMesh.FindClosestEdge(hit.position, out edgeHit, NavMesh.AllAreas)) {
+
+                    float minDistanceFromWall = 1.5f;
+
+                    if (edgeHit.distance < minDistanceFromWall) {
+                        return;
+                    }
+                }
+
                 _agent.SetDestination(hit.position);
                 _hasDestination = true;
-            } else {
-                BeginWait(); 
             }
         }
 
@@ -106,7 +122,7 @@ namespace FifthSemester.Framework.BehaviourTrees {
         private void ProcessWait() {
             if (_waitNode.Process() != Status.Success) {
                 return;
-            }  
+            }
 
             _isWaiting = false;
         }

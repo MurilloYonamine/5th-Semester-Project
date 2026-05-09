@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using FifthSemester.Framework.BehaviourTrees;
 
-namespace FifthSemester.Framework.BehaviourTrees {
+namespace FifthSemester.Gameplay.Enemy {
     public class ActionChase : Node {
         private const string NAV_AGENT_KEY = "NavAgent";
         private const string PLAYER_TARGET_KEY = "PlayerTarget";

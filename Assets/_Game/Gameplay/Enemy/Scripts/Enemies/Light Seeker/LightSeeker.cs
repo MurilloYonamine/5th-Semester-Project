@@ -1,5 +1,5 @@
 // Autor: Murillo Gomes Yonamine
-// Data: Atualizado para Lentidão ao invés de Stun
+// Data: 06/05/2026
 
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
@@ -74,22 +74,22 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void BuildBehaviourTree() {
-        //    //// If player is in line of sight, chase and attempt jumpscare
-        //    //var chaseSequence = new Sequence("AggressiveChase");
-        //    //chaseSequence.AddChild(new ConditionLineOfSight(_blackboard, "Line of Sight Check"));
-        //    chaseSequence.AddChild(new ActionChase(_blackboard, "Chase Player"));
-        //    //chaseSequence.AddChild(new ActionPlayJumpscare(_blackboard, "Jumpscare"));
+           // If player is in line of sight, chase and attempt jumpscare
+           var chaseSequence = new Sequence("AggressiveChase");
+           chaseSequence.AddChild(new ConditionLineOfSight(_blackboard, "Line of Sight Check"));
+           chaseSequence.AddChild(new ActionChase(_blackboard, "Chase Player"));
+           chaseSequence.AddChild(new ActionPlayJumpscare(_blackboard, "Jumpscare"));
 
-        //    //// If not illuminated and no line of sight, search by patrolling waypoints
-        //    //var patrolSequence = new Sequence("SearchPatrol");
-        //    //patrolSequence.AddChild(new ActionPatrol(_blackboard, "Patrol Waypoints"));
+           // If not illuminated and no line of sight, search by patrolling waypoints
+           var patrolSequence = new Sequence("SearchPatrol");
+           patrolSequence.AddChild(new ActionPatrol(_blackboard, "Patrol Waypoints"));
 
-        //    // Root: Selector evaluates priorities left to right
-        //    var root = new Selector("RootBehavior");
-        //    root.AddChild(chaseSequence); // Prioridade 1: Caçar (agora será lento se iluminado)
-        //    root.AddChild(patrolSequence); // Prioridade 2: Patrulhar
+           // Root: Selector evaluates priorities left to right
+           var root = new Selector("RootBehavior");
+           root.AddChild(chaseSequence); // Prioridade 1: Caçar (agora será lento se iluminado)
+           root.AddChild(patrolSequence); // Prioridade 2: Patrulhar
 
-        //    _tree = new BehaviourTree("LightSeeker Behaviour Tree", root);
+           _tree = new BehaviourTree("LightSeeker Behaviour Tree", root);
         }
 
         private void Update() {
@@ -98,7 +98,6 @@ namespace FifthSemester.Gameplay.Enemy {
             if (_animator != null && _agent != null) {
                 _animator.SetFloat(_speedHash, _agent.velocity.magnitude);
             }
-            _agent.SetDestination(_target.position);
         }
 
         private void OnEnable() {
@@ -146,7 +145,6 @@ namespace FifthSemester.Gameplay.Enemy {
                 _agent.speed = _speed;
             }
 
-            // Opcional: Para evitar que ele deslize um pouco, garantimos que a aceleração acompanhe
             _agent.acceleration = _agent.speed * 2f;
         }
 

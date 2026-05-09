@@ -68,7 +68,7 @@ namespace FifthSemester.Player.Components {
             _lookInput = evt.Value;
         }
 
-  private void HandleFlashlightInput(FlashlightInputEvent evt) {
+        private void HandleFlashlightInput(FlashlightInputEvent evt) {
             if (!evt.IsPressed) return;
             
             _isOn = !_isOn;

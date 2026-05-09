@@ -9,7 +9,7 @@ using UnityEngine.Playables;
 using FifthSemester.Framework.BehaviourTrees;
 using UnityEngine.SceneManagement;
 
-namespace FifthSemester.Framework.BehaviourTrees {
+namespace FifthSemester.Gameplay.Enemy {
     public class ActionPlayJumpscare : Node {
         private const string NAV_AGENT_KEY = "NavAgent";
         private const string JUMPSCARE_DIRECTOR_KEY = "JumpscareDirector";

@@ -30,7 +30,7 @@ namespace FifthSemester.Gameplay.Enemy {
         [SerializeField] private LayerMask _obstacleMask;
 
         private BehaviourTree _tree;
-        private Blackboard _blackboard;
+        public Blackboard Blackboard { get; private set; }
         private NavMeshAgent _agent;
         private Animator _animator;
 
@@ -64,21 +64,21 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void SetupBlackboard() {
-            _blackboard = new Blackboard();
-            _blackboard.SetData(PLAYER_TARGET_KEY, _target);
-            _blackboard.SetData(NAV_AGENT_KEY, _agent);
-            _blackboard.SetData(ANIMATOR_KEY, _animator);
-            _blackboard.SetData(PATROL_WAIT_TIME_KEY, _patrolWaitTime);
-            _blackboard.SetData(JUMPSCARE_DIRECTOR_KEY, _jumpscareDirector);
-            _blackboard.SetData(IS_STUNNED_KEY, false);
+            Blackboard = new Blackboard();
+            Blackboard.SetData(PLAYER_TARGET_KEY, _target);
+            Blackboard.SetData(NAV_AGENT_KEY, _agent);
+            Blackboard.SetData(ANIMATOR_KEY, _animator);
+            Blackboard.SetData(PATROL_WAIT_TIME_KEY, _patrolWaitTime);
+            Blackboard.SetData(JUMPSCARE_DIRECTOR_KEY, _jumpscareDirector);
+            Blackboard.SetData(IS_STUNNED_KEY, false);
 
             // Vision parameters
-            _blackboard.SetData("EyeTransform", _eyeTransform);
-            _blackboard.SetData("ViewDistance", _viewDistance);
-            _blackboard.SetData("FovAngle", _fovAngle);
-            _blackboard.SetData("ObstacleMask", _obstacleMask);
-            _blackboard.SetData("LoseTargetDistance", _loseTargetDistance);
-            _blackboard.SetData(HAS_LINE_OF_SIGHT_KEY, false);
+            Blackboard.SetData("EyeTransform", _eyeTransform);
+            Blackboard.SetData("ViewDistance", _viewDistance);
+            Blackboard.SetData("FovAngle", _fovAngle);
+            Blackboard.SetData("ObstacleMask", _obstacleMask);
+            Blackboard.SetData("LoseTargetDistance", _loseTargetDistance);
+            Blackboard.SetData(HAS_LINE_OF_SIGHT_KEY, false);
         }
 
         private void Start() {
@@ -86,17 +86,32 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void BuildBehaviourTree() {
+            var stareAndJumpSequence = new Sequence("StareAndJumpSequence");
+            stareAndJumpSequence.AddChild(new ConditionPlayerInSafeLight(Blackboard, "Is Player in Light?"));
+            stareAndJumpSequence.AddChild(new ConditionLineOfSight(Blackboard, "Line of Sight Check"));
+            stareAndJumpSequence.AddChild(new ActionStareAndPounce(Blackboard, "Stare and Pounce"));
+            stareAndJumpSequence.AddChild(new ActionPlayJumpscare(Blackboard, "Jumpscare"));
+
             var chaseSequence = new Sequence("AggressiveChase");
-            chaseSequence.AddChild(new ConditionLineOfSight(_blackboard, "Line of Sight Check"));
-            chaseSequence.AddChild(new ActionChase(_blackboard, "Chase Player"));
-            chaseSequence.AddChild(new ActionPlayJumpscare(_blackboard, "Jumpscare"));
+            chaseSequence.AddChild(new ConditionLineOfSight(Blackboard, "Line of Sight Check"));
+            chaseSequence.AddChild(new ActionChase(Blackboard, "Chase Player"));
+            chaseSequence.AddChild(new ActionPlayJumpscare(Blackboard, "Jumpscare"));
 
             var patrolSequence = new Sequence("SearchPatrol");
-            patrolSequence.AddChild(new ActionPatrol(_blackboard, "Patrol Waypoints"));
+            patrolSequence.AddChild(new ActionPatrol(Blackboard, "Patrol Waypoints"));
 
             var root = new Selector("RootBehavior");
-            root.AddChild(chaseSequence); 
-            root.AddChild(patrolSequence); 
+
+            var flashlightChase = new Sequence("FlashlightChase");
+            flashlightChase.AddChild(new ConditionIsIlluminated(Blackboard, "Is Illuminated?"));
+            flashlightChase.AddChild(new ConditionLineOfSight(Blackboard, "Line of Sight Check"));
+            flashlightChase.AddChild(new ActionChase(Blackboard, "Chase Player (Illuminated)"));
+            flashlightChase.AddChild(new ActionPlayJumpscare(Blackboard, "Jumpscare"));
+
+            root.AddChild(flashlightChase);
+            root.AddChild(stareAndJumpSequence);
+            root.AddChild(chaseSequence);
+            root.AddChild(patrolSequence);
 
             _tree = new BehaviourTree("LightSeeker Behaviour Tree", root);
         }
@@ -132,7 +147,7 @@ namespace FifthSemester.Gameplay.Enemy {
             }
 
             _isIlluminated = evt.IsIlluminated;
-            _blackboard?.SetData(IS_STUNNED_KEY, _isIlluminated);
+            Blackboard?.SetData(IS_STUNNED_KEY, _isIlluminated);
 
             UpdateSpeed();
         }
@@ -160,9 +175,9 @@ namespace FifthSemester.Gameplay.Enemy {
 
             Vector3 eyePos = _eyeTransform.position;
             Vector3 dirToTarget = _target.position - eyePos;
-            float dist = dirToTarget.magnitude;
+            float distance = dirToTarget.magnitude;
 
-            if (dist > _viewDistance) {
+            if (distance > _viewDistance) {
                 return false;
             }
 
@@ -173,7 +188,7 @@ namespace FifthSemester.Gameplay.Enemy {
                 return false;
             }
 
-            if (Physics.Raycast(eyePos, dirToTargetNormalized, dist, _obstacleMask)) {
+            if (Physics.Raycast(eyePos, dirToTargetNormalized, distance, _obstacleMask)) {
                 return false;
             }
 

@@ -1,5 +1,5 @@
-﻿// Autor: Murillo Gomes Yonamine
-// Data: 28/04/2026
+// Autor: Murillo Gomes Yonamine
+// Data: Atualizado
 
 using FifthSemester.Core.Services;
 using UnityEngine;
@@ -12,6 +12,7 @@ namespace FifthSemester.Gameplay.Enemy {
         private const string PLAYER_TARGET_KEY = "PlayerTarget";
         private const string IS_STUNNED_KEY = "IsStunnedByFlashlight";
         private const string HAS_LINE_OF_SIGHT_KEY = "HasLineOfSight";
+        private const string IS_IN_SAFE_LIGHT_KEY = "IsPlayerInSafeLight";
 
         private readonly Blackboard _blackboard;
         private NavMeshAgent _agent;
@@ -30,10 +31,18 @@ namespace FifthSemester.Gameplay.Enemy {
             CacheReferences();
 
             if (_agent == null || _target == null) {
+                StopGlitch(); 
                 return Status.Failure;
             }
 
             if (_blackboard.GetData<bool>(IS_STUNNED_KEY)) {
+                StopGlitch();
+                return Status.Failure;
+            }
+
+            if (_blackboard.HasKey(IS_IN_SAFE_LIGHT_KEY) && _blackboard.GetData<bool>(IS_IN_SAFE_LIGHT_KEY)) {
+                _agent.ResetPath();
+                StopGlitch(); 
                 return Status.Failure;
             }
 
@@ -44,6 +53,7 @@ namespace FifthSemester.Gameplay.Enemy {
 
             if (distance >= _loseTargetDistance) {
                 _agent.ResetPath();
+                StopGlitch();
                 return Status.Failure;
             }
 
@@ -62,7 +72,6 @@ namespace FifthSemester.Gameplay.Enemy {
         private void CacheReferences() {
             _agent ??= _blackboard.GetData<NavMeshAgent>(NAV_AGENT_KEY);
             _target ??= _blackboard.GetData<Transform>(PLAYER_TARGET_KEY);
-
             _whiteNoiseService ??= ServiceLocator.Get<IWhiteNoiseService>();
         }
 
@@ -70,6 +79,7 @@ namespace FifthSemester.Gameplay.Enemy {
             bool hasLineOfSight = _blackboard.GetData<bool>(HAS_LINE_OF_SIGHT_KEY);
 
             if (!hasLineOfSight) {
+                StopGlitch();
                 return;
             }
 
@@ -80,10 +90,13 @@ namespace FifthSemester.Gameplay.Enemy {
 
             if (currentDistance <= _glitchStartDistance) {
                 float intensity = 1f - (currentDistance / _glitchStartDistance);
-
                 _whiteNoiseService?.RequestIntensity(intensity);
             }
+            else {
+                StopGlitch();
+            }
         }
+
         private void EnsureAgentIsMoving() {
             if (_agent.isStopped) {
                 _agent.isStopped = false;
@@ -98,8 +111,13 @@ namespace FifthSemester.Gameplay.Enemy {
             return _agent.remainingDistance <= _agent.stoppingDistance + 0.1f;
         }
 
+        private void StopGlitch() {
+            _whiteNoiseService?.RequestIntensity(0f);
+        }
+
         public override void Reset() {
             base.Reset();
+            StopGlitch();
         }
     }
 }

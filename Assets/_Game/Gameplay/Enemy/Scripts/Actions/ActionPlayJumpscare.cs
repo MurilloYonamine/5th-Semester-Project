@@ -1,4 +1,4 @@
-﻿// Autor: Murillo Gomes Yonamine
+// Autor: Murillo Gomes Yonamine
 // Data: 28/04/2026
 
 using FifthSemester.Core.Services;
@@ -62,11 +62,21 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private bool CanStartJumpscare() {
-            if (_agent.pathPending || !_agent.hasPath) {
-                return false;
+            if (_agent == null || _target == null) return false;
+
+            // If the agent has a direct destination near the player, allow jumpscare when close
+
+            // If agent is still calculating a path do not start yet
+            if (_agent.pathPending) return false;
+
+            // Prefer NavMeshAgent remainingDistance when there's an active path
+            if (_agent.hasPath) {
+                return _agent.remainingDistance <= _agent.stoppingDistance;
             }
 
-            return _agent.remainingDistance <= _agent.stoppingDistance;
+            // If there's no path (e.g. agent was teleported on landing), fallback to direct distance check
+            float directDistance = Vector3.Distance(_agent.transform.position, _target.position);
+            return directDistance <= Mathf.Max(0.1f, _agent.stoppingDistance);
         }
 
         private void StartJumpscare() {

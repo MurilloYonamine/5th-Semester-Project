@@ -63,7 +63,7 @@ namespace FifthSemester.Core.Audio {
         /// <param name="pitch">Audio pitch.</param>
         /// <param name="loop">Whether the audio should loop.</param>
         /// <returns>AudioSource created for the SFX.</returns>
-        public AudioSource PlaySFX(string filePath, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false, int spatialBlend = 1) {
+        public AudioSource PlaySFX(string filePath, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false, int spatialBlend = 1, float maxDistance = 500f) {
             AudioClip clip = Resources.Load<AudioClip>(filePath);
 
             if (clip == null) {
@@ -71,7 +71,7 @@ namespace FifthSemester.Core.Audio {
                 return null;
             }
 
-            return PlaySFX(clip, mixer, volume, pitch, loop, spatialBlend, filePath);
+            return PlaySFX(clip, mixer, volume, pitch, loop, spatialBlend, filePath, maxDistance);
         }
         /// <summary>
         /// Plays a sound effect (SFX) from an AudioClip.
@@ -83,7 +83,7 @@ namespace FifthSemester.Core.Audio {
         /// <param name="loop">Whether the audio should loop.</param>
         /// <param name="filePath">File name or path (optional).</param>
         /// <returns>AudioSource created for the SFX.</returns>
-        public AudioSource PlaySFX(AudioClip clip, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false, int spatialBlend = 1, string filePath = "") {
+        public AudioSource PlaySFX(AudioClip clip, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false, int spatialBlend = 1, string filePath = "", float maxDistance = 500f) {
             string fileName = clip != null ? clip.name : "NULL_CLIP";
 
             if (filePath != string.Empty) {
@@ -104,6 +104,7 @@ namespace FifthSemester.Core.Audio {
             audioSource.volume = volume;
             audioSource.pitch = pitch;
             audioSource.spatialBlend = spatialBlend;
+            audioSource.maxDistance = maxDistance;
             audioSource.loop = loop;
 
             audioSource.Play();

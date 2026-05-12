@@ -1,55 +1,90 @@
 using UnityEngine;
+using System.Collections;
+using UnityEngine.VFX;
 
 namespace FifthSemester.UI.VFX {
     [RequireComponent(typeof(Light))]
     public class FlickeringLight : MonoBehaviour {
-        [SerializeField] private float _minOffDuration = 0.8f;
-        [SerializeField] private float _maxOffDuration = 1.5f;
-        [SerializeField] private float _minOnDuration = 1f;
-        [SerializeField] private float _maxOnDuration = 2f;
-        [SerializeField] private GameObject _sparkVFXPrefab;
-
+        private GameObject _sparkPrefab;
+        [SerializeField] private float _toggleDelay = 0.5f;
+        [SerializeField] private float _toggleDelayVariation = 0.2f;
+        [SerializeField] private float _sparkInterval = 3f;
+        [SerializeField] private float _sparkIntervalVariation = 1f;
         private Light _light;
-        private float _flickerTimer;
-        private bool _isLightOn;
+        private Coroutine _toggleCoroutine;
+        private Coroutine _sparkLoopCoroutine;
+        private GameObject _sparkInstance;
 
         private void Awake() {
+            _sparkPrefab = GetComponentInChildren<VisualEffect>()?.gameObject;
             _light = GetComponent<Light>();
-            _isLightOn = _light.enabled;
-            ResetTimer();
+            SpawnSparkPrefab();
         }
 
-        private void Update() {
-            _flickerTimer -= Time.deltaTime;
+        private void OnEnable() {
+            _sparkLoopCoroutine = StartCoroutine(SparkLoopCoroutine());
+        }
 
-            if (_flickerTimer <= 0) {
-                ToggleLight();
+        private void OnDisable() {
+            if (_sparkLoopCoroutine != null) {
+                StopCoroutine(_sparkLoopCoroutine);
+            }
+
+            if (_toggleCoroutine != null) {
+                StopCoroutine(_toggleCoroutine);
             }
         }
 
-        private void ToggleLight() {
-            _isLightOn = !_isLightOn;
-            _light.enabled = _isLightOn;
-
-            if (!_isLightOn) {
-                TriggerSparkVFX();
-            }
-
-            ResetTimer();
-        }
-
-        private void ResetTimer() {
-            if (_isLightOn) {
-                _flickerTimer = Random.Range(_minOnDuration, _maxOnDuration);
-            } else {
-                _flickerTimer = Random.Range(_minOffDuration, _maxOffDuration);
+        private void SpawnSparkPrefab() {
+            if (_sparkPrefab != null && _sparkInstance == null) {
+                _sparkInstance = Instantiate(_sparkPrefab, transform.position, Quaternion.identity, transform);
+                _sparkInstance.SetActive(false);
+                SubscribeToSparkEffect();
             }
         }
 
-        private void TriggerSparkVFX() {
-            if (_sparkVFXPrefab == null) return;
+        private IEnumerator SparkLoopCoroutine() {
+            while (true) {
+                float randomInterval = _sparkInterval + Random.Range(-_sparkIntervalVariation, _sparkIntervalVariation);
+                yield return new WaitForSeconds(randomInterval);
+                PlaySparkEffect();
+            }
+        }
 
-            Instantiate(_sparkVFXPrefab, transform.position, Quaternion.identity);
+        private void PlaySparkEffect() {
+            if (_sparkInstance != null) {
+                _sparkInstance.SetActive(true);
+            }
+        }
+
+        private void SubscribeToSparkEffect() {
+            if (_sparkInstance == null) return;
+            
+            VisualEffect vfx = _sparkInstance.GetComponent<VisualEffect>();
+            if (vfx != null) {
+                vfx.outputEventReceived += OnSparkFired;
+            }
+        }
+
+        private void OnSparkFired(VFXOutputEventArgs eventData) {
+            int sparkEventID = Shader.PropertyToID("SparkFired");
+            if (eventData.nameId == sparkEventID) {
+                if (_toggleCoroutine != null) {
+                    StopCoroutine(_toggleCoroutine);
+                }
+                _toggleCoroutine = StartCoroutine(ToggleLightCoroutine());
+            }
+        }
+
+        private IEnumerator ToggleLightCoroutine() {
+            _light.enabled = false;
+            float randomDelay = _toggleDelay + Random.Range(-_toggleDelayVariation, _toggleDelayVariation);
+            yield return new WaitForSeconds(randomDelay);
+            _light.enabled = true;
+            
+            if (_sparkInstance != null) {
+                _sparkInstance.SetActive(false);
+            }
         }
     }
 }

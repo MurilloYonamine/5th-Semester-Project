@@ -89,7 +89,7 @@ namespace FifthSemester.Player.Components {
             }
         }
 
-        private void Update() {
+        private void LateUpdate() {
             if (_isOn) AimLightTowardsPointer();
         }
 

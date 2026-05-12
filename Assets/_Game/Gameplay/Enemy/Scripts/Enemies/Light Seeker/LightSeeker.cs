@@ -1,5 +1,5 @@
 // Autor: Murillo Gomes Yonamine
-// Data: 28/04/2026
+// Data: 06/05/2026
 
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
@@ -13,63 +13,72 @@ namespace FifthSemester.Gameplay.Enemy {
     public class LightSeeker : MonoBehaviour {
         private const string PLAYER_TARGET_KEY = "PlayerTarget";
         private const string NAV_AGENT_KEY = "NavAgent";
-        private const string PATROL_WAYPOINTS_KEY = "PatrolWaypoints";
         private const string ANIMATOR_KEY = "Animator";
         private const string PATROL_WAIT_TIME_KEY = "PatrolWaitTime";
         private const string JUMPSCARE_DIRECTOR_KEY = "JumpscareDirector";
         private const string IS_STUNNED_KEY = "IsStunnedByFlashlight";
+        private const string HAS_LINE_OF_SIGHT_KEY = "HasLineOfSight";
 
         [SerializeField] private Transform _target;
-
-        [Header("Patrol Settings")]
-        [SerializeField] private Transform[] _patrolWaypoints;
-
         [SerializeField] private float _patrolWaitTime = 2f;
 
         [Header("Vision Settings")]
         [SerializeField] private Transform _eyeTransform;
-
         [SerializeField, Range(0, 120)] private float _viewDistance = 15f;
+        [SerializeField] private float _loseTargetDistance = 25f;
         [SerializeField, Range(0, 360)] private float _fovAngle = 90f;
         [SerializeField] private LayerMask _obstacleMask;
 
         private BehaviourTree _tree;
-        private Blackboard _blackboard;
+        public Blackboard Blackboard { get; private set; }
         private NavMeshAgent _agent;
         private Animator _animator;
 
         [Header("Timeline")]
         [SerializeField] private PlayableDirector _jumpscareDirector;
 
+
         [Header("Speed Settings")]
         [SerializeField, Range(0f, 10f)] private float _speed = 1.5f;
         [SerializeField, Range(0f, 10f)] private float _sprint = 3f;
+        [SerializeField, Range(0f, 10f)] private float _slowSpeed = 0.5f;
 
         private readonly int _speedHash = Animator.StringToHash("Speed");
+
+        private bool _isIlluminated = false;
+        private bool _isPlayerSprinting = false;
 
         private void Awake() {
             _agent = GetComponent<NavMeshAgent>();
             _animator = GetComponentInChildren<Animator>();
+
+            Shader.SetGlobalFloat("_NoiseOpacity", 0);
+
+            if (_jumpscareDirector == null) {
+                _jumpscareDirector = GetComponentInChildren<PlayableDirector>(true);
+            }
+
             _agent.speed = _speed;
 
             SetupBlackboard();
         }
 
         private void SetupBlackboard() {
-            _blackboard = new Blackboard();
-            _blackboard.SetData(PLAYER_TARGET_KEY, _target);
-            _blackboard.SetData(NAV_AGENT_KEY, _agent);
-            _blackboard.SetData(PATROL_WAYPOINTS_KEY, _patrolWaypoints);
-            _blackboard.SetData(ANIMATOR_KEY, _animator);
-            _blackboard.SetData(PATROL_WAIT_TIME_KEY, _patrolWaitTime);
-            _blackboard.SetData(JUMPSCARE_DIRECTOR_KEY, _jumpscareDirector);
-            _blackboard.SetData(IS_STUNNED_KEY, false);
-            
+            Blackboard = new Blackboard();
+            Blackboard.SetData(PLAYER_TARGET_KEY, _target);
+            Blackboard.SetData(NAV_AGENT_KEY, _agent);
+            Blackboard.SetData(ANIMATOR_KEY, _animator);
+            Blackboard.SetData(PATROL_WAIT_TIME_KEY, _patrolWaitTime);
+            Blackboard.SetData(JUMPSCARE_DIRECTOR_KEY, _jumpscareDirector);
+            Blackboard.SetData(IS_STUNNED_KEY, false);
+
             // Vision parameters
-            _blackboard.SetData("EyeTransform", _eyeTransform);
-            _blackboard.SetData("ViewDistance", _viewDistance);
-            _blackboard.SetData("FovAngle", _fovAngle);
-            _blackboard.SetData("ObstacleMask", _obstacleMask);
+            Blackboard.SetData("EyeTransform", _eyeTransform);
+            Blackboard.SetData("ViewDistance", _viewDistance);
+            Blackboard.SetData("FovAngle", _fovAngle);
+            Blackboard.SetData("ObstacleMask", _obstacleMask);
+            Blackboard.SetData("LoseTargetDistance", _loseTargetDistance);
+            Blackboard.SetData(HAS_LINE_OF_SIGHT_KEY, false);
         }
 
         private void Start() {
@@ -77,27 +86,30 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void BuildBehaviourTree() {
-            // Priority 1: React to Light (Conditional Abort Pattern)
-            // If illuminated, immediately stop all actions and freeze
-            var reactionToLightSequence = new Sequence("ReactionToLight");
-            reactionToLightSequence.AddChild(new ConditionIsIlluminated(_blackboard, "Illuminated Check"));
-            reactionToLightSequence.AddChild(new ActionStop(_agent, "Freeze Movement"));
+            var stareAndJumpSequence = new Sequence("StareAndJumpSequence");
+            stareAndJumpSequence.AddChild(new ConditionPlayerInSafeLight(Blackboard, "Is Player in Light?"));
+            stareAndJumpSequence.AddChild(new ConditionLineOfSight(Blackboard, "Line of Sight Check"));
+            stareAndJumpSequence.AddChild(new ActionStareAndPounce(Blackboard, "Stare and Pounce"));
+            stareAndJumpSequence.AddChild(new ActionPlayJumpscare(Blackboard, "Jumpscare"));
 
-            // Priority 2: Aggressive Chase
-            // If player is in line of sight, chase and attempt jumpscare
             var chaseSequence = new Sequence("AggressiveChase");
-            chaseSequence.AddChild(new ConditionLineOfSight(_blackboard, "Line of Sight Check"));
-            chaseSequence.AddChild(new ActionChase(_blackboard, "Chase Player"));
-            chaseSequence.AddChild(new ActionPlayJumpscare(_blackboard, "Jumpscare"));
+            chaseSequence.AddChild(new ConditionLineOfSight(Blackboard, "Line of Sight Check"));
+            chaseSequence.AddChild(new ActionChase(Blackboard, "Chase Player"));
+            chaseSequence.AddChild(new ActionPlayJumpscare(Blackboard, "Jumpscare"));
 
-            // Priority 3: Fallback Patrol
-            // If not illuminated and no line of sight, search by patrolling waypoints
             var patrolSequence = new Sequence("SearchPatrol");
-            patrolSequence.AddChild(new ActionPatrol(_blackboard, "Patrol Waypoints"));
+            patrolSequence.AddChild(new ActionPatrol(Blackboard, "Patrol Waypoints"));
 
-            // Root: Selector evaluates priorities left to right
             var root = new Selector("RootBehavior");
-            root.AddChild(reactionToLightSequence);
+
+            var flashlightChase = new Sequence("FlashlightChase");
+            flashlightChase.AddChild(new ConditionIsIlluminated(Blackboard, "Is Illuminated?"));
+            flashlightChase.AddChild(new ConditionLineOfSight(Blackboard, "Line of Sight Check"));
+            flashlightChase.AddChild(new ActionChase(Blackboard, "Chase Player (Illuminated)"));
+            flashlightChase.AddChild(new ActionPlayJumpscare(Blackboard, "Jumpscare"));
+
+            root.AddChild(flashlightChase);
+            root.AddChild(stareAndJumpSequence);
             root.AddChild(chaseSequence);
             root.AddChild(patrolSequence);
 
@@ -125,9 +137,8 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void HandleSprint(PlayerSprintChangedEvent evt) {
-            if (_agent != null) {
-                _agent.speed = evt.IsSprinting ? _sprint : _speed;
-            }
+            _isPlayerSprinting = evt.IsSprinting;
+            UpdateSpeed();
         }
 
         private void HandleFlashlightTargeted(FlashlightTargetedEvent evt) {
@@ -135,30 +146,26 @@ namespace FifthSemester.Gameplay.Enemy {
                 return;
             }
 
-            if (evt.IsIlluminated) {
-                ApplyStun();
-                return;
-            }
+            _isIlluminated = evt.IsIlluminated;
+            Blackboard?.SetData(IS_STUNNED_KEY, _isIlluminated);
 
-            RemoveStun();
+            UpdateSpeed();
         }
 
-        private void ApplyStun() {
-            if (_agent.isOnNavMesh) {
-                _agent.isStopped = true;
-                _agent.velocity = Vector3.zero;
-                _agent.ResetPath();
+        private void UpdateSpeed() {
+            if (_agent == null || !_agent.isOnNavMesh) return;
+
+            if (_isIlluminated) {
+                _agent.speed = _slowSpeed;
+            }
+            else if (_isPlayerSprinting) {
+                _agent.speed = _sprint;
+            }
+            else {
+                _agent.speed = _speed;
             }
 
-            _blackboard?.SetData(IS_STUNNED_KEY, true);
-        }
-
-        private void RemoveStun() {
-            if (_agent.isOnNavMesh) {
-                _agent.isStopped = false;
-            }
-
-            _blackboard?.SetData(IS_STUNNED_KEY, false);
+            _agent.acceleration = _agent.speed * 2f;
         }
 
         private bool IsPlayerInFOV() {
@@ -168,9 +175,9 @@ namespace FifthSemester.Gameplay.Enemy {
 
             Vector3 eyePos = _eyeTransform.position;
             Vector3 dirToTarget = _target.position - eyePos;
-            float dist = dirToTarget.magnitude;
+            float distance = dirToTarget.magnitude;
 
-            if (dist > _viewDistance) {
+            if (distance > _viewDistance) {
                 return false;
             }
 
@@ -181,7 +188,7 @@ namespace FifthSemester.Gameplay.Enemy {
                 return false;
             }
 
-            if (Physics.Raycast(eyePos, dirToTargetNormalized, dist, _obstacleMask)) {
+            if (Physics.Raycast(eyePos, dirToTargetNormalized, distance, _obstacleMask)) {
                 return false;
             }
 
@@ -191,7 +198,6 @@ namespace FifthSemester.Gameplay.Enemy {
         private void OnDrawGizmosSelected() {
             DrawFOVGizmos();
         }
-
         private void OnDrawGizmos() {
             DrawFOVGizmos();
         }
@@ -199,30 +205,20 @@ namespace FifthSemester.Gameplay.Enemy {
         private void DrawFOVGizmos() {
             Transform eye = _eyeTransform != null ? _eyeTransform : transform;
             Vector3 pos = eye.position;
-
             bool inFov = IsPlayerInFOV();
             Gizmos.color = inFov ? Color.red : Color.yellow;
-
             Vector3 forward = eye.forward;
-
             int steps = 10;
             float halfFov = _fovAngle * 0.5f;
-
             Vector3 prevPoint = Vector3.zero;
 
             for (int i = 0; i <= steps; i++) {
                 float t = i / (float)steps;
                 float angle = Mathf.Lerp(-halfFov, halfFov, t);
-
                 Vector3 dir = Quaternion.Euler(0f, angle, 0f) * forward;
                 Vector3 point = pos + dir * _viewDistance;
-
                 Gizmos.DrawLine(pos, point);
-
-                if (i > 0) {
-                    Gizmos.DrawLine(prevPoint, point);
-                }
-
+                if (i > 0) Gizmos.DrawLine(prevPoint, point);
                 prevPoint = point;
             }
 

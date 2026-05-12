@@ -1,4 +1,4 @@
-﻿// Autor: Murillo Gomes Yonamine
+// Autor: Murillo Gomes Yonamine
 // Data: 28/04/2026
 
 using FifthSemester.Core.Services;
@@ -9,7 +9,7 @@ using UnityEngine.Playables;
 using FifthSemester.Framework.BehaviourTrees;
 using UnityEngine.SceneManagement;
 
-namespace FifthSemester.Framework.BehaviourTrees {
+namespace FifthSemester.Gameplay.Enemy {
     public class ActionPlayJumpscare : Node {
         private const string NAV_AGENT_KEY = "NavAgent";
         private const string JUMPSCARE_DIRECTOR_KEY = "JumpscareDirector";
@@ -41,6 +41,7 @@ namespace FifthSemester.Framework.BehaviourTrees {
             if (!_started) {
                 if (CanStartJumpscare()) {
                     StartJumpscare();
+                    return Status.Running;
                 }
 
                 return Status.Running;
@@ -61,8 +62,21 @@ namespace FifthSemester.Framework.BehaviourTrees {
         }
 
         private bool CanStartJumpscare() {
-            float distanceToPlayer = Vector3.Distance(_agent.transform.position, _target.position);
-            return distanceToPlayer <= _agent.stoppingDistance + 0.5f;
+            if (_agent == null || _target == null) return false;
+
+            // If the agent has a direct destination near the player, allow jumpscare when close
+
+            // If agent is still calculating a path do not start yet
+            if (_agent.pathPending) return false;
+
+            // Prefer NavMeshAgent remainingDistance when there's an active path
+            if (_agent.hasPath) {
+                return _agent.remainingDistance <= _agent.stoppingDistance;
+            }
+
+            // If there's no path (e.g. agent was teleported on landing), fallback to direct distance check
+            float directDistance = Vector3.Distance(_agent.transform.position, _target.position);
+            return directDistance <= Mathf.Max(0.1f, _agent.stoppingDistance);
         }
 
         private void StartJumpscare() {

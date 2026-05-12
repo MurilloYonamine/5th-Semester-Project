@@ -160,10 +160,10 @@ namespace FifthSemester.Core.Events {
         public void HandleFlash(InputAction.CallbackContext context) {
             if (context.performed) {
                 if (CurrentGameState != GameState.Gameplay) return;
-                PublishEvent(new FifthSemester.Core.Events.FlashlightInputEvent(true));
+                PublishEvent(new FlashlightInputEvent(true));
             }
             else if (context.canceled) {
-                PublishEvent(new FifthSemester.Core.Events.FlashlightInputEvent(false));
+                PublishEvent(new FlashlightInputEvent(false));
             }
         }
 

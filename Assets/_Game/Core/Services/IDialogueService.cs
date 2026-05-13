@@ -1,9 +1,8 @@
 using FifthSemester.Core.Events;
 using FifthSemester.Core.States;
-using UnityEngine;
 
 namespace FifthSemester.Core.Services {
-    public interface IDialogueService<TDialogue> where TDialogue : ScriptableObject {
+    public interface IDialogueService<TDialogue> {
         GameState CurrentState { get; set; }
         bool IsDialogueActive { get; }
 

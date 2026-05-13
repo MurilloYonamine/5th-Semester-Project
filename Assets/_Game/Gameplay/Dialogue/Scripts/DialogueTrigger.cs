@@ -5,16 +5,17 @@ using UnityEngine;
 using ThirdParty.QuickOutline;
 using FifthSemester.Core.Services;
 using FifthSemester.Gameplay.Shared;
+using Sirenix.OdinInspector;
 
 namespace FifthSemester.Gameplay.Dialogue {
     [RequireComponent(typeof(Outline))]
     public class DialogueTrigger : MonoBehaviour, IInteractable {
         [field: SerializeField] public string Id { get; private set; }
 
-        [SerializeField] private DialogueSO _dialogue;
+        [SerializeField] private TextAsset _dialogue;
         private Outline _outline;
 
-        private IDialogueService<DialogueSO> _dialogueService;
+        private IDialogueService<TextAsset> _dialogueService;
 
         public bool IsInteractable => _dialogue != null;
 
@@ -22,13 +23,17 @@ namespace FifthSemester.Gameplay.Dialogue {
             _outline = GetComponent<Outline>();
             _outline.enabled = false;
         }
+
         private void Start() {
-            _dialogueService = ServiceLocator.Get<IDialogueService<DialogueSO>>();
+            _dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
         }
+
         public void Interact() {
-            if (_dialogue != null) {
-                _dialogueService.StartDialogue(_dialogue);
+            if (_dialogue == null) {
+                return;
             }
+
+            _dialogueService.StartDialogue(_dialogue);
         }
 
         public void StopInteract() {

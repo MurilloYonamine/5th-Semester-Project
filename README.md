@@ -99,18 +99,41 @@ Assets/
 * [Assets/_Game/Gameplay/Environment/README.md](Assets/_Game/Gameplay/Environment/README.md)
 * [Assets/_Game/Gameplay/Props/README.md](Assets/_Game/Gameplay/Props/README.md)
 
+## Dialogue Data Model Update
+
+The dialogue runtime now follows a split data model:
+
+- **TextAsset** stores dialogue content (speaker name + line text).
+- **CharacterSO** stores speaker presentation (colors and fonts).
+
+### Why
+
+This keeps dialogue authoring simple in `.txt` files while preserving reusable character styling in assets.
+
+### Runtime Flow
+
+1. `DialogueTrigger` references a `TextAsset` file.
+2. `DialogueService` calls `DialogueParser.Parse(TextAsset)`.
+3. Each parsed `speakerName` is matched against configured `CharacterSO` assets (case-insensitive).
+4. UI applies speaker name/text colors and fonts from `CharacterSO`.
+5. If no match exists, `DialogueService` uses default colors/fonts.
+
+### Notes
+
+- `DialogueSO` is no longer required for runtime playback in this flow.
+- Keep `CharacterSO` for centralized speaker styling and consistency across dialogues.
+
 ## Credits
 
-CI/CD powered by [GameCI](https://game.ci/) and GitHub Actions.
-Quick Outline powered by [Chris Nolet](https://assetstore.unity.com/packages/tools/particles-effects/quick-outline-115488?aid=1101l9Bhe)
-PSX footsteps provided by [Hazard Play](https://hazardpay.itch.io/40-free-psx-crunchy-footsteps)
-Item Pickup SFX provided by [Lamoot](https://opengameart.org/content/positive-item-pickup-yo-frankie)
+CI/CD powered by [GameCI](https://game.ci/) and GitHub Actions.  
+Quick Outline powered by [Chris Nolet](https://assetstore.unity.com/packages/tools/particles-effects/quick-outline-115488?aid=1101l9Bhe)  
+PSX footsteps provided by [Hazard Play](https://hazardpay.itch.io/40-free-psx-crunchy-footsteps)  
+Item Pickup SFX provided by [Lamoot](https://opengameart.org/content/positive-item-pickup-yo-frankie)  
 
-Navigation menu SFX from [Fupi](https://opengameart.org/content/8bit-menu-highlight)
+Navigation menu SFX from [Fupi](https://opengameart.org/content/8bit-menu-highlight)  
 Open and Close menu SFX from [Pedro Alegria](https://pabloalegria9.itch.io/psxhorrorpack)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [contributors-shield]: https://img.shields.io/github/contributors/MurilloYonamine/5th-Semester-Project.svg?style=for-the-badge

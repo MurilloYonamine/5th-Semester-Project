@@ -8,6 +8,7 @@ using FifthSemester.Core.Services;
 using FifthSemester.Core.States;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Playables;
 
 namespace FifthSemester.Gameplay.Dialogue {
     public class DialogueService : MonoBehaviour, IDialogueService<TextAsset> {
@@ -32,6 +33,8 @@ namespace FifthSemester.Gameplay.Dialogue {
         [SerializeField] private TMP_FontAsset _defaultTextFont;
 
         private Queue<ParsedDialogueLine> _linesQueue;
+
+        public PlayableDirector CurrentDirector { get; private set; }
 
         private void Awake() {
             ServiceLocator.Register<IDialogueService<TextAsset>>(this);
@@ -67,13 +70,53 @@ namespace FifthSemester.Gameplay.Dialogue {
         }
 
         private void OnDialogueAdvanceRequested(DialogueAdvanceRequestedEvent evt) {
-            DisplayNextLine();
+            if (!IsDialogueActive) return;
+
+            if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
+                Clear();
+
+                if (_dialoguePanel != null) _dialoguePanel.SetActive(false);
+
+                CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
+            }
+            else {
+                DisplayNextLine();
+            }
         }
 
-        public void StartDialogue(TextAsset dialogueFile) {
+        public void StartDialogue(TextAsset dialogueFile, PlayableDirector director = null) {
+            if (IsDialogueActive) {
+                EndDialogue();
+            }
+
             _linesQueue = DialogueParser.Parse(dialogueFile);
+            CurrentDirector = director;
+
+            if (_linesQueue.Count == 0 && CurrentDirector == null) {
+                EndDialogue();
+                return;
+            }
+
             ToggleDialogue(true);
             _eventBus?.Publish(new DialogueStartedEvent());
+
+            if (CurrentDirector != null) {
+                CurrentDirector.time = 0d;
+                CurrentDirector.Evaluate();
+                CurrentDirector.Play();
+            }
+            else {
+                DisplayNextLine();
+            }
+        }
+        public void TimelineShowLineAndPause() {
+            if (_dialoguePanel != null) _dialoguePanel.SetActive(true);
+
+            DisplayNextLine();
+
+            if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
+                CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(0);
+            }
         }
 
         public void DisplayNextLine() {
@@ -100,6 +143,14 @@ namespace FifthSemester.Gameplay.Dialogue {
         public void EndDialogue() {
             Clear();
             ToggleDialogue(false);
+
+            if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
+                CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
+            }
+
+            CurrentDirector = null;
+            _linesQueue = null;
+
             _eventBus?.Publish(new DialogueEndedEvent());
         }
 

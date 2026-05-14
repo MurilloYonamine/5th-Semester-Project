@@ -1,11 +1,12 @@
 // autor: Murillo Gomes Yonamine
 // data: 30/03/2026
 
-using UnityEngine;
-using ThirdParty.QuickOutline;
 using FifthSemester.Core.Services;
 using FifthSemester.Gameplay.Shared;
 using Sirenix.OdinInspector;
+using ThirdParty.QuickOutline;
+using UnityEngine;
+using UnityEngine.Playables;
 
 namespace FifthSemester.Gameplay.Dialogue {
     [RequireComponent(typeof(Outline))]
@@ -18,6 +19,7 @@ namespace FifthSemester.Gameplay.Dialogue {
         private IDialogueService<TextAsset> _dialogueService;
 
         public bool IsInteractable => _dialogue != null;
+        [SerializeField] private PlayableDirector _director;
 
         private void Awake() {
             _outline = GetComponent<Outline>();
@@ -33,7 +35,7 @@ namespace FifthSemester.Gameplay.Dialogue {
                 return;
             }
 
-            _dialogueService.StartDialogue(_dialogue);
+            _dialogueService.StartDialogue(_dialogue, _director);
         }
 
         public void StopInteract() {

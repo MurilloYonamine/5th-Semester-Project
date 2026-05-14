@@ -169,6 +169,7 @@ namespace FifthSemester.Core.Events {
 
         public void HandleNext(InputAction.CallbackContext context) {
             if (!context.performed) return;
+            if (CurrentGameState != GameState.Gameplay) return;
 
             if (!_isInventoryOpen) {
                 PublishEvent(new InventoryToggledEvent(true)); // abre inventário
@@ -179,6 +180,7 @@ namespace FifthSemester.Core.Events {
 
         public void HandlePrevious(InputAction.CallbackContext context) {
             if (!context.performed) return;
+            if (CurrentGameState != GameState.Gameplay) return;
 
             if (!_isInventoryOpen) {
                 PublishEvent(new InventoryToggledEvent(true)); // abre inventário

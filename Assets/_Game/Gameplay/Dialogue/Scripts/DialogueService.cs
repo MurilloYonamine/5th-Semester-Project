@@ -73,10 +73,6 @@ namespace FifthSemester.Gameplay.Dialogue {
             if (!IsDialogueActive) return;
 
             if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
-                Clear();
-
-                if (_dialoguePanel != null) _dialoguePanel.SetActive(false);
-
                 CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
             }
             else {
@@ -110,8 +106,6 @@ namespace FifthSemester.Gameplay.Dialogue {
             }
         }
         public void TimelineShowLineAndPause() {
-            if (_dialoguePanel != null) _dialoguePanel.SetActive(true);
-
             DisplayNextLine();
 
             if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {

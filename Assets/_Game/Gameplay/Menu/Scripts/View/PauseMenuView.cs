@@ -10,8 +10,12 @@ namespace FifthSemester.Gameplay.Menu {
         private IGameStateService _gameState;
         private IEventBus _eventBus;
 
+        [Header("Background Panel")]
+        [SerializeField] private CanvasGroup _backgroundPanel; 
+
         [Header("Buttons")]
         [SerializeField] private Button _resumeButton;
+        [SerializeField] private Button _loadButton;
         [SerializeField] private Button _settingsButton;
         [SerializeField] private Button _creditsButton;
         [SerializeField] private Button _quitButton;
@@ -27,9 +31,16 @@ namespace FifthSemester.Gameplay.Menu {
             base.Start();
 
             _resumeButton.onClick.AddListener(OnResume);
+            _loadButton.onClick.AddListener(OnLoad);
             _settingsButton.onClick.AddListener(OnSettings);
             _creditsButton.onClick.AddListener(OnCredits);
             _quitButton.onClick.AddListener(OnQuit);
+            
+            if (_gameState.CurrentState == GameState.Gameplay && _backgroundPanel != null) {
+                 _backgroundPanel.alpha = 0f;
+                 _backgroundPanel.blocksRaycasts = false;
+                 _backgroundPanel.interactable = false;
+            }
         }
 
         protected override void OnDestroy() {
@@ -39,17 +50,28 @@ namespace FifthSemester.Gameplay.Menu {
 
         private void OnGameStateChanged(GameStateChangedEvent evt) {
             if (evt.CurrentState == GameState.Paused) {
+                if (_backgroundPanel != null) {
+                    _backgroundPanel.alpha = 1f;
+                    _backgroundPanel.blocksRaycasts = true;
+                    _backgroundPanel.interactable = true;
+                }
+
                 _menuService.Show(MenuScreen.PauseMenu);
 
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
             }
             else if (evt.PreviousState == GameState.Paused) {
+                if (_backgroundPanel != null) {
+                    _backgroundPanel.alpha = 0f;
+                    _backgroundPanel.blocksRaycasts = false;
+                    _backgroundPanel.interactable = false;
+                }
+
                 _menuService.Hide();
 
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
-
             }
         }
 
@@ -57,6 +79,9 @@ namespace FifthSemester.Gameplay.Menu {
             _gameState.ChangeState(GameState.Gameplay);
         }
 
+        public void OnLoad() {
+            _menuService.Show(MenuScreen.LoadGame);
+        }
         public void OnSettings() {
             _menuService.Show(MenuScreen.Settings);
         }
@@ -66,7 +91,6 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public void OnQuit() {
-            _gameState.ChangeState(GameState.MainMenu);
         }
     }
 }

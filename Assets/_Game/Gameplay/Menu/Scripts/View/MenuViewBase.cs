@@ -6,10 +6,17 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
 namespace FifthSemester.Gameplay.Menu {
+    [RequireComponent(typeof(CanvasGroup))]
     public abstract class MenuViewBase : MonoBehaviour, IMenuView {
         protected IMenuService _menuService;
         [SerializeField] protected GameObject _focusFirstElement;
         protected abstract MenuScreen MenuScreenType { get; }
+
+        protected CanvasGroup _canvasGroup;
+
+        protected virtual void Awake() {
+            _canvasGroup = GetComponent<CanvasGroup>();
+        }
 
         protected virtual void Start() {
             _menuService = ServiceLocator.Get<IMenuService>();
@@ -31,6 +38,10 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public virtual void OnShow() {
+            _canvasGroup.alpha = 1f;
+            _canvasGroup.interactable = true;
+            _canvasGroup.blocksRaycasts = true;
+
             EventSystem.current.SetSelectedGameObject(null);
             if (_focusFirstElement != null) {
                 EventSystem.current.SetSelectedGameObject(_focusFirstElement);
@@ -38,7 +49,9 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public virtual void OnHide() {
-            // Can be overridden by subclasses
+            _canvasGroup.alpha = 0f;
+            _canvasGroup.interactable = false;
+            _canvasGroup.blocksRaycasts = false;
         }
     }
 }

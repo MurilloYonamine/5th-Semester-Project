@@ -17,7 +17,7 @@ TagManager:
   - Interactable
   - Obstacle
   - Wall
-  - 
+  - HUD
   - 
   - 
   - 
@@ -41,6 +41,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: HUD
+    uniqueID: 1286881635
     locked: 0
   - name: UI
     uniqueID: 953569863

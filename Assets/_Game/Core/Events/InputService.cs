@@ -12,6 +12,8 @@ namespace FifthSemester.Core.Events {
     public class InputService : IInputService, IDisposable {
         private GameInput _gameInput;
         public GameState CurrentGameState { get; set; } = GameState.Gameplay;
+        public bool LastPauseWasGamepad { get; private set; }
+        public bool LastLookWasGamepad { get; private set; }
 
         private bool _ignoreNextDialogueAdvance = false;
         private bool _isInventoryOpen = false;
@@ -102,6 +104,7 @@ namespace FifthSemester.Core.Events {
 
         public void HandleLook(InputAction.CallbackContext context) {
             if (context.performed) {
+                LastLookWasGamepad = context.control != null && context.control.device is Gamepad;
                 if (CurrentGameState != GameState.Gameplay) return;
                 PublishEvent(new LookInputEvent(context.ReadValue<Vector2>()));
             }
@@ -193,6 +196,7 @@ namespace FifthSemester.Core.Events {
         }
         public void HandleOpenPause(InputAction.CallbackContext context) {
             if (context.performed) {
+                LastPauseWasGamepad = context.control != null && context.control.device is Gamepad;
                 PublishEvent(new PauseToggleRequestedEvent());
             }
         }

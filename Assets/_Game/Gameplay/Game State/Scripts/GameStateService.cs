@@ -2,6 +2,7 @@ using UnityEngine;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.States;
+using FifthSemester.Core.Input;
 
 namespace FifthSemester.Gameplay {
     public class GameStateService : MonoBehaviour, IGameStateService {
@@ -10,10 +11,12 @@ namespace FifthSemester.Gameplay {
         private GameState _previousState;
 
         private IEventBus _eventBus;
+        private IInputService _inputService;
 
         private void Start() {
             ServiceLocator.Register<IGameStateService>(this);
             _eventBus = ServiceLocator.Get<IEventBus>();
+            _inputService = ServiceLocator.Get<IInputService>();
 
             CurrentState = GameState.Gameplay;
 
@@ -31,10 +34,12 @@ namespace FifthSemester.Gameplay {
             CurrentState = newState;
 
             if (CurrentState == GameState.Paused) {
+                bool pauseRequestedByGamepad = _inputService != null && _inputService.LastPauseWasGamepad;
                 Time.timeScale = 0f;
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
-            } else {
+                Cursor.visible = !pauseRequestedByGamepad;
+                Cursor.lockState = pauseRequestedByGamepad ? CursorLockMode.Locked : CursorLockMode.None;
+            }
+            else {
                 Time.timeScale = 1f;
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
@@ -57,7 +62,8 @@ namespace FifthSemester.Gameplay {
         private void OnPauseToggled(PauseToggleRequestedEvent evt) {
             if (CurrentState == GameState.Paused) {
                 ChangeState(GameState.Gameplay);
-            } else if (CurrentState == GameState.Gameplay) {
+            }
+            else if (CurrentState == GameState.Gameplay) {
                 ChangeState(GameState.Paused);
             }
         }

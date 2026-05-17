@@ -1,8 +1,9 @@
 using UnityEngine;
 using ThirdParty.QuickOutline;
+using FifthSemester.Gameplay.Shared;
 
 namespace FifthSemester.Doors {
-    public class Door : MonoBehaviour {
+    public class Door : MonoBehaviour, IInteractable {
         [Header("Configurações Visuais")]
         [SerializeField] private Outline _outline;
         [SerializeField] private Transform _doorMesh;
@@ -17,6 +18,8 @@ namespace FifthSemester.Doors {
         private Quaternion _targetRotation;
 
         public bool IsInteractable { get; private set; } = true;
+
+        public string Id => gameObject.name;    
 
         private void Awake() {
             if (_outline != null) _outline.enabled = false;
@@ -42,12 +45,12 @@ namespace FifthSemester.Doors {
 
         public void StopInteract() { }
 
-        public void EnableOutline(bool enable) {
+        public void Highlight(bool value) {
             if (_outline != null)
-                _outline.enabled = enable;
+                _outline.enabled = value;
 
             if (_textLocal != null)
-                _textLocal.SetActive(enable);
+                _textLocal.SetActive(value);
         }
     }
 }

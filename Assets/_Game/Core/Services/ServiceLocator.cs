@@ -48,5 +48,18 @@ namespace FifthSemester.Core.Services
             Debug.LogError($" {TAG} Serviço do tipo {type} não foi encontrado.");
             return default;
         }
+
+        public static bool TryGet<T>(out T service)
+        {
+            var type = typeof(T);
+            if (_services.TryGetValue(type, out var found))
+            {
+                service = (T)found;
+                return true;
+            }
+
+            service = default;
+            return false;
+        }
     }
 }

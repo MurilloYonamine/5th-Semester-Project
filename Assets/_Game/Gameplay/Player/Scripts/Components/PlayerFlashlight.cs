@@ -1,4 +1,4 @@
-﻿// Autor: Murillo Gomes Yonamine
+// Autor: Murillo Gomes Yonamine
 // Data: 28/04/2026
 
 using UnityEngine;
@@ -22,13 +22,12 @@ namespace FifthSemester.Player.Components {
         [SerializeField, Tooltip("Seconds of continuous illumination required to consider the target illuminated")]
         private float _illuminationDelay = 0.12f;
 
-        // internal timer
         private float _illuminationTimer = 0f;
 
         [Header("Audio")] 
         [SerializeField] private AudioClip _toggleSound;
 
-        private bool _isOn = false;
+        [SerializeField] private bool _isOn = false;
 
         private IEventBus _eventBus;
         private IAudioService _audioService;

@@ -10,6 +10,7 @@ namespace FifthSemester.Gameplay.Menu {
 
     public class GameplaySettingsView : MenuViewBase {
         private ISettingsService _settingsService;
+        private IGameplayService _gameplayService;
 
         [Header("Defaults")]
         [SerializeField] private SettingsDefaultsGameplay _defaultsGameplay;
@@ -30,18 +31,28 @@ namespace FifthSemester.Gameplay.Menu {
 
         protected override MenuScreen MenuScreenType => MenuScreen.Settings_Gameplay;
 
+        protected override void Awake() {
+            base.Awake();
+            _gameplayService = new GameplayService(_settingsService);
+        }
+
         protected override void Start() {
             base.Start();
             _settingsService = ServiceLocator.Get<ISettingsService>();
+
             _backButton.onClick.AddListener(OnBack);
+
             _invertYAxisToggle.isOn = _settingsService.InvertYAxis;
             _invertYAxisToggle.onValueChanged.AddListener(OnInvertYAxisChanged);
             _invertYAxisLabel.text = _settingsService.InvertYAxis ? "Yes" : "No";
+
             _sensibilitySlider.onValueChanged.AddListener(OnSensibilityChanged);
             _sensibilitySlider.value = _settingsService.Sensibility;
             _sensibilityValueText.text = _settingsService.Sensibility.ToString("F2");
+
             _language.Initialize(GetLanguageOptions(), (int)_settingsService.Language);
             _language.OnValueChanged += OnLanguageChanged;
+
             _resetDefaultsButton.onClick.AddListener(ResetToDefaults);
         }
         public void ResetToDefaults() {

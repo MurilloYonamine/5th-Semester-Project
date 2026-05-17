@@ -57,9 +57,6 @@ namespace FifthSemester.Gameplay.Menu {
                 }
 
                 _menuService.Show(MenuScreen.PauseMenu);
-
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
             }
             else if (evt.PreviousState == GameState.Paused) {
                 if (_backgroundPanel != null) {
@@ -69,9 +66,6 @@ namespace FifthSemester.Gameplay.Menu {
                 }
 
                 _menuService.Hide();
-
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
             }
         }
 

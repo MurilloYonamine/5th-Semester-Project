@@ -45,11 +45,13 @@ namespace FifthSemester.Gameplay.Menu {
 
 
         protected override MenuScreen MenuScreenType => MenuScreen.Settings_Graphics;
-
+        protected override void Awake() {
+            base.Awake();
+            _graphicsService = new GraphicsService(_rendererData);
+        }
         protected override void Start() {
             base.Start();
             _settingsService = ServiceLocator.Get<ISettingsService>();
-            _graphicsService = new GraphicsService(_rendererData);
 
             _barrelDistortionToggle.isOn = _settingsService.BarrelDistortion;
             _ditheringToggle.isOn = _settingsService.Dithering;

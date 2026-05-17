@@ -3,12 +3,15 @@
 
 using UnityEngine;
 using FifthSemester.Core.Services;
+using FifthSemester.Core.Input;
 using FifthSemester.Core.Events;
 using Sirenix.OdinInspector;
 using Unity.Cinemachine;
 
 namespace FifthSemester.Player.Components {
     public class PlayerCamera : MonoBehaviour {
+        private const float GAMEPAD_SENSITIVITY_MULTIPLIER = 2.5f;
+
         [Header("Cinemachine References")]
         [SerializeField] private CinemachineCamera _vCam;
         [SerializeField, Required] private Transform _cameraTarget;
@@ -26,6 +29,13 @@ namespace FifthSemester.Player.Components {
         [FoldoutGroup("Zoom"), ShowIf("_enableZoom")]
         [SerializeField] private float _zoomStepTime = 5f;
 
+        [Header("Head Bob")]
+        [SerializeField] private bool _enableHeadBob = true;
+        [FoldoutGroup("Head Bob"), ShowIf("_enableHeadBob")]
+        [SerializeField] private float _bobSpeed = 10f;
+        [FoldoutGroup("Head Bob"), ShowIf("_enableHeadBob")]
+        [SerializeField] private Vector3 _bobAmount = new Vector3(0.15f, 0.05f, 0f);
+
         private float _defaultFov;
         private bool _isZoomed;
         private bool _zoomPressed;
@@ -35,16 +45,27 @@ namespace FifthSemester.Player.Components {
         private PlayerMovement _movement;
         private PlayerController _player;
         private IEventBus _eventBus;
+        private IGameplayService _gameplayService;
+        private IInputService _inputService;
 
         private CinemachinePanTilt _panTilt;
 
+        private float _bobTimer;
+        private Vector3 _targetOriginalPos;
+
         private void Awake() {
             _player = GetComponent<PlayerController>();
-            _movement = _player?.GetComponent<PlayerMovement>();
+            _movement = GetComponent<PlayerMovement>();
+            _gameplayService = ServiceLocator.Get<IGameplayService>();
+            _inputService = ServiceLocator.Get<IInputService>();
 
             if (_vCam != null) {
                 _defaultFov = _vCam.Lens.FieldOfView;
                 _panTilt = _vCam.GetComponent<CinemachinePanTilt>();
+            }
+
+            if (_cameraTarget != null) {
+                _targetOriginalPos = _cameraTarget.localPosition;
             }
         }
 
@@ -53,7 +74,6 @@ namespace FifthSemester.Player.Components {
             _eventBus?.Subscribe<LookInputEvent>(HandleLookInput);
             _eventBus?.Subscribe<ZoomInputEvent>(HandleZoomInput);
 
-            // Trava o cursor se necessário
             Cursor.lockState = CursorLockMode.Locked;
         }
 
@@ -73,7 +93,8 @@ namespace FifthSemester.Player.Components {
             _player.transform.rotation = Quaternion.Euler(0, cameraYaw, 0);
 
             HandleZoom();
-            HandleNoiseAmplitude();
+
+            HandleHeadBob();
         }
 
         private void HandleLookInput(LookInputEvent evt) {
@@ -87,8 +108,26 @@ namespace FifthSemester.Player.Components {
         private void ApplyRotation() {
             if (_panTilt == null) return;
 
-            _panTilt.PanAxis.Value += _lookInput.x * _mouseSensitivity;
-            _panTilt.TiltAxis.Value -= _lookInput.y * _mouseSensitivity;
+            if (_gameplayService == null) {
+                _gameplayService = ServiceLocator.Get<IGameplayService>();
+            }
+
+            if (_inputService == null) {
+                _inputService = ServiceLocator.Get<IInputService>();
+            }
+
+            float sensitivity = _mouseSensitivity;
+            if (_gameplayService != null) {
+                sensitivity *= _gameplayService.Sensibility;
+            }
+
+            if (_inputService != null && _inputService.LastLookWasGamepad) {
+                sensitivity *= GAMEPAD_SENSITIVITY_MULTIPLIER;
+            }
+
+            float invertY = _gameplayService != null && _gameplayService.InvertYAxis ? 1f : -1f;
+            _panTilt.PanAxis.Value += _lookInput.x * sensitivity;
+            _panTilt.TiltAxis.Value += _lookInput.y * sensitivity * invertY;
         }
 
         private void HandleZoom() {
@@ -104,23 +143,41 @@ namespace FifthSemester.Player.Components {
 
             float targetFov = _isZoomed ? _zoomFov : _defaultFov;
 
-            // Atualiza a lente da câmera virtual
             var lens = _vCam.Lens;
             lens.FieldOfView = Mathf.Lerp(lens.FieldOfView, targetFov, _zoomStepTime * Time.deltaTime);
             _vCam.Lens = lens;
         }
 
-        private void HandleNoiseAmplitude() {
-            // Em vez de calcular seno/cosseno manualmente, alteramos a força do ruído
-            var noise = _vCam.GetComponent<CinemachineBasicMultiChannelPerlin>();
-            if (noise == null || _movement == null) return;
+        private void HandleHeadBob() {
+            if (!_enableHeadBob || _cameraTarget == null || _movement == null) return;
 
-            float targetAmplitude = 0f;
             if (_movement.IsWalking) {
-                targetAmplitude = _movement.IsSprinting ? 2.0f : 1.0f;
-            }
+                if (_movement.IsSprinting) {
+                    _bobTimer += Time.deltaTime * (_bobSpeed + _movement.SprintSpeed);
+                }
+                else if (_movement.IsCrouched) {
+                    _bobTimer += Time.deltaTime * (_bobSpeed * _movement.SpeedReduction);
+                }
+                else {
+                    _bobTimer += Time.deltaTime * _bobSpeed;
+                }
 
-            noise.AmplitudeGain = Mathf.Lerp(noise.AmplitudeGain, targetAmplitude, Time.deltaTime * 5f);
+                Vector3 offset = new Vector3(
+                    Mathf.Sin(_bobTimer) * _bobAmount.x,
+                    Mathf.Sin(_bobTimer) * _bobAmount.y,
+                    Mathf.Sin(_bobTimer) * _bobAmount.z
+                );
+
+                _cameraTarget.localPosition = _targetOriginalPos + offset;
+            }
+            else {
+                _bobTimer = 0f;
+                _cameraTarget.localPosition = new Vector3(
+                    Mathf.Lerp(_cameraTarget.localPosition.x, _targetOriginalPos.x, Time.deltaTime * _bobSpeed),
+                    Mathf.Lerp(_cameraTarget.localPosition.y, _targetOriginalPos.y, Time.deltaTime * _bobSpeed),
+                    Mathf.Lerp(_cameraTarget.localPosition.z, _targetOriginalPos.z, Time.deltaTime * _bobSpeed)
+                );
+            }
         }
     }
 }

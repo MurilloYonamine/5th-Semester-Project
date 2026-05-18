@@ -1,13 +1,15 @@
 using UnityEngine;
 using ThirdParty.QuickOutline;
 using FifthSemester.Gameplay.Shared;
+using TMPro;
 
 namespace FifthSemester.Doors {
+    [RequireComponent(typeof(Outline))]
     public class Door : MonoBehaviour, IInteractable {
         [Header("Configurações Visuais")]
         [SerializeField] private Outline _outline;
         [SerializeField] private Transform _doorMesh;
-        [SerializeField] private GameObject _textLocal;
+        [SerializeField] private TextMeshPro _textLocal;
 
         [Header("Configurações de Movimento")]
         [SerializeField] private bool _isOpen = false;
@@ -16,16 +18,21 @@ namespace FifthSemester.Doors {
 
         private Quaternion _closedRotation;
         private Quaternion _targetRotation;
+        private bool _isLocked = false;
+        private Color _unlockedColor;
 
         public bool IsInteractable { get; private set; } = true;
 
-        public string Id => gameObject.name;    
+        public string Id => gameObject.name;
 
         private void Awake() {
-            if (_outline != null) _outline.enabled = false;
+            _outline = GetComponent<Outline>();
+            _outline.enabled = false;
+            _textLocal.gameObject.SetActive(false);
 
             _closedRotation = _doorMesh.localRotation;
             _targetRotation = _closedRotation;
+            _unlockedColor = new Color32(105, 255, 144, 255); // 69FF90
         }
 
         private void Update() {
@@ -33,6 +40,8 @@ namespace FifthSemester.Doors {
         }
 
         public void Interact() {
+            if (_isLocked) return;
+
             _isOpen = !_isOpen;
 
             if (_isOpen) {
@@ -50,7 +59,31 @@ namespace FifthSemester.Doors {
                 _outline.enabled = value;
 
             if (_textLocal != null)
-                _textLocal.SetActive(value);
+                _textLocal.gameObject.SetActive(value);
+        }
+
+        public void Lock() {
+            _isLocked = true;
+
+            if (_outline != null)
+                _outline.OutlineColor = Color.red;
+
+            if (_textLocal != null) {
+                _textLocal.color = Color.red;
+                _textLocal.text = "TRANCADA";
+            }
+        }
+
+        public void Unlock() {
+            _isLocked = false;
+
+            if (_outline != null)
+                _outline.OutlineColor = _unlockedColor;
+
+            if (_textLocal != null) {
+                _textLocal.color = _unlockedColor;
+                _textLocal.text = "ABRIR";
+            }
         }
     }
 }

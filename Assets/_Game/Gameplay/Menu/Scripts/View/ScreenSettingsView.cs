@@ -1,16 +1,17 @@
 using System.Collections.Generic;
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
+using FifthSemester.Features.Localization;
 using UnityEngine;
 using UnityEngine.UI;
 using FifthSemester.Framework.UI;
 using TMPro;
 
 namespace FifthSemester.Gameplay.Menu {
-
     public class ScreenSettingsView : MenuViewBase {
         private ISettingsService _settingsService;
         private IScreenService _screenService;
+        private ILocalizationService _localizationService;
 
         [Header("Defaults")]
         [SerializeField] private SettingsDefaultsScreen _defaultsScreen;
@@ -30,22 +31,31 @@ namespace FifthSemester.Gameplay.Menu {
 
         protected override MenuScreen MenuScreenType => MenuScreen.Settings_Screen;
 
+        protected override void Awake() {
+            base.Awake();
+
+            _settingsService = ServiceLocator.Get<ISettingsService>();
+            _localizationService = ServiceLocator.Get<ILocalizationService>();
+            _screenService = new ScreenService();
+        }
+
         protected override void Start() {
             base.Start();
-            _settingsService = ServiceLocator.Get<ISettingsService>();
-            _screenService = new ScreenService();
-            
-            _fullscreenToggle.isOn = _settingsService.IsFullscreen;
+
             _fullscreenToggle.onValueChanged.AddListener(OnFullscreenToggled);
-            
-            _resolutionSelector.Initialize(GetResolutionOptions(), _settingsService.ResolutionIndex);
+
             _resolutionSelector.OnValueChanged += OnResolutionChanged;
-            
-            _fpsSelector.Initialize(GetFPSOptions(), _fpsValues.IndexOf(_settingsService.FrameRate));
             _fpsSelector.OnValueChanged += OnFPSChanged;
 
             _backButton.onClick.AddListener(OnBack);
             _resetDefaultsButton.onClick.AddListener(ResetToDefaults);
+
+            RefreshUI();
+        }
+
+        public override void OnShow() {
+            base.OnShow();
+            RefreshUI(); 
         }
 
         public void ResetToDefaults() {
@@ -65,22 +75,32 @@ namespace FifthSemester.Gameplay.Menu {
 
             RefreshUI();
         }
+
         public void OnResolutionChanged(int index) {
             var resolution = _settingsService.AvailableResolutions[index];
             _settingsService.ResolutionIndex = index;
             _screenService.SetResolution(resolution.x, resolution.y);
         }
+
         public void OnFPSChanged(int index) {
             int fps = _fpsValues[index];
             _screenService.SetFrameRate(fps);
         }
+
         private List<string> GetFPSOptions() {
             List<string> options = new();
             foreach (var fps in _fpsValues) {
-                options.Add(fps > 0 ? fps.ToString() : "Unlimited");
+                if (fps > 0) {
+                    options.Add(fps.ToString());
+                }
+                else {
+                    string unlimitedText = _localizationService != null ? _localizationService.GetText("settings_screen_unlimited") : "Unlimited";
+                    options.Add(unlimitedText);
+                }
             }
             return options;
         }
+
         private List<string> GetResolutionOptions() {
             List<string> options = new();
             foreach (var res in _settingsService.AvailableResolutions) {
@@ -88,10 +108,18 @@ namespace FifthSemester.Gameplay.Menu {
             }
             return options;
         }
+
         public void OnFullscreenToggled(bool isOn) {
             _screenService.SetFullscreen(isOn);
-            _fullscreenValue.text = isOn ? "Yes" : "No";
+            UpdateFullscreenLabel(isOn);
         }
+
+        private void UpdateFullscreenLabel(bool isOn) {
+            if (_localizationService == null) return;
+            string key = isOn ? "general_yes" : "general_no";
+            _fullscreenValue.text = _localizationService.GetText(key);
+        }
+
         private void OnBack() {
             _menuService.Show(MenuScreen.Settings);
         }
@@ -100,11 +128,13 @@ namespace FifthSemester.Gameplay.Menu {
             if (_settingsService == null) _settingsService = ServiceLocator.Get<ISettingsService>();
 
             _fullscreenToggle.isOn = _settingsService.IsFullscreen;
-            _fullscreenValue.text = _settingsService.IsFullscreen ? "Yes" : "No";
-            _resolutionSelector.SetValue(_settingsService.ResolutionIndex);
+            UpdateFullscreenLabel(_settingsService.IsFullscreen);
+
+            _resolutionSelector.Initialize(GetResolutionOptions(), _settingsService.ResolutionIndex);
+
             int fpsIdx = _fpsValues.IndexOf(_settingsService.FrameRate);
             if (fpsIdx < 0) fpsIdx = 0;
-            _fpsSelector.SetValue(fpsIdx);
+            _fpsSelector.Initialize(GetFPSOptions(), fpsIdx);
         }
     }
 }

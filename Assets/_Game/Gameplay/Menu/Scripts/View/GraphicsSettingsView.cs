@@ -1,5 +1,6 @@
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
+using FifthSemester.Features.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -9,6 +10,7 @@ namespace FifthSemester.Gameplay.Menu {
     public class GraphicsSettingsView : MenuViewBase {
         private ISettingsService _settingsService;
         private IGraphicsService _graphicsService;
+        private ILocalizationService _localizationService;
 
         [Header("Defaults")]
         [SerializeField] private SettingsDefaultsShaders _defaultsShaders;
@@ -43,29 +45,19 @@ namespace FifthSemester.Gameplay.Menu {
         [SerializeField] private Button _backButton;
         [SerializeField] private Button _resetDefaultsButton;
 
-
         protected override MenuScreen MenuScreenType => MenuScreen.Settings_Graphics;
+
         protected override void Awake() {
             base.Awake();
+
+            _settingsService = ServiceLocator.Get<ISettingsService>();
+            _localizationService = ServiceLocator.Get<ILocalizationService>();
+
             _graphicsService = new GraphicsService(_rendererData);
         }
+
         protected override void Start() {
             base.Start();
-            _settingsService = ServiceLocator.Get<ISettingsService>();
-
-            _barrelDistortionToggle.isOn = _settingsService.BarrelDistortion;
-            _ditheringToggle.isOn = _settingsService.Dithering;
-            _pixelationToggle.isOn = _settingsService.Pixelation;
-            _rollingBandsToggle.isOn = _settingsService.RollingBands;
-            _scanlinesToggle.isOn = _settingsService.Scanlines;
-            _vhsEffectToggle.isOn = _settingsService.VHSEffect;
-
-            OnToggleChanged(_settingsService.BarrelDistortion, _barrelDistortionText);
-            OnToggleChanged(_settingsService.Dithering, _ditheringText);
-            OnToggleChanged(_settingsService.Pixelation, _pixelationText);
-            OnToggleChanged(_settingsService.RollingBands, _rollingBandsText);
-            OnToggleChanged(_settingsService.Scanlines, _scanlinesText);
-            OnToggleChanged(_settingsService.VHSEffect, _vhsEffectText);
 
             _barrelDistortionToggle.onValueChanged.AddListener(OnBarrelDistortionToggle);
             _ditheringToggle.onValueChanged.AddListener(OnDitheringToggle);
@@ -76,9 +68,13 @@ namespace FifthSemester.Gameplay.Menu {
 
             _backButton.onClick.AddListener(OnBack);
             _resetDefaultsButton.onClick.AddListener(ResetToDefaults);
+
+            RefreshUI();
         }
+
         public void ResetToDefaults() {
             if (_defaultsShaders == null) return;
+
             _settingsService.BarrelDistortion = _defaultsShaders.BarrelDistortion;
             _settingsService.Dithering = _defaultsShaders.Dithering;
             _settingsService.Pixelation = _defaultsShaders.Pixelation;
@@ -99,6 +95,7 @@ namespace FifthSemester.Gameplay.Menu {
         public override void OnShow() {
             base.OnShow();
             ChangeCamera(true);
+            RefreshUI(); 
         }
 
         public override void OnHide() {
@@ -162,17 +159,26 @@ namespace FifthSemester.Gameplay.Menu {
             OnToggleChanged(value, _vhsEffectText);
         }
 
+        // --- Lógica de Localização ---
         private void OnToggleChanged(bool value, TextMeshProUGUI text) {
-            text.text = value ? "On" : "Off";
+            if (_localizationService == null) {
+                _localizationService = ServiceLocator.Get<ILocalizationService>();
+            }
+
+            string key = value ? "general_on" : "general_off";
+            text.text = _localizationService.GetText(key);
         }
+
         public void RefreshUI() {
             if (_settingsService == null) _settingsService = ServiceLocator.Get<ISettingsService>();
+
             _barrelDistortionToggle.isOn = _settingsService.BarrelDistortion;
             _ditheringToggle.isOn = _settingsService.Dithering;
             _pixelationToggle.isOn = _settingsService.Pixelation;
             _rollingBandsToggle.isOn = _settingsService.RollingBands;
             _scanlinesToggle.isOn = _settingsService.Scanlines;
             _vhsEffectToggle.isOn = _settingsService.VHSEffect;
+
             OnToggleChanged(_settingsService.BarrelDistortion, _barrelDistortionText);
             OnToggleChanged(_settingsService.Dithering, _ditheringText);
             OnToggleChanged(_settingsService.Pixelation, _pixelationText);

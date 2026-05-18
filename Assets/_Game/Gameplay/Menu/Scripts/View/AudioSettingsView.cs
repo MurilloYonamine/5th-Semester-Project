@@ -1,5 +1,6 @@
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
+using FifthSemester.Features.Localization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,7 @@ namespace FifthSemester.Gameplay.Menu {
     public class AudioSettingsView : MenuViewBase {
         private ISettingsService _settingsService;
         private IAudioService _audioService;
+        private ILocalizationService _localizationService;
 
         [Header("Defaults")]
         [SerializeField] private SettingsDefaultsAudio _defaultsAudio;
@@ -30,25 +32,16 @@ namespace FifthSemester.Gameplay.Menu {
         [SerializeField] private Button _resetDefaultsButton;
         protected override MenuScreen MenuScreenType => MenuScreen.Settings_Audio;
 
-        protected override void Start() {
-            base.Start();
+        protected override void Awake() {
+            base.Awake();
+
             _settingsService = ServiceLocator.Get<ISettingsService>();
             _audioService = ServiceLocator.Get<IAudioService>();
+            _localizationService = ServiceLocator.Get<ILocalizationService>();
+        }
 
-            _masterVolumeSlider.value = _settingsService.MasterVolume;
-            _masterVolumeText.text = Mathf.RoundToInt(_settingsService.MasterVolume).ToString();
-
-            _musicVolumeSlider.value = _settingsService.MusicVolume;
-            _musicVolumeText.text = Mathf.RoundToInt(_settingsService.MusicVolume).ToString();
-
-            _sfxVolumeSlider.value = _settingsService.SFXVolume;
-            _sfxVolumeText.text = Mathf.RoundToInt(_settingsService.SFXVolume).ToString();
-
-            _ambienceVolumeSlider.value = _settingsService.AmbienceVolume;
-            _ambienceVolumeText.text = Mathf.RoundToInt(_settingsService.AmbienceVolume).ToString();
-
-            _forceMonoToggle.isOn = _settingsService.ForceMonoAudio;
-            _forceMonoText.text = _settingsService.ForceMonoAudio ? "Yes" : "No";
+        protected override void Start() {
+            base.Start();
 
             _masterVolumeSlider.onValueChanged.AddListener(OnMasterVolumeChanged);
             _musicVolumeSlider.onValueChanged.AddListener(OnMusicVolumeChanged);
@@ -58,9 +51,13 @@ namespace FifthSemester.Gameplay.Menu {
 
             _backButton.onClick.AddListener(OnBack);
             _resetDefaultsButton.onClick.AddListener(ResetToDefaults);
+
+            RefreshUI();
         }
+
         public void ResetToDefaults() {
             if (_defaultsAudio == null) return;
+
             _settingsService.MasterVolume = _defaultsAudio.MasterVolume;
             _settingsService.MusicVolume = _defaultsAudio.MusicVolume;
             _settingsService.SFXVolume = _defaultsAudio.SFXVolume;
@@ -74,6 +71,7 @@ namespace FifthSemester.Gameplay.Menu {
 
             RefreshUI();
         }
+
         public void OnBack() {
             _menuService.Show(MenuScreen.Settings);
         }
@@ -89,33 +87,47 @@ namespace FifthSemester.Gameplay.Menu {
             _audioService?.SetMusicVolume(value);
             _musicVolumeText.text = Mathf.RoundToInt(value).ToString();
         }
+
         public void OnSFXVolumeChanged(float value) {
             _settingsService.SFXVolume = value;
             _audioService?.SetSFXVolume(value);
             _sfxVolumeText.text = Mathf.RoundToInt(value).ToString();
         }
+
         public void OnAmbienceVolumeChanged(float value) {
             _settingsService.AmbienceVolume = value;
             _audioService?.SetAmbienceVolume(value);
             _ambienceVolumeText.text = Mathf.RoundToInt(value).ToString();
         }
+
         public void OnForceMonoAudioChanged(bool value) {
             _settingsService.ForceMonoAudio = value;
-            _forceMonoText.text = value ? "Yes" : "No";
+            UpdateForceMonoLabel(value);
+        }
+
+        private void UpdateForceMonoLabel(bool value) {
+            if (_localizationService == null) return;
+            string key = value ? "general_yes" : "general_no";
+            _forceMonoText.text = _localizationService.GetText(key);
         }
 
         public void RefreshUI() {
             if (_settingsService == null) _settingsService = ServiceLocator.Get<ISettingsService>();
+
             _masterVolumeSlider.value = _settingsService.MasterVolume;
             _masterVolumeText.text = Mathf.RoundToInt(_settingsService.MasterVolume).ToString();
+
             _musicVolumeSlider.value = _settingsService.MusicVolume;
             _musicVolumeText.text = Mathf.RoundToInt(_settingsService.MusicVolume).ToString();
+
             _sfxVolumeSlider.value = _settingsService.SFXVolume;
             _sfxVolumeText.text = Mathf.RoundToInt(_settingsService.SFXVolume).ToString();
+
             _ambienceVolumeSlider.value = _settingsService.AmbienceVolume;
             _ambienceVolumeText.text = Mathf.RoundToInt(_settingsService.AmbienceVolume).ToString();
+
             _forceMonoToggle.isOn = _settingsService.ForceMonoAudio;
-            _forceMonoText.text = _settingsService.ForceMonoAudio ? "Yes" : "No";
+            UpdateForceMonoLabel(_settingsService.ForceMonoAudio);
         }
     }
 }

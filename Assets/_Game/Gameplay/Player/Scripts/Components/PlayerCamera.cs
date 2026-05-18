@@ -56,8 +56,6 @@ namespace FifthSemester.Player.Components {
         private void Awake() {
             _player = GetComponent<PlayerController>();
             _movement = GetComponent<PlayerMovement>();
-            _gameplayService = ServiceLocator.Get<IGameplayService>();
-            _inputService = ServiceLocator.Get<IInputService>();
 
             if (_vCam != null) {
                 _defaultFov = _vCam.Lens.FieldOfView;
@@ -70,6 +68,9 @@ namespace FifthSemester.Player.Components {
         }
 
         private void Start() {
+            _gameplayService = ServiceLocator.Get<IGameplayService>();
+            _inputService = ServiceLocator.Get<IInputService>();
+
             _eventBus = ServiceLocator.Get<IEventBus>();
             _eventBus?.Subscribe<LookInputEvent>(HandleLookInput);
             _eventBus?.Subscribe<ZoomInputEvent>(HandleZoomInput);

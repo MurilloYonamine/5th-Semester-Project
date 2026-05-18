@@ -9,6 +9,8 @@ using System.IO;
 
 namespace FifthSemester.Features.Localization.EditorTools {
     public class LocalizationSyncTool : EditorWindow {
+        private const string TAG = "[Localization]";
+
         // O ID extraído do teu link
         private const string SheetId = "1szeeod-nQVArgDkAGl3sB9kFgaTGmjD-hgcg8V0WaiM";
 
@@ -31,7 +33,7 @@ namespace FifthSemester.Features.Localization.EditorTools {
             while (!operation.isDone) { }
 
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError) {
-                Debug.LogError($"[Localization] Erro de conexão: {request.error}");
+                Debug.LogError($"{TAG} Erro de conexão: {request.error}");
             }
             else {
                 bool fileExists = File.Exists(SavePath);
@@ -47,10 +49,10 @@ namespace FifthSemester.Features.Localization.EditorTools {
                 AssetDatabase.Refresh();
 
                 if (fileExists) {
-                    Debug.Log($"[Localization] Sucesso! O arquivo foi atualizado em {SavePath}");
+                    Debug.Log($"{TAG} Sucesso! O arquivo foi atualizado em {SavePath}");
                 }
                 else {
-                    Debug.Log($"[Localization] Sucesso! Novo arquivo criado em {SavePath}");
+                    Debug.Log($"{TAG} Sucesso! Novo arquivo criado em {SavePath}");
                 }
             }
         }

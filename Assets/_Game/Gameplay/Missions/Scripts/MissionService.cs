@@ -61,13 +61,20 @@ namespace FifthSemester.Gameplay.Missions {
         }
 
         private void CleanupCurrentMission() {
-            if (_currentMission != null) {
-                if (_currentMission is MissionBase missionBase) {
-                    missionBase.OnMissionComplete -= OnMissionComplete;
-                }
-                _currentMission.Cleanup();
+            if (_currentMission == null) return;
+
+            UnityEngine.Object missionObject = _currentMission as UnityEngine.Object;
+            if (missionObject == null) {
                 _currentMission = null;
+                return;
             }
+
+            if (_currentMission is MissionBase missionBase) {
+                missionBase.OnMissionComplete -= OnMissionComplete;
+            }
+
+            _currentMission.Cleanup();
+            _currentMission = null;
         }
 
         private void OnMissionComplete() {

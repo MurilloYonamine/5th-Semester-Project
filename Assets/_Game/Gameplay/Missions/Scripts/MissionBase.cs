@@ -49,8 +49,9 @@ namespace FifthSemester.Gameplay.Missions {
         public virtual void Cleanup() {
             if (_isComplete) return;
 
-            if (gameObject != null)
-                gameObject.SetActive(false);
+            if (this == null || gameObject == null) return;
+
+            gameObject.SetActive(false);
         }
 
         protected virtual void SaveProgress() {

@@ -2,14 +2,10 @@
 // Data: 05/05/2026
 
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 namespace FifthSemester.Gameplay.Missions {
-    public enum MissionType {
-        CollectItems = 0,
-        CollectAndDeliver = 1
-    }
-
-    [CreateAssetMenu(menuName = "Gameplay/Mission", fileName = "NewMission")]
+    [CreateAssetMenu(menuName = "Mission/New Mission", fileName = "NewMission")]
     public class MissionDefinition : ScriptableObject {
         [Header("Identity")]
         public string MissionId;
@@ -21,14 +17,29 @@ namespace FifthSemester.Gameplay.Missions {
         [Header("Type & Completion")]
         public MissionType Type;
 
+        [ShowIf("IsTalkToNpc")]
+        [Tooltip("NPC ID to talk to")]
+        public string NpcId;
+
+        [ShowIf("IsCollectItems")]
         [Tooltip("Item name to collect")]
         public string TargetItemName;
 
+        [ShowIf("IsCollectItems")]
         [Tooltip("Number of items to collect")]
         public int RequiredCount = 1;
 
-        [Tooltip("Delivery point ID for deliver missions")]
-        public string DeliveryPointId;
+        [ShowIf("IsCollectAndDeliver")]
+        [Tooltip("Item name to collect")]
+        public string CollectItemName;
+
+        [ShowIf("IsCollectAndDeliver")]
+        [Tooltip("Number of items to collect")]
+        public int CollectCount = 1;
+
+        [ShowIf("IsCollectAndDeliver")]
+        [Tooltip("Delivery point IDs for deliver missions")]
+        public string[] DeliveryPointIds;
 
         [Header("Persistence")]
         [Tooltip("Save progress for this mission")]
@@ -37,5 +48,9 @@ namespace FifthSemester.Gameplay.Missions {
         [Header("Debug Setup")]
         [Tooltip("Events to apply when skipping to this mission")]
         public string[] DebugSetupEvents;
+
+        private bool IsTalkToNpc() => Type == MissionType.TalkToNpc;
+        private bool IsCollectItems() => Type == MissionType.CollectItems;
+        private bool IsCollectAndDeliver() => Type == MissionType.CollectAndDeliver;
     }
 }

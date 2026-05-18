@@ -1,5 +1,6 @@
-using UnityEngine;
+using FifthSemester.Core.Enums;
 using FifthSemester.Core.States;
+using UnityEngine;
 
 namespace FifthSemester.Core.Events {
     public readonly struct GameStateChangedEvent {
@@ -174,4 +175,13 @@ namespace FifthSemester.Core.Events {
     }
 
     public readonly struct SaveCancelledEvent { }
+
+    // ============= Settings Events =============
+    public struct LanguageChangedEvent {
+        public Language NewLanguage { get; private set; }
+
+        public LanguageChangedEvent(Language newLanguage) {
+            NewLanguage = newLanguage;
+        }
+    }
 }

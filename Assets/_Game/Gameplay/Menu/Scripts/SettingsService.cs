@@ -1,9 +1,12 @@
 using FifthSemester.Core.Enums;
+using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
+using FifthSemester.Features.Localization;
 using UnityEngine;
 
 namespace FifthSemester.Gameplay.Menu {
     public class SettingsService : ISettingsService {
+
 
         // Funções auxiliares para salvar e ler booleanos no PlayerPrefs
         private bool GetBool(string key, bool defaultValue = false) {
@@ -105,8 +108,17 @@ namespace FifthSemester.Gameplay.Menu {
 
         // ===== Gameplay ======
         public Language Language {
-            get => (Language)PlayerPrefs.GetInt("Settings_Language", 0);
-            set { PlayerPrefs.SetInt("Settings_Language", (int)value); PlayerPrefs.Save(); }
+            get => (Language)PlayerPrefs.GetInt("Settings_Language");
+            set {
+                PlayerPrefs.SetInt("Settings_Language", (int)value);
+                PlayerPrefs.Save();
+
+                var localization = ServiceLocator.Get<ILocalizationService>();
+                localization?.SetLanguage(value);
+
+                var eventBus = ServiceLocator.Get<IEventBus>();
+                eventBus?.Publish(new LanguageChangedEvent(value));
+            }
         }
         public bool InvertYAxis {
             get => GetBool("Settings_InvertY", false);

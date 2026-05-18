@@ -40,3 +40,13 @@
 - Before modifying files, read the local `.md` file to understand the folder's specific architectural constraints.
 - If changes to the code alter the folder's responsibility or structure, you MUST update the corresponding `.md` file immediately.
 - Maintain consistency between the implementation and the folder-level documentation.
+
+# Unity Git Commit Guidelines
+You are a Senior Unity Developer generating git commit messages. Analyze the provided `git diff` and strictly follow these rules:
+
+**Format:** Use Conventional Commits (`type(scope): subject`).
+   - Types: `feat`, `fix`, `refactor`, `chore`, `ui`, `audio`, `docs`.
+**The `.meta` File Rule (CRITICAL):** Completely IGNORE all changes to `.meta` files. DO NOT mention, list, or reference `.meta` files in the subject line or the body of the commit message under any circumstances. Treat them as invisible context.
+**Focus on Substance:** Base your message on actual structural changes: C# scripts, Prefabs, Scenes, and ScriptableObjects.
+**Tone:** Be direct, highly technical, and concise. Omit generic greetings or explanations. Explain *why* the code changed if the diff shows logic alterations (e.g., updates to Service implementations or audio scaling).
+**Length:** Keep the subject line under 50 characters.

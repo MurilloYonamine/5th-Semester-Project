@@ -31,8 +31,8 @@ namespace FifthSemester.Gameplay.Missions {
         private void OnItemDelivered(ItemDeliveredEvent evt) {
             if (!_itemsCollected || _isComplete) return;
 
-            bool deliveryPointMatches = evt.DeliveryPointId == _definition.DeliveryPointId;
-            bool itemMatches = evt.DeliveredItemId == _definition.TargetItemName;
+            bool deliveryPointMatches = System.Array.Exists(_definition.DeliveryPointIds, id => id == evt.DeliveryPointId);
+            bool itemMatches = evt.DeliveredItemId == _definition.CollectItemName;
 
             if (deliveryPointMatches && itemMatches) {
                 Complete();

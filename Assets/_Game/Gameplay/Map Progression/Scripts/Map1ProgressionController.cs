@@ -2,11 +2,13 @@ using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Doors;
 using FifthSemester.Gameplay.Missions;
+using FifthSemester.Gameplay.Dialogue; 
 using UnityEngine;
 
 namespace FifthSemester.Gameplay {
     public class Map1ProgressionController : MonoBehaviour {
         [Header("Referências do Mapa")]
+        [SerializeField] private OpeningCutscene _openingCutscene; 
         [SerializeField] private GameObject _medsOnTable;
         [SerializeField] private Door _doorMedsRoom;
         [SerializeField] private Door[] _patientDoors;
@@ -19,6 +21,7 @@ namespace FifthSemester.Gameplay {
 
         private IEventBus _eventBus;
         private IMissionService _missionService;
+        private bool _openingCutscenePlayed;
 
         private void Start() {
             _eventBus = ServiceLocator.Get<IEventBus>();
@@ -33,6 +36,7 @@ namespace FifthSemester.Gameplay {
             _jumpscareTriggerEvent5.SetActive(false);
 
             SyncMapWithCurrentMission();
+            TryPlayOpeningCutscene();
         }
 
         private void OnDestroy() {
@@ -44,13 +48,22 @@ namespace FifthSemester.Gameplay {
 
         private void OnMissionUpdated(MissionUpdatedEvent evt) {
             SyncMapWithCurrentMission();
+            TryPlayOpeningCutscene();
         }
 
         private void SyncMapWithCurrentMission() {
-            var currentMission = _missionService.GetCurrentMission();
+            MissionDefinition currentMission = _missionService.GetCurrentMission();
             if (currentMission != null) {
                 ApplyMapState(currentMission);
             }
+        }
+
+        private void TryPlayOpeningCutscene() {
+            if (_openingCutscenePlayed || _openingCutscene == null || _missionService == null) return;
+            if (_missionService.GetCurrentMission() != _mission01_TalkToNurse) return;
+
+            _openingCutscenePlayed = true;
+            _openingCutscene.PlayCutscene();
         }
 
         private void ApplyMapState(MissionDefinition currentDef) {

@@ -73,6 +73,8 @@ namespace FifthSemester.Gameplay.Dialogue {
             if (!IsDialogueActive) return;
 
             if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
+                Clear();
+                ToggleDialogue(false);
                 CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
             }
             else {
@@ -81,31 +83,24 @@ namespace FifthSemester.Gameplay.Dialogue {
         }
 
         public void StartDialogue(TextAsset dialogueFile, PlayableDirector director = null) {
-            if (IsDialogueActive) {
-                EndDialogue();
-            }
-
             _linesQueue = DialogueParser.Parse(dialogueFile);
             CurrentDirector = director;
 
-            if (_linesQueue.Count == 0 && CurrentDirector == null) {
-                EndDialogue();
-                return;
-            }
-
-            ToggleDialogue(true);
+            IsDialogueActive = true;
             _eventBus?.Publish(new DialogueStartedEvent());
 
             if (CurrentDirector != null) {
-                CurrentDirector.time = 0d;
-                CurrentDirector.Evaluate();
+                ToggleDialogue(false);
                 CurrentDirector.Play();
             }
             else {
+                ToggleDialogue(true);
                 DisplayNextLine();
             }
         }
         public void TimelineShowLineAndPause() {
+            ToggleDialogue(true);
+
             DisplayNextLine();
 
             if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {

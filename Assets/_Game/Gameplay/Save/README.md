@@ -30,11 +30,11 @@ Gerencia todos os saves/checkpoints do jogo via `ISaveService`.
 
 **SaveData contém:**
 ```csharp
-public int CurrentMissionIndex;           // Índice da missão ativa
-public Dictionary<string, int> MissionProgress; // missionId → progress
-public string LastCheckpointId;           // Último checkpoint usado
-public int SaveVersion;                   // Versionamento (migrações)
-public long Timestamp;                    // Unix timestamp
+public int CurrentMissionIndex;              // Índice da missão ativa
+public Dictionary<string, string> MissionProgress; // missionId → progress (string)
+public string LastCheckpointId;              // Último checkpoint usado
+public int SaveVersion;                      // Versionamento (migrações)
+public long Timestamp;                       // Unix timestamp
 ```
 
 **Registro automático:**
@@ -113,7 +113,7 @@ private void SaveGameState() {
     ISaveService saveService = ServiceLocator.Get<ISaveService>();
     SaveData saveData = new SaveData {
         CurrentMissionIndex = CurrentIndex,
-        MissionProgress = GetCurrentProgress()
+        MissionProgress = GetCurrentProgress() // retorna strings por missão
     };
     saveService.SaveToSlot("default", saveData);
 }
@@ -179,7 +179,10 @@ protected virtual void SaveProgress() {
     if (!_definition.PersistProgress || _saveService == null) return;
 
     SaveData saveData = _saveService.LoadFromSlot("default") ?? new SaveData();
-    saveData.MissionProgress[MissionId] = _progress;
+    // Progresso de missão é salvo como `string` em `SaveData.MissionProgress`.
+    // Missões que precisam de contagem convertem o valor internamente para `int` apenas para comparação com `RequiredCount`.
+
+    saveData.MissionProgress[MissionId] = _progress ?? string.Empty;
     _saveService.SaveToSlot("default", saveData);
 }
 ```

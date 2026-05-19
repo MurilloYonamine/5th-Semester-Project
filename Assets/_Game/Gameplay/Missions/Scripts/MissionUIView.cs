@@ -1,70 +1,73 @@
-// Autor: Murillo Gomes Yonamine
-// Data: Atualizado para UI de Missões
-
-using UnityEngine;
-using TMPro;
-using FifthSemester.Core.Services;
 using FifthSemester.Core.Events;
+using FifthSemester.Core.Services;
+using FifthSemester.Core.States;
+using TMPro;
+using UnityEngine;
 
 namespace FifthSemester.Gameplay.Missions {
     public class MissionUIView : MonoBehaviour {
-        [Header("Referências de UI")]
-        [SerializeField] private TextMeshProUGUI _titleText;
-        [SerializeField] private TextMeshProUGUI _descriptionText;
-        [SerializeField] private TextMeshProUGUI _progressText;
-        [SerializeField] private CanvasGroup _canvasGroup;
+        [Header("UI Components")]
+        [SerializeField] private GameObject _missionPanel;
+        [SerializeField] private TextMeshProUGUI _missionTitleText;
+        [SerializeField] private TextMeshProUGUI _missionDescriptionText;
+        [SerializeField] private TextMeshProUGUI _missionProgressionText;
 
         private IEventBus _eventBus;
-        private IMissionService _missionService;
 
         private void Start() {
             _eventBus = ServiceLocator.Get<IEventBus>();
-            _missionService = ServiceLocator.Get<IMissionService>();
 
-            _eventBus.Subscribe<MissionUpdatedEvent>(OnMissionUpdated);
-            _eventBus.Subscribe<MissionProgressEvent>(OnMissionProgressed);
+            if (_eventBus != null) {
+                _eventBus.Subscribe<MissionUpdatedEvent>(OnMissionUpdated);
+                _eventBus.Subscribe<MissionProgressEvent>(OnMissionProgress);
+                _eventBus.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
+                _eventBus.Subscribe<DialogueStartedEvent>(OnDialogueStarted);
+                _eventBus.Subscribe<DialogueEndedEvent>(OnDialogueEnded);
+            }
 
-            UpdateUI();
+            IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
+            if (gameStateService != null) {
+                ApplyGameState(gameStateService.CurrentState);
+            }
         }
 
         private void OnDestroy() {
             if (_eventBus != null) {
                 _eventBus.Unsubscribe<MissionUpdatedEvent>(OnMissionUpdated);
-                _eventBus.Unsubscribe<MissionProgressEvent>(OnMissionProgressed);
+                _eventBus.Unsubscribe<MissionProgressEvent>(OnMissionProgress);
+                _eventBus.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
+                _eventBus.Unsubscribe<DialogueStartedEvent>(OnDialogueStarted);
+                _eventBus.Unsubscribe<DialogueEndedEvent>(OnDialogueEnded);
             }
         }
 
         private void OnMissionUpdated(MissionUpdatedEvent evt) {
-            UpdateUI();
+            _missionTitleText.text = evt.Title;
+            _missionDescriptionText.text = evt.Description;
         }
 
-        private void OnMissionProgressed(MissionProgressEvent evt) {
-            if (_progressText.gameObject.activeSelf) {
-                _progressText.text = $"{evt.Current} / {evt.Required}";
-            }
-            UpdateUI();
+        private void OnMissionProgress(MissionProgressEvent evt) {
+            _missionProgressionText.text = evt.Progress;
         }
 
-        private void UpdateUI() {
-            var currentMission = _missionService.GetCurrentMission();
+        private void OnGameStateChanged(GameStateChangedEvent evt) {
+            ApplyGameState(evt.CurrentState);
+        }
 
-            if (currentMission != null) {
-                _canvasGroup.alpha = 1f;
+        private void OnDialogueStarted(DialogueStartedEvent evt) {
+            ApplyGameState(GameState.Cutscene);
+        }
 
-                _titleText.text = currentMission.Title;
-                _descriptionText.text = currentMission.Description;
+        private void OnDialogueEnded(DialogueEndedEvent evt) {
+            IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
+            ApplyGameState(gameStateService != null ? gameStateService.CurrentState : GameState.Gameplay);
+        }
 
-                if (currentMission.Type == MissionType.CollectItems || currentMission.Type == MissionType.CollectAndDeliver) {
-                    _progressText.gameObject.SetActive(true);
+        private void ApplyGameState(GameState currentState) {
+            if (_missionPanel == null) return;
 
-                }
-                else {
-                    _progressText.gameObject.SetActive(false);
-                }
-            }
-            else {
-                _canvasGroup.alpha = 0f;
-            }
+            bool shouldShow = currentState == GameState.Gameplay;
+            _missionPanel.SetActive(shouldShow);
         }
     }
 }

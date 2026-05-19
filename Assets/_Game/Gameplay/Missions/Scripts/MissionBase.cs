@@ -11,11 +11,11 @@ namespace FifthSemester.Gameplay.Missions {
         protected MissionDefinition _definition;
         protected IEventBus _eventBus;
         protected ISaveService _saveService;
-        protected int _progress;
+        protected string _progress;
         protected bool _isComplete;
 
-        public int Progress => _progress;
         public bool IsComplete => _isComplete;
+        public string Progress => _progress;
         public string MissionId => _definition != null ? _definition.MissionId : "";
 
         public event Action OnMissionComplete;
@@ -24,7 +24,7 @@ namespace FifthSemester.Gameplay.Missions {
             _definition = definition;
             _eventBus = eventBus;
             _saveService = saveService;
-            _progress = 0;
+            _progress = string.Empty;
             _isComplete = false;
 
             if (_definition.PersistProgress) {
@@ -55,10 +55,10 @@ namespace FifthSemester.Gameplay.Missions {
         }
 
         protected virtual void SaveProgress() {
-            if (!_definition.PersistProgress || _saveService == null) return;
+            if (_definition == null || !_definition.PersistProgress || _saveService == null) return;
 
             SaveData saveData = _saveService.LoadFromSlot("default") ?? new SaveData();
-            saveData.MissionProgress[MissionId] = _progress;
+            saveData.MissionProgress[MissionId] = _progress ?? string.Empty;
             _saveService.SaveToSlot("default", saveData);
         }
 
@@ -66,22 +66,30 @@ namespace FifthSemester.Gameplay.Missions {
             if (_saveService == null) return;
 
             SaveData saveData = _saveService.LoadFromSlot("default");
-            if (saveData != null && saveData.MissionProgress.TryGetValue(MissionId, out int savedProgress)) {
+            if (saveData != null && saveData.MissionProgress.TryGetValue(MissionId, out string savedProgress)) {
                 _progress = savedProgress;
             }
         }
 
         protected void PublishProgress() {
-            _eventBus?.Publish(new MissionProgressEvent(MissionId, _progress, _definition.RequiredCount));
+            _eventBus?.Publish(new MissionProgressEvent(MissionId, _progress));
         }
 
         protected void IncrementProgress() {
-            _progress++;
+            int progressCount = GetProgressCount();
+            progressCount++;
+            _progress = progressCount.ToString();
             PublishProgress();
 
-            if (_progress >= _definition.RequiredCount) {
+            if (_definition != null && progressCount >= _definition.RequiredCount) {
                 Complete();
             }
+        }
+
+        protected int GetProgressCount() {
+            if (string.IsNullOrWhiteSpace(_progress)) return 0;
+            if (int.TryParse(_progress, out int progressCount)) return progressCount;
+            return 0;
         }
     }
 }

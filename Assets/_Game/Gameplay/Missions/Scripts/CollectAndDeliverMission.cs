@@ -11,7 +11,7 @@ namespace FifthSemester.Gameplay.Missions {
 
         public override void Initialize(MissionDefinition definition, IEventBus eventBus, ISaveService saveService) {
             base.Initialize(definition, eventBus, saveService);
-            _itemsCollected = _progress >= _definition.RequiredCount;
+            _itemsCollected = GetProgressCount() >= _definition.RequiredCount;
         }
 
         public override void StartMission() {

@@ -13,12 +13,16 @@ namespace FifthSemester.Gameplay {
         private IEventBus _eventBus;
         private IInputService _inputService;
 
-        private void Start() {
+        private void Awake() {
             ServiceLocator.Register<IGameStateService>(this);
             _eventBus = ServiceLocator.Get<IEventBus>();
             _inputService = ServiceLocator.Get<IInputService>();
+        }
 
+        private void Start() {
             CurrentState = GameState.Gameplay;
+
+            if (_eventBus == null) return;
 
             _eventBus.Subscribe<DialogueStartedEvent>(OnDialogueStarted);
             _eventBus.Subscribe<DialogueEndedEvent>(OnDialogueEnded);
@@ -52,10 +56,12 @@ namespace FifthSemester.Gameplay {
         // ============ REAGINDO AOS EVENTOS ============
 
         private void OnDialogueStarted(DialogueStartedEvent evt) {
+            if (CurrentState == GameState.Cutscene) return;
             ChangeState(GameState.Dialogue);
         }
 
         private void OnDialogueEnded(DialogueEndedEvent evt) {
+            if (CurrentState == GameState.Cutscene) return;
             ChangeState(GameState.Gameplay);
         }
 

@@ -13,17 +13,25 @@ namespace FifthSemester.Gameplay.Missions {
         private IEventBus _eventBus;
         private ISaveService _saveService;
         private IMission _currentMission;
-
-        public MissionDefinition[] Missions => _missionDefinitions;
         public int CurrentIndex { get; private set; } = -1;
+        public MissionDefinition[] Missions => _missionDefinitions;
 
         private void Awake() {
             ServiceLocator.Register<IMissionService>(this);
             _eventBus = ServiceLocator.Get<IEventBus>();
             _saveService = ServiceLocator.Get<ISaveService>();
+
+            SaveData saveData = _saveService?.LoadFromSlot("default");
+            int startIndex = saveData?.CurrentMissionIndex ?? 0;
+
+            if (_missionDefinitions != null && _missionDefinitions.Length > 0) {
+                SetCurrentMission(startIndex);
+            }
         }
 
         private void Start() {
+            if (_currentMission != null) return;
+
             SaveData saveData = _saveService?.LoadFromSlot("default");
             int startIndex = saveData?.CurrentMissionIndex ?? 0;
 

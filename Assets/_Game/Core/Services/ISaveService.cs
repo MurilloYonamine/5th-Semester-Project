@@ -42,7 +42,7 @@ namespace FifthSemester.Core.Services {
     [System.Serializable]
     public class SaveData {
         public int CurrentMissionIndex;
-        public Dictionary<string, int> MissionProgress = new();
+        public Dictionary<string, string> MissionProgress = new();
         public string LastCheckpointId = "default";
         public int SaveVersion = 1;
         public long Timestamp;

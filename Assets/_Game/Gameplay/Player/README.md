@@ -391,6 +391,21 @@ public class PlayerUI : MonoBehaviour {
 
 ---
 
+### `Scripts/UI/PlayerStateUIController.cs`
+
+Controls player HUD visibility based on the current `GameState`.
+
+```csharp
+public class PlayerStateUIController : MonoBehaviour {
+    [SerializeField] private GameObject _crosshair;
+    [SerializeField] private GameObject _staminaBarRoot;
+}
+```
+
+Use it to hide the crosshair and stamina bar whenever the game is not in `Gameplay`.
+
+---
+
 ## Setup
 
 ### Player Prefab

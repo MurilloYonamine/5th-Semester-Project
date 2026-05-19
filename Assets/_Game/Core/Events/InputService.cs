@@ -202,15 +202,16 @@ namespace FifthSemester.Core.Events {
         }
 
         private void HandleDialogueAdvance(InputAction.CallbackContext context) {
-            if (context.started) {
-                if (CurrentGameState != GameState.Dialogue) return;
+            if (!context.started) return;
+
+            if (CurrentGameState != GameState.Dialogue && CurrentGameState != GameState.Cutscene) return;
                 
-                if (_ignoreNextDialogueAdvance) {
-                    _ignoreNextDialogueAdvance = false;
-                    return;
-                }
-                PublishEvent(new DialogueAdvanceRequestedEvent());
+            if (_ignoreNextDialogueAdvance) {
+                _ignoreNextDialogueAdvance = false;
+                return;
             }
+
+            PublishEvent(new DialogueAdvanceRequestedEvent());
         }
 
         public void OnGameStateChanged(GameStateChangedEvent evt) {

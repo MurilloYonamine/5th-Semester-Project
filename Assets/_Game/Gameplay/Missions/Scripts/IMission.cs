@@ -11,7 +11,7 @@ namespace FifthSemester.Gameplay.Missions {
         void Complete();
         void Cleanup();
 
-        int Progress { get; }
+        string Progress { get; }
         bool IsComplete { get; }
         string MissionId { get; }
     }

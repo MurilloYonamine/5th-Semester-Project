@@ -684,7 +684,7 @@ public interface ISaveService {
 [System.Serializable]
 public class SaveData {
     public int CurrentMissionIndex;
-    public Dictionary<string, int> MissionProgress;
+    public Dictionary<string, string> MissionProgress;
     public string LastCheckpointId;
     public int SaveVersion;
     public long Timestamp;

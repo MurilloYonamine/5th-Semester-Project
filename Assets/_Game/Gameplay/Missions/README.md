@@ -156,6 +156,8 @@ void OnTriggerEnter(Collider other) {
   - Missão completa (`Complete()` chamado)
   - Checkpoint interagido (`SavePoint.SaveGame()`)
 
+- `MissionBase.Progress` e `MissionProgressEvent.Progress` usam `string`
+- Missões baseadas em contagem derivam o número internamente quando precisam comparar com `RequiredCount`
 - Progresso é recuperado ao iniciar via `MissionService.Start()` consultando `SaveData`
 
 ## UI Integration

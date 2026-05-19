@@ -15,7 +15,6 @@ namespace FifthSemester.Core.Events {
         }
     }
 
-    // Published when the active mission changes (UI listens to this)
     public readonly struct MissionUpdatedEvent {
         public readonly string MissionId;
         public readonly string Title;
@@ -28,16 +27,13 @@ namespace FifthSemester.Core.Events {
         }
     }
 
-    // Published when mission progress changes (UI listens to show count)
     public readonly struct MissionProgressEvent {
         public readonly string MissionId;
-        public readonly int Current;
-        public readonly int Required;
+        public readonly string Progress;
 
-        public MissionProgressEvent(string missionId, int current, int required) {
+        public MissionProgressEvent(string missionId, string progress) {
             MissionId = missionId;
-            Current = current;
-            Required = required;
+            Progress = progress;
         }
     }
 }

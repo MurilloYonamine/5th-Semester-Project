@@ -16,8 +16,9 @@ MonoBehaviour:
   Title: Falar com a Enfermeira
   Description: "Fale com a Enfermeira Anna no corredor para receber as instru\xE7\xF5es
     do dia."
-  NextMission: {fileID: 0}
-  Type: 2
+  NextMission: {fileID: 11400000, guid: 096e1a4e789dcb34a835a393aea37361, type: 2}
+  Type: 3
+  TargetCutscene: 1
   NpcId: Enfermeira_A
   TargetItemName: 
   RequiredCount: 1

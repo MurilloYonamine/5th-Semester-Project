@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.Enums;
+using Unity.Cinemachine;
 
 namespace FifthSemester.Gameplay.Dialogue {
     public class CutsceneService : MonoBehaviour, ICutsceneService {
@@ -12,6 +13,7 @@ namespace FifthSemester.Gameplay.Dialogue {
         private Dictionary<CutsceneType, CutsceneController> _cutsceneDictionary;
 
         private CutsceneController _activeCutscene;
+        [SerializeField] private CinemachineCamera _playerCamera;
 
         private void Awake() {
             ServiceLocator.Register<ICutsceneService>(this);
@@ -33,6 +35,7 @@ namespace FifthSemester.Gameplay.Dialogue {
         public void PlayCutscene(CutsceneType type) {
             if (_cutsceneDictionary.TryGetValue(type, out var cutscene)) {
                 _activeCutscene = cutscene;
+                cutscene.SetPlayerCamera(_playerCamera);
                 cutscene.PlayCutscene();
             }
             else {

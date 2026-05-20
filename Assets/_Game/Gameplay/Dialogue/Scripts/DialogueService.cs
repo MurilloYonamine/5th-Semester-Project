@@ -73,14 +73,14 @@ namespace FifthSemester.Gameplay.Dialogue {
         private void OnDialogueAdvanceRequested(DialogueAdvanceRequestedEvent evt) {
             if (!IsDialogueActive) return;
 
-            if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
-                Clear();
-                ToggleDialogue(false);
-                CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
-            }
-            else {
-                DisplayNextLine();
-            }
+            //if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
+            //    Clear();
+            //    ToggleDialogue(false);
+            //    CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
+            //}
+            //else {
+            //}
+            DisplayNextLine();
         }
 
         public void StartDialogue(TextAsset dialogueFile, PlayableDirector director = null, string sourceId = null) {
@@ -102,8 +102,11 @@ namespace FifthSemester.Gameplay.Dialogue {
         }
         public void TimelineShowLine() {
             ToggleDialogue(true);
-
             DisplayNextLine();
+
+            if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
+                CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(0);
+            }
         }
 
         public void DisplayNextLine() {

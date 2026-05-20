@@ -87,7 +87,9 @@ namespace FifthSemester.Core.Events {
 
     public readonly struct DialogueStartedEvent { }
 
-    public readonly struct DialogueEndedEvent { }
+    public struct DialogueEndedEvent {
+        public string NpcId; 
+    }
 
     /// ============= Player Events =============
     public readonly struct PlayerSprintChangedEvent {

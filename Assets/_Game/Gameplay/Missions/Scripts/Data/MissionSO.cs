@@ -1,8 +1,11 @@
 // Autor: Murillo Gomes Yonamine
 // Data: 05/05/2026
 
-using UnityEngine;
+using FifthSemester.Core.Enums;
 using Sirenix.OdinInspector;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace FifthSemester.Gameplay.Missions {
     [CreateAssetMenu(menuName = "Mission/New Mission", fileName = "NewMission")]
@@ -13,6 +16,9 @@ namespace FifthSemester.Gameplay.Missions {
 
         [TextArea(3, 6)]
         public string Description;
+
+        [Header("Próxima Missão")]
+        public MissionDefinition NextMission;
 
         [Header("Type & Completion")]
         public MissionType Type;
@@ -49,8 +55,38 @@ namespace FifthSemester.Gameplay.Missions {
         [Tooltip("Events to apply when skipping to this mission")]
         public string[] DebugSetupEvents;
 
+        [Header("Efeitos no Mapa")]
+        public List<MapAction> MapActions;
+
         private bool IsTalkToNpc() => Type == MissionType.TalkToNpc;
         private bool IsCollectItems() => Type == MissionType.CollectItems;
         private bool IsCollectAndDeliver() => Type == MissionType.CollectAndDeliver;
+    }
+    [System.Serializable]
+    public struct MapAction {
+        public enum ActionType { Activate, Deactivate, LockDoor, UnlockDoor, LockAllDoorsExcept }
+
+        public ActionType Type;
+
+        [ShowIf("IsSingleDoorAction")]
+        public DoorType TargetDoor;
+
+        [ShowIf("IsLockAllExceptAction")]
+        public DoorType[] DoorsToKeepUnlocked;
+
+        [HideIf("IsAnyDoorAction")]
+        public string TargetObjectId;
+
+        private bool IsSingleDoorAction() {
+            return Type == ActionType.LockDoor || Type == ActionType.UnlockDoor;
+        }
+
+        private bool IsLockAllExceptAction() {
+            return Type == ActionType.LockAllDoorsExcept;
+        }
+
+        private bool IsAnyDoorAction() {
+            return IsSingleDoorAction() || IsLockAllExceptAction();
+        }
     }
 }

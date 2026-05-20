@@ -16,6 +16,7 @@ MonoBehaviour:
   Title: "Pegar Rem\xE9dios"
   Description: "V\xE1 at\xE9 a sala de rem\xE9dios e pegue as 5 doses di\xE1rias
     que est\xE3o em cima da mesa."
+  NextMission: {fileID: 0}
   Type: 0
   NpcId: 
   TargetItemName: Remedio
@@ -25,3 +26,7 @@ MonoBehaviour:
   DeliveryPointIds: []
   PersistProgress: 1
   DebugSetupEvents: []
+  MapActions:
+  - Type: 0
+    TargetDoor: 0
+    TargetObjectId: 

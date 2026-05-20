@@ -39,15 +39,19 @@ namespace FifthSemester.Gameplay.Missions {
 
         public virtual void Complete() {
             if (_isComplete) return;
+            _eventBus?.Publish(new MissionCompletedEvent { MissionId = _definition.MissionId });
             _isComplete = true;
             SaveProgress();
             PublishProgress();
             OnMissionComplete?.Invoke();
+            Cleanup();
             Debug.Log($"[{GetType().Name}] Mission completed: {MissionId}");
         }
 
         public virtual void Cleanup() {
             if (_isComplete) return;
+
+            OnMissionComplete = null;
 
             if (this == null || gameObject == null) return;
 

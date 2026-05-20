@@ -43,7 +43,21 @@ namespace FifthSemester.Gameplay.Missions {
         private void OnDestroy() {
             CleanupCurrentMission();
         }
+        public void StartMission(MissionDefinition mission) {
+            if (mission == null) {
+                Debug.LogError("[MissionService] Tentativa de iniciar uma missão nula.");
+                return;
+            }
 
+            int index = Array.IndexOf(_missionDefinitions, mission);
+
+            if (index == -1) {
+                Debug.LogError($"[MissionService] Missão {mission.name} não encontrada na lista!");
+                return;
+            }
+
+            SetCurrentMission(index);
+        }
         public MissionDefinition GetCurrentMission() {
             if (_missionDefinitions == null || CurrentIndex < 0 || CurrentIndex >= _missionDefinitions.Length) return null;
             return _missionDefinitions[CurrentIndex];
@@ -142,5 +156,6 @@ namespace FifthSemester.Gameplay.Missions {
             saveData.CurrentMissionIndex = CurrentIndex;
             _saveService.SaveToSlot("default", saveData);
         }
+
     }
 }

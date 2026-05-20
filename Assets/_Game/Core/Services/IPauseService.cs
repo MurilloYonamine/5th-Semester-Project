@@ -2,10 +2,8 @@ using System;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.States;
 
-namespace FifthSemester.Core.Services
-{
-    public interface IPauseService 
-    {
+namespace FifthSemester.Core.Services {
+    public interface IPauseService {
         GameState CurrentState { get; set; }
 
         void PauseGame();

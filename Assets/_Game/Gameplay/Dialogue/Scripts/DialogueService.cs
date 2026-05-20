@@ -33,6 +33,7 @@ namespace FifthSemester.Gameplay.Dialogue {
         [SerializeField] private TMP_FontAsset _defaultTextFont;
 
         private Queue<ParsedDialogueLine> _linesQueue;
+        private string _currentDialogueSourceId;
 
         public PlayableDirector CurrentDirector { get; private set; }
 
@@ -82,9 +83,10 @@ namespace FifthSemester.Gameplay.Dialogue {
             }
         }
 
-        public void StartDialogue(TextAsset dialogueFile, PlayableDirector director = null) {
+        public void StartDialogue(TextAsset dialogueFile, PlayableDirector director = null, string sourceId = null) {
             _linesQueue = DialogueParser.Parse(dialogueFile);
             CurrentDirector = director;
+            _currentDialogueSourceId = sourceId;
 
             IsDialogueActive = true;
             _eventBus?.Publish(new DialogueStartedEvent());
@@ -98,14 +100,10 @@ namespace FifthSemester.Gameplay.Dialogue {
                 DisplayNextLine();
             }
         }
-        public void TimelineShowLineAndPause() {
+        public void TimelineShowLine() {
             ToggleDialogue(true);
 
             DisplayNextLine();
-
-            if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
-                CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(0);
-            }
         }
 
         public void DisplayNextLine() {
@@ -137,10 +135,12 @@ namespace FifthSemester.Gameplay.Dialogue {
                 CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
             }
 
+            string sourceId = _currentDialogueSourceId;
             CurrentDirector = null;
             _linesQueue = null;
+            _currentDialogueSourceId = null;
 
-            _eventBus?.Publish(new DialogueEndedEvent());
+            _eventBus?.Publish(new DialogueEndedEvent { NpcId = sourceId });
         }
 
         public void OnGameStateChanged(GameStateChangedEvent evt) {

@@ -23,6 +23,10 @@ namespace FifthSemester.Gameplay.Missions {
         [Header("Type & Completion")]
         public MissionType Type;
 
+        [ShowIf("Type", MissionType.PlayCutscene)]
+        [Tooltip("Qual cutscene deve ser tocada quando esta missão iniciar?")]
+        public CutsceneType TargetCutscene;
+
         [ShowIf("IsTalkToNpc")]
         [Tooltip("NPC ID to talk to")]
         public string NpcId;
@@ -61,6 +65,7 @@ namespace FifthSemester.Gameplay.Missions {
         private bool IsTalkToNpc() => Type == MissionType.TalkToNpc;
         private bool IsCollectItems() => Type == MissionType.CollectItems;
         private bool IsCollectAndDeliver() => Type == MissionType.CollectAndDeliver;
+        private bool IsPlayCutscene() => Type == MissionType.PlayCutscene;
     }
     [System.Serializable]
     public struct MapAction {

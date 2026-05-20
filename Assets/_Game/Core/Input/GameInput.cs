@@ -136,6 +136,15 @@ namespace FifthSemester.Core.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Skip Cutscene"",
+                    ""type"": ""Button"",
+                    ""id"": ""b8de947b-dc43-4957-8ce0-ce6adbc5136f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -598,6 +607,28 @@ namespace FifthSemester.Core.Input
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""Flash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""33a7d277-3aed-49ad-8737-aa09319b8f62"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Skip Cutscene"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""33036184-617a-4a1c-aa90-a6962d21194a"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Skip Cutscene"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1376,6 +1407,7 @@ namespace FifthSemester.Core.Input
             m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
             m_Player_OpenPause = m_Player.FindAction("Open Pause", throwIfNotFound: true);
             m_Player_Flash = m_Player.FindAction("Flash", throwIfNotFound: true);
+            m_Player_SkipCutscene = m_Player.FindAction("Skip Cutscene", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1471,6 +1503,7 @@ namespace FifthSemester.Core.Input
         private readonly InputAction m_Player_Zoom;
         private readonly InputAction m_Player_OpenPause;
         private readonly InputAction m_Player_Flash;
+        private readonly InputAction m_Player_SkipCutscene;
         public struct PlayerActions
         {
             private @GameInput m_Wrapper;
@@ -1487,6 +1520,7 @@ namespace FifthSemester.Core.Input
             public InputAction @Zoom => m_Wrapper.m_Player_Zoom;
             public InputAction @OpenPause => m_Wrapper.m_Player_OpenPause;
             public InputAction @Flash => m_Wrapper.m_Player_Flash;
+            public InputAction @SkipCutscene => m_Wrapper.m_Player_SkipCutscene;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1532,6 +1566,9 @@ namespace FifthSemester.Core.Input
                 @Flash.started += instance.OnFlash;
                 @Flash.performed += instance.OnFlash;
                 @Flash.canceled += instance.OnFlash;
+                @SkipCutscene.started += instance.OnSkipCutscene;
+                @SkipCutscene.performed += instance.OnSkipCutscene;
+                @SkipCutscene.canceled += instance.OnSkipCutscene;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -1572,6 +1609,9 @@ namespace FifthSemester.Core.Input
                 @Flash.started -= instance.OnFlash;
                 @Flash.performed -= instance.OnFlash;
                 @Flash.canceled -= instance.OnFlash;
+                @SkipCutscene.started -= instance.OnSkipCutscene;
+                @SkipCutscene.performed -= instance.OnSkipCutscene;
+                @SkipCutscene.canceled -= instance.OnSkipCutscene;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -1798,6 +1838,7 @@ namespace FifthSemester.Core.Input
             void OnZoom(InputAction.CallbackContext context);
             void OnOpenPause(InputAction.CallbackContext context);
             void OnFlash(InputAction.CallbackContext context);
+            void OnSkipCutscene(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {

@@ -47,7 +47,8 @@ namespace FifthSemester.Gameplay.Dialogue {
                 return;
             }
 
-            _dialogueService.StartDialogue(correctDialogue, _director);
+            string dialogueId = string.IsNullOrWhiteSpace(Id) ? gameObject.name : Id;
+            _dialogueService.StartDialogue(correctDialogue, _director, dialogueId);
         }
 
         public void StopInteract() {

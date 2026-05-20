@@ -7,12 +7,11 @@ namespace FifthSemester.Core.Services {
         GameState CurrentState { get; set; }
         bool IsDialogueActive { get; }
 
-        void StartDialogue(TDialogue dialogue, PlayableDirector director = null);
+        void StartDialogue(TDialogue dialogue, PlayableDirector director = null, string sourceId = null);
         void DisplayNextLine();
         void EndDialogue();
 
         void OnGameStateChanged(GameStateChangedEvent evt);
-        void TimelineShowLineAndPause();
-
+        void TimelineShowLine();
     }
 }

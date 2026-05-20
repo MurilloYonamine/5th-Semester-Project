@@ -268,13 +268,17 @@ namespace FifthSemester.Core.Audio {
         }
         #endregion
         #region Set Volumes
+        private float LinearToDecibel(float linear) {
+            float clampedLinear = Mathf.Clamp(linear, 0.0001f, 1f);
+            return Mathf.Log10(clampedLinear) * 20f;
+        }
         /// <summary>
         /// Sets the master volume of the mixer.
         /// </summary>
         /// <param name="volume">Volume value (0 to 1).</param>
         /// <param name="muted">Whether to mute the audio.</param>
         public void SetMasterVolume(float volume, bool muted = false) {
-            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : Mathf.Log10(volume) * 20f;
+            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : LinearToDecibel(volume);
             MasterMixer.audioMixer.SetFloat(MASTER_VOLUME_PARAMETER_NAME, dbVolume);
         }
 
@@ -284,17 +288,16 @@ namespace FifthSemester.Core.Audio {
         /// <param name="volume">Volume value (0 to 1).</param>
         /// <param name="muted">Whether to mute the audio.</param>
         public void SetMusicVolume(float volume, bool muted = false) {
-            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : Mathf.Log10(volume) * 20f;
+            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : LinearToDecibel(volume);
             MusicMixer.audioMixer.SetFloat(MUSIC_VOLUME_PARAMETER_NAME, dbVolume);
         }
-
         /// <summary>
         /// Sets the sound effects (SFX) volume of the mixer.
         /// </summary>
         /// <param name="volume">Volume value (0 to 1).</param>
         /// <param name="muted">Whether to mute the audio.</param>
         public void SetSFXVolume(float volume, bool muted = false) {
-            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : Mathf.Log10(volume) * 20f;
+            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : LinearToDecibel(volume);
             SFXMixer.audioMixer.SetFloat(SFX_VOLUME_PARAMETER_NAME, dbVolume);
         }
         /// <summary>
@@ -303,7 +306,7 @@ namespace FifthSemester.Core.Audio {
         /// <param name="volume">Volume value (0 to 1).</param>
         /// <param name="muted">Whether to mute the audio.</param>
         public void SetAmbienceVolume(float volume, bool muted = false) {
-            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : Mathf.Log10(volume) * 20f;
+            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : LinearToDecibel(volume);
             AmbienceMixer.audioMixer.SetFloat(AMBIENCE_VOLUME_PARAMETER_NAME, dbVolume);
         }
 

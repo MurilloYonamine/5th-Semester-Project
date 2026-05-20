@@ -10,6 +10,7 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Playables;
 using UnityEngine.InputSystem;
+using Unity.Cinemachine;
 
 namespace FifthSemester.Gameplay.Dialogue {
     public class CutsceneController : MonoBehaviour {
@@ -26,6 +27,12 @@ namespace FifthSemester.Gameplay.Dialogue {
         private bool _allowSkip = true;
 
         private bool _isPlaying;
+        private CinemachineCamera _playerCamera;
+
+        [SerializeField, Tooltip("Animator que deve voltar para idle ao fim/skip da cutscene")]
+        private Animator _targetAnimator;
+
+        private readonly int _speedHash = Animator.StringToHash("Speed");
 
         private IEventBus _eventBus;
 
@@ -40,6 +47,10 @@ namespace FifthSemester.Gameplay.Dialogue {
             if (_eventBus != null) {
                 _eventBus.Unsubscribe<SkipCutsceneRequestedEvent>(OnSkipCutsceneRequested);
             }
+        }
+
+        public void SetPlayerCamera(CinemachineCamera playerCamera) {
+            _playerCamera = playerCamera;
         }
 
         public void PlayCutscene() {
@@ -79,8 +90,12 @@ namespace FifthSemester.Gameplay.Dialogue {
         public void SkipCutscene() {
             if (_director != null) {
                 _director.stopped -= OnCutsceneStopped;
+                _director.time = _director.duration;
+                _director.Evaluate();
                 _director.Stop();
             }
+
+            RestorePlayerCamera();
 
             IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
             gameStateService?.ChangeState(GameState.Gameplay);
@@ -93,10 +108,22 @@ namespace FifthSemester.Gameplay.Dialogue {
                 _director.stopped -= OnCutsceneStopped;
             }
 
+            RestorePlayerCamera();
+
             IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
             gameStateService?.ChangeState(GameState.Gameplay);
 
             _isPlaying = false;
+        }
+
+        private void RestorePlayerCamera() {
+            if (_playerCamera != null) {
+                _playerCamera.Priority = 1;
+            }
+
+            if (_targetAnimator != null) {
+                _targetAnimator.SetFloat(_speedHash, 0f);
+            }
         }
     }
 }

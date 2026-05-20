@@ -1,3 +1,5 @@
+using FifthSemester.Core.Enums;
+using FifthSemester.Core.Services;
 using UnityEngine;
 using ThirdParty.QuickOutline;
 using FifthSemester.Gameplay.Shared;
@@ -16,6 +18,10 @@ namespace FifthSemester.Doors {
         [SerializeField] private float _openAngle = 90f;
         [SerializeField] private float _speed = 5f;
 
+        [Header("Map Registry")]
+        [SerializeField] private DoorType _doorType = DoorType.None;
+
+        private IMapService _mapService;
         private Quaternion _closedRotation;
         private Quaternion _targetRotation;
         private bool _isLocked = false;
@@ -33,6 +39,18 @@ namespace FifthSemester.Doors {
             _closedRotation = _doorMesh.localRotation;
             _targetRotation = _closedRotation;
             _unlockedColor = new Color32(105, 255, 144, 255); // 69FF90
+        }
+
+        private void Start() {
+            if (_doorType == DoorType.None) return;
+
+            _mapService = ServiceLocator.Get<IMapService>();
+            _mapService?.Register(_doorType, gameObject);
+        }
+
+        private void OnDestroy() {
+            if (_doorType == DoorType.None || _mapService == null) return;
+            _mapService.Unregister(_doorType);
         }
 
         private void Update() {

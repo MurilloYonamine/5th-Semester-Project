@@ -1,0 +1,30 @@
+namespace FifthSemester.Core.Enums {
+    public enum DoorType {
+        None = 0,
+        Door_Archives,
+        Door_BathroomA,
+        Door_BathroomB,
+        Door_Director,
+        Door_InternGarden,
+        Door_Janitor,
+        Door_Lab,
+        Door_MedRoom,
+        Door_Meeting,
+        Door_NurseA,
+        Door_NurseB,
+        Door_NurseC,
+        Door_NurseD,
+        Door_NurseE,
+        Door_Recreation1,
+        Door_Recreation2,
+        Door_RoomA,
+        Door_RoomB,
+        Door_RoomC,
+        Door_RoomE,
+        Door_RoomP,
+        Door_TriagemA,
+        Door_TriagemB,
+        Door_TriagemC,
+        Door_TriagemD
+    }
+}

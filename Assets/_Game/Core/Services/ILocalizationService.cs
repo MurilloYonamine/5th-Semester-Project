@@ -4,7 +4,7 @@
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
 
-namespace FifthSemester.Features.Localization {
+namespace FifthSemester.Core.Services {
     public interface ILocalizationService {
         void SetLanguage(Language language);
         string GetText(string key);

@@ -16,6 +16,7 @@ MonoBehaviour:
   Title: Falar com a Enfermeira
   Description: "Fale com a Enfermeira Anna no corredor para receber as instru\xE7\xF5es
     do dia."
+  NextMission: {fileID: 0}
   Type: 2
   NpcId: Enfermeira_A
   TargetItemName: 
@@ -25,3 +26,4 @@ MonoBehaviour:
   DeliveryPointIds: []
   PersistProgress: 1
   DebugSetupEvents: []
+  MapActions: []

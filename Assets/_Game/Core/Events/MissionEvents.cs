@@ -36,4 +36,18 @@ namespace FifthSemester.Core.Events {
             Progress = progress;
         }
     }
+    public struct MissionCompletedEvent {
+        public string MissionId;
+    }
+    public struct PuzzlePartPlacedEvent {
+        public string PuzzleId;
+    }
+
+    public struct ObjectSuccessfullyInteractedEvent {
+        public string ObjectId;
+    }
+
+    public struct PlayerReachedZoneEvent {
+        public string ZoneId;
+    }
 }

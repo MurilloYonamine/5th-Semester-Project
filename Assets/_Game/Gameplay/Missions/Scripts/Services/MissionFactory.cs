@@ -1,6 +1,7 @@
 // Autor: Murillo Gomes Yonamine
 // Data: 05/05/2026
 
+using FifthSemester.Core.Enums;
 using UnityEngine;
 
 namespace FifthSemester.Gameplay.Missions {
@@ -12,8 +13,15 @@ namespace FifthSemester.Gameplay.Missions {
             IMission mission = definition.Type switch {
                 MissionType.CollectItems => missionGO.AddComponent<CollectItemsMission>(),
                 MissionType.CollectAndDeliver => missionGO.AddComponent<CollectAndDeliverMission>(),
+                MissionType.TalkToNpc => missionGO.AddComponent<TalkToNpcMission>(),
+                MissionType.PlayCutscene => missionGO.AddComponent<CutsceneMission>(),
                 _ => null
             };
+
+            if (mission == null) {
+                Object.Destroy(missionGO);
+                Debug.LogError($"[MissionFactory] Mission type not supported: {definition.Type} ({definition.MissionId})");
+            }
 
             return mission;
         }

@@ -30,6 +30,7 @@ namespace FifthSemester.Core.Events {
         private InputAction _previous;
         private InputAction _openPause;
         private InputAction _dialogueAdvance;
+        private InputAction _skipCutscene;
 
 
         public InputService() {
@@ -61,6 +62,7 @@ namespace FifthSemester.Core.Events {
             _previous = _gameInput.Player.Previous;
             _openPause = _gameInput.Player.OpenPause;
             _dialogueAdvance = _gameInput.UI.Interact;
+            _skipCutscene = _gameInput.Player.SkipCutscene;
 
             _dialogueAdvance.started += HandleDialogueAdvance;
 
@@ -81,6 +83,7 @@ namespace FifthSemester.Core.Events {
             _next.performed += HandleNext;
             _previous.performed += HandlePrevious;
             _openPause.performed += HandleOpenPause;
+            _skipCutscene.started += HandleSkipCutscene;
 
             ServiceLocator.Get<IEventBus>()?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
             ServiceLocator.Get<IEventBus>()?.Subscribe<InventoryToggledEvent>(OnInventoryToggled);
@@ -214,6 +217,13 @@ namespace FifthSemester.Core.Events {
             PublishEvent(new DialogueAdvanceRequestedEvent());
         }
 
+        private void HandleSkipCutscene(InputAction.CallbackContext context) {
+            if (!context.started) return;
+            if (CurrentGameState != GameState.Cutscene) return;
+
+            PublishEvent(new SkipCutsceneRequestedEvent());
+        }
+
         public void OnGameStateChanged(GameStateChangedEvent evt) {
             CurrentGameState = evt.CurrentState;
 
@@ -263,6 +273,7 @@ namespace FifthSemester.Core.Events {
             _previous.performed -= HandlePrevious;
             _openPause.performed -= HandleOpenPause;
             _dialogueAdvance.started -= HandleDialogueAdvance;
+            _skipCutscene.started -= HandleSkipCutscene;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace FifthSemester.Gameplay {
             _dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
         }
         public void TriggerNextLine() {
-            _dialogueService.TimelineShowLineAndPause();
+            _dialogueService.TimelineShowLine();
         }
     }
 }

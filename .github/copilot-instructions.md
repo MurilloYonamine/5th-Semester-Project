@@ -25,10 +25,12 @@
 - Physics: Use `CompareTag("Tag")`. Apply physics strictly in `FixedUpdate()`.
 - Garbage Collection: Avoid LINQ, complex `foreach`, and string concatenation (`+`) inside frequent loops.
 - Coroutines: Prefer caching `WaitForSeconds` instead of allocating `new WaitForSeconds()` inside a `while` loop.
+- Avoid scene-wide searches (e.g., `FindObjectsOfType`) at runtime; prefer services or cached references to improve performance and predictability.
 
 # Architecture & Decoupling
 - Events: Use `System.Action` or UnityEvents to communicate between scripts instead of tight coupling.
 - Data Management: Suggest `ScriptableObjects` for storing static game data, stats, and configurations instead of hardcoding variables.
+- Use dedicated services for global data access. Example: Use `MapService` as the source of doors for `StoryManager` instead of performing a scene-wide search via `FindObjectsOfType`. Obtain doors through `MapService` (injected or referenced and cached in `Awake/Start`) to improve decoupling, testability, and performance.
 
 # Inspector & Debugging
 - Use attributes like `[Header("...")`, `[Tooltip("...")]`, and `[Range(min, max)]` to organize the Unity Inspector for designers.

@@ -71,6 +71,8 @@ namespace FifthSemester.Core.Events {
 
     public readonly struct PreviousInputEvent { }
 
+    public readonly struct SkipCutsceneRequestedEvent { }
+
     /// ============= Pause Events =============
     public readonly struct PauseToggleRequestedEvent { }
 

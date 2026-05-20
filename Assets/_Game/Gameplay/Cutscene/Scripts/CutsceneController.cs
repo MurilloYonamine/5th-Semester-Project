@@ -9,15 +9,38 @@ using FifthSemester.Features.Localization;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Playables;
+using UnityEngine.InputSystem;
 
 namespace FifthSemester.Gameplay.Dialogue {
-    public class OpeningCutscene : MonoBehaviour {
+    public class CutsceneController : MonoBehaviour {
+
+        [SerializeField] public CutsceneType CutsceneID = CutsceneType.OpeningCutscene;
 
         [SerializeField, Title("Textos da Cutscene Inicial")]
         private LocalizedTextAsset _dialogueFiles;
 
         [SerializeField, Title("Timeline (Director)")]
         private PlayableDirector _director;
+
+        [SerializeField, Tooltip("Allow the player to skip the opening cutscene")]
+        private bool _allowSkip = true;
+
+        private bool _isPlaying;
+
+        private IEventBus _eventBus;
+
+        private void OnEnable() {
+            _eventBus = ServiceLocator.Get<IEventBus>();
+            if (_eventBus != null) {
+                _eventBus.Subscribe<SkipCutsceneRequestedEvent>(OnSkipCutsceneRequested);
+            }
+        }
+
+        private void OnDisable() {
+            if (_eventBus != null) {
+                _eventBus.Unsubscribe<SkipCutsceneRequestedEvent>(OnSkipCutsceneRequested);
+            }
+        }
 
         public void PlayCutscene() {
             IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
@@ -30,7 +53,6 @@ namespace FifthSemester.Gameplay.Dialogue {
             TextAsset correctDialogue = _dialogueFiles.GetAsset(currentLanguage);
 
             if (correctDialogue == null) {
-                Debug.LogWarning("[Cutscene] Nenhum arquivo TXT de abertura encontrado!");
                 return;
             }
 
@@ -45,16 +67,36 @@ namespace FifthSemester.Gameplay.Dialogue {
             }
 
             dialogueService.StartDialogue(correctDialogue, _director);
+
+            _isPlaying = true;
+        }
+
+        private void OnSkipCutsceneRequested(SkipCutsceneRequestedEvent evt) {
+            if (!_isPlaying) return;
+            SkipCutscene();
+        }
+
+        public void SkipCutscene() {
+            if (_director != null) {
+                _director.stopped -= OnCutsceneStopped;
+                _director.Stop();
+            }
+
+            IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
+            gameStateService?.ChangeState(GameState.Gameplay);
+
+            _isPlaying = false;
         }
 
         private void OnCutsceneStopped(PlayableDirector director) {
-            IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
-
             if (_director != null) {
                 _director.stopped -= OnCutsceneStopped;
             }
 
+            IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
             gameStateService?.ChangeState(GameState.Gameplay);
+
+            _isPlaying = false;
         }
     }
 }

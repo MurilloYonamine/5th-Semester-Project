@@ -48,7 +48,7 @@ namespace FifthSemester.Gameplay.Menu {
 
         public void OnPlay() {
             _gameState.ChangeState(GameState.Gameplay);
-            SceneManager.LoadScene("Gym");
+            SceneManager.LoadScene("Game");
         }
 
         public void OnNewGame() {
@@ -75,7 +75,7 @@ namespace FifthSemester.Gameplay.Menu {
             saveService.SaveToSlot(chosen, data);
 
             _gameState.ChangeState(GameState.Gameplay);
-            SceneManager.LoadScene("Gym");
+            SceneManager.LoadScene("Game");
         }
 
         public void OnContinue() {

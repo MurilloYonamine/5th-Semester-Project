@@ -44,6 +44,8 @@ namespace FifthSemester.Gameplay.Missions {
             _eventBus?.Publish(new MissionCompletedEvent { MissionId = _definition.MissionId });
             _progress = string.Empty;
 
+            Debug.Log($"Mission '{MissionId}' completed!");
+
             if (_definition.PersistProgress && _saveService != null) {
                 SaveData saveData = _saveService.LoadFromSlot("default") ?? new SaveData();
 

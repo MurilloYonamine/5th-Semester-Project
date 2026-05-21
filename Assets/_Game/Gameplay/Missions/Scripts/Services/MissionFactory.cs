@@ -15,6 +15,7 @@ namespace FifthSemester.Gameplay.Missions {
                 MissionType.CollectAndDeliver => missionGO.AddComponent<CollectAndDeliverMission>(),
                 MissionType.TalkToNpc => missionGO.AddComponent<TalkToNpcMission>(),
                 MissionType.PlayCutscene => missionGO.AddComponent<CutsceneMission>(),
+                MissionType.EndGame => missionGO.AddComponent<EndGameMission>(),
                 _ => null
             };
 

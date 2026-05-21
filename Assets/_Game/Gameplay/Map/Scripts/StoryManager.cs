@@ -114,7 +114,6 @@ namespace FifthSemester.Gameplay.Map {
                 GameObject doorObj = _registry.Get(doorType);
 
                 if (doorObj == null) {
-                    Debug.LogWarning($"[StoryManager] Porta do tipo {doorType} não encontrada no MapService!");
                     continue;
                 }
 

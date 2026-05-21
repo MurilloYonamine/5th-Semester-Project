@@ -7,6 +7,7 @@ namespace FifthSemester.Core.Enums {
         OpeningCutscene,
         EnfermeiraA_Dialogo,
         PacienteB_Bebado,
+        M03_Lightseeker,
         Monstro_Jumpscare
     }
 }

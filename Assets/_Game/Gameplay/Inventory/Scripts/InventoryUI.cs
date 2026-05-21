@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.Events;
@@ -80,20 +81,18 @@ namespace FifthSemester.Gameplay.Inventory {
         }
 
         private void HandleItemAdded(InventoryItemAddedEvent item) {
-            if (_slots != null && item.Index >= 0 && item.Index < _slots.Length) {
-                var items = _inventoryService?.GetItems();
-                if (items != null && item.Index < items.Count) {
-                    _slots[item.Index].SetItem(items[item.Index]);
-                    ShowInventory();
-                }
-            }
+            RefreshInventorySlots();
+            ShowInventory();
         }
 
         private void HandleItemRemoved(InventoryItemRemovedEvent item) {
-            if (_slots != null && item.Index >= 0 && item.Index < _slots.Length) {
+            RefreshInventorySlots();
+
+            if (HasItems()) {
                 ShowInventory();
-                HighlightSlot(item.Index);
-                _slots[item.Index].ClearItem();
+            }
+            else {
+                HideInventory();
             }
         }
 
@@ -105,6 +104,43 @@ namespace FifthSemester.Gameplay.Inventory {
         private void HandlePreviousInput(PreviousInputEvent evt) {
             if (_inventoryCanvasGroup != null && _inventoryCanvasGroup.alpha > 0)
                 NavigatePrevious();
+        }
+
+        private void RefreshInventorySlots() {
+            if (_slots == null || _inventoryService == null) return;
+
+            IReadOnlyList<Item> items = _inventoryService.GetItems();
+            int itemCount = items != null ? items.Count : 0;
+            int visibleCount = Mathf.Min(itemCount, _slots.Length);
+
+            ResetAllSlots();
+
+            for (int i = 0; i < _slots.Length; i++) {
+                if (_slots[i] != null) {
+                    _slots[i].ClearItem();
+                }
+            }
+
+            for (int i = 0; i < visibleCount; i++) {
+                if (_slots[i] != null) {
+                    _slots[i].SetItem(items[i]);
+                }
+            }
+
+            if (visibleCount <= 0) {
+                _currentIndex = 0;
+                return;
+            }
+
+            if (_currentIndex < 0 || _currentIndex >= visibleCount) {
+                _currentIndex = Mathf.Clamp(_currentIndex, 0, visibleCount - 1);
+            }
+
+            HighlightSlot(_currentIndex);
+        }
+
+        private bool HasItems() {
+            return _inventoryService != null && _inventoryService.GetItems() != null && _inventoryService.GetItems().Count > 0;
         }
 
         public void NavigateNext() {

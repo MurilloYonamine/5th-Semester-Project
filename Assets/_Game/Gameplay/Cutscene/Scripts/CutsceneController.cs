@@ -2,15 +2,13 @@
 // data: 18/05/2026
 
 using FifthSemester.Core.Enums;
-using FifthSemester.Core.Events; 
 using FifthSemester.Core.Services;
 using FifthSemester.Core.States;
 using FifthSemester.Features.Localization;
 using Sirenix.OdinInspector;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.Playables;
-using UnityEngine.InputSystem;
-using Unity.Cinemachine;
 
 namespace FifthSemester.Gameplay.Dialogue {
     public class CutsceneController : MonoBehaviour {
@@ -34,20 +32,7 @@ namespace FifthSemester.Gameplay.Dialogue {
 
         private readonly int _speedHash = Animator.StringToHash("Speed");
 
-        private IEventBus _eventBus;
-
-        private void OnEnable() {
-            _eventBus = ServiceLocator.Get<IEventBus>();
-            if (_eventBus != null) {
-                _eventBus.Subscribe<SkipCutsceneRequestedEvent>(OnSkipCutsceneRequested);
-            }
-        }
-
-        private void OnDisable() {
-            if (_eventBus != null) {
-                _eventBus.Unsubscribe<SkipCutsceneRequestedEvent>(OnSkipCutsceneRequested);
-            }
-        }
+        public bool IsPlaying => _isPlaying;
 
         public void SetPlayerCamera(CinemachineCamera playerCamera) {
             _playerCamera = playerCamera;
@@ -58,52 +43,48 @@ namespace FifthSemester.Gameplay.Dialogue {
             IDialogueService<TextAsset> dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
             ISettingsService settingsService = ServiceLocator.Get<ISettingsService>();
 
-            if (dialogueService == null || gameStateService == null) return;
+            if (dialogueService == null || gameStateService == null)
+                return;
 
-            Language currentLanguage = settingsService != null ? settingsService.Language : Language.Portuguese;
+            Language currentLanguage =
+                settingsService != null
+                ? settingsService.Language
+                : Language.Portuguese;
+
             TextAsset correctDialogue = _dialogueFiles.GetAsset(currentLanguage);
 
-            if (correctDialogue == null) {
+            if (correctDialogue == null)
                 return;
-            }
 
             gameStateService.ChangeState(GameState.Cutscene);
 
             if (_director != null) {
                 _director.stopped -= OnCutsceneStopped;
                 _director.stopped += OnCutsceneStopped;
+
                 _director.time = 0d;
                 _director.Evaluate();
                 _director.Play();
             }
 
-            dialogueService.StartDialogue(correctDialogue, _director);
+            dialogueService.StartDialogue(correctDialogue, _director, null, DialogueMode.Cutscene);
 
             _isPlaying = true;
         }
 
-        private void OnSkipCutsceneRequested(SkipCutsceneRequestedEvent evt) {
-            if (!_isPlaying) return;
-            SkipCutscene();
-        }
-
         public void SkipCutscene() {
+            if (!_isPlaying)
+                return;
+
             if (_director != null) {
                 _director.stopped -= OnCutsceneStopped;
+
                 _director.time = _director.duration;
                 _director.Evaluate();
                 _director.Stop();
             }
 
-            EndCutsceneDialogue();
-            RestorePlayerCamera();
-
-            _eventBus?.Publish(new DialogueEndedEvent { NpcId = "Skip" });
-
-            IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
-            gameStateService?.ChangeState(GameState.Gameplay);
-
-            _isPlaying = false;
+            FinishCutscene();
         }
 
         private void OnCutsceneStopped(PlayableDirector director) {
@@ -111,23 +92,33 @@ namespace FifthSemester.Gameplay.Dialogue {
                 _director.stopped -= OnCutsceneStopped;
             }
 
+            FinishCutscene();
+        }
+
+        private void FinishCutscene() {
+
             EndCutsceneDialogue();
+
             RestorePlayerCamera();
 
-            IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
+            IGameStateService gameStateService =
+                ServiceLocator.Get<IGameStateService>();
+
             gameStateService?.ChangeState(GameState.Gameplay);
 
             _isPlaying = false;
         }
 
         private void EndCutsceneDialogue() {
-            IDialogueService<TextAsset> dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
-            if (dialogueService != null && dialogueService.IsDialogueActive) {
-                dialogueService.EndDialogue();
-            }
+
+            IDialogueService<TextAsset> dialogueService =
+                ServiceLocator.Get<IDialogueService<TextAsset>>();
+
+            dialogueService?.EndDialogue();
         }
 
         private void RestorePlayerCamera() {
+
             if (_playerCamera != null) {
                 _playerCamera.Priority = 1;
             }

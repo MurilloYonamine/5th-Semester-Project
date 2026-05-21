@@ -1,6 +1,7 @@
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Gameplay.Dialogue;
+using FifthSemester.Gameplay.Interactables;
 using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Gameplay.Save;
 using FifthSemester.Gameplay.Shared;
@@ -62,12 +63,44 @@ namespace FifthSemester.Player {
         private IInteractable GetInteractableFromRay() {
             Ray ray = _playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
-            if (Physics.Raycast(ray, out RaycastHit hit, _interactionRange, _interactionLayer)) {
-                Debug.Log($"{TAG} Raycast atingiu: {hit.collider.name}");
-                return hit.collider.GetComponent<IInteractable>();
+            if (!Physics.Raycast(ray, out RaycastHit hit, _interactionRange, _interactionLayer)) {
+                return null;
             }
 
-            return null;
+            MonoBehaviour[] components = hit.collider.GetComponents<MonoBehaviour>();
+            IInteractable selectedInteractable = null;
+
+            for (int i = 0; i < components.Length; i++) {
+                MonoBehaviour component = components[i];
+                if (component is not IInteractable interactable || !interactable.IsInteractable) continue;
+
+                if (component is Item) {
+                    return interactable;
+                }
+
+                if (component is DeliveryPoint) {
+                    selectedInteractable = interactable;
+                    continue;
+                }
+
+                if (component is SavePoint) {
+                    if (selectedInteractable == null) {
+                        selectedInteractable = interactable;
+                    }
+                    continue;
+                }
+
+                if (component is DialogueTrigger && selectedInteractable == null) {
+                    selectedInteractable = interactable;
+                    continue;
+                }
+
+                if (selectedInteractable == null) {
+                    selectedInteractable = interactable;
+                }
+            }
+
+            return selectedInteractable;
         }
 
         private void Interact(InteractInputEvent evt) {
@@ -77,6 +110,8 @@ namespace FifthSemester.Player {
 
             if (_currentInteractable is Item item) {
                 HandleItemPickup(item);
+            } else if (_currentInteractable is DeliveryPoint deliveryPoint) {
+                deliveryPoint.Interact();
             } else if (_currentInteractable is SavePoint savePoint) {
                 savePoint.SetPlayerController(_playerController);
                 savePoint.Interact();
@@ -95,7 +130,7 @@ namespace FifthSemester.Player {
 
             if (wasAdded) {
                 PlayPickupFeedback();
-                _eventBus?.Publish(new ItemPickedUpEvent(item.name, item.gameObject));
+                _eventBus?.Publish(new ItemPickedUpEvent(item.Id, item.gameObject));
                 item.Interact();
             }
         }

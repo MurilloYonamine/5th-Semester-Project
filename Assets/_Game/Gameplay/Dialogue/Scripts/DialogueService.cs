@@ -1,11 +1,12 @@
 // autor: Murillo Gomes Yonamine
 // data: 30/03/2026
 
-using System;
-using System.Collections.Generic;
+using FifthSemester.Core.Enums;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.States;
+using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -13,6 +14,7 @@ using UnityEngine.Playables;
 namespace FifthSemester.Gameplay.Dialogue {
     public class DialogueService : MonoBehaviour, IDialogueService<TextAsset> {
         public GameState CurrentState { get; set; } = GameState.Gameplay;
+        public DialogueMode CurrentMode { get; private set; }
 
         public bool IsDialogueActive { get; private set; }
 
@@ -71,22 +73,34 @@ namespace FifthSemester.Gameplay.Dialogue {
         }
 
         private void OnDialogueAdvanceRequested(DialogueAdvanceRequestedEvent evt) {
-            if (!IsDialogueActive) return;
+            if (!IsDialogueActive)
+                return;
 
-            //if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
-            //    Clear();
-            //    ToggleDialogue(false);
-            //    CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
-            //}
-            //else {
-            //}
-            DisplayNextLine();
+            if (CurrentMode == DialogueMode.Cutscene) {
+                if (_linesQueue != null && _linesQueue.Count > 0) {
+                    DisplayNextLine();
+                }
+                else {
+                    EndDialogue();
+                }
+                return;
+            }
+
+            if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
+                Clear();
+                ToggleDialogue(false);
+                CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
+            }
+            else {
+                DisplayNextLine();
+            }
         }
 
-        public void StartDialogue(TextAsset dialogueFile, PlayableDirector director = null, string sourceId = null) {
+        public void StartDialogue(TextAsset dialogueFile, PlayableDirector director = null, string sourceId = null, DialogueMode mode = DialogueMode.Normal) {
             _linesQueue = DialogueParser.Parse(dialogueFile);
             CurrentDirector = director;
             _currentDialogueSourceId = sourceId;
+            CurrentMode = mode;
 
             IsDialogueActive = true;
             _eventBus?.Publish(new DialogueStartedEvent());
@@ -136,7 +150,7 @@ namespace FifthSemester.Gameplay.Dialogue {
             Clear();
             ToggleDialogue(false);
 
-            if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
+            if (CurrentDirector != null && CurrentDirector.isActiveAndEnabled && CurrentDirector.playableGraph.IsValid()) {
                 CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
             }
 

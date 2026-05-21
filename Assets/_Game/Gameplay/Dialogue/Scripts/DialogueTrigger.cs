@@ -47,6 +47,8 @@ namespace FifthSemester.Gameplay.Dialogue {
                 return;
             }
 
+            _outline.enabled = false;
+
             string dialogueId = string.IsNullOrWhiteSpace(Id) ? gameObject.name : Id;
             _dialogueService.StartDialogue(correctDialogue, _director, dialogueId);
         }
@@ -56,7 +58,8 @@ namespace FifthSemester.Gameplay.Dialogue {
         }
 
         public void Highlight(bool value) {
-            _outline.enabled = value;
+            bool isDialogueActive = _dialogueService != null && _dialogueService.IsDialogueActive;
+            _outline.enabled = !isDialogueActive && value;
         }
     }
 }

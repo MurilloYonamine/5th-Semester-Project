@@ -59,6 +59,11 @@ namespace FifthSemester.Gameplay.Missions {
         [Tooltip("Events to apply when skipping to this mission")]
         public string[] DebugSetupEvents;
 
+        [Header("End Game Setup")]
+        [ShowIf("Type", MissionType.EndGame)] 
+        [Tooltip("Prefab ou objeto da UI/Video que deve ser instanciado.")]
+        public GameObject EndGamePrefab;
+
         [Header("Efeitos no Mapa")]
         public List<MapAction> MapActions;
 

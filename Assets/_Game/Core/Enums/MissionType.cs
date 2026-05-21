@@ -3,6 +3,7 @@ namespace FifthSemester.Core.Enums {
         CollectItems = 0,
         CollectAndDeliver,
         TalkToNpc,
-        PlayCutscene
+        PlayCutscene,
+        EndGame
     }
 }

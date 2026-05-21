@@ -18,6 +18,7 @@ namespace FifthSemester.Gameplay.Missions {
 
             if (_eventBus != null && !_subscribed) {
                 _eventBus.Subscribe<DialogueEndedEvent>(OnDialogueEnded);
+                _eventBus.Subscribe<CutsceneEndedEvent>(OnCutsceneEnded);
                 _subscribed = true;
             }
 
@@ -33,10 +34,16 @@ namespace FifthSemester.Gameplay.Missions {
             PublishProgress();
             Complete();
         }
-
+        private void OnCutsceneEnded(CutsceneEndedEvent evt) {
+            if (evt.CutsceneID == _definition.TargetCutscene) {
+                PublishProgress();
+                Complete();
+            }
+        }
         public override void Cleanup() {
             if (_eventBus != null && _subscribed) {
                 _eventBus.Unsubscribe<DialogueEndedEvent>(OnDialogueEnded);
+                _eventBus.Unsubscribe<CutsceneEndedEvent>(OnCutsceneEnded);
                 _subscribed = false;
             }
             base.Cleanup();
@@ -45,6 +52,7 @@ namespace FifthSemester.Gameplay.Missions {
         private void OnDestroy() {
             if (_eventBus != null && _subscribed) {
                 _eventBus.Unsubscribe<DialogueEndedEvent>(OnDialogueEnded);
+                _eventBus.Unsubscribe<CutsceneEndedEvent>(OnCutsceneEnded);
                 _subscribed = false;
             }
         }

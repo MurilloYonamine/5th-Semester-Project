@@ -1,6 +1,7 @@
 // Autor: Generated
 // Data: 05/05/2026
 
+using FifthSemester.Core.Enums;
 using UnityEngine;
 
 namespace FifthSemester.Core.Events {
@@ -38,6 +39,9 @@ namespace FifthSemester.Core.Events {
     }
     public struct MissionCompletedEvent {
         public string MissionId;
+    }
+    public struct CutsceneEndedEvent {
+        public CutsceneType CutsceneID;
     }
     public struct PuzzlePartPlacedEvent {
         public string PuzzleId;

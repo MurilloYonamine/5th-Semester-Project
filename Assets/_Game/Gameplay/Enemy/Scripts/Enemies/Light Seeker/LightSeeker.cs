@@ -64,6 +64,10 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void SetupBlackboard() {
+            if(_target == null ) {
+                _target = GameObject.FindGameObjectWithTag("Player")?.transform;
+            }
+
             Blackboard = new Blackboard();
             Blackboard.SetData(PLAYER_TARGET_KEY, _target);
             Blackboard.SetData(NAV_AGENT_KEY, _agent);

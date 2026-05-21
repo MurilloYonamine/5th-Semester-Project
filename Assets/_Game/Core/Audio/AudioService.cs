@@ -274,7 +274,7 @@ namespace FifthSemester.Core.Audio {
         /// <param name="volume">Volume value (0 to 1).</param>
         /// <param name="muted">Whether to mute the audio.</param>
         public void SetMasterVolume(float volume, bool muted = false) {
-            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : volume;
+            float dbVolume = (volume <= 0) ? -80f : Mathf.Log10(volume / 100f) * 20f;
             MasterMixer.audioMixer.SetFloat(MASTER_VOLUME_PARAMETER_NAME, dbVolume);
         }
 
@@ -284,7 +284,7 @@ namespace FifthSemester.Core.Audio {
         /// <param name="volume">Volume value (0 to 1).</param>
         /// <param name="muted">Whether to mute the audio.</param>
         public void SetMusicVolume(float volume, bool muted = false) {
-            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : volume;
+            float dbVolume = (volume <= 0) ? -80f : Mathf.Log10(volume / 100f) * 20f;
             MusicMixer.audioMixer.SetFloat(MUSIC_VOLUME_PARAMETER_NAME, dbVolume);
         }
         /// <summary>
@@ -293,7 +293,7 @@ namespace FifthSemester.Core.Audio {
         /// <param name="volume">Volume value (0 to 1).</param>
         /// <param name="muted">Whether to mute the audio.</param>
         public void SetSFXVolume(float volume, bool muted = false) {
-            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : volume;
+            float dbVolume = (volume <= 0) ? -80f : Mathf.Log10(volume / 100f) * 20f;
             SFXMixer.audioMixer.SetFloat(SFX_VOLUME_PARAMETER_NAME, dbVolume);
         }
         /// <summary>
@@ -302,7 +302,7 @@ namespace FifthSemester.Core.Audio {
         /// <param name="volume">Volume value (0 to 1).</param>
         /// <param name="muted">Whether to mute the audio.</param>
         public void SetAmbienceVolume(float volume, bool muted = false) {
-            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : volume;
+            float dbVolume = (volume <= 0) ? -80f : Mathf.Log10(volume / 100f) * 20f;
             AmbienceMixer.audioMixer.SetFloat(AMBIENCE_VOLUME_PARAMETER_NAME, dbVolume);
         }
 

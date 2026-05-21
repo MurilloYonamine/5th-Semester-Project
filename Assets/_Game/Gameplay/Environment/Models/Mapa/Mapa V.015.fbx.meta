@@ -1,0 +1,542 @@
+fileFormatVersion: 2
+guid: b5665448958e2424195c7727024592c9
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Al
+    second: {fileID: 2100000, guid: 8a58fb2eb4f4aae4f963ea3777fa3afe, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Aluminio
+    second: {fileID: 2100000, guid: 0136526d0b668bc42a2859f972e6838c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Aluminio1
+    second: {fileID: 2100000, guid: 6739c7049ba61474e9aa2e734fe08b4f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Comodos Centrais
+    second: {fileID: 2100000, guid: 8183c2513c9a9fd4bb91313b296217d8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Concreto
+    second: {fileID: 2100000, guid: 4c3f9b733b6aea94d9baae2a537bc79b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Gesso
+    second: {fileID: 2100000, guid: 4648e75aa7f7d7e4dbd425e90addd3d3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Grama
+    second: {fileID: 2100000, guid: 064eb63ec2f0b4b47be6be59bc959c16, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Madeira
+    second: {fileID: 2100000, guid: 2a6d5e0c90e177c4c967afb4ebcbced1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Parede Direita
+    second: {fileID: 2100000, guid: ee295f5cce704ec439ec335dbc4757e3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Parede Fundo
+    second: {fileID: 2100000, guid: 6404e452c7f52ed44b9684885818fedb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Parede Triagem Dir
+    second: {fileID: 2100000, guid: 143ff5860b7ebd246b94e0775b21b66b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Parede Triagem Esq
+    second: {fileID: 2100000, guid: 5f6596cdad0ef9c4399616b05bd1e5b3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Parede Zelador
+    second: {fileID: 2100000, guid: 6d0bda03f2285cd40b29f15793418702, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Parede_Esquerda
+    second: {fileID: 2100000, guid: 4bf5fd77b248e9542a9a4bf278525ea0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Parede_banheiros  F
+    second: {fileID: 2100000, guid: 103a29bcc13ffe24e97722d81aeb5322, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Parede_banheiros M
+    second: {fileID: 2100000, guid: 12dbeba9949f99447810963bafe611c8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Parede_diretoria
+    second: {fileID: 2100000, guid: a6724f54ec752de44ad53623ef631ab8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "Parede_recep\xE7ao"
+    second: {fileID: 2100000, guid: 548c14462e0ea284fa0672f373323b23, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Piso Banheiro
+    second: {fileID: 2100000, guid: ecb38b091746d5048afb10413d899112, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Porta_entrada
+    second: {fileID: 2100000, guid: 7408ce3159d13a64eb94c07a3d2f2be5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Porta_entrada.006
+    second: {fileID: 2100000, guid: 55a6366fd2a560649b80d5ca5d478e73, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Porta_entrada.021
+    second: {fileID: 2100000, guid: 95a0ea5c402a1bb48ac5a77f6919fd83, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Porta_interna
+    second: {fileID: 2100000, guid: 1e05085dfacda904cadc617a0d980247, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Suporte_porta_interna
+    second: {fileID: 2100000, guid: aff57f262f18fb342bec54cc5d85901c, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Vidro_porta_entrada
+    second: {fileID: 2100000, guid: be9243becae12244facb34652edc490a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: fonte
+    second: {fileID: 2100000, guid: 9f4ea35c78513e7478826d1864d842f9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "ma\xE7aneta_porta_interna"
+    second: {fileID: 2100000, guid: 4dd5650c51a9bbf4bbe26fb25be2e225, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "ma\xE7aneta_porta_interna.022"
+    second: {fileID: 2100000, guid: 83a697e1752e2bb42b63707d7371bfff, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "ma\xE7aneta_porta_interna.023"
+    second: {fileID: 2100000, guid: 34015d29f32382843883ca04750406bc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "ma\xE7aneta_porta_interna.024"
+    second: {fileID: 2100000, guid: 694b4aa9a8f9ecb418c3acbabbbfa5f1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "parede recep\xE7\xE3o"
+    second: {fileID: 2100000, guid: d2859296612cf6f43bbdc1d130841c29, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "parede_medica\xE7\xE3o"
+    second: {fileID: 2100000, guid: 1824a6baae1850344ac3237e73a28fc8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.001
+    second: {fileID: 2100000, guid: 7b42777e3b2f42d40904b95061ed4d90, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.002
+    second: {fileID: 2100000, guid: d611f0c3508306c498aaa38f5730be82, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.003
+    second: {fileID: 2100000, guid: e687cede3bc4ede4286128f5036b6ca5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.004
+    second: {fileID: 2100000, guid: b6dea1c814fa46f4ca9d842c5d397fee, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.005
+    second: {fileID: 2100000, guid: a145a47e90455644db17df33a1147928, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.006
+    second: {fileID: 2100000, guid: 47434b057e66f3a48910d6eca560ea35, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.007
+    second: {fileID: 2100000, guid: c4518817e6ab8c44baf8375a7c3294a1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.008
+    second: {fileID: 2100000, guid: d3b9b8747300a964daca5649a58e9ef1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.009
+    second: {fileID: 2100000, guid: c730bdf8741522c419ed5d674264ba6e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.010
+    second: {fileID: 2100000, guid: ccb42d1f596b09548a9680522341f889, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.011
+    second: {fileID: 2100000, guid: 9c30333a2a7f88347b629e62b997f01a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.012
+    second: {fileID: 2100000, guid: 0940e99b160852348989b888b6492531, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.013
+    second: {fileID: 2100000, guid: 5adf0dc66b482bb42b66aa6cea2364a3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.014
+    second: {fileID: 2100000, guid: a340d03a227632143a14ab518fb862b0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.015
+    second: {fileID: 2100000, guid: 766b6def4332c7f4ab693bd833e81f56, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.016
+    second: {fileID: 2100000, guid: 7e147c8756777114f98612a467d0e788, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.017
+    second: {fileID: 2100000, guid: fc05c9a3fcb10bf4ba9a77f27b94905e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.018
+    second: {fileID: 2100000, guid: caaff309b0fcd684ba6f7e9cc296596e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.019
+    second: {fileID: 2100000, guid: b57638a02febb47448a380a4315e9cc0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.020
+    second: {fileID: 2100000, guid: 1be79713e1e52e3409793dd32b48f157, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.021
+    second: {fileID: 2100000, guid: 33808e4d8f4d222448aae3d8484acbd4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.022
+    second: {fileID: 2100000, guid: 7586bd109a768a1418d1cba313332a06, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.023
+    second: {fileID: 2100000, guid: 85206de6bd8a9084aa7940eb8958c4a5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.024
+    second: {fileID: 2100000, guid: 8b9dd167977513a4a926626d3bc68509, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.025
+    second: {fileID: 2100000, guid: 6c5bef01b8238f940980d3dd9f2b52fa, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.026
+    second: {fileID: 2100000, guid: e106a27f6073f394c8b37e7ffa2c0399, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.027
+    second: {fileID: 2100000, guid: 326eb6cf3ae61294a995df03ef3d9bce, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.028
+    second: {fileID: 2100000, guid: 986ea39f75a0fd74081caac2a29631d8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.029
+    second: {fileID: 2100000, guid: 3ffc52f54eaf1b7499f7524385443f88, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.030
+    second: {fileID: 2100000, guid: 4852d939d0264944abca8971bf33af1f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.031
+    second: {fileID: 2100000, guid: e351bfb9384be5342ad36734ca126997, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.032
+    second: {fileID: 2100000, guid: 8e7153245cd0bc645b62a8078f318d32, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.033
+    second: {fileID: 2100000, guid: 2373427f4482670409de14a53b918c6a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.034
+    second: {fileID: 2100000, guid: 04bde4b14e4889749a28a9b04aaf321d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.035
+    second: {fileID: 2100000, guid: 3cfd3a327ee25cb4ca18a0ddf5195db3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.036
+    second: {fileID: 2100000, guid: 8f7e6c663ab46d449bcf5cf8eef3f2d9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.037
+    second: {fileID: 2100000, guid: 559640437b20bbc4f867880dda0c6260, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.038
+    second: {fileID: 2100000, guid: cebd42834cc95fb4cb0f24564a316773, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.039
+    second: {fileID: 2100000, guid: f298643b889550444b5ca6c68319e6d5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.040
+    second: {fileID: 2100000, guid: 69471848028084243b009f96a5e9b545, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.041
+    second: {fileID: 2100000, guid: a121adeffc1796744b6ba47f3c07193a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.042
+    second: {fileID: 2100000, guid: 65dff368a25897c42a13f2aa9f9f4197, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.043
+    second: {fileID: 2100000, guid: 702182babe4892b4a941083e402d6d2d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.044
+    second: {fileID: 2100000, guid: 9bc8622ec12c8c546a2fdae5952e7b8d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.045
+    second: {fileID: 2100000, guid: 71157fb2021ccba4dbb3fb78f422dccb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.046
+    second: {fileID: 2100000, guid: b7edc55a708a7d8418ef17c4feababfe, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.047
+    second: {fileID: 2100000, guid: d997d689a0c8b8a43a8dcae88f5653cd, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.048
+    second: {fileID: 2100000, guid: 22c46ea8a2f76ee4e95f04849a8bfe24, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.049
+    second: {fileID: 2100000, guid: bd36fb8d40bbec44d9a8414fc2fbbd86, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.050
+    second: {fileID: 2100000, guid: d14bc2b5f1c92fb48aa18462d57ea10b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.051
+    second: {fileID: 2100000, guid: 7f2ce9757a4c0ab46acbfb49d2a6e296, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.052
+    second: {fileID: 2100000, guid: 8a46ddceebe50de47a8c75dc4f0ff397, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.053
+    second: {fileID: 2100000, guid: 7873b8e70cbba4f48b331a363dceb4da, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.054
+    second: {fileID: 2100000, guid: 0a0643bb884ce944db54882451ffe20b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro.055
+    second: {fileID: 2100000, guid: dca48ad9a897faf4ab81cb432f1406ea, type: 2}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 1
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 0
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

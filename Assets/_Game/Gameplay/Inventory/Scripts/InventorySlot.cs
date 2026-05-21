@@ -54,6 +54,10 @@ namespace FifthSemester.Gameplay.Inventory {
 
             _item = item;
 
+            if (_itemDisplay != null && _renderTexture != null) {
+                _itemDisplay.texture = _renderTexture;
+            }
+
             if (_item is MonoBehaviour mono) {
                 CreateItemPreview(mono.gameObject);
             }
@@ -146,6 +150,9 @@ namespace FifthSemester.Gameplay.Inventory {
             if (_currentItem != null) {
                 Destroy(_currentItem);
                 _currentItem = null;
+            }
+
+            if (_itemDisplay != null) {
                 _itemDisplay.texture = null;
             }
 
@@ -163,8 +170,11 @@ namespace FifthSemester.Gameplay.Inventory {
         private void OnDestroy() {
             ClearItem();
 
-            if (_renderTexture != null) {
+            if (_previewCamera != null) {
                 _previewCamera.targetTexture = null;
+            }
+
+            if (_renderTexture != null) {
                 _renderTexture.Release();
             }
         }

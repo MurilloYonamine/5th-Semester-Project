@@ -52,6 +52,7 @@ namespace FifthSemester.Gameplay.Inventory {
                 }
                 _eventBus?.Publish(new InventoryItemRemovedEvent(index, _items.Count));
 
+
                 return true;
             }
 

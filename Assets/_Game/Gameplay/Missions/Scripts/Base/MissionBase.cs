@@ -39,15 +39,34 @@ namespace FifthSemester.Gameplay.Missions {
 
         public virtual void Complete() {
             if (_isComplete) return;
-            _eventBus?.Publish(new MissionCompletedEvent { MissionId = _definition.MissionId });
             _isComplete = true;
-            SaveProgress();
+
+            _eventBus?.Publish(new MissionCompletedEvent { MissionId = _definition.MissionId });
+            _progress = string.Empty;
+
+            if (_definition.PersistProgress && _saveService != null) {
+                SaveData saveData = _saveService.LoadFromSlot("default") ?? new SaveData();
+
+                if (saveData.MissionProgress.ContainsKey(MissionId)) {
+                    saveData.MissionProgress.Remove(MissionId);
+                }
+
+                _saveService.SaveToSlot("default", saveData);
+            }
+
             PublishProgress();
             OnMissionComplete?.Invoke();
             Cleanup();
-            Debug.Log($"[{GetType().Name}] Mission completed: {MissionId}");
         }
+        protected virtual void ClearSavedProgress() {
+            if (_saveService == null || _definition == null || !_definition.PersistProgress) return;
 
+            SaveData saveData = _saveService.LoadFromSlot("default");
+            if (saveData != null && saveData.MissionProgress.ContainsKey(MissionId)) {
+                saveData.MissionProgress.Remove(MissionId);
+                _saveService.SaveToSlot("default", saveData);
+            }
+        }
         public virtual void Cleanup() {
             if (_isComplete) return;
 
@@ -94,9 +113,22 @@ namespace FifthSemester.Gameplay.Missions {
             if (string.IsNullOrWhiteSpace(_progress)) return 0;
 
             int slashIndex = _progress.IndexOf('/');
-            string currentValue = slashIndex >= 0 ? _progress.Substring(0, slashIndex) : _progress;
+            int colonIndex = _progress.IndexOf(':');
 
-            if (int.TryParse(currentValue, out int progressCount)) return progressCount;
+            string currentValue;
+
+            if (slashIndex >= 0) {
+                int startIndex = colonIndex >= 0 ? colonIndex + 1 : 0;
+                currentValue = _progress.Substring(startIndex, slashIndex - startIndex).Trim();
+            }
+            else {
+                currentValue = colonIndex >= 0 ? _progress.Substring(colonIndex + 1).Trim() : _progress.Trim();
+            }
+
+            if (int.TryParse(currentValue, out int progressCount)) {
+                return progressCount;
+            }
+
             return 0;
         }
     }

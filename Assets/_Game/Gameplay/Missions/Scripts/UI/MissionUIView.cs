@@ -13,6 +13,7 @@ namespace FifthSemester.Gameplay.Missions {
         [SerializeField] private TextMeshProUGUI _missionProgressionText;
 
         private IEventBus _eventBus;
+        private string _currentMissionId;
 
         private void Start() {
             _eventBus = ServiceLocator.Get<IEventBus>();
@@ -42,11 +43,16 @@ namespace FifthSemester.Gameplay.Missions {
         }
 
         private void OnMissionUpdated(MissionUpdatedEvent evt) {
+            _currentMissionId = evt.MissionId;
             _missionTitleText.text = evt.Title;
             _missionDescriptionText.text = evt.Description;
         }
 
         private void OnMissionProgress(MissionProgressEvent evt) {
+            if (!string.IsNullOrEmpty(_currentMissionId) && evt.MissionId != _currentMissionId) {
+                return;
+            }
+
             if (string.IsNullOrEmpty(evt.Progress)) {
                 _missionProgressionText.gameObject.SetActive(false);
             }

@@ -31,13 +31,11 @@ namespace FifthSemester.Gameplay.Inventory {
         }
 
         public void Interact() {
-            Debug.Log("Interagiu com o item!");
             _outline.enabled = false;
             _collider.enabled = false;
         }
 
         public void StopInteract() {
-            Debug.Log("Não pode interagir com o Item!");
         }
 
         public void Highlight(bool value) {

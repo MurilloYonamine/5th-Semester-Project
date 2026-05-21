@@ -95,7 +95,10 @@ namespace FifthSemester.Gameplay.Dialogue {
                 _director.Stop();
             }
 
+            EndCutsceneDialogue();
             RestorePlayerCamera();
+
+            _eventBus?.Publish(new DialogueEndedEvent { NpcId = "Skip" });
 
             IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
             gameStateService?.ChangeState(GameState.Gameplay);
@@ -108,12 +111,20 @@ namespace FifthSemester.Gameplay.Dialogue {
                 _director.stopped -= OnCutsceneStopped;
             }
 
+            EndCutsceneDialogue();
             RestorePlayerCamera();
 
             IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
             gameStateService?.ChangeState(GameState.Gameplay);
 
             _isPlaying = false;
+        }
+
+        private void EndCutsceneDialogue() {
+            IDialogueService<TextAsset> dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
+            if (dialogueService != null && dialogueService.IsDialogueActive) {
+                dialogueService.EndDialogue();
+            }
         }
 
         private void RestorePlayerCamera() {

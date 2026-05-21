@@ -10,6 +10,9 @@ namespace FifthSemester.Gameplay.Missions {
 
         public override void Initialize(MissionDefinition definition, IEventBus eventBus, ISaveService saveService) {
             base.Initialize(definition, eventBus, saveService);
+
+            int current = GetProgressCount();
+            _progress = $"{current}/{_definition.RequiredCount}";
         }
 
         public override void StartMission() {
@@ -22,7 +25,16 @@ namespace FifthSemester.Gameplay.Missions {
 
         private void OnItemAdded(InventoryItemAddedEvent evt) {
             if (_isComplete) return;
-            IncrementProgress();
+
+            int current = GetProgressCount() + 1;
+            int total = _definition.RequiredCount;
+            _progress = $"{current}/{total}";
+            SaveProgress();
+            PublishProgress();
+
+            if (current >= total) {
+                Complete();
+            }
         }
 
         public override void Cleanup() {

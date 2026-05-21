@@ -18,11 +18,11 @@ namespace FifthSemester.Gameplay.Missions {
 
         private void Awake() {
             ServiceLocator.Register<IMissionService>(this);
+            EnsureServices();
         }
 
         private void Start() {
-            _eventBus = ServiceLocator.Get<IEventBus>();
-            _saveService = ServiceLocator.Get<ISaveService>();
+            EnsureServices();
 
             if (_currentMission != null) return;
 
@@ -38,6 +38,8 @@ namespace FifthSemester.Gameplay.Missions {
             CleanupCurrentMission();
         }
         public void StartMission(MissionDefinition mission) {
+            EnsureServices();
+
             if (mission == null) {
                 Debug.LogError("[MissionService] Tentativa de iniciar uma missão nula.");
                 return;
@@ -58,7 +60,15 @@ namespace FifthSemester.Gameplay.Missions {
         }
 
         private void SetCurrentMission(int index) {
-            if (_missionDefinitions == null || index < 0 || index >= _missionDefinitions.Length) return;
+            EnsureServices();
+
+            if (_eventBus == null) {
+                return;
+            }
+
+            if (_missionDefinitions == null || index < 0 || index >= _missionDefinitions.Length) {
+                return;
+            }
 
             CleanupCurrentMission();
 
@@ -149,6 +159,16 @@ namespace FifthSemester.Gameplay.Missions {
             SaveData saveData = _saveService.LoadFromSlot("default") ?? new SaveData();
             saveData.CurrentMissionIndex = CurrentIndex;
             _saveService.SaveToSlot("default", saveData);
+        }
+
+        private void EnsureServices() {
+            if (_eventBus == null) {
+                _eventBus = ServiceLocator.Get<IEventBus>();
+            }
+
+            if (_saveService == null) {
+                _saveService = ServiceLocator.Get<ISaveService>();
+            }
         }
 
     }

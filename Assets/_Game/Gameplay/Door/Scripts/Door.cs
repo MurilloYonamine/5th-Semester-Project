@@ -30,6 +30,7 @@ namespace FifthSemester.Doors {
         public bool IsInteractable { get; private set; } = true;
 
         public string Id => gameObject.name;
+        private string _defaultText;
 
         private void Awake() {
             _outline = GetComponent<Outline>();
@@ -39,6 +40,8 @@ namespace FifthSemester.Doors {
             _closedRotation = _doorMesh.localRotation;
             _targetRotation = _closedRotation;
             _unlockedColor = new Color32(105, 255, 144, 255); // 69FF90
+
+            _defaultText = _textLocal.text;
         }
 
         private void Start() {
@@ -100,7 +103,7 @@ namespace FifthSemester.Doors {
 
             if (_textLocal != null) {
                 _textLocal.color = _unlockedColor;
-                _textLocal.text = "ABRIR";
+                _textLocal.text = _defaultText;
             }
         }
     }

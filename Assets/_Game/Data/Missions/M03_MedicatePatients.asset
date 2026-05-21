@@ -15,7 +15,9 @@ MonoBehaviour:
   MissionId: M03_MedicatePatients
   Title: Medicar Pacientes
   Description: "Entregue a medica\xE7\xE3o para os pacientes na ala dos quartos."
+  NextMission: {fileID: 0}
   Type: 1
+  TargetCutscene: 0
   NpcId: 
   TargetItemName: 
   RequiredCount: 1
@@ -29,3 +31,24 @@ MonoBehaviour:
   - Paciente_E
   PersistProgress: 1
   DebugSetupEvents: []
+  MapActions:
+  - Type: 3
+    TargetDoor: 17
+    DoorsToKeepUnlocked: 
+    TargetObjectId: 
+  - Type: 3
+    TargetDoor: 18
+    DoorsToKeepUnlocked: 
+    TargetObjectId: 
+  - Type: 3
+    TargetDoor: 19
+    DoorsToKeepUnlocked: 
+    TargetObjectId: 
+  - Type: 3
+    TargetDoor: 20
+    DoorsToKeepUnlocked: 
+    TargetObjectId: 
+  - Type: 3
+    TargetDoor: 21
+    DoorsToKeepUnlocked: 
+    TargetObjectId: 

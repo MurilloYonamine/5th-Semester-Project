@@ -92,7 +92,11 @@ namespace FifthSemester.Gameplay.Missions {
 
         protected int GetProgressCount() {
             if (string.IsNullOrWhiteSpace(_progress)) return 0;
-            if (int.TryParse(_progress, out int progressCount)) return progressCount;
+
+            int slashIndex = _progress.IndexOf('/');
+            string currentValue = slashIndex >= 0 ? _progress.Substring(0, slashIndex) : _progress;
+
+            if (int.TryParse(currentValue, out int progressCount)) return progressCount;
             return 0;
         }
     }

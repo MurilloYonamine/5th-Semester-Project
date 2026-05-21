@@ -131,6 +131,8 @@ namespace FifthSemester.Gameplay.Dialogue {
         }
 
         public void EndDialogue() {
+            string sourceId = _currentDialogueSourceId;
+
             Clear();
             ToggleDialogue(false);
 
@@ -138,7 +140,6 @@ namespace FifthSemester.Gameplay.Dialogue {
                 CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
             }
 
-            string sourceId = _currentDialogueSourceId;
             CurrentDirector = null;
             _linesQueue = null;
             _currentDialogueSourceId = null;

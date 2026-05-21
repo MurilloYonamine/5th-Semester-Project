@@ -53,7 +53,7 @@ namespace FifthSemester.Gameplay.Map {
             if (_storySequence == null || _storySequence.Sequence == null) return;
 
             if (_currentSequenceIndex < _storySequence.Sequence.Count) {
-                var nextMission = _storySequence.Sequence[_currentSequenceIndex];
+                MissionDefinition nextMission = _storySequence.Sequence[_currentSequenceIndex];
                 if (nextMission == null) return;
 
                 _missionService.StartMission(nextMission);
@@ -112,19 +112,26 @@ namespace FifthSemester.Gameplay.Map {
                 if (doorType == DoorType.None) continue;
 
                 GameObject doorObj = _registry.Get(doorType);
-                if (doorObj == null) continue;
-                doorObj.GetComponent<Door>()?.Lock();
-            }
 
-            if (doorsToKeepUnlocked == null || doorsToKeepUnlocked.Length == 0) return;
+                if (doorObj == null) {
+                    Debug.LogWarning($"[StoryManager] Porta do tipo {doorType} não encontrada no MapService!");
+                    continue;
+                }
 
-            for (int i = 0; i < doorsToKeepUnlocked.Length; i++) {
-                if (doorsToKeepUnlocked[i] == DoorType.None) continue;
+                bool shouldUnlock = false;
+                foreach (var doorToKeep in doorsToKeepUnlocked) {
+                    if (doorType == doorToKeep) {
+                        shouldUnlock = true;
+                        break;
+                    }
+                }
 
-                GameObject doorObj = _registry.Get(doorsToKeepUnlocked[i]);
-                if (doorObj == null) continue;
-
-                doorObj.GetComponent<Door>()?.Unlock();
+                if (shouldUnlock) {
+                    doorObj.GetComponent<Door>()?.Unlock();
+                }
+                else {
+                    doorObj.GetComponent<Door>()?.Lock();
+                }
             }
         }
     }

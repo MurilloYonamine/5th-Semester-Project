@@ -16,15 +16,14 @@ namespace FifthSemester.Gameplay.Missions {
         public override void StartMission() {
             base.StartMission();
 
-            var cutsceneService = ServiceLocator.Get<ICutsceneService>();
-
-            if (cutsceneService != null) {
-                cutsceneService.PlayCutscene(_definition.TargetCutscene);
-            }
-
             if (_eventBus != null && !_subscribed) {
                 _eventBus.Subscribe<DialogueEndedEvent>(OnDialogueEnded);
                 _subscribed = true;
+            }
+
+            ICutsceneService cutsceneService = ServiceLocator.Get<ICutsceneService>();
+            if (cutsceneService != null) {
+                cutsceneService.PlayCutscene(_definition.TargetCutscene);
             }
         }
 

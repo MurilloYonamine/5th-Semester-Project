@@ -63,7 +63,7 @@ namespace FifthSemester.Core.Audio {
         /// <param name="pitch">Audio pitch.</param>
         /// <param name="loop">Whether the audio should loop.</param>
         /// <returns>AudioSource created for the SFX.</returns>
-        public AudioSource PlaySFX(string filePath, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false, int spatialBlend = 1, float maxDistance = 500f) {
+        public AudioSource PlaySFX(string filePath, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false, float spatialBlend = 0.5f, float maxDistance = 500f) {
             AudioClip clip = Resources.Load<AudioClip>(filePath);
 
             if (clip == null) {
@@ -83,7 +83,7 @@ namespace FifthSemester.Core.Audio {
         /// <param name="loop">Whether the audio should loop.</param>
         /// <param name="filePath">File name or path (optional).</param>
         /// <returns>AudioSource created for the SFX.</returns>
-        public AudioSource PlaySFX(AudioClip clip, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false, int spatialBlend = 1, string filePath = "", float maxDistance = 500f) {
+        public AudioSource PlaySFX(AudioClip clip, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false, float spatialBlend = 0.5f, string filePath = "", float maxDistance = 500f) {
             string fileName = clip != null ? clip.name : "NULL_CLIP";
 
             if (filePath != string.Empty) {
@@ -268,17 +268,13 @@ namespace FifthSemester.Core.Audio {
         }
         #endregion
         #region Set Volumes
-        private float LinearToDecibel(float linear) {
-            float clampedLinear = Mathf.Clamp(linear, 0.0001f, 1f);
-            return Mathf.Log10(clampedLinear) * 20f;
-        }
         /// <summary>
         /// Sets the master volume of the mixer.
         /// </summary>
         /// <param name="volume">Volume value (0 to 1).</param>
         /// <param name="muted">Whether to mute the audio.</param>
         public void SetMasterVolume(float volume, bool muted = false) {
-            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : LinearToDecibel(volume);
+            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : volume;
             MasterMixer.audioMixer.SetFloat(MASTER_VOLUME_PARAMETER_NAME, dbVolume);
         }
 
@@ -288,7 +284,7 @@ namespace FifthSemester.Core.Audio {
         /// <param name="volume">Volume value (0 to 1).</param>
         /// <param name="muted">Whether to mute the audio.</param>
         public void SetMusicVolume(float volume, bool muted = false) {
-            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : LinearToDecibel(volume);
+            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : volume;
             MusicMixer.audioMixer.SetFloat(MUSIC_VOLUME_PARAMETER_NAME, dbVolume);
         }
         /// <summary>
@@ -297,7 +293,7 @@ namespace FifthSemester.Core.Audio {
         /// <param name="volume">Volume value (0 to 1).</param>
         /// <param name="muted">Whether to mute the audio.</param>
         public void SetSFXVolume(float volume, bool muted = false) {
-            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : LinearToDecibel(volume);
+            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : volume;
             SFXMixer.audioMixer.SetFloat(SFX_VOLUME_PARAMETER_NAME, dbVolume);
         }
         /// <summary>
@@ -306,7 +302,7 @@ namespace FifthSemester.Core.Audio {
         /// <param name="volume">Volume value (0 to 1).</param>
         /// <param name="muted">Whether to mute the audio.</param>
         public void SetAmbienceVolume(float volume, bool muted = false) {
-            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : LinearToDecibel(volume);
+            float dbVolume = (muted || volume <= 0f) ? MUTED_VOLUME_LEVEL : volume;
             AmbienceMixer.audioMixer.SetFloat(AMBIENCE_VOLUME_PARAMETER_NAME, dbVolume);
         }
 

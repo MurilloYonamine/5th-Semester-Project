@@ -16,8 +16,9 @@ MonoBehaviour:
   Title: "Pegar Rem\xE9dios"
   Description: "V\xE1 at\xE9 a sala de rem\xE9dios e pegue as 5 doses di\xE1rias
     que est\xE3o em cima da mesa."
-  NextMission: {fileID: 0}
+  NextMission: {fileID: 11400000, guid: a3510c6362266be45b20da76094f87dc, type: 2}
   Type: 0
+  TargetCutscene: 0
   NpcId: 
   TargetItemName: Remedio
   RequiredCount: 5
@@ -27,6 +28,7 @@ MonoBehaviour:
   PersistProgress: 1
   DebugSetupEvents: []
   MapActions:
-  - Type: 0
+  - Type: 4
     TargetDoor: 0
+    DoorsToKeepUnlocked: 08000000
     TargetObjectId: 

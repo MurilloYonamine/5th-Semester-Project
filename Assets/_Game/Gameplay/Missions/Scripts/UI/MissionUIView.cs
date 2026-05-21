@@ -47,7 +47,13 @@ namespace FifthSemester.Gameplay.Missions {
         }
 
         private void OnMissionProgress(MissionProgressEvent evt) {
-            _missionProgressionText.text = evt.Progress;
+            if (string.IsNullOrEmpty(evt.Progress)) {
+                _missionProgressionText.gameObject.SetActive(false);
+            }
+            else {
+                _missionProgressionText.gameObject.SetActive(true);
+                _missionProgressionText.text = evt.Progress;
+            }
         }
 
         private void OnGameStateChanged(GameStateChangedEvent evt) {

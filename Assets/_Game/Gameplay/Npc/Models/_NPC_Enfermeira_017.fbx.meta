@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: ccd073fad52c954439c9393235f5795b
+guid: 1a5f509fbeace9f4884417a6a4380a68
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -42,39 +42,11 @@ ModelImporter:
     removeConstantScaleCurves: 0
     motionNodeName: 
     animationImportErrors: 
-    animationImportWarnings: "\nClip 'Death2' has import animation warnings that
-      might lower retargeting quality:\nNote: Activate translation DOF on avatar
-      to improve retargeting quality.\n\t'neck.2' is inbetween humanoid transforms
-      and has rotation animation that will be discarded.\n\nClip 'Jumpscare' has
-      import animation warnings that might lower retargeting quality:\nNote: Activate
-      translation DOF on avatar to improve retargeting quality.\n\t'neck.2' is inbetween
-      humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'Speak' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'neck.2'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'hand.1.R'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'Walk2' has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'neck.2'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'NPC_Enfermeira_Armadura|Death2' has import animation warnings that might lower
-      retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting
-      quality.\n\t'neck.2' is inbetween humanoid transforms and has rotation animation
-      that will be discarded.\n\nClip 'NPC_Enfermeira_Armadura|Jumpscare' has import
-      animation warnings that might lower retargeting quality:\nNote: Activate translation
-      DOF on avatar to improve retargeting quality.\n\t'neck.2' is inbetween humanoid
-      transforms and has rotation animation that will be discarded.\n\nClip 'NPC_Enfermeira_Armadura|Speak'
-      has import animation warnings that might lower retargeting quality:\nNote:
-      Activate translation DOF on avatar to improve retargeting quality.\n\t'neck.2'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\t'hand.1.R'
-      is inbetween humanoid transforms and has rotation animation that will be discarded.\n\nClip
-      'NPC_Enfermeira_Armadura|Walk2' has import animation warnings that might lower
-      retargeting quality:\nNote: Activate translation DOF on avatar to improve retargeting
-      quality.\n\t'neck.2' is inbetween humanoid transforms and has rotation animation
-      that will be discarded.\n"
+    animationImportWarnings: 
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
-    importAnimatedCustomProperties: 0
-    importConstraints: 0
+    importAnimatedCustomProperties: 1
+    importConstraints: 1
     animationCompression: 3
     animationRotationError: 0.5
     animationPositionError: 0.5
@@ -310,7 +282,21 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.50727504
+        functionName: FootstepRight
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 572269dcd6e04774bb42a1c80630267e, type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 1
+        functionName: FootstepLeft
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 572269dcd6e04774bb42a1c80630267e, type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
@@ -367,7 +353,7 @@ ModelImporter:
     bakeAxisConversion: 0
     preserveHierarchy: 0
     skinWeightsMode: 0
-    maxBonesPerVertex: 4
+    maxBonesPerVertex: 72
     minBoneWeight: 0.001
     optimizeBones: 1
     meshOptimizationFlags: -1
@@ -393,372 +379,20 @@ ModelImporter:
   importAnimation: 1
   humanDescription:
     serializedVersion: 3
-    human:
-    - boneName: Origem
-      humanName: Hips
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: leg.2.L
-      humanName: LeftUpperLeg
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: leg.2.R
-      humanName: RightUpperLeg
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: leg.1.L.001
-      humanName: LeftLowerLeg
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: leg.1.R.001
-      humanName: RightLowerLeg
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: foot.2.L
-      humanName: LeftFoot
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: foot.2.R
-      humanName: RightFoot
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: spinal.1
-      humanName: Spine
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: spinal.2
-      humanName: Chest
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: neck.1
-      humanName: Neck
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: head
-      humanName: Head
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: arm.0.L
-      humanName: LeftShoulder
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: arm.0.R
-      humanName: RightShoulder
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: arm.1.L
-      humanName: LeftUpperArm
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: arm.1.R
-      humanName: RightUpperArm
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: arm.2.L
-      humanName: LeftLowerArm
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: arm.2.R
-      humanName: RightLowerArm
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: hand.2.L
-      humanName: LeftHand
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: hand.2.R
-      humanName: RightHand
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerP.1.L
-      humanName: Left Thumb Proximal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerP.2.L
-      humanName: Left Thumb Intermediate
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerP.2.L_end
-      humanName: Left Thumb Distal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerT.1.L.001
-      humanName: Left Index Proximal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerT.2.L.001
-      humanName: Left Index Intermediate
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerT.2.L.001_end
-      humanName: Left Index Distal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerM.1.L
-      humanName: Left Ring Proximal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerM.2.L
-      humanName: Left Ring Intermediate
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerM.2.L_end
-      humanName: Left Ring Distal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerI.1.L
-      humanName: Left Little Proximal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerI.2.L
-      humanName: Left Little Intermediate
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerI.2.L_end
-      humanName: Left Little Distal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerP.1.R
-      humanName: Right Thumb Proximal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerP.2.R
-      humanName: Right Thumb Intermediate
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerP.2.R_end
-      humanName: Right Thumb Distal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerT.1.R.001
-      humanName: Right Index Proximal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerT.2.R.001
-      humanName: Right Index Intermediate
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerT.2.R.001_end
-      humanName: Right Index Distal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerM.1.R
-      humanName: Right Ring Proximal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerM.2.R
-      humanName: Right Ring Intermediate
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerM.2.R_end
-      humanName: Right Ring Distal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerI.1.R
-      humanName: Right Little Proximal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerI.2.R
-      humanName: Right Little Intermediate
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: fingerI.2.R_end
-      humanName: Right Little Distal
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
-    - boneName: spinal.3
-      humanName: UpperChest
-      limit:
-        min: {x: 0, y: 0, z: 0}
-        max: {x: 0, y: 0, z: 0}
-        value: {x: 0, y: 0, z: 0}
-        length: 0
-        modified: 0
+    human: []
     skeleton:
-    - name: _NPC_Enfermeira_016(Clone)
+    - name: _NPC_Enfermeira_017(Clone)
       parentName: 
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: NPC_Enfermeira
-      parentName: _NPC_Enfermeira_016(Clone)
+      parentName: _NPC_Enfermeira_017(Clone)
       position: {x: 0.00000026240394, y: 5.079235e-10, z: 0.0019072199}
-      rotation: {x: -0.00000011098628, y: 0.70710665, z: 0.00000011098625, w: 0.7071069}
-      scale: {x: 0.8674983, y: 0.8674983, z: 0.8674983}
+      rotation: {x: 0.49999997, y: 0.5, z: -0.49999988, w: 0.5000001}
+      scale: {x: 0.008674982, y: 0.008674982, z: 0.008674982}
     - name: NPC_Enfermeira_Armadura
-      parentName: _NPC_Enfermeira_016(Clone)
+      parentName: _NPC_Enfermeira_017(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: -0.00000003329201, y: -0.7071067, z: -0.7071069, w: 0.000000033292}
       scale: {x: 33.93519, y: 33.93519, z: 33.93519}
@@ -802,11 +436,6 @@ ModelImporter:
       position: {x: -3.3156144e-13, y: 0.0009659293, z: 1.8701854e-10}
       rotation: {x: -0.05840343, y: 2.7732797e-13, z: 0.000000008818681, w: 0.9982931}
       scale: {x: 1, y: 0.99999994, z: 1}
-    - name: head_end_end
-      parentName: head_end
-      position: {x: -0, y: 0.007832893, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: arm.0.L
       parentName: spinal.3
       position: {x: -2.0271783e-13, y: 0.0050065294, z: 9.085102e-12}
@@ -835,7 +464,7 @@ ModelImporter:
     - name: fingerP.1.L
       parentName: hand.1.L
       position: {x: 1.3631674e-10, y: 0.0010634437, z: 0.00064650417}
-      rotation: {x: 0.32117897, y: 0.0028714158, z: 0.0009795151, w: 0.9470137}
+      rotation: {x: 0.013776843, y: 0.003031943, z: 0.000043959266, w: 0.9999005}
       scale: {x: 1, y: 0.99999994, z: 0.99999994}
     - name: fingerP.2.L
       parentName: fingerP.1.L
@@ -846,11 +475,6 @@ ModelImporter:
       parentName: fingerP.2.L
       position: {x: 0.0000000011066277, y: 0.0010149517, z: 3.958121e-11}
       rotation: {x: -0.000000047815842, y: -0.00000006794594, z: -0.0000023490884, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: fingerP.2.L_end_end
-      parentName: fingerP.2.L_end
-      position: {x: -0, y: 0.0010149508, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: fingerT.1.L.001
       parentName: hand.1.L
@@ -867,11 +491,6 @@ ModelImporter:
       position: {x: -6.915525e-10, y: 0.0010149523, z: 2.7939677e-11}
       rotation: {x: 0.0000000035531338, y: -0.00000013730843, z: -0.0000046981304, w: 1}
       scale: {x: 1, y: 1, z: 0.99999994}
-    - name: fingerT.2.L.001_end_end
-      parentName: fingerT.2.L.001_end
-      position: {x: -0, y: 0.0010149508, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: fingerM.1.L
       parentName: hand.1.L
       position: {x: 0.000000005464092, y: 0.0010670174, z: -0.00007447685}
@@ -887,11 +506,6 @@ ModelImporter:
       position: {x: -0.0000000026660198, y: 0.0010149529, z: -1.0710209e-10}
       rotation: {x: -0.00000008087778, y: -0.00000006857155, z: -0.0000023491039, w: 1}
       scale: {x: 1, y: 0.99999994, z: 1}
-    - name: fingerM.2.L_end_end
-      parentName: fingerM.2.L_end
-      position: {x: -0, y: 0.0010149532, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: fingerI.1.L
       parentName: hand.1.L
       position: {x: 0.000000008503872, y: 0.0010690572, z: -0.0004858356}
@@ -906,11 +520,6 @@ ModelImporter:
       parentName: fingerI.2.L
       position: {x: -0.0000000035396623, y: 0.0010149518, z: -7.683411e-11}
       rotation: {x: 4.658694e-10, y: -6.148504e-11, z: -9.237055e-14, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: fingerI.2.L_end_end
-      parentName: fingerI.2.L_end
-      position: {x: -0, y: 0.0010149508, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: hand.2.L.001
       parentName: hand.2.L
@@ -931,11 +540,6 @@ ModelImporter:
       parentName: fingerT.2.L
       position: {x: -0.000000001322478, y: 0.0005810536, z: 7.45058e-10}
       rotation: {x: 0.000000810988, y: -0.00000008987263, z: 0.0000020903701, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: fingerT.2.L_end_end
-      parentName: fingerT.2.L_end
-      position: {x: -0, y: 0.00058105384, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: arm.0.R
       parentName: spinal.3
@@ -965,7 +569,7 @@ ModelImporter:
     - name: fingerP.1.R
       parentName: hand.1.R
       position: {x: -0.0000000011558239, y: 0.0010634422, z: 0.0006465044}
-      rotation: {x: 0.32117915, y: -0.0028706111, z: -0.0009738363, w: 0.9470136}
+      rotation: {x: 0.013777029, y: -0.0030319043, z: -0.00003876665, w: 0.9999005}
       scale: {x: 0.99999994, y: 0.99999994, z: 0.99999994}
     - name: fingerP.2.R
       parentName: fingerP.1.R
@@ -977,11 +581,6 @@ ModelImporter:
       position: {x: 0.0000000013143472, y: 0.0010149548, z: 0}
       rotation: {x: -0.0000000028547888, y: 0.00000006747734, z: 0.0000023490638, w: 1}
       scale: {x: 1, y: 1, z: 0.99999994}
-    - name: fingerP.2.R_end_end
-      parentName: fingerP.2.R_end
-      position: {x: -0, y: 0.0010149508, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: fingerT.1.R.001
       parentName: hand.1.R
       position: {x: -0.0000000040754102, y: 0.0010652371, z: 0.00028454178}
@@ -997,11 +596,6 @@ ModelImporter:
       position: {x: 6.5019773e-10, y: 0.0010149545, z: 5.5879353e-11}
       rotation: {x: 0.00000001002419, y: 0.000000102987684, z: 0.0000035235885, w: 1}
       scale: {x: 1, y: 1, z: 0.99999994}
-    - name: fingerT.2.R.001_end_end
-      parentName: fingerT.2.R.001_end
-      position: {x: -0, y: 0.0010149508, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: fingerM.1.R
       parentName: hand.1.R
       position: {x: -0.0000000069712396, y: 0.0010670162, z: -0.0000744766}
@@ -1017,11 +611,6 @@ ModelImporter:
       position: {x: -4.0556186e-10, y: 0.0010149536, z: -1.0011717e-10}
       rotation: {x: 0.0000000021085957, y: 0.00000010305041, z: 0.0000035235953, w: 1}
       scale: {x: 1, y: 0.99999994, z: 0.99999994}
-    - name: fingerM.2.R_end_end
-      parentName: fingerM.2.R_end
-      position: {x: -0, y: 0.0010149521, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: fingerI.1.R
       parentName: hand.1.R
       position: {x: -0.000000010289259, y: 0.0010690563, z: -0.0004858352}
@@ -1037,11 +626,6 @@ ModelImporter:
       position: {x: -0.0000000019957769, y: 0.0010149529, z: -4.8894434e-11}
       rotation: {x: 2.5695407e-10, y: 5.6671116e-11, z: -5.0448534e-13, w: 1}
       scale: {x: 1, y: 1, z: 0.99999994}
-    - name: fingerI.2.R_end_end
-      parentName: fingerI.2.R_end
-      position: {x: -0, y: 0.0010149521, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: hand.2.R.001
       parentName: hand.2.R
       position: {x: -6.8166806e-11, y: 0.0006487586, z: -8.320967e-11}
@@ -1062,11 +646,6 @@ ModelImporter:
       position: {x: -9.49949e-10, y: 0.000581054, z: -8.9406965e-10}
       rotation: {x: 0.0000023058542, y: 0.000000003259629, z: -0.0000062831314, w: 1}
       scale: {x: 1, y: 0.99999994, z: 0.9999999}
-    - name: fingerT.2.R_end_end
-      parentName: fingerT.2.R_end
-      position: {x: -0, y: 0.0005810537, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: Origem.001
       parentName: spinal.2
       position: {x: -0.0029990284, y: -0.015921, z: 0.0036391201}
@@ -1077,11 +656,6 @@ ModelImporter:
       position: {x: -4.7822367e-12, y: 0.005893323, z: -2.3101307e-11}
       rotation: {x: -0.06825268, y: -0.00000013577849, z: -0.038339116, w: 0.99693114}
       scale: {x: 1, y: 0.99999994, z: 1}
-    - name: Origem.007_end
-      parentName: Origem.007
-      position: {x: -0, y: 0.0041094865, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: Origem.002
       parentName: spinal.2
       position: {x: -0.007993018, y: -0.015549155, z: -0.0017981201}
@@ -1092,11 +666,6 @@ ModelImporter:
       position: {x: 7.504799e-10, y: 0.0058286986, z: 1.2119496e-11}
       rotation: {x: 0.0013155772, y: -0.0000001128592, z: -0.10158393, w: 0.99482614}
       scale: {x: 0.99999994, y: 1, z: 1}
-    - name: Origem.008_end
-      parentName: Origem.008
-      position: {x: -0, y: 0.0041446714, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: Origem.003
       parentName: spinal.2
       position: {x: 0.003000965, y: -0.015888225, z: 0.0036478105}
@@ -1107,11 +676,6 @@ ModelImporter:
       position: {x: 9.3965155e-11, y: 0.0058158776, z: 5.3780765e-11}
       rotation: {x: -0.06825277, y: -0.000000071510755, z: 0.038338985, w: 0.99693114}
       scale: {x: 0.99999994, y: 1, z: 1}
-    - name: Origem.009_end
-      parentName: Origem.009
-      position: {x: -0, y: 0.0041094865, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: Origem.004
       parentName: spinal.2
       position: {x: 0.0030126444, y: -0.015259834, z: -0.0069114123}
@@ -1122,11 +686,6 @@ ModelImporter:
       position: {x: -1.7539684e-10, y: 0.005766869, z: -9.666852e-11}
       rotation: {x: 0.06694662, y: -0.000000047794742, z: 0.038349263, w: 0.9970193}
       scale: {x: 1, y: 0.99999994, z: 1}
-    - name: Origem.010_end
-      parentName: Origem.010
-      position: {x: -0, y: 0.0041080243, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: Origem.005
       parentName: spinal.2
       position: {x: -0.0029873555, y: -0.015211017, z: -0.0069149905}
@@ -1136,11 +695,6 @@ ModelImporter:
       parentName: Origem.005
       position: {x: -9.055036e-11, y: 0.005781235, z: 1.7203867e-10}
       rotation: {x: 0.06694665, y: -0.00000031492903, z: -0.038349245, w: 0.9970193}
-      scale: {x: 1, y: 1, z: 1}
-    - name: Origem.011_end
-      parentName: Origem.011
-      position: {x: -0, y: 0.0041080243, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Origem.006
       parentName: spinal.2
@@ -1152,11 +706,6 @@ ModelImporter:
       position: {x: -4.4132328e-10, y: 0.0058287005, z: -1.5795152e-11}
       rotation: {x: 0.0013155217, y: -0.000000008690853, z: 0.10158395, w: 0.99482614}
       scale: {x: 0.99999994, y: 1, z: 1}
-    - name: Origem.012_end
-      parentName: Origem.012
-      position: {x: -0, y: 0.0041446714, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: Bone
       parentName: Origem
       position: {x: -0, y: 0.015052542, z: 0}
@@ -1175,13 +724,8 @@ ModelImporter:
     - name: foot.2.L
       parentName: leg.1.L.001
       position: {x: 2.8206548e-10, y: 0.010545486, z: 3.5350993e-11}
-      rotation: {x: -0.66820747, y: -0.08207878, z: 0.09014943, w: -0.7339176}
+      rotation: {x: -0.00000009266887, y: -0.67323077, z: 0.73943245, w: 0.00000009570924}
       scale: {x: 1, y: 1.0000002, z: 1}
-    - name: foot.2.L_end
-      parentName: foot.2.L
-      position: {x: -0, y: 0.0026937402, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: Bone.001
       parentName: Origem
       position: {x: -0, y: 0.015052542, z: 0}
@@ -1200,113 +744,58 @@ ModelImporter:
     - name: foot.2.R
       parentName: leg.1.R.001
       position: {x: -6.107051e-10, y: 0.010545488, z: 4.745928e-12}
-      rotation: {x: 0.66821, y: -0.08207842, z: 0.09014907, w: 0.7339153}
+      rotation: {x: -0.00000005674228, y: -0.6732308, z: 0.7394324, w: -0.00000005166213}
       scale: {x: 1, y: 0.9999996, z: 0.9999999}
-    - name: foot.2.R_end
-      parentName: foot.2.R
-      position: {x: -0, y: 0.0026937365, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: IK.arm.Control.L
       parentName: Origem
       position: {x: -0.01531374, y: 0.016173584, z: 0.012388144}
       rotation: {x: 0.000058174137, y: 3.5621386e-21, z: 1, w: -6.123234e-17}
-      scale: {x: 1, y: 1, z: 1}
-    - name: IK.arm.Control.L_end
-      parentName: IK.arm.Control.L
-      position: {x: -0, y: 0.0039149164, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: IK.arm.Controller.L
       parentName: Origem
       position: {x: -0.008717553, y: 0.007385038, z: 0.012388144}
       rotation: {x: 0, y: 0, z: 1, w: -6.123234e-17}
       scale: {x: 1, y: 1, z: 1}
-    - name: IK.arm.Controller.L_end
-      parentName: IK.arm.Controller.L
-      position: {x: -0, y: 0.0037766444, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: IK.arm.Control.R
       parentName: Origem
       position: {x: 0.015323739, y: 0.016173584, z: 0.012388144}
       rotation: {x: -0.000058174137, y: -3.5621386e-21, z: 1, w: -6.123234e-17}
-      scale: {x: 1, y: 1, z: 1}
-    - name: IK.arm.Control.R_end
-      parentName: IK.arm.Control.R
-      position: {x: -0, y: 0.0039149164, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: IK.arm.Controller.R
       parentName: Origem
       position: {x: 0.008727549, y: 0.007385038, z: 0.012388144}
       rotation: {x: 0, y: 0, z: 1, w: -6.123234e-17}
       scale: {x: 1, y: 1, z: 1}
-    - name: IK.arm.Controller.R_end
-      parentName: IK.arm.Controller.R
-      position: {x: -0, y: 0.0037766444, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: IK.leg.Dire.L
       parentName: NPC_Enfermeira_Armadura
       position: {x: 0.0031367745, y: -0.021215348, z: 0.012514252}
       rotation: {x: 0, y: 0, z: 1, w: -6.123234e-17}
-      scale: {x: 1, y: 1, z: 1}
-    - name: IK.leg.Dire.L_end
-      parentName: IK.leg.Dire.L
-      position: {x: -0, y: 0.005, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: IK.leg.Control.L
-      parentName: NPC_Enfermeira_Armadura
-      position: {x: 0.0031367748, y: 0.000069815826, z: 0.0004983808}
-      rotation: {x: 0.000000049511367, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: IK.leg.Control.L_end
-      parentName: IK.leg.Control.L
-      position: {x: -0, y: 0.0060192887, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: IK.leg.Dire.R
       parentName: NPC_Enfermeira_Armadura
       position: {x: -0.0031367745, y: -0.021215348, z: 0.012514252}
       rotation: {x: 0, y: 0, z: 1, w: -6.123234e-17}
       scale: {x: 1, y: 1, z: 1}
-    - name: IK.leg.Dire.R_end
-      parentName: IK.leg.Dire.R
-      position: {x: -0, y: 0.005, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: IK.leg.Control.R
-      parentName: NPC_Enfermeira_Armadura
-      position: {x: -0.0031367748, y: 0.000069815826, z: 0.0004983808}
-      rotation: {x: 0.000000049511367, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-    - name: IK.leg.Control.R_end
-      parentName: IK.leg.Control.R
-      position: {x: -0, y: 0.0060192887, z: 0}
-      rotation: {x: 0, y: -0, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
     - name: NPC_Enfermeira_Cabelo1
-      parentName: _NPC_Enfermeira_016(Clone)
+      parentName: _NPC_Enfermeira_017(Clone)
       position: {x: 0.00000026240392, y: -0.083777264, z: 0.001907242}
-      rotation: {x: -0.00000011098628, y: 0.70710665, z: 0.00000011098625, w: 0.7071069}
-      scale: {x: 0.9111701, y: 0.9111701, z: 0.9111701}
+      rotation: {x: 0.5, y: 0.5, z: -0.49999985, w: 0.5000002}
+      scale: {x: 0.0091117015, y: 0.0091117015, z: 0.0091117015}
     - name: NPC_Enfermeira_Cabelo2
-      parentName: _NPC_Enfermeira_016(Clone)
+      parentName: _NPC_Enfermeira_017(Clone)
       position: {x: -0.0000005082295, y: 1.6238842, z: -0.009673367}
-      rotation: {x: -0.00000011098628, y: 0.70710665, z: 0.00000011098625, w: 0.7071069}
-      scale: {x: 0.8734443, y: 0.8734443, z: 0.8734443}
+      rotation: {x: 0.5, y: 0.5, z: -0.49999985, w: 0.5000002}
+      scale: {x: 0.008734443, y: 0.008734443, z: 0.008734443}
     - name: NPC_Enfermeira_Saia
-      parentName: _NPC_Enfermeira_016(Clone)
+      parentName: _NPC_Enfermeira_017(Clone)
       position: {x: 0.00000026240394, y: 0.0030976564, z: 0.001907219}
-      rotation: {x: -0.00000011098629, y: 0.70710665, z: 0.00000011098626, w: 0.7071069}
-      scale: {x: 121.445724, y: 121.445724, z: 121.445724}
+      rotation: {x: 0.49999997, y: 0.5, z: -0.49999988, w: 0.5000001}
+      scale: {x: 1.2144572, y: 1.2144572, z: 1.2144572}
     - name: NPC_Enfermeira_Sapato
-      parentName: _NPC_Enfermeira_016(Clone)
+      parentName: _NPC_Enfermeira_017(Clone)
       position: {x: 0.00000026240394, y: 5.079235e-10, z: 0.0019072199}
-      rotation: {x: -0.000000110986264, y: 0.70710665, z: 0.00000011098623, w: 0.7071069}
-      scale: {x: 0.9200871, y: 0.8674983, z: 0.9535716}
+      rotation: {x: 0.49999997, y: 0.5, z: -0.49999988, w: 0.5000001}
+      scale: {x: 0.009200871, y: 0.009535716, z: 0.008674982}
     armTwist: 0.5
     foreArmTwist: 0.5
     upperLegTwist: 0.5
@@ -1321,7 +810,7 @@ ModelImporter:
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
-  animationType: 3
+  animationType: 2
   humanoidOversampling: 1
   avatarSetup: 1
   addHumanoidExtraRootOnlyWhenUsingAvatar: 1

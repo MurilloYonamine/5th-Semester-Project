@@ -1,9 +1,12 @@
 using FifthSemester.Core.Enums;
+using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
+using FifthSemester.Features.Localization;
 using UnityEngine;
 
 namespace FifthSemester.Gameplay.Menu {
     public class SettingsService : ISettingsService {
+
 
         // Funções auxiliares para salvar e ler booleanos no PlayerPrefs
         private bool GetBool(string key, bool defaultValue = false) {
@@ -21,8 +24,8 @@ namespace FifthSemester.Gameplay.Menu {
 
         // ====== Audio ======
         public float MasterVolume {
-            get => PlayerPrefs.GetFloat("Settings_MasterVolume", 1f);
-            set { PlayerPrefs.SetFloat("Settings_MasterVolume", value); PlayerPrefs.Save(); }
+            get => PlayerPrefs.GetFloat("Settings_MasterVolume", 1f); 
+            set { PlayerPrefs.SetFloat("Settings_MasterVolume", value); PlayerPrefs.Save(); } 
         }
         public float MusicVolume {
             get => PlayerPrefs.GetFloat("Settings_MusicVolume", 1f);
@@ -69,7 +72,7 @@ namespace FifthSemester.Gameplay.Menu {
 
         // ===== Screen & Window ======
         public int FrameRate {
-            get => PlayerPrefs.GetInt("Settings_FrameRate", 60);
+            get => PlayerPrefs.GetInt("Settings_FrameRate", 24);
             set {
                 PlayerPrefs.SetInt("Settings_FrameRate", value);
                 Application.targetFrameRate = value;
@@ -99,13 +102,23 @@ namespace FifthSemester.Gameplay.Menu {
             new Vector2Int(640, 480),
             new Vector2Int(800, 600),
             new Vector2Int(1024, 768),
-            new Vector2Int(1280, 720)
+            new Vector2Int(1280, 960),
+            new Vector2Int(1600, 1200),
         };
 
         // ===== Gameplay ======
         public Language Language {
-            get => (Language)PlayerPrefs.GetInt("Settings_Language", 0);
-            set { PlayerPrefs.SetInt("Settings_Language", (int)value); PlayerPrefs.Save(); }
+            get => (Language)PlayerPrefs.GetInt("Settings_Language");
+            set {
+                PlayerPrefs.SetInt("Settings_Language", (int)value);
+                PlayerPrefs.Save();
+
+                var localization = ServiceLocator.Get<ILocalizationService>();
+                localization?.SetLanguage(value);
+
+                var eventBus = ServiceLocator.Get<IEventBus>();
+                eventBus?.Publish(new LanguageChangedEvent(value));
+            }
         }
         public bool InvertYAxis {
             get => GetBool("Settings_InvertY", false);

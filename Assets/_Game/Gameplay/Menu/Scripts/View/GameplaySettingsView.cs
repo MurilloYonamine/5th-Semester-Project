@@ -1,23 +1,24 @@
-using System.Collections.Generic;
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
+using FifthSemester.Features.Localization;
 using FifthSemester.Framework.UI;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Utilities;
 using UnityEngine.UI;
 
 namespace FifthSemester.Gameplay.Menu {
-    public class GameplaySettingsView : MonoBehaviour {
-        private IMenuService _menuService;
-        private ISettingsService _settingsService;
 
-        [Header("Focus")]
-        [SerializeField] private GameObject _focusFirstElement;
+    public class GameplaySettingsView : MenuViewBase {
+        private ISettingsService _settingsService;
+        private IGameplayService _gameplayService;
+        private ILocalizationService _localizationService;
+
+        [Header("Defaults")]
+        [SerializeField] private SettingsDefaultsGameplay _defaultsGameplay;
 
         [SerializeField] private Button _backButton;
+        [SerializeField] private Button _resetDefaultsButton;
 
         [Header("Invert Y-Axis")]
         [SerializeField] private Toggle _invertYAxisToggle;
@@ -30,53 +31,58 @@ namespace FifthSemester.Gameplay.Menu {
         [Header("Language")]
         [SerializeField] private OptionSelector _language;
 
-        private void Start() {
-            _menuService = ServiceLocator.Get<IMenuService>();
+        protected override MenuScreen MenuScreenType => MenuScreen.Settings_Gameplay;
+
+        protected override void Awake() {
+            base.Awake();
+
             _settingsService = ServiceLocator.Get<ISettingsService>();
+            _localizationService = ServiceLocator.Get<ILocalizationService>(); // Novo!
+            _gameplayService = new GameplayService(_settingsService);
+        }
+
+        protected override void Start() {
+            base.Start();
 
             _backButton.onClick.AddListener(OnBack);
+            _resetDefaultsButton.onClick.AddListener(ResetToDefaults);
 
-            _invertYAxisToggle.isOn = _settingsService.InvertYAxis;
             _invertYAxisToggle.onValueChanged.AddListener(OnInvertYAxisChanged);
-            _invertYAxisLabel.text = _settingsService.InvertYAxis ? "Yes" : "No";
-
             _sensibilitySlider.onValueChanged.AddListener(OnSensibilityChanged);
-            _sensibilitySlider.value = _settingsService.Sensibility;
-            _sensibilityValueText.text = _settingsService.Sensibility.ToString("F2");
 
             _language.Initialize(GetLanguageOptions(), (int)_settingsService.Language);
             _language.OnValueChanged += OnLanguageChanged;
 
-            _menuService.Register(MenuScreen.Settings_Gameplay, gameObject);
+            RefreshUI();
         }
 
-        private void OnEnable() {
-            EventSystem.current.SetSelectedGameObject(null);
-
-            if (_focusFirstElement != null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-            }
-
-            InputSystem.onAnyButtonPress.Call(OnAnyInput);
+        public void ResetToDefaults() {
+            if (_defaultsGameplay == null) return;
+            _settingsService.Language = _defaultsGameplay.Language;
+            _settingsService.InvertYAxis = _defaultsGameplay.InvertYAxis;
+            _settingsService.Sensibility = _defaultsGameplay.Sensibility;
+            RefreshUI();
         }
-        private void OnDestroy() {
-            _menuService?.Unregister(MenuScreen.Settings_Gameplay);
-        }
+
         public void OnBack() {
             _menuService.Show(MenuScreen.Settings);
         }
+
         public void OnInvertYAxisChanged(bool isInverted) {
             _settingsService.InvertYAxis = isInverted;
-            _invertYAxisLabel.text = isInverted ? "Yes" : "No";
+            UpdateInvertYAxisLabel(isInverted);
         }
 
         public void OnSensibilityChanged(float value) {
             _settingsService.Sensibility = value;
             _sensibilityValueText.text = value.ToString("F2");
         }
+
         public void OnLanguageChanged(int index) {
             _settingsService.Language = (Language)index;
+            UpdateInvertYAxisLabel(_settingsService.InvertYAxis);
         }
+
         private List<string> GetLanguageOptions() {
             var options = new List<string>();
             foreach (Language lang in System.Enum.GetValues(typeof(Language))) {
@@ -84,19 +90,25 @@ namespace FifthSemester.Gameplay.Menu {
             }
             return options;
         }
-        private void OnAnyInput(InputControl control) {
-            if (control.device is Gamepad && EventSystem.current.currentSelectedGameObject == null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-            }
-        }
-        public void RefreshUI()
-        {
+
+        public void RefreshUI() {
             if (_settingsService == null) _settingsService = ServiceLocator.Get<ISettingsService>();
+
             _invertYAxisToggle.isOn = _settingsService.InvertYAxis;
-            _invertYAxisLabel.text = _settingsService.InvertYAxis ? "Yes" : "No";
+
+            UpdateInvertYAxisLabel(_settingsService.InvertYAxis);
+
             _sensibilitySlider.value = _settingsService.Sensibility;
             _sensibilityValueText.text = _settingsService.Sensibility.ToString("F2");
+
             _language.SetValue((int)_settingsService.Language);
+        }
+
+        private void UpdateInvertYAxisLabel(bool isInverted) {
+            if (_localizationService == null) return;
+
+            string key = isInverted ? "general_yes" : "general_no";
+            _invertYAxisLabel.text = _localizationService.GetText(key);
         }
     }
 }

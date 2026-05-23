@@ -12,6 +12,8 @@ namespace FifthSemester.Core.Events {
     public class InputService : IInputService, IDisposable {
         private GameInput _gameInput;
         public GameState CurrentGameState { get; set; } = GameState.Gameplay;
+        public bool LastPauseWasGamepad { get; private set; }
+        public bool LastLookWasGamepad { get; private set; }
 
         private bool _ignoreNextDialogueAdvance = false;
         private bool _isInventoryOpen = false;
@@ -23,10 +25,12 @@ namespace FifthSemester.Core.Events {
         private InputAction _sprint;
         private InputAction _interact;
         private InputAction _zoom;
+        private InputAction _flash;
         private InputAction _next;
         private InputAction _previous;
         private InputAction _openPause;
         private InputAction _dialogueAdvance;
+        private InputAction _skipCutscene;
 
 
         public InputService() {
@@ -53,10 +57,12 @@ namespace FifthSemester.Core.Events {
             _sprint = _gameInput.Player.Sprint;
             _interact = _gameInput.Player.Interact;
             _zoom = _gameInput.Player.Zoom;
+            _flash = _gameInput.Player.Flash;
             _next = _gameInput.Player.Next;
             _previous = _gameInput.Player.Previous;
             _openPause = _gameInput.Player.OpenPause;
             _dialogueAdvance = _gameInput.UI.Interact;
+            _skipCutscene = _gameInput.Player.SkipCutscene;
 
             _dialogueAdvance.started += HandleDialogueAdvance;
 
@@ -72,9 +78,12 @@ namespace FifthSemester.Core.Events {
             _interact.started += HandleInteract;
             _zoom.performed += HandleZoom;
             _zoom.canceled += HandleZoom;
+            _flash.performed += HandleFlash;
+            _flash.canceled += HandleFlash;
             _next.performed += HandleNext;
             _previous.performed += HandlePrevious;
             _openPause.performed += HandleOpenPause;
+            _skipCutscene.started += HandleSkipCutscene;
 
             ServiceLocator.Get<IEventBus>()?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
             ServiceLocator.Get<IEventBus>()?.Subscribe<InventoryToggledEvent>(OnInventoryToggled);
@@ -98,6 +107,7 @@ namespace FifthSemester.Core.Events {
 
         public void HandleLook(InputAction.CallbackContext context) {
             if (context.performed) {
+                LastLookWasGamepad = context.control != null && context.control.device is Gamepad;
                 if (CurrentGameState != GameState.Gameplay) return;
                 PublishEvent(new LookInputEvent(context.ReadValue<Vector2>()));
             }
@@ -137,8 +147,6 @@ namespace FifthSemester.Core.Events {
         }
 
         public void HandleInteract(InputAction.CallbackContext context) {
-            if (CurrentGameState != GameState.Gameplay) return;
-
             PublishEvent(new InteractInputEvent());
         }
 
@@ -153,8 +161,19 @@ namespace FifthSemester.Core.Events {
             }
         }
 
+        public void HandleFlash(InputAction.CallbackContext context) {
+            if (context.performed) {
+                if (CurrentGameState != GameState.Gameplay) return;
+                PublishEvent(new FlashlightInputEvent(true));
+            }
+            else if (context.canceled) {
+                PublishEvent(new FlashlightInputEvent(false));
+            }
+        }
+
         public void HandleNext(InputAction.CallbackContext context) {
             if (!context.performed) return;
+            if (CurrentGameState != GameState.Gameplay) return;
 
             if (!_isInventoryOpen) {
                 PublishEvent(new InventoryToggledEvent(true)); // abre inventário
@@ -165,6 +184,7 @@ namespace FifthSemester.Core.Events {
 
         public void HandlePrevious(InputAction.CallbackContext context) {
             if (!context.performed) return;
+            if (CurrentGameState != GameState.Gameplay) return;
 
             if (!_isInventoryOpen) {
                 PublishEvent(new InventoryToggledEvent(true)); // abre inventário
@@ -177,18 +197,29 @@ namespace FifthSemester.Core.Events {
         }
         public void HandleOpenPause(InputAction.CallbackContext context) {
             if (context.performed) {
+                LastPauseWasGamepad = context.control != null && context.control.device is Gamepad;
                 PublishEvent(new PauseToggleRequestedEvent());
             }
         }
 
         private void HandleDialogueAdvance(InputAction.CallbackContext context) {
-            if (context.started) {
-                if (_ignoreNextDialogueAdvance) {
-                    _ignoreNextDialogueAdvance = false;
-                    return;
-                }
-                PublishEvent(new DialogueAdvanceRequestedEvent());
+            if (!context.started) return;
+
+            if (CurrentGameState != GameState.Dialogue && CurrentGameState != GameState.Cutscene) return;
+                
+            if (_ignoreNextDialogueAdvance) {
+                _ignoreNextDialogueAdvance = false;
+                return;
             }
+
+            PublishEvent(new DialogueAdvanceRequestedEvent());
+        }
+
+        private void HandleSkipCutscene(InputAction.CallbackContext context) {
+            if (!context.started) return;
+            if (CurrentGameState != GameState.Cutscene) return;
+
+            PublishEvent(new SkipCutsceneRequestedEvent());
         }
 
         public void OnGameStateChanged(GameStateChangedEvent evt) {
@@ -202,6 +233,7 @@ namespace FifthSemester.Core.Events {
                 _jump.Enable();
                 _crouch.Enable();
                 _sprint.Enable();
+                _flash?.Enable();
             }
             else {
                 PublishEvent(new MoveInputEvent(Vector2.zero));
@@ -213,6 +245,7 @@ namespace FifthSemester.Core.Events {
                 _jump.Disable();
                 _crouch.Disable();
                 _sprint.Disable();
+                _flash?.Disable();
             }
         }
         public void Dispose() {
@@ -232,10 +265,13 @@ namespace FifthSemester.Core.Events {
             _interact.started -= HandleInteract;
             _zoom.performed -= HandleZoom;
             _zoom.canceled -= HandleZoom;
+            _flash.performed -= HandleFlash;
+            _flash.canceled -= HandleFlash;
             _next.performed -= HandleNext;
             _previous.performed -= HandlePrevious;
             _openPause.performed -= HandleOpenPause;
             _dialogueAdvance.started -= HandleDialogueAdvance;
+            _skipCutscene.started -= HandleSkipCutscene;
         }
     }
 }

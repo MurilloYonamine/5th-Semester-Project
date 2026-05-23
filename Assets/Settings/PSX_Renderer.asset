@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
   m_Name: ScanlinesPassRendererFeature
   m_EditorClassIdentifier: 
-  m_Active: 0
+  m_Active: 1
   injectionPoint: 600
   fetchColorBuffer: 1
   requirements: 4
@@ -32,7 +32,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
   m_Name: RollingBandsPassRendererFeature
   m_EditorClassIdentifier: 
-  m_Active: 0
+  m_Active: 1
   injectionPoint: 600
   fetchColorBuffer: 1
   requirements: 4
@@ -52,7 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
   m_Name: DitherPassRendererFeature
   m_EditorClassIdentifier: 
-  m_Active: 0
+  m_Active: 1
   injectionPoint: 600
   fetchColorBuffer: 1
   requirements: 4
@@ -72,11 +72,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
   m_Name: PixelatePassRendererFeature
   m_EditorClassIdentifier: 
-  m_Active: 0
+  m_Active: 1
   injectionPoint: 600
   fetchColorBuffer: 1
   requirements: 4
   passMaterial: {fileID: 2100000, guid: 2f45d4265cbecb743b2444893a6e01c1, type: 2}
+  passIndex: 0
+  bindDepthStencilAttachment: 0
+  m_Version: 1
+--- !u!114 &-621816095633495534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
+  m_Name: TVGlitchPassRendererFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
+  injectionPoint: 450
+  fetchColorBuffer: 1
+  requirements: 4
+  passMaterial: {fileID: 2100000, guid: 87c7f237b4103c740a0c08660371a7b6, type: 2}
   passIndex: 0
   bindDepthStencilAttachment: 0
   m_Version: 1
@@ -92,7 +112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
   m_Name: BarrelDistortionPassRendererFeature
   m_EditorClassIdentifier: 
-  m_Active: 0
+  m_Active: 1
   injectionPoint: 600
   fetchColorBuffer: 1
   requirements: 0
@@ -132,7 +152,8 @@ MonoBehaviour:
   - {fileID: -3727017411173756394}
   - {fileID: -8663911430653622191}
   - {fileID: 84873706099977528}
-  m_RendererFeatureMap: ad6b866f10d7b46c78a64c51a4f23de245730805eaf749f8a64316b231e49cd516d24a3f69f946cc51c8710a759ac387382ddc9e2f882d01
+  - {fileID: -621816095633495534}
+  m_RendererFeatureMap: ad6b866f10d7b46c78a64c51a4f23de245730805eaf749f8a64316b231e49cd516d24a3f69f946cc51c8710a759ac387382ddc9e2f882d01122a25388edd5ef7
   m_UseNativeRenderPass: 1
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -170,7 +191,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
   m_Name: VHSEffectPassRendererFeature
   m_EditorClassIdentifier: 
-  m_Active: 0
+  m_Active: 1
   injectionPoint: 600
   fetchColorBuffer: 1
   requirements: 4

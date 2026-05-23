@@ -1,6 +1,7 @@
 // Autor: Murillo Gomes Yonamine
 // Data: 24/04/2026
 
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using FifthSemester.Core.Events;
@@ -21,6 +22,11 @@ namespace FifthSemester.Gameplay.Interactables {
         [Tooltip("O item deve ser removido do inventário após o uso?")]
         [SerializeField] private bool _consumeItemOnDelivery = true;
 
+        [Header("UI")]
+        [SerializeField] private TextMeshPro _interactionPromptText;
+        [SerializeField] private string _deliverPromptText = "entregar";
+        [SerializeField] private string _talkPromptText = "conversar";
+
         private IInventoryService<Item> _inventoryService;
         private IEventBus _eventBus;
         private bool _isCompleted = false;
@@ -38,6 +44,7 @@ namespace FifthSemester.Gameplay.Interactables {
             _inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
             _eventBus = ServiceLocator.Get<IEventBus>();
 
+            UpdateInteractionPrompt();
             Highlight(false);
         }
 
@@ -46,14 +53,13 @@ namespace FifthSemester.Gameplay.Interactables {
         }
 
         public void Interact() {
-            if (!IsInteractable) return;
+            if (_isCompleted) {
+                return;
+            }
 
             if (TryDeliverItem()) {
                 CompleteDelivery();
-                Debug.Log($"{TAG} Item '{_requiredItemId}' entregue com sucesso!");
-            }
-            else {
-                Debug.Log($"{TAG} O item necessário '{_requiredItemId}' não está no inventário.");
+                UpdateInteractionPrompt();
             }
         }
 
@@ -70,7 +76,6 @@ namespace FifthSemester.Gameplay.Interactables {
             var items = _inventoryService.GetItems();
             foreach (var item in items) {
                 if (item.Id == _requiredItemId) {
-
                     if (_consumeItemOnDelivery) {
                         _inventoryService.RemoveItem(item);
                     }
@@ -83,8 +88,15 @@ namespace FifthSemester.Gameplay.Interactables {
 
         private void CompleteDelivery() {
             _isCompleted = true;
-
             _eventBus?.Publish(new ItemDeliveredEvent(Id, _requiredItemId));
+        }
+
+        private void UpdateInteractionPrompt() {
+            if (_interactionPromptText == null) {
+                return;
+            }
+
+            _interactionPromptText.text = _isCompleted ? _talkPromptText : _deliverPromptText;
         }
     }
 }

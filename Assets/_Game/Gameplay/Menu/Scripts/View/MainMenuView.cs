@@ -1,59 +1,109 @@
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.States;
+using FifthSemester.Gameplay.Save;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Utilities;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace FifthSemester.Gameplay.Menu {
-    public class MainMenuView : MonoBehaviour {
-        [Header("Focus")]
-        [SerializeField] private GameObject _focusFirstElement;
+
+    public class MainMenuView : MenuViewBase {
 
         [Header("Buttons")]
-        [SerializeField] private Button _playButton;
+        [SerializeField] private Button _newGameButton;
+        [SerializeField] private Button _continueButton;
         [SerializeField] private Button _settingsButton;
         [SerializeField] private Button _creditsButton;
         [SerializeField] private Button _quitButton;
 
+        [Header("Continue UI")]
+        [SerializeField] private GameObject _continueButtonContainer;
+        [SerializeField] private LoadGameView _loadGameView;
+        [SerializeField] private CheckpointSO _initialCheckpoint;
+
         private IGameStateService _gameState;
-        private IMenuService _menuService;
 
-        private void Start() {
+        protected override MenuScreen MenuScreenType => MenuScreen.MainMenu;
+
+        protected override void Start() {
             _gameState = ServiceLocator.Get<IGameStateService>();
-            _menuService = ServiceLocator.Get<IMenuService>();
+            base.Start();
 
-            _menuService.Register(MenuScreen.MainMenu, gameObject);
             _menuService.Show(MenuScreen.MainMenu);
 
-            EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-
-            _playButton.onClick.AddListener(OnPlay);
+            _newGameButton.onClick.AddListener(OnNewGame);
+            _continueButton.onClick.AddListener(OnContinue);
             _settingsButton.onClick.AddListener(OnSettings);
             _creditsButton.onClick.AddListener(OnCredits);
             _quitButton.onClick.AddListener(OnQuit);
+
+            UpdateContinueVisibility();
         }
 
-        private void OnEnable() {
-            EventSystem.current.SetSelectedGameObject(null);
-
-            if (_focusFirstElement != null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-            }
-
-            InputSystem.onAnyButtonPress.Call(OnAnyInput);
-        }
-
-        private void OnDestroy() {
-            _menuService?.Unregister(MenuScreen.MainMenu);
+        protected override void OnEnable() {
+            base.OnEnable();
+            UpdateContinueVisibility();
         }
 
         public void OnPlay() {
             _gameState.ChangeState(GameState.Gameplay);
-            SceneManager.LoadScene("Gym");
+            SceneManager.LoadScene("Game");
+        }
+
+        public void OnNewGame() {
+            var saveService = ServiceLocator.Get<ISaveService>();
+            if (saveService == null || _initialCheckpoint == null) {
+                OnPlay();
+                return;
+            }
+
+            string chosen = null;
+            for (int i = 0; i < 3; i++) {
+                string id = $"slot_{i}";
+                if (!saveService.SlotExists(id)) {
+                    chosen = id;
+                    break;
+                }
+            }
+            if (chosen == null) chosen = "slot_0";
+
+            var data = new SaveData() {
+                LastCheckpointId = _initialCheckpoint.Id
+            };
+
+            saveService.SaveToSlot(chosen, data);
+
+            _gameState.ChangeState(GameState.Gameplay);
+            SceneManager.LoadScene("Game");
+        }
+
+        public void OnContinue() {
+            if (_loadGameView != null) {
+                _menuService.Show(MenuScreen.LoadGame); 
+            }
+            else {
+                OnPlay();
+            }
+        }
+
+        public void UpdateContinueVisibility() {
+            if (_continueButtonContainer == null) return;
+
+            ISaveService saveService = ServiceLocator.Get<ISaveService>();
+            _continueButtonContainer.SetActive(HasSavedGame(saveService));
+        }
+
+        private bool HasSavedGame(ISaveService saveService) {
+            if (saveService == null) return false;
+
+            for (int i = 0; i < 3; i++) {
+                if (saveService.SlotExists($"slot_{i}")) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public void OnSettings() {
@@ -68,11 +118,6 @@ namespace FifthSemester.Gameplay.Menu {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
-        }
-        private void OnAnyInput(InputControl control) {
-            if (control.device is Gamepad && EventSystem.current.currentSelectedGameObject == null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-            }
         }
     }
 }

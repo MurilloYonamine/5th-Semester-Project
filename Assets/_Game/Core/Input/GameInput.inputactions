@@ -103,6 +103,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Flash",
+                    "type": "Button",
+                    "id": "bc1268b1-1652-4fa3-9ee9-936fd20aaac4",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Skip Cutscene",
+                    "type": "Button",
+                    "id": "b8de947b-dc43-4957-8ce0-ce6adbc5136f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -543,6 +561,50 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "Open Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3932dc8d-932c-4319-9382-4908790e4fcf",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Flash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dacbbd98-0f27-49e8-bb8a-1ebbfb3de568",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Flash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "33a7d277-3aed-49ad-8737-aa09319b8f62",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Skip Cutscene",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "33036184-617a-4a1c-aa90-a6962d21194a",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Skip Cutscene",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -1188,6 +1250,17 @@
                 },
                 {
                     "name": "",
+                    "id": "a592023e-e0c1-4592-b809-46e659bf33de",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "Next",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "f626c803-800a-4537-9fd1-fb7f2f35c87e",
                     "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
@@ -1215,6 +1288,17 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
+                    "action": "Previous",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fa5bcfe2-f7b6-4121-9eb3-536e7ab96344",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
                     "action": "Previous",
                     "isComposite": false,
                     "isPartOfComposite": false

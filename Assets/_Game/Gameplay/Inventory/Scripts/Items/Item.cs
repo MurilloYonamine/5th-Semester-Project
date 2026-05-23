@@ -17,20 +17,25 @@ namespace FifthSemester.Gameplay.Inventory {
 
         private void Awake() {
             _outline = GetComponent<Outline>();
-            _collider = GetComponent<BoxCollider>();
+
+            if (!TryGetComponent(out BoxCollider collider)) {
+                _collider = GetComponentInChildren<BoxCollider>();
+            } else {
+                _collider = collider;
+            }
 
             _outline.enabled = false;
-            _collider.enabled = true;
+
+            if (_collider != null)
+                _collider.enabled = true;
         }
 
         public void Interact() {
-            Debug.Log("Interagiu com o item!");
             _outline.enabled = false;
             _collider.enabled = false;
         }
 
         public void StopInteract() {
-            Debug.Log("Não pode interagir com o Item!");
         }
 
         public void Highlight(bool value) {

@@ -1,53 +1,167 @@
-using UnityEngine;
+using System;
+using FifthSemester.Core.Enums;
+using FifthSemester.Core.Services;
+using FifthSemester.Gameplay.Shared;
+using Sirenix.OdinInspector;
+using TMPro;
 using ThirdParty.QuickOutline;
+using UnityEngine;
 
 namespace FifthSemester.Doors {
-    public class Door : MonoBehaviour {
+    [RequireComponent(typeof(Outline))]
+    public class Door : MonoBehaviour, IInteractable {
         [Header("Configurações Visuais")]
         [SerializeField] private Outline _outline;
-        [SerializeField] private Transform _doorMesh;
-        [SerializeField] private GameObject _textLocal;
+        [SerializeField] private TextMeshPro _textLocal;
 
         [Header("Configurações de Movimento")]
         [SerializeField] private bool _isOpen = false;
         [SerializeField] private float _openAngle = 90f;
         [SerializeField] private float _speed = 5f;
+        [SerializeField] private bool _useDoubleDoor;
 
-        private Quaternion _closedRotation;
-        private Quaternion _targetRotation;
+        [ShowIf(nameof(_useDoubleDoor))]
+        [SerializeField] private Transform[] _doorMeshes;
+
+        [HideIf(nameof(_useDoubleDoor))]
+        [SerializeField] private Transform _doorMesh;
+
+        [Header("Map Registry")]
+        [SerializeField] private DoorType _doorType = DoorType.None;
+
+        private IMapService _mapService;
+        private Quaternion[] _closedRotations;
+        private Quaternion[] _targetRotations;
+        private Transform[] _activeDoorMeshes;
+        private bool _isLocked = false;
+        private Color _unlockedColor;
 
         public bool IsInteractable { get; private set; } = true;
 
-        private void Awake() {
-            if (_outline != null) _outline.enabled = false;
+        public string Id => gameObject.name;
+        private string _defaultText;
 
-            _closedRotation = _doorMesh.localRotation;
-            _targetRotation = _closedRotation;
+        private void Awake() {
+            _outline = GetComponent<Outline>();
+            _outline.enabled = false;
+
+            if (_textLocal != null) {
+                _textLocal.gameObject.SetActive(false);
+                _defaultText = _textLocal.text;
+            }
+
+            CacheDoorMeshes();
+            InitializeRotations();
+
+            _unlockedColor = new Color32(105, 255, 144, 255); // 69FF90
+        }
+
+        private void Start() {
+            if (_doorType == DoorType.None) return;
+
+            _mapService = ServiceLocator.Get<IMapService>();
+            _mapService?.Register(_doorType, gameObject);
+        }
+
+        private void OnDestroy() {
+            if (_doorType == DoorType.None || _mapService == null) return;
+            _mapService.Unregister(_doorType);
         }
 
         private void Update() {
-            _doorMesh.localRotation = Quaternion.Lerp(_doorMesh.localRotation, _targetRotation, Time.deltaTime * _speed);
+            if (_activeDoorMeshes == null || _targetRotations == null) return;
+
+            for (int i = 0; i < _activeDoorMeshes.Length; i++) {
+                Transform doorMesh = _activeDoorMeshes[i];
+                if (doorMesh == null) continue;
+
+                doorMesh.localRotation = Quaternion.Lerp(doorMesh.localRotation, _targetRotations[i], Time.deltaTime * _speed);
+            }
         }
 
         public void Interact() {
-            _isOpen = !_isOpen;
+            if (_isLocked) return;
 
-            if (_isOpen) {
-                _targetRotation = _closedRotation * Quaternion.Euler(0, _openAngle, 0);
-            }
-            else {
-                _targetRotation = _closedRotation;
-            }
+            _isOpen = !_isOpen;
+            UpdateTargetRotations();
         }
 
         public void StopInteract() { }
 
-        public void EnableOutline(bool enable) {
+        public void Highlight(bool value) {
             if (_outline != null)
-                _outline.enabled = enable;
+                _outline.enabled = value;
 
             if (_textLocal != null)
-                _textLocal.SetActive(enable);
+                _textLocal.gameObject.SetActive(value);
+        }
+
+        public void Lock() {
+            _isLocked = true;
+
+            if (_outline != null)
+                _outline.OutlineColor = Color.red;
+
+            if (_textLocal != null) {
+                _textLocal.color = Color.red;
+                _textLocal.text = "TRANCADA";
+            }
+        }
+
+        public void Unlock() {
+            _isLocked = false;
+
+            if (_outline != null)
+                _outline.OutlineColor = _unlockedColor;
+
+            if (_textLocal != null) {
+                _textLocal.color = _unlockedColor;
+                _textLocal.text = _defaultText;
+            }
+        }
+
+        private void CacheDoorMeshes() {
+            if (_useDoubleDoor) {
+                _activeDoorMeshes = _doorMeshes ?? Array.Empty<Transform>();
+                return;
+            }
+
+            _activeDoorMeshes = _doorMesh != null ? new[] { _doorMesh } : Array.Empty<Transform>();
+        }
+
+        private void InitializeRotations() {
+            if (_activeDoorMeshes == null) {
+                _closedRotations = Array.Empty<Quaternion>();
+                _targetRotations = Array.Empty<Quaternion>();
+                return;
+            }
+
+            _closedRotations = new Quaternion[_activeDoorMeshes.Length];
+            _targetRotations = new Quaternion[_activeDoorMeshes.Length];
+
+            for (int i = 0; i < _activeDoorMeshes.Length; i++) {
+                Transform doorMesh = _activeDoorMeshes[i];
+                if (doorMesh == null) continue;
+
+                _closedRotations[i] = doorMesh.localRotation;
+                _targetRotations[i] = _closedRotations[i];
+            }
+        }
+
+        private void UpdateTargetRotations() {
+            if (_activeDoorMeshes == null || _targetRotations == null) return;
+
+            for (int i = 0; i < _activeDoorMeshes.Length; i++) {
+                if (_activeDoorMeshes[i] == null) continue;
+
+                if (_isOpen) {
+                    float direction = _useDoubleDoor && i % 2 == 1 ? -_openAngle : _openAngle;
+                    _targetRotations[i] = _closedRotations[i] * Quaternion.Euler(0f, direction, 0f);
+                }
+                else {
+                    _targetRotations[i] = _closedRotations[i];
+                }
+            }
         }
     }
 }

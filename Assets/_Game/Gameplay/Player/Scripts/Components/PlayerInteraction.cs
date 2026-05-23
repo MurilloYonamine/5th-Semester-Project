@@ -1,12 +1,15 @@
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Gameplay.Dialogue;
+using FifthSemester.Gameplay.Interactables;
 using FifthSemester.Gameplay.Inventory;
+using FifthSemester.Gameplay.Save;
 using FifthSemester.Gameplay.Shared;
 using UnityEngine;
 
 namespace FifthSemester.Player {
     public class PlayerInteraction : MonoBehaviour {
+        private const string TAG = "<color=cyan>[PlayerInteraction]</color>";
         [SerializeField] private Camera _playerCamera;
 
         [Header("Settings")]
@@ -17,9 +20,14 @@ namespace FifthSemester.Player {
         [SerializeField] private AudioClip _pickupSound;
 
         private IInteractable _currentInteractable;
+        private PlayerController _playerController;
         private IEventBus _eventBus;
         private IAudioService _audioService;
         private IInventoryService<Item> _inventoryService;
+
+        private void Awake() {
+            _playerController = GetComponent<PlayerController>();
+        }
 
         private void Start() {
             _audioService = ServiceLocator.Get<IAudioService>();
@@ -55,11 +63,44 @@ namespace FifthSemester.Player {
         private IInteractable GetInteractableFromRay() {
             Ray ray = _playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
-            if (Physics.Raycast(ray, out RaycastHit hit, _interactionRange, _interactionLayer)) {
-                return hit.collider.GetComponent<IInteractable>();
+            if (!Physics.Raycast(ray, out RaycastHit hit, _interactionRange, _interactionLayer)) {
+                return null;
             }
 
-            return null;
+            MonoBehaviour[] components = hit.collider.GetComponents<MonoBehaviour>();
+            IInteractable selectedInteractable = null;
+
+            for (int i = 0; i < components.Length; i++) {
+                MonoBehaviour component = components[i];
+                if (component is not IInteractable interactable || !interactable.IsInteractable) continue;
+
+                if (component is Item) {
+                    return interactable;
+                }
+
+                if (component is DeliveryPoint) {
+                    selectedInteractable = interactable;
+                    continue;
+                }
+
+                if (component is SavePoint) {
+                    if (selectedInteractable == null) {
+                        selectedInteractable = interactable;
+                    }
+                    continue;
+                }
+
+                if (component is DialogueTrigger && selectedInteractable == null) {
+                    selectedInteractable = interactable;
+                    continue;
+                }
+
+                if (selectedInteractable == null) {
+                    selectedInteractable = interactable;
+                }
+            }
+
+            return selectedInteractable;
         }
 
         private void Interact(InteractInputEvent evt) {
@@ -69,6 +110,11 @@ namespace FifthSemester.Player {
 
             if (_currentInteractable is Item item) {
                 HandleItemPickup(item);
+            } else if (_currentInteractable is DeliveryPoint deliveryPoint) {
+                deliveryPoint.Interact();
+            } else if (_currentInteractable is SavePoint savePoint) {
+                savePoint.SetPlayerController(_playerController);
+                savePoint.Interact();
             } else {
                 _currentInteractable.Interact();
             }
@@ -84,6 +130,7 @@ namespace FifthSemester.Player {
 
             if (wasAdded) {
                 PlayPickupFeedback();
+                _eventBus?.Publish(new ItemPickedUpEvent(item.Id, item.gameObject));
                 item.Interact();
             }
         }
@@ -92,6 +139,16 @@ namespace FifthSemester.Player {
             if (_pickupSound != null && _audioService != null) {
                 _audioService.PlaySFX(_pickupSound);
             }
+        }
+        private void OnDrawGizmos()
+        {
+            Camera cam = _playerCamera != null ? _playerCamera : Camera.main;
+            if (cam == null) return;
+
+            Gizmos.color = Color.yellow;
+            Vector3 origin = cam.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, 0));
+            Vector3 direction = cam.transform.forward;
+            Gizmos.DrawLine(origin, origin + direction * _interactionRange);
         }
     }
 }

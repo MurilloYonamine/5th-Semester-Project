@@ -1,50 +1,90 @@
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.States;
+using FifthSemester.Core.Events;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Utilities;
+using UnityEngine.UI;
 
 namespace FifthSemester.Gameplay.Menu {
-    public class PauseMenuView : MonoBehaviour {
+    public class PauseMenuView : MenuViewBase {
         private IGameStateService _gameState;
-        private IMenuService _menuService;
+        private IEventBus _eventBus;
 
-        [Header("Focus")]
-        [SerializeField] private GameObject _focusFirstElement;
+        [Header("Background Panel")]
+        [SerializeField] private CanvasGroup _backgroundPanel; 
 
-        private void Start() {
+        [Header("Buttons")]
+        [SerializeField] private Button _resumeButton;
+        [SerializeField] private Button _loadButton;
+        [SerializeField] private Button _settingsButton;
+        [SerializeField] private Button _creditsButton;
+        [SerializeField] private Button _quitButton;
+
+        protected override MenuScreen MenuScreenType => MenuScreen.PauseMenu;
+
+        protected override void Start() {
             _gameState = ServiceLocator.Get<IGameStateService>();
-            _menuService = ServiceLocator.Get<IMenuService>();
+            _eventBus = ServiceLocator.Get<IEventBus>();
+
+            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
+
+            base.Start();
+
+            _resumeButton.onClick.AddListener(OnResume);
+            _loadButton.onClick.AddListener(OnLoad);
+            _settingsButton.onClick.AddListener(OnSettings);
+            _creditsButton.onClick.AddListener(OnCredits);
+            _quitButton.onClick.AddListener(OnQuit);
             
-            _menuService.Register(MenuScreen.PauseMenu, gameObject);
-        }
-        private void OnEnable() {
-            EventSystem.current.SetSelectedGameObject(null);
-
-            if (_focusFirstElement != null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
+            if (_gameState.CurrentState == GameState.Gameplay && _backgroundPanel != null) {
+                 _backgroundPanel.alpha = 0f;
+                 _backgroundPanel.blocksRaycasts = false;
+                 _backgroundPanel.interactable = false;
             }
-
-            InputSystem.onAnyButtonPress.Call(OnAnyInput);
         }
-        private void OnDestroy() {
-            _menuService?.Unregister(MenuScreen.PauseMenu);
+
+        protected override void OnDestroy() {
+            base.OnDestroy();
+            _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
+        }
+
+        private void OnGameStateChanged(GameStateChangedEvent evt) {
+            if (evt.CurrentState == GameState.Paused) {
+                if (_backgroundPanel != null) {
+                    _backgroundPanel.alpha = 1f;
+                    _backgroundPanel.blocksRaycasts = true;
+                    _backgroundPanel.interactable = true;
+                }
+
+                _menuService.Show(MenuScreen.PauseMenu);
+            }
+            else if (evt.PreviousState == GameState.Paused) {
+                if (_backgroundPanel != null) {
+                    _backgroundPanel.alpha = 0f;
+                    _backgroundPanel.blocksRaycasts = false;
+                    _backgroundPanel.interactable = false;
+                }
+
+                _menuService.Hide();
+            }
         }
 
         public void OnResume() {
             _gameState.ChangeState(GameState.Gameplay);
         }
 
-        public void OnQuit() {
-            _gameState.ChangeState(GameState.MainMenu);
+        public void OnLoad() {
+            _menuService.Show(MenuScreen.LoadGame);
+        }
+        public void OnSettings() {
+            _menuService.Show(MenuScreen.Settings);
         }
 
-        private void OnAnyInput(InputControl control) {
-            if (control.device is Gamepad && EventSystem.current.currentSelectedGameObject == null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
-            }
+        public void OnCredits() {
+            _menuService.Show(MenuScreen.Credits);
+        }
+
+        public void OnQuit() {
         }
     }
 }

@@ -1,38 +1,55 @@
 // autor: Murillo Gomes Yonamine
 // data: 30/03/2026
 
-using System.Collections.Generic;
+using FifthSemester.Core.Enums;
+using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
+using FifthSemester.Core.States;
+using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
-
-using FifthSemester.Core.Events;
-using FifthSemester.Core.States;
+using UnityEngine.Playables;
 
 namespace FifthSemester.Gameplay.Dialogue {
-    public class DialogueService : MonoBehaviour, IDialogueService<DialogueSO> {
+    public class DialogueService : MonoBehaviour, IDialogueService<TextAsset> {
         public GameState CurrentState { get; set; } = GameState.Gameplay;
+        public DialogueMode CurrentMode { get; private set; }
 
-        public bool IsDialogueActive { get; private set; } = false;
-
+        public bool IsDialogueActive { get; private set; }
 
         private IEventBus _eventBus;
 
+        [Header("UI")]
         [SerializeField] private GameObject _dialoguePanel;
         [SerializeField] private TextMeshProUGUI _nameText;
         [SerializeField] private TextMeshProUGUI _dialogueText;
 
-        private Queue<DialogueLine> _linesQueue;
+        [Header("Speakers")]
+        [SerializeField] private List<CharacterSO> _characters = new List<CharacterSO>();
 
+        [Header("Defaults")]
+        [SerializeField] private Color _defaultNameColor = Color.white;
+        [SerializeField] private Color _defaultTextColor = Color.white;
+        [SerializeField] private TMP_FontAsset _defaultNameFont;
+        [SerializeField] private TMP_FontAsset _defaultTextFont;
+
+        private Queue<ParsedDialogueLine> _linesQueue;
+        private string _currentDialogueSourceId;
+
+        public PlayableDirector CurrentDirector { get; private set; }
+
+        private void Awake() {
+            ServiceLocator.Register<IDialogueService<TextAsset>>(this);
+        }
 
         private void Start() {
-            ServiceLocator.Register<IDialogueService<DialogueSO>>(this);
             _eventBus = ServiceLocator.Get<IEventBus>();
 
-            _eventBus.Subscribe<DialogueAdvanceRequestedEvent>(OnDialogueAdvanceRequested);
-            _eventBus.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
+            _eventBus?.Subscribe<DialogueAdvanceRequestedEvent>(OnDialogueAdvanceRequested);
+            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
         }
+
         private void OnDisable() {
             _eventBus?.Unsubscribe<DialogueAdvanceRequestedEvent>(OnDialogueAdvanceRequested);
             _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
@@ -40,20 +57,70 @@ namespace FifthSemester.Gameplay.Dialogue {
 
         public void ToggleDialogue(bool enable) {
             IsDialogueActive = enable;
-            _dialoguePanel.SetActive(enable);
+            if (_dialoguePanel != null) {
+                _dialoguePanel.SetActive(enable);
+            }
         }
+
         private void Clear() {
-            _nameText.text = "";
-            _dialogueText.text = "";
+            if (_nameText != null) {
+                _nameText.text = string.Empty;
+            }
+
+            if (_dialogueText != null) {
+                _dialogueText.text = string.Empty;
+            }
         }
+
         private void OnDialogueAdvanceRequested(DialogueAdvanceRequestedEvent evt) {
-            DisplayNextLine();
+            if (!IsDialogueActive)
+                return;
+
+            if (CurrentMode == DialogueMode.Cutscene) {
+                if (_linesQueue != null && _linesQueue.Count > 0) {
+                    DisplayNextLine();
+                }
+                else {
+                    EndDialogue();
+                }
+                return;
+            }
+
+            if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
+                Clear();
+                ToggleDialogue(false);
+                CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
+            }
+            else {
+                DisplayNextLine();
+            }
         }
-        public void StartDialogue(DialogueSO dialogue) {
-            ToggleDialogue(true);
+
+        public void StartDialogue(TextAsset dialogueFile, PlayableDirector director = null, string sourceId = null, DialogueMode mode = DialogueMode.Normal) {
+            _linesQueue = DialogueParser.Parse(dialogueFile);
+            CurrentDirector = director;
+            _currentDialogueSourceId = sourceId;
+            CurrentMode = mode;
+
+            IsDialogueActive = true;
             _eventBus?.Publish(new DialogueStartedEvent());
 
-            _linesQueue = new Queue<DialogueLine>(dialogue.lines);
+            if (CurrentDirector != null) {
+                ToggleDialogue(false);
+                CurrentDirector.Play();
+            }
+            else {
+                ToggleDialogue(true);
+                DisplayNextLine();
+            }
+        }
+        public void TimelineShowLine() {
+            ToggleDialogue(true);
+            DisplayNextLine();
+
+            if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid()) {
+                CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(0);
+            }
         }
 
         public void DisplayNextLine() {
@@ -62,22 +129,62 @@ namespace FifthSemester.Gameplay.Dialogue {
                 return;
             }
 
-            DialogueLine line = _linesQueue.Dequeue();
-            _nameText.text = line.speaker.characterName;
-            _nameText.color = line.speaker.nameColor;
+            ParsedDialogueLine line = _linesQueue.Dequeue();
+
+            CharacterSO character;
+            bool hasCharacter = TryGetCharacter(line.speakerName, out character);
+
+            string speakerName = string.IsNullOrWhiteSpace(line.speakerName) ? string.Empty : line.speakerName;
+            _nameText.text = speakerName;
+            _nameText.color = hasCharacter ? character.nameColor : _defaultNameColor;
+            _nameText.font = hasCharacter && character.nameFont != null ? character.nameFont : _defaultNameFont;
 
             _dialogueText.text = line.text;
-            _dialogueText.color = line.speaker.textColor;
+            _dialogueText.color = hasCharacter ? character.textColor : _defaultTextColor;
+            _dialogueText.font = hasCharacter && character.textFont != null ? character.textFont : _defaultTextFont;
         }
 
         public void EndDialogue() {
-            ToggleDialogue(false);
-            _eventBus?.Publish(new DialogueEndedEvent());
+            string sourceId = _currentDialogueSourceId;
+
             Clear();
+            ToggleDialogue(false);
+
+            if (CurrentDirector != null && CurrentDirector.isActiveAndEnabled && CurrentDirector.playableGraph.IsValid()) {
+                CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
+            }
+
+            CurrentDirector = null;
+            _linesQueue = null;
+            _currentDialogueSourceId = null;
+
+            _eventBus?.Publish(new DialogueEndedEvent { NpcId = sourceId });
         }
 
         public void OnGameStateChanged(GameStateChangedEvent evt) {
             CurrentState = evt.CurrentState;
+        }
+
+        private bool TryGetCharacter(string speakerName, out CharacterSO character) {
+            character = null;
+
+            if (string.IsNullOrWhiteSpace(speakerName)) {
+                return false;
+            }
+
+            for (int i = 0; i < _characters.Count; i++) {
+                CharacterSO config = _characters[i];
+                if (config == null) {
+                    continue;
+                }
+
+                if (string.Equals(config.characterName, speakerName, StringComparison.OrdinalIgnoreCase)) {
+                    character = config;
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

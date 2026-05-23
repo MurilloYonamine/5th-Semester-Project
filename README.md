@@ -22,7 +22,7 @@
 <h3 align="center">5th Semester Project</h3>
 
   <p align="center">
-    A project made in Unity for University of Senac Santo Amaor
+    A Unity project developed for Senac Santo Amaro University
     <br />
     <a href="https://github.com/MurilloYonamine/5th-Semester-Project"><strong>Explore the docs »</strong></a>
     <br />
@@ -37,63 +37,103 @@
 
 ## Project Architecture
 
-This project uses a simple **Feature-Based Architecture**.
+This project follows a **layered + feature-based architecture** inside `Assets/_Game`.
+
+### High-Level Layers
+
+* **Core**: global services and contracts (`EventBus`, `ServiceLocator`, `Input`, `Audio`, enums).
+* **Framework**: reusable systems (Behaviour Trees, generic UI components).
+* **Gameplay**: game-specific features (Player, Enemy, Dialogue, Menu, Inventory, Door, Delivery, etc.).
+* **Shared**: cross-cutting interfaces/utilities (`IInteractable`, helpers, physic materials).
+* **UI**: PSX shaders and VFX pipeline.
 
 ### Folder Structure
 
 ```
 Assets/
-│
-├── _Project/   → Project-level files (Readme, tutorial info, misc)
-├── _Core/      → Shared systems (EventBus, ServiceLocator, utilities)
-├── Features/   → Gameplay features (Player, Enemy, Combat, UI, etc.)
-└── _Game/      → Bootstrap, scenes, composition
+└── _Game/
+  ├── Core/
+  ├── Framework/
+  ├── Gameplay/
+  ├── Shared/
+  └── UI/
 ```
 
----
+### Dependency Rules
 
-### Rules
+* Core does not depend on Gameplay features.
+* Framework depends on Core.
+* Gameplay depends on Core + Framework.
+* Features communicate through `EventBus` and service interfaces.
+* Avoid direct feature-to-feature coupling when possible.
 
-* No global `Scripts` or `Prefabs` folders.
-* Each feature owns its own Scripts, Prefabs, Sprites, etc.
-* Features can depend on `_Core`.
-* Features should not directly depend on other features.
-* `_Game` references Core and Features and handles setup.
+### Runtime Initialization
 
----
+`Gameplay/Bootstrap/GameBootstrapper.cs` initializes global services before scene load using Unity runtime initialization attributes.
 
-### Feature Template
-
-```
-FeatureName/
-│
-├── Scripts/
-├── Prefabs/
-├── Models/
-├── Sprites/
-├── Animations/
-├── Audio/
-└── FeatureName.asmdef
-```
-
-### Layer Style
+### Architectural View
 
 <a href="https://github.com/MurilloYonamine/5th-Semester-Project">
-  <img src="Media/Diagrams/architecture.drawio.png" alt="Logo">
+  <img src="Media/folder-structure.png">
 </a>
+
+### Documentation Index
+
+* [Assets/_Game/Core/README.md](Assets/_Game/Core/README.md)
+* [Assets/_Game/Framework/README.md](Assets/_Game/Framework/README.md)
+* [Assets/_Game/Gameplay/README.md](Assets/_Game/Gameplay/README.md)
+* [Assets/_Game/Shared/README.md](Assets/_Game/Shared/README.md)
+* [Assets/_Game/UI/README.md](Assets/_Game/UI/README.md)
+
+#### Gameplay Feature Docs
+
+* [Assets/_Game/Gameplay/Bootstrap/README.md](Assets/_Game/Gameplay/Bootstrap/README.md)
+* [Assets/_Game/Gameplay/Game%20State/README.md](Assets/_Game/Gameplay/Game%20State/README.md)
+* [Assets/_Game/Gameplay/Player/README.md](Assets/_Game/Gameplay/Player/README.md)
+* [Assets/_Game/Gameplay/Enemy/README.md](Assets/_Game/Gameplay/Enemy/README.md)
+* [Assets/_Game/Gameplay/Dialogue/README.md](Assets/_Game/Gameplay/Dialogue/README.md)
+* [Assets/_Game/Gameplay/Menu/README.md](Assets/_Game/Gameplay/Menu/README.md)
+* [Assets/_Game/Gameplay/Inventory/README.md](Assets/_Game/Gameplay/Inventory/README.md)
+* [Assets/_Game/Gameplay/Door/README.md](Assets/_Game/Gameplay/Door/README.md)
+* [Assets/_Game/Gameplay/Delivery/README.md](Assets/_Game/Gameplay/Delivery/README.md)
+* [Assets/_Game/Gameplay/Environment/README.md](Assets/_Game/Gameplay/Environment/README.md)
+* [Assets/_Game/Gameplay/Props/README.md](Assets/_Game/Gameplay/Props/README.md)
+
+## Dialogue Data Model Update
+
+The dialogue runtime now follows a split data model:
+
+- **TextAsset** stores dialogue content (speaker name + line text).
+- **CharacterSO** stores speaker presentation (colors and fonts).
+
+### Why
+
+This keeps dialogue authoring simple in `.txt` files while preserving reusable character styling in assets.
+
+### Runtime Flow
+
+1. `DialogueTrigger` references a `TextAsset` file.
+2. `DialogueService` calls `DialogueParser.Parse(TextAsset)`.
+3. Each parsed `speakerName` is matched against configured `CharacterSO` assets (case-insensitive).
+4. UI applies speaker name/text colors and fonts from `CharacterSO`.
+5. If no match exists, `DialogueService` uses default colors/fonts.
+
+### Notes
+
+- `DialogueSO` is no longer required for runtime playback in this flow.
+- Keep `CharacterSO` for centralized speaker styling and consistency across dialogues.
 
 ## Credits
 
-CI/CD powered by [GameCI](https://game.ci/) and GitHub Actions.
-Quick Outline powered by [Chris Nolet](https://assetstore.unity.com/packages/tools/particles-effects/quick-outline-115488?aid=1101l9Bhe)
-PSX footsteps provided by [Hazard Play](https://hazardpay.itch.io/40-free-psx-crunchy-footsteps)
-Item Pickup SFX provided by [Lamoot](https://opengameart.org/content/positive-item-pickup-yo-frankie)
+CI/CD powered by [GameCI](https://game.ci/) and GitHub Actions.  
+Quick Outline powered by [Chris Nolet](https://assetstore.unity.com/packages/tools/particles-effects/quick-outline-115488?aid=1101l9Bhe)  
+PSX footsteps provided by [Hazard Play](https://hazardpay.itch.io/40-free-psx-crunchy-footsteps)  
+Item Pickup SFX provided by [Lamoot](https://opengameart.org/content/positive-item-pickup-yo-frankie)  
 
-Navigation menu SFX from [Fupi](https://opengameart.org/content/8bit-menu-highlight)
+Navigation menu SFX from [Fupi](https://opengameart.org/content/8bit-menu-highlight)  
 Open and Close menu SFX from [Pedro Alegria](https://pabloalegria9.itch.io/psxhorrorpack)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 
 <!-- MARKDOWN LINKS & IMAGES -->
 [contributors-shield]: https://img.shields.io/github/contributors/MurilloYonamine/5th-Semester-Project.svg?style=for-the-badge

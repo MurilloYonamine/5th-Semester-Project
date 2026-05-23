@@ -1,5 +1,6 @@
-using UnityEngine;
+using FifthSemester.Core.Enums;
 using FifthSemester.Core.States;
+using UnityEngine;
 
 namespace FifthSemester.Core.Events {
     public readonly struct GameStateChangedEvent {
@@ -58,9 +59,19 @@ namespace FifthSemester.Core.Events {
         }
     }
 
+    public readonly struct FlashlightInputEvent {
+        public readonly bool IsPressed;
+
+        public FlashlightInputEvent(bool isPressed) {
+            IsPressed = isPressed;
+        }
+    }
+
     public readonly struct NextInputEvent { }
 
     public readonly struct PreviousInputEvent { }
+
+    public readonly struct SkipCutsceneRequestedEvent { }
 
     /// ============= Pause Events =============
     public readonly struct PauseToggleRequestedEvent { }
@@ -78,7 +89,9 @@ namespace FifthSemester.Core.Events {
 
     public readonly struct DialogueStartedEvent { }
 
-    public readonly struct DialogueEndedEvent { }
+    public struct DialogueEndedEvent {
+        public string NpcId; 
+    }
 
     /// ============= Player Events =============
     public readonly struct PlayerSprintChangedEvent {
@@ -135,6 +148,44 @@ namespace FifthSemester.Core.Events {
         public ItemDeliveredEvent(string deliveryPointId, string deliveredItemId) {
             DeliveryPointId = deliveryPointId;
             DeliveredItemId = deliveredItemId;
+        }
+    }
+
+    public readonly struct FlashlightTargetedEvent {
+        public readonly GameObject Target;
+        public readonly bool IsIlluminated;
+
+        public FlashlightTargetedEvent(GameObject target, bool isIlluminated) {
+            Target = target;
+            IsIlluminated = isIlluminated;
+        }
+    }
+
+    /// ============= Save Events =============
+    public readonly struct SaveConfirmationRequestedEvent {
+        public readonly string CheckpointId;
+
+        public SaveConfirmationRequestedEvent(string checkpointId) {
+            CheckpointId = checkpointId;
+        }
+    }
+
+    public readonly struct SaveConfirmedEvent {
+        public readonly string CheckpointId;
+
+        public SaveConfirmedEvent(string checkpointId) {
+            CheckpointId = checkpointId;
+        }
+    }
+
+    public readonly struct SaveCancelledEvent { }
+
+    // ============= Settings Events =============
+    public struct LanguageChangedEvent {
+        public Language NewLanguage { get; private set; }
+
+        public LanguageChangedEvent(Language newLanguage) {
+            NewLanguage = newLanguage;
         }
     }
 }

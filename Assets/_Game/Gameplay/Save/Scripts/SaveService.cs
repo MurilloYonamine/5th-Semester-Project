@@ -29,7 +29,6 @@ namespace FifthSemester.Gameplay.Save{
             PlayerPrefs.Save();
 
             OnSaveCompleted?.Invoke(slotId);
-            Debug.Log($"[SaveService] Saved to slot: {slotId}");
         }
 
         public SaveData LoadFromSlot(string slotId) {

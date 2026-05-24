@@ -20,6 +20,10 @@ namespace FifthSemester.Gameplay.Missions {
         private IEventBus _eventBus;
         private string _currentMissionId;
 
+        private void Awake() {
+            _canvasGroup = GetComponent<CanvasGroup>();
+        }
+
         private void Start() {
             _eventBus = ServiceLocator.Get<IEventBus>();
 
@@ -36,7 +40,6 @@ namespace FifthSemester.Gameplay.Missions {
                 ApplyGameState(gameStateService.CurrentState);
             }
 
-            _canvasGroup = GetComponent<CanvasGroup>();
             _canvasGroup.interactable = false;
             _canvasGroup.blocksRaycasts = false;
         }

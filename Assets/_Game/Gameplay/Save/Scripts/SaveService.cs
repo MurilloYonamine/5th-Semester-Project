@@ -41,7 +41,6 @@ namespace FifthSemester.Gameplay.Save{
 
             string json = PlayerPrefs.GetString(key);
             SaveData data = JsonUtility.FromJson<SaveData>(json);
-            Debug.Log($"[SaveService] Loaded from slot: {slotId}");
             return data;
         }
 
@@ -51,7 +50,6 @@ namespace FifthSemester.Gameplay.Save{
             if (PlayerPrefs.HasKey(key)) {
                 PlayerPrefs.DeleteKey(key);
                 PlayerPrefs.Save();
-                Debug.Log($"[SaveService] Deleted slot: {slotId}");
             }
         }
 

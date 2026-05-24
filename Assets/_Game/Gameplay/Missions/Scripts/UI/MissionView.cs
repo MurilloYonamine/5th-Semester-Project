@@ -5,9 +5,14 @@ using TMPro;
 using UnityEngine;
 
 namespace FifthSemester.Gameplay.Missions {
+    [RequireComponent(typeof(CanvasGroup))]
     public class MissionUIView : MonoBehaviour {
         [Header("UI Components")]
         [SerializeField] private GameObject _missionPanel;
+
+        [Header("Canvas")]
+        private CanvasGroup _canvasGroup;
+
         [SerializeField] private TextMeshProUGUI _missionTitleText;
         [SerializeField] private TextMeshProUGUI _missionDescriptionText;
         [SerializeField] private TextMeshProUGUI _missionProgressionText;
@@ -30,6 +35,10 @@ namespace FifthSemester.Gameplay.Missions {
             if (gameStateService != null) {
                 ApplyGameState(gameStateService.CurrentState);
             }
+
+            _canvasGroup = GetComponent<CanvasGroup>();
+            _canvasGroup.interactable = false;
+            _canvasGroup.blocksRaycasts = false;
         }
 
         private void OnDestroy() {
@@ -76,10 +85,15 @@ namespace FifthSemester.Gameplay.Missions {
         }
 
         private void ApplyGameState(GameState currentState) {
-            if (_missionPanel == null) return;
-
             bool shouldShow = currentState == GameState.Gameplay;
-            _missionPanel.SetActive(shouldShow);
+
+            if (_canvasGroup != null) {
+                _canvasGroup.alpha = shouldShow ? 1f : 0f;
+            }
+            else {
+                if (_missionPanel == null) return;
+                _missionPanel.SetActive(shouldShow);
+            }
         }
     }
 }

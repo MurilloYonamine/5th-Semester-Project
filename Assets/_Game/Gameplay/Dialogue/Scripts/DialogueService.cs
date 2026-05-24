@@ -99,6 +99,11 @@ namespace FifthSemester.Gameplay.Dialogue
 
             if (CurrentMode == DialogueMode.Cutscene)
             {
+                if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid())
+                {
+                    CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
+                }
+
                 if (_linesQueue != null && _linesQueue.Count > 0)
                 {
                     DisplayNextLine();

@@ -9,36 +9,35 @@ namespace FifthSemester.Gameplay.Dialogue {
         public static Queue<ParsedDialogueLine> Parse(TextAsset file) {
             Queue<ParsedDialogueLine> parsedLines = new Queue<ParsedDialogueLine>();
 
-            if (file == null || string.IsNullOrWhiteSpace(file.text)) {
+            if (!TextAssetParserUtility.HasContent(file)) {
                 return parsedLines;
             }
 
-            string[] rawLines = file.text.Split(new[] { "\r\n", "\n", "\r" }, System.StringSplitOptions.None);
+            string[] rawLines = TextAssetParserUtility.SplitLines(file.text);
 
             for (int i = 0; i < rawLines.Length; i++) {
-                string line = rawLines[i];
+                string line = TextAssetParserUtility.NormalizeText(rawLines[i]);
                 if (string.IsNullOrWhiteSpace(line)) {
                     continue;
                 }
 
-                string trimmedLine = line.Trim();
-                if (trimmedLine.StartsWith("//")) {
+                if (line.StartsWith("//")) {
                     continue;
                 }
 
-                int firstQuoteIndex = trimmedLine.IndexOf('"');
-                int lastQuoteIndex = trimmedLine.LastIndexOf('"');
+                int firstQuoteIndex = line.IndexOf('"');
+                int lastQuoteIndex = line.LastIndexOf('"');
 
                 if (firstQuoteIndex >= 0 && lastQuoteIndex > firstQuoteIndex) {
-                    string speakerName = trimmedLine.Substring(0, firstQuoteIndex).Replace(":", "").Trim();
-                    string text = trimmedLine.Substring(firstQuoteIndex + 1, lastQuoteIndex - firstQuoteIndex - 1);
+                    string speakerName = line.Substring(0, firstQuoteIndex).Replace(":", "").Trim();
+                    string text = line.Substring(firstQuoteIndex + 1, lastQuoteIndex - firstQuoteIndex - 1);
                     text = text.Replace("\\\"", "\"");
 
                     parsedLines.Enqueue(new ParsedDialogueLine(speakerName, text));
                     continue;
                 }
 
-                parsedLines.Enqueue(new ParsedDialogueLine(string.Empty, trimmedLine));
+                parsedLines.Enqueue(new ParsedDialogueLine(string.Empty, line));
             }
 
             return parsedLines;

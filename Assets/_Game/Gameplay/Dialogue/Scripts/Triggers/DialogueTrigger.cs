@@ -4,7 +4,6 @@
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
 using FifthSemester.Features.Localization;
-using FifthSemester.Gameplay.Shared;
 using Sirenix.OdinInspector;
 using ThirdParty.QuickOutline;
 using UnityEngine;
@@ -12,32 +11,48 @@ using UnityEngine.Playables;
 
 namespace FifthSemester.Gameplay.Dialogue {
     [RequireComponent(typeof(Outline))]
-    public class DialogueTrigger : MonoBehaviour, IInteractable {
+    public class DialogueTrigger : TextTriggerBase {
         private IDialogueService<TextAsset> _dialogueService;
         private ISettingsService _settingsService;
-
-        [field: SerializeField] public string Id { get; private set; }
 
         [SerializeField, Title("Textos do Diálogo")]
         private LocalizedTextAsset _dialogueFiles;
 
-        private Outline _outline;
-
-        public bool IsInteractable => _dialogueFiles.Portuguese != null || _dialogueFiles.English != null;
+        public override bool IsInteractable => _dialogueFiles.Portuguese != null || _dialogueFiles.English != null;
 
         [SerializeField] private PlayableDirector _director;
 
-        private void Awake() {
-            _outline = GetComponent<Outline>();
-            _outline.enabled = false;
+        protected override void Awake() {
+            base.Awake();
         }
 
-        private void Start() {
+        protected virtual void Start() {
             _dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
             _settingsService = ServiceLocator.Get<ISettingsService>();
+
+            if (_dialogueService == null) {
+                Debug.LogError($"[DialogueTrigger] IDialogueService<TextAsset> não encontrado em {name}.");
+                enabled = false;
+                return;
+            }
+
+            if (_settingsService == null) {
+                Debug.LogError($"[DialogueTrigger] ISettingsService não encontrado em {name}.");
+                enabled = false;
+                return;
+            }
         }
 
-        public void Interact() {
+        protected override bool CanInteract() {
+            return _dialogueService != null && !_dialogueService.IsDialogueActive && IsInteractable;
+        }
+
+        protected override void OnInteract() {
+            if (_dialogueFiles.Portuguese == null && _dialogueFiles.English == null) {
+                Debug.LogError($"[DialogueTrigger] Nenhum texto de diálogo configurado em {name}.");
+                return;
+            }
+
             Language currentLanguage = _settingsService != null ? _settingsService.Language : Language.Portuguese;
 
             TextAsset correctDialogue = _dialogueFiles.GetAsset(currentLanguage);
@@ -47,19 +62,19 @@ namespace FifthSemester.Gameplay.Dialogue {
                 return;
             }
 
-            _outline.enabled = false;
+            Highlight(false);
 
             string dialogueId = string.IsNullOrWhiteSpace(Id) ? gameObject.name : Id;
             _dialogueService.StartDialogue(correctDialogue, _director, dialogueId);
         }
 
-        public void StopInteract() {
+        public override void StopInteract() {
             _dialogueService.EndDialogue();
         }
 
-        public void Highlight(bool value) {
+        public override void Highlight(bool value) {
             bool isDialogueActive = _dialogueService != null && _dialogueService.IsDialogueActive;
-            _outline.enabled = !isDialogueActive && value;
+            base.Highlight(!isDialogueActive && value);
         }
     }
 }

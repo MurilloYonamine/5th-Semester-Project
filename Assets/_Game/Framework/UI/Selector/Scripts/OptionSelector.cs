@@ -83,11 +83,15 @@ namespace FifthSemester.Framework.UI {
         }
 
         private void BindButtons() {
-            if (_leftButton != null)
+            if (_leftButton != null) {
+                _leftButton.onClick.RemoveListener(Previous);
                 _leftButton.onClick.AddListener(Previous);
+            }
 
-            if (_rightButton != null)
+            if (_rightButton != null) {
+                _rightButton.onClick.RemoveListener(Next);
                 _rightButton.onClick.AddListener(Next);
+            }
         }
 
         public void Next() {

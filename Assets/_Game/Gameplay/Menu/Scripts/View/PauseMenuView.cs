@@ -4,6 +4,7 @@ using FifthSemester.Core.States;
 using FifthSemester.Core.Events;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace FifthSemester.Gameplay.Menu {
     public class PauseMenuView : MenuViewBase {
@@ -85,6 +86,7 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public void OnQuit() {
+            SceneManager.LoadScene("MainMenu");
         }
     }
 }

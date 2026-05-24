@@ -7,8 +7,6 @@ using UnityEngine;
 namespace FifthSemester.Gameplay.Menu {
     public class SettingsService : ISettingsService {
 
-
-        // Funções auxiliares para salvar e ler booleanos no PlayerPrefs
         private bool GetBool(string key, bool defaultValue = false) {
             return PlayerPrefs.GetInt(key, defaultValue ? 1 : 0) == 1;
         }
@@ -19,7 +17,19 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public SettingsService() {
+            ApplyStartupScreenSettings();
+        }
+
+        private void ApplyStartupScreenSettings() {
             Application.targetFrameRate = FrameRate;
+
+            if (ResolutionIndex >= 0 && ResolutionIndex < AvailableResolutions.Length) {
+                Vector2Int resolution = AvailableResolutions[ResolutionIndex];
+                Screen.SetResolution(resolution.x, resolution.y, IsFullscreen);
+            }
+            else {
+                Screen.fullScreen = IsFullscreen;
+            }
         }
 
         // ====== Audio ======
@@ -83,6 +93,7 @@ namespace FifthSemester.Gameplay.Menu {
             get => GetBool("Settings_Fullscreen", true);
             set {
                 SetBool("Settings_Fullscreen", value);
+                Screen.fullScreenMode = value ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
                 Screen.fullScreen = value;
             }
         }

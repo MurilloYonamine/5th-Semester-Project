@@ -14,10 +14,27 @@ namespace FifthSemester.Core.Services
         public DeviceDisplayType CurrentDevice { get; private set; } = DeviceDisplayType.Keyboard;
         public event Action<DeviceDisplayType> OnDeviceChanged;
 
+        private Action<InputEventPtr, InputDevice> _onEventHandler;
+
         private void Awake()
         {
             ServiceLocator.Register<IInputDeviceService>(this);
-            InputSystem.onEvent += (inputEvent, device) => UpdateDevice(device);
+            _onEventHandler = HandleInputEvent;
+            InputSystem.onEvent += _onEventHandler;
+        }
+
+        private void OnDestroy()
+        {
+            if (_onEventHandler != null)
+            {
+                InputSystem.onEvent -= _onEventHandler;
+                _onEventHandler = null;
+            }
+        }
+
+        private void HandleInputEvent(InputEventPtr inputEvent, InputDevice device)
+        {
+            UpdateDevice(device);
         }
 
         private void UpdateDevice(InputDevice device)

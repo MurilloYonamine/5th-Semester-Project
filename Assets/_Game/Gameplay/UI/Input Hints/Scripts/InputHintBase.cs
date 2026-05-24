@@ -19,11 +19,7 @@ namespace FifthSemester.Gameplay.UI.InputHints {
 
         protected virtual void Start() {
             _hintService = ServiceLocator.Get<IInputDeviceService>();
-
-            if (_hintService != null) {
-                _hintService.OnDeviceChanged += OnDeviceChanged;
-                OnDeviceChanged(_hintService.CurrentDevice);
-            }
+            BindDeviceService();
         }
 
         protected virtual void OnEnable() {
@@ -37,10 +33,7 @@ namespace FifthSemester.Gameplay.UI.InputHints {
             if (_hintService == null)
                 ServiceLocator.TryGet<IInputDeviceService>(out _hintService);
 
-            if (_hintService != null && !_isBound) {
-                _hintService.OnDeviceChanged += OnDeviceChanged;
-                _isBound = true;
-            }
+            BindDeviceService();
 
             UpdateIdleSprite();
         }
@@ -56,6 +49,14 @@ namespace FifthSemester.Gameplay.UI.InputHints {
                 _hintService.OnDeviceChanged -= OnDeviceChanged;
                 _isBound = false;
             }
+        }
+
+        private void BindDeviceService() {
+            if (_hintService == null || _isBound) return;
+
+            _hintService.OnDeviceChanged += OnDeviceChanged;
+            _isBound = true;
+            OnDeviceChanged(_hintService.CurrentDevice);
         }
 
         protected abstract void OnDeviceChanged(DeviceDisplayType newDevice);
@@ -99,7 +100,7 @@ namespace FifthSemester.Gameplay.UI.InputHints {
 
             return DeviceDisplayType.Keyboard;
         }
-        
+
         protected abstract void OnInputStarted(InputAction.CallbackContext context);
         protected abstract void OnInputPerformed(InputAction.CallbackContext context);
         protected abstract void OnInputCanceled(InputAction.CallbackContext context);

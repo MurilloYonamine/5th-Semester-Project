@@ -9,7 +9,6 @@ using UnityEngine;
 
 namespace FifthSemester.Player {
     public class PlayerInteraction : MonoBehaviour {
-        private const string TAG = "<color=cyan>[PlayerInteraction]</color>";
         [SerializeField] private Camera _playerCamera;
 
         [Header("Settings")]
@@ -27,6 +26,17 @@ namespace FifthSemester.Player {
 
         private void Awake() {
             _playerController = GetComponent<PlayerController>();
+
+            if (_playerCamera == null) {
+                Debug.LogError("[PlayerInteraction] PlayerCamera não atribuído.");
+                enabled = false;
+                return;
+            }
+
+            if (_playerController == null) {
+                Debug.LogError("[PlayerInteraction] PlayerController ausente no mesmo GameObject.");
+                enabled = false;
+            }
         }
 
         private void Start() {

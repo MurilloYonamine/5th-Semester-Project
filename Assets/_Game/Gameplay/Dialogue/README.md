@@ -1,14 +1,14 @@
 # The `Dialogue` Directory: Conversation System
 
-> Runtime update: dialogues are now loaded from `TextAsset` files through `DialogueParser.Parse(TextAsset)` and consumed by `IDialogueService<TextAsset>`.
+> Runtime update: the dialogue system is being split into `Views/`, `Triggers/`, and `Services/`.
 >
 > Current runtime flow:
-> - `DialogueTrigger` references a `TextAsset`
-> - `DialogueService` calls `DialogueParser` to build `Queue<ParsedDialogueLine>`
-> - `DialogueService` resolves colors using `List<SpeakerConfig>` in Inspector
-> - `DialogueStartedEvent` / `DialogueEndedEvent` are still published
+> - `DialogueTrigger` still loads localized `TextAsset` dialogue files
+> - `DialogueService` parses `TextAsset` content through `DialogueParser.Parse(TextAsset)`
+> - `DialogueStartedEvent` / `DialogueEndedEvent` still drive game state transitions
+> - UI rendering is moving into the new `Views/` layer
 
-The **Dialogue** directory manages **character conversations**—dialogue playback, character data, line-by-line display, and state transitions during conversations.
+The **Dialogue** directory manages **text-driven interactions**—dialogue playback, documents, captions, character data, and the transition toward a separated view/trigger/service architecture.
 
 ---
 
@@ -36,14 +36,22 @@ CharacterSO (ScriptableObject)
 ├── nameColor: Color
 └── textColor: Color
 
-DialogueTrigger (MonoBehaviour)
-├─ Detects player interaction
-└─ Tells DialogueService to start dialogue
+Views/
+├─ TextViewBase
+├─ DialogueView
+├─ DocumentView
+└─ CaptionView
+
+Triggers/
+├─ TextTriggerBase
+├─ DialogueTrigger
+├─ DocumentTrigger
+└─ CaptionTrigger
 
 DialogueService (MonoBehaviour)
-├─ Manages active dialogue
-├─ Displays lines one by one
-└─ Publishes DialogueStartedEvent / DialogueEndedEvent
+├─ Coordinates dialogue playback
+├─ Still publishes DialogueStartedEvent / DialogueEndedEvent
+└─ Is being refactored away from direct UI ownership
 ```
 
 ---

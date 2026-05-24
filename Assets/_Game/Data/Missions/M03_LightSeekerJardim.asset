@@ -15,7 +15,7 @@ MonoBehaviour:
   MissionId: M03_LightSeekerJardim
   Title: Investigar o Jardim
   Description: Tem algo na janela...
-  NextMission: {fileID: 11400000, guid: e974556fb6ac1494d805e5ffd4e915f5, type: 2}
+  NextMission: {fileID: 11400000, guid: d32df546ddd58ef489476e0446e41021, type: 2}
   Type: 3
   TargetCutscene: 4
   NpcId: 
@@ -31,6 +31,7 @@ MonoBehaviour:
   - Paciente_E
   PersistProgress: 1
   DebugSetupEvents: []
+  EndGamePrefab: {fileID: 0}
   MapActions:
   - Type: 4
     TargetDoor: 0

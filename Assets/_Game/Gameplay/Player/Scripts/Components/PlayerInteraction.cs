@@ -120,12 +120,15 @@ namespace FifthSemester.Player {
 
             if (_currentInteractable is Item item) {
                 HandleItemPickup(item);
-            } else if (_currentInteractable is DeliveryPoint deliveryPoint) {
+            }
+            else if (_currentInteractable is DeliveryPoint deliveryPoint) {
                 deliveryPoint.Interact();
-            } else if (_currentInteractable is SavePoint savePoint) {
+            }
+            else if (_currentInteractable is SavePoint savePoint) {
                 savePoint.SetPlayerController(_playerController);
                 savePoint.Interact();
-            } else {
+            }
+            else {
                 _currentInteractable.Interact();
             }
         }
@@ -150,8 +153,7 @@ namespace FifthSemester.Player {
                 _audioService.PlaySFX(_pickupSound);
             }
         }
-        private void OnDrawGizmos()
-        {
+        private void OnDrawGizmos() {
             Camera cam = _playerCamera != null ? _playerCamera : Camera.main;
             if (cam == null) return;
 

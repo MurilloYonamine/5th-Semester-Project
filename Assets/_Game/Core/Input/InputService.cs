@@ -26,8 +26,7 @@ namespace FifthSemester.Core.Events {
         private InputAction _interact;
         private InputAction _zoom;
         private InputAction _flash;
-        private InputAction _next;
-        private InputAction _previous;
+        private InputAction _inventoryNavigate;
         private InputAction _openPause;
         private InputAction _dialogueAdvance;
         private InputAction _skipCutscene;
@@ -58,8 +57,7 @@ namespace FifthSemester.Core.Events {
             _interact = _gameInput.Player.Interact;
             _zoom = _gameInput.Player.Zoom;
             _flash = _gameInput.Player.Flash;
-            _next = _gameInput.Player.Next;
-            _previous = _gameInput.Player.Previous;
+            _inventoryNavigate = _gameInput.Player.InventoryNavigate;
             _openPause = _gameInput.Player.OpenPause;
             _dialogueAdvance = _gameInput.UI.Interact;
             _skipCutscene = _gameInput.Player.SkipCutscene;
@@ -80,8 +78,7 @@ namespace FifthSemester.Core.Events {
             _zoom.canceled += HandleZoom;
             _flash.performed += HandleFlash;
             _flash.canceled += HandleFlash;
-            _next.performed += HandleNext;
-            _previous.performed += HandlePrevious;
+            _inventoryNavigate.performed += HandleInventoryNavigation;
             _openPause.performed += HandleOpenPause;
             _skipCutscene.started += HandleSkipCutscene;
 
@@ -171,26 +168,20 @@ namespace FifthSemester.Core.Events {
             }
         }
 
-        public void HandleNext(InputAction.CallbackContext context) {
-            if (!context.performed) return;
+        public void HandleInventoryNavigation(InputAction.CallbackContext context) {
             if (CurrentGameState != GameState.Gameplay) return;
 
-            if (!_isInventoryOpen) {
-                PublishEvent(new InventoryToggledEvent(true)); // abre inventário
-                return;
-            }
-            PublishEvent(new NextInputEvent()); // navega
-        }
-
-        public void HandlePrevious(InputAction.CallbackContext context) {
-            if (!context.performed) return;
-            if (CurrentGameState != GameState.Gameplay) return;
+            float direction = context.ReadValue<float>(); 
 
             if (!_isInventoryOpen) {
-                PublishEvent(new InventoryToggledEvent(true)); // abre inventário
+                PublishEvent(new InventoryToggledEvent(true));
                 return;
             }
-            PublishEvent(new PreviousInputEvent()); // navega
+
+            if (direction > 0)
+                PublishEvent(new NextInputEvent());
+            else if (direction < 0)
+                PublishEvent(new PreviousInputEvent());
         }
         private void OnInventoryToggled(InventoryToggledEvent evt) {
             _isInventoryOpen = evt.IsOpen;
@@ -206,7 +197,7 @@ namespace FifthSemester.Core.Events {
             if (!context.started) return;
 
             if (CurrentGameState != GameState.Dialogue && CurrentGameState != GameState.Cutscene) return;
-                
+
             if (_ignoreNextDialogueAdvance) {
                 _ignoreNextDialogueAdvance = false;
                 return;
@@ -267,8 +258,7 @@ namespace FifthSemester.Core.Events {
             _zoom.canceled -= HandleZoom;
             _flash.performed -= HandleFlash;
             _flash.canceled -= HandleFlash;
-            _next.performed -= HandleNext;
-            _previous.performed -= HandlePrevious;
+            _inventoryNavigate.performed -= HandleInventoryNavigation;
             _openPause.performed -= HandleOpenPause;
             _dialogueAdvance.started -= HandleDialogueAdvance;
             _skipCutscene.started -= HandleSkipCutscene;

@@ -5,6 +5,7 @@ using UnityEngine;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.Input;
 using FifthSemester.Core.Events;
+using FifthSemester.Core.States;
 using Sirenix.OdinInspector;
 using Unity.Cinemachine;
 
@@ -47,6 +48,7 @@ namespace FifthSemester.Player.Components {
         private IEventBus _eventBus;
         private IGameplayService _gameplayService;
         private IInputService _inputService;
+        private IGameStateService _gameStateService;
 
         private CinemachinePanTilt _panTilt;
 
@@ -70,10 +72,14 @@ namespace FifthSemester.Player.Components {
         private void Start() {
             _gameplayService = ServiceLocator.Get<IGameplayService>();
             _inputService = ServiceLocator.Get<IInputService>();
+            _gameStateService = ServiceLocator.Get<IGameStateService>();
 
             _eventBus = ServiceLocator.Get<IEventBus>();
             _eventBus?.Subscribe<LookInputEvent>(HandleLookInput);
             _eventBus?.Subscribe<ZoomInputEvent>(HandleZoomInput);
+            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
+
+            ApplyGameState(_gameStateService != null ? _gameStateService.CurrentState : GameState.Gameplay);
 
             Cursor.lockState = CursorLockMode.Locked;
         }
@@ -81,6 +87,7 @@ namespace FifthSemester.Player.Components {
         private void OnDisable() {
             _eventBus?.Unsubscribe<LookInputEvent>(HandleLookInput);
             _eventBus?.Unsubscribe<ZoomInputEvent>(HandleZoomInput);
+            _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
         }
 
         public Transform GetCameraTarget() => _cameraTarget;
@@ -104,6 +111,21 @@ namespace FifthSemester.Player.Components {
 
         private void HandleZoomInput(ZoomInputEvent evt) {
             _zoomPressed = evt.IsPressed;
+        }
+
+        private void OnGameStateChanged(GameStateChangedEvent evt) {
+            ApplyGameState(evt.CurrentState);
+        }
+
+        private void ApplyGameState(GameState currentState) {
+            if (_vCam == null) return;
+
+            bool isGameplay = currentState == GameState.Gameplay;
+            _vCam.Priority = isGameplay ? 10 : 1;
+
+            if (isGameplay && _cameraTarget != null) {
+                _cameraTarget.localPosition = _targetOriginalPos;
+            }
         }
 
         private void ApplyRotation() {

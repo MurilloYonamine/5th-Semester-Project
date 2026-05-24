@@ -11,12 +11,9 @@ using UnityEngine;
 namespace FifthSemester.Gameplay.Map {
     public class StoryManager : MonoBehaviour {
         [SerializeField] private MissionSequenceSO _storySequence;
-
         private IMissionService _missionService;
         private IMapService _registry;
         private IEventBus _eventBus;
-
-        private int _currentSequenceIndex = 0;
 
         private void Start() {
             _missionService = ServiceLocator.Get<IMissionService>();
@@ -24,40 +21,21 @@ namespace FifthSemester.Gameplay.Map {
             _eventBus = ServiceLocator.Get<IEventBus>();
 
             if (_eventBus != null) {
-                _eventBus.Subscribe<MissionCompletedEvent>(OnMissionCompleted);
                 _eventBus.Subscribe<MissionUpdatedEvent>(OnMissionUpdated);
             }
-
-            StartNextMission();
+            if (_missionService != null) {
+                _missionService.StartSequence(_storySequence);
+            }
             ApplyMissionEffects();
         }
 
         private void OnDestroy() {
             if (_eventBus == null) return;
-
-            _eventBus.Unsubscribe<MissionCompletedEvent>(OnMissionCompleted);
             _eventBus.Unsubscribe<MissionUpdatedEvent>(OnMissionUpdated);
         }
 
         private void OnMissionUpdated(MissionUpdatedEvent evt) {
             ApplyMissionEffects();
-        }
-
-        private void OnMissionCompleted(MissionCompletedEvent evt) {
-            _currentSequenceIndex++;
-            StartNextMission();
-            ApplyMissionEffects();
-        }
-
-        private void StartNextMission() {
-            if (_storySequence == null || _storySequence.Sequence == null) return;
-
-            if (_currentSequenceIndex < _storySequence.Sequence.Count) {
-                MissionDefinition nextMission = _storySequence.Sequence[_currentSequenceIndex];
-                if (nextMission == null) return;
-
-                _missionService.StartMission(nextMission);
-            }
         }
 
         private void ApplyMissionEffects() {

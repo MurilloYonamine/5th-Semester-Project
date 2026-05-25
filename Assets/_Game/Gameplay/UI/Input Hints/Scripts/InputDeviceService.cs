@@ -4,13 +4,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System;
-using UnityEngine.InputSystem.Utilities;
 using FifthSemester.Core.Enums;
 using UnityEngine.InputSystem.LowLevel;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.States;
+using FifthSemester.Core.Services;
 
-namespace FifthSemester.Core.Services {
+namespace FifthSemester.Gameplay.UI {
     [RequireComponent(typeof(CanvasGroup))]
     public class InputDeviceService : MonoBehaviour, IInputDeviceService {
         public DeviceDisplayType CurrentDevice { get; private set; } = DeviceDisplayType.Keyboard;

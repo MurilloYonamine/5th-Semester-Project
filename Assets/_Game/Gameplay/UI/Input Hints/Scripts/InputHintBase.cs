@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.Enums;
 
-namespace FifthSemester.Gameplay.UI.InputHints {
+namespace FifthSemester.Gameplay.UI {
     public abstract class InputHintBase : MonoBehaviour {
         [Header("Referências Base")]
         [SerializeField] protected Image _hintImage;

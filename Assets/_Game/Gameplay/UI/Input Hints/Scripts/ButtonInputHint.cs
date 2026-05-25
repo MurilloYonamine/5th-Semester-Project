@@ -5,7 +5,7 @@ using FifthSemester.Core.Enums;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace FifthSemester.Gameplay.UI.InputHints {
+namespace FifthSemester.Gameplay.UI {
     public class ButtonInputHint : InputHintBase {
         [Serializable]
         public struct ButtonSprites {

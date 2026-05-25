@@ -67,10 +67,7 @@ namespace FifthSemester.Player.Components {
         [SerializeField] private AudioClip[] _footstepClips;
         [FoldoutGroup("Footsteps")]
         [SerializeField] private float _walkFootstepInterval = 0.5f;
-        [FoldoutGroup("Footsteps")]
-        [SerializeField] private float _sprintFootstepInterval = 0.32f;
-        [FoldoutGroup("Footsteps")]
-        [SerializeField] private float _crouchFootstepInterval = 0.7f;
+        
         [FoldoutGroup("Footsteps")]
         [SerializeField] private float _minFootstepSpeed = 0.1f;
         private float _footstepTimer;
@@ -140,11 +137,6 @@ namespace FifthSemester.Player.Components {
             float speed = horizontalVelocity.magnitude;
 
             if (speed < _minFootstepSpeed) {
-                _footstepTimer = _walkFootstepInterval;
-                return;
-            }
-
-            if (_isSprinting || _isCrouched) {
                 _footstepTimer = _walkFootstepInterval;
                 return;
             }

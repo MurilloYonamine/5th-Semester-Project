@@ -11,6 +11,13 @@ namespace FifthSemester.Gameplay {
 
         private string _speedParameter = "Speed";
 
+        [Header("Fallback Idle")]
+        [Tooltip("Opcional: nome do estado Idle no Animator. Se preenchido, o bridge fará Play(nome) ao terminar diálogo.")]
+        [SerializeField] private string _idleStateName = string.Empty;
+
+        [Tooltip("Se true, forçar retorno ao estado inicial do Animator quando não houver IdleStateName definido (uses Animator.Rebind()).")]
+        [SerializeField] private bool _forceRebindIfNoIdle = true;
+
         private IDialogueService<TextAsset> _dialogueService;
         private IEventBus _eventBus;
 
@@ -47,12 +54,28 @@ namespace FifthSemester.Gameplay {
             if (_npcAnimator == null) return;
 
             _npcAnimator.SetBool(_talkingParameter, false);
+            _npcAnimator.SetFloat(_speedParameter, 0f);
         }
 
         private void OnDialogueEnded(DialogueEndedEvent evt) {
             if (_npcAnimator == null) return;
 
+            // Parar fala e zerar velocidade
             _npcAnimator.SetBool(_talkingParameter, false);
+            _npcAnimator.SetFloat(_speedParameter, 0f);
+
+            // Forçar retorno ao estado de idle: Play(nome) se fornecido, senão Rebind() opcional.
+            if (!string.IsNullOrWhiteSpace(_idleStateName)) {
+                try {
+                    _npcAnimator.Play(_idleStateName, 0, 0f);
+                }
+                catch {
+                    if (_forceRebindIfNoIdle) _npcAnimator.Rebind();
+                }
+            }
+            else if (_forceRebindIfNoIdle) {
+                _npcAnimator.Rebind();
+            }
         }
     }
 }

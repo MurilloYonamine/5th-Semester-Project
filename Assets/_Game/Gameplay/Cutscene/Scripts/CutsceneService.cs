@@ -11,7 +11,7 @@ using UnityEngine;
 namespace FifthSemester.Gameplay.Dialogue {
 
     public class CutsceneService : MonoBehaviour, ICutsceneService {
-        private const float SKIP_FADE_DURATION = 0.5f;
+        private const float SKIP_FADE_DURATION = 1f;
 
         [SerializeField]
         private List<CutsceneController> _cutscenesInMap;
@@ -113,6 +113,10 @@ namespace FifthSemester.Gameplay.Dialogue {
 
             _fadeService.FadeOut(SKIP_FADE_DURATION, () => {
                 _activeCutscene.SkipCutscene();
+
+                var dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
+                dialogueService?.ForceEndDialogueImmediate();
+
                 _fadeService.FadeIn(SKIP_FADE_DURATION);
                 _activeCutscene = null;
             });

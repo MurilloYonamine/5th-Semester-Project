@@ -15,10 +15,11 @@ MonoBehaviour:
   MissionId: M04_ProcurarEnfermeira
   Title: Encontrar Enfermeira Anna
   Description: Preciso avisar a enfermeira sobre o que eu vi.
-  NextMission: {fileID: 0}
-  Type: 2
+  NextMission: {fileID: 11400000, guid: 40a54eb579bd77b44b54e7a9da64ec86, type: 2}
+  Type: 3
+  UseFadeOnStart: 0
   TargetCutscene: 0
-  NpcId: Nurse_A
+  NpcId: M04_Nurse_A
   TargetItemName: 
   RequiredCount: 1
   CollectItemName: Remedio
@@ -31,6 +32,7 @@ MonoBehaviour:
   - Paciente_E
   PersistProgress: 1
   DebugSetupEvents: []
+  EndGamePrefab: {fileID: 0}
   MapActions:
   - Type: 4
     TargetDoor: 0

@@ -10,9 +10,9 @@ namespace FifthSemester.Gameplay.Dialogue {
     public abstract class TextTriggerBase : MonoBehaviour, IInteractable {
         [Header("Interaction")]
         [SerializeField] private GameObject _interactionHint;
-        [SerializeField] private string _playerTag = "Player";
+        private const string PLAYER_TAG = "Player";
 
-         private Outline _outline;
+        private Outline _outline;
         [field: SerializeField] public string Id { get; private set; }
 
         private bool _isPlayerInside;
@@ -26,6 +26,10 @@ namespace FifthSemester.Gameplay.Dialogue {
 
             if (_outline != null) {
                 _outline.enabled = false;
+            }
+
+            if (Id == null || Id == string.Empty) {
+                Id = gameObject.name;
             }
 
             SetHintVisible(false);
@@ -89,7 +93,7 @@ namespace FifthSemester.Gameplay.Dialogue {
         }
 
         private bool IsPlayer(Collider other) {
-            return other != null && other.CompareTag(_playerTag);
+            return other != null && other.CompareTag(PLAYER_TAG);
         }
     }
 }

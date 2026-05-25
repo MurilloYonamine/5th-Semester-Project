@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4086185916625652455}
   - component: {fileID: 1536797018600061277}
   - component: {fileID: 1247333928689443173}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Document Page Count TMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,9 +145,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1660951509985047398}
-  - component: {fileID: 1568005095638679338}
   - component: {fileID: 4148805486549146059}
-  m_Layer: 0
+  - component: {fileID: 3182122238724810728}
+  m_Layer: 11
   m_Name: Document Read
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,24 +170,6 @@ Transform:
   - {fileID: 1017234585837643345}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1568005095638679338
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2085719437641360220}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12d7c60c5eba6194eb85569c56dc8cc8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _titleText: {fileID: 2066770298722912897}
-  _bodyText: {fileID: 8642077707092838207}
-  _pageCounterText: {fileID: 1247333928689443173}
-  _turnPageSfx: {fileID: 0}
-  _openCloseSfx: {fileID: 0}
-  _canvasGroup: {fileID: 4148805486549146059}
 --- !u!225 &4148805486549146059
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -196,10 +178,32 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2085719437641360220}
   m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Alpha: 0
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!114 &3182122238724810728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2085719437641360220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a66f4bfe844aa324aa8c214df5bf0c84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fadeDuration: 0.2
+  _useTypewriterEffect: 0
+  _charactersPerSecond: 45
+  _audioSource: {fileID: 0}
+  _showClip: {fileID: 0}
+  _hideClip: {fileID: 0}
+  _typewriterClip: {fileID: 0}
+  _contentText: {fileID: 8642077707092838207}
+  _titleText: {fileID: 2066770298722912897}
+  _pageCounterText: {fileID: 1247333928689443173}
 --- !u!1 &3898497518408158218
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,7 +216,7 @@ GameObject:
   - component: {fileID: 4148747414655123822}
   - component: {fileID: 585753251598861953}
   - component: {fileID: 3808469299855133922}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -313,7 +317,7 @@ GameObject:
   - component: {fileID: 2748804834437316649}
   - component: {fileID: 1099808686990919125}
   - component: {fileID: 8642077707092838207}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Document Body TMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -461,7 +465,7 @@ GameObject:
   - component: {fileID: 1097868737505648115}
   - component: {fileID: 520775386509922673}
   - component: {fileID: 2066770298722912897}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Document Title TMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -598,7 +602,7 @@ GameObject:
   - component: {fileID: 7544238533906264575}
   - component: {fileID: 5372586661921290186}
   - component: {fileID: 7545848132280122372}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}

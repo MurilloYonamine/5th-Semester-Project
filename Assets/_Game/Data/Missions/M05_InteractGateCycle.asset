@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9931ed7247e861b45942aa2c3019d1d0, type: 3}
-  m_Name: M01_TalkToNurse
+  m_Name: M05_InteractGateCycle
   m_EditorClassIdentifier: 
-  MissionId: M01_TalkToNurse
-  Title: Falar com a Enfermeira
-  Description: "Fale com a Enfermeira Anna no corredor para receber as instru\xE7\xF5es
-    do dia."
-  NextMission: {fileID: 11400000, guid: a3510c6362266be45b20da76094f87dc, type: 2}
-  Type: 3
-  UseFadeOnStart: 1
-  TargetCutscene: 1
-  NpcId: Enfermeira_A
+  MissionId: M05_InteractGateCycle
+  Title: Interagir com o Portão
+  Description: Fale com o portão para seguir com o ciclo.
+  NextMission: {fileID: 0}
+  Type: 2
+  UseFadeOnStart: 0
+  TargetCutscene: 0
+  NpcId: 
+  InteractableTargetId: M05_Interact
   TargetItemName: 
   RequiredCount: 1
   CollectItemName: 
@@ -29,8 +29,4 @@ MonoBehaviour:
   PersistProgress: 1
   DebugSetupEvents: []
   EndGamePrefab: {fileID: 0}
-  MapActions:
-  - Type: 1
-    TargetDoor: 0
-    DoorsToKeepUnlocked: 
-    TargetObjectId: M04_Nurse_A
+  MapActions: []

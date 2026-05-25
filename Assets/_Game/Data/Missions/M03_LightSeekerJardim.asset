@@ -17,6 +17,7 @@ MonoBehaviour:
   Description: Tem algo na janela...
   NextMission: {fileID: 11400000, guid: d32df546ddd58ef489476e0446e41021, type: 2}
   Type: 3
+  UseFadeOnStart: 1
   TargetCutscene: 4
   NpcId: 
   TargetItemName: 
@@ -37,3 +38,11 @@ MonoBehaviour:
     TargetDoor: 0
     DoorsToKeepUnlocked: 080000001100000012000000130000001400000015000000
     TargetObjectId: 
+  - Type: 1
+    TargetDoor: 0
+    DoorsToKeepUnlocked: 
+    TargetObjectId: M01_Nurse_A
+  - Type: 0
+    TargetDoor: 0
+    DoorsToKeepUnlocked: 
+    TargetObjectId: M04_Nurse_A

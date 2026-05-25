@@ -6,6 +6,7 @@ using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.States;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -21,6 +22,8 @@ namespace FifthSemester.Gameplay.Dialogue {
 
         private IEventBus _eventBus;
         private IFadeService _fadeService;
+        private IAudioService _audioService;
+        private Coroutine _endHoldCoroutine;
 
         [Header("Views")]
         [SerializeField] private DialogueView _dialogueView;
@@ -43,6 +46,7 @@ namespace FifthSemester.Gameplay.Dialogue {
 
         private void Start() {
             _eventBus = ServiceLocator.Get<IEventBus>();
+            ServiceLocator.TryGet<IAudioService>(out _audioService);
 
             if (_eventBus == null) {
                 Debug.LogError("[DialogueService] IEventBus não encontrado.");
@@ -132,6 +136,7 @@ namespace FifthSemester.Gameplay.Dialogue {
             }
             else {
                 ToggleDialogue(true);
+                PlayDialogueStartClip();
                 DisplayNextLine();
 
                 if (CurrentDirector != null) {
@@ -178,7 +183,7 @@ namespace FifthSemester.Gameplay.Dialogue {
         public void EndDialogue() {
             string sourceId = _currentDialogueSourceId;
 
-            PlayEndFade(() => FinalizeDialogueEnd(sourceId));
+            PlayEndFade(sourceId);
         }
 
         private void FinalizeDialogueEnd(string sourceId) {
@@ -211,15 +216,56 @@ namespace FifthSemester.Gameplay.Dialogue {
             _fadeService.FadeIn(DIALOGUE_FADE_DURATION, onComplete);
         }
 
-        private void PlayEndFade(Action onComplete) {
+        private void PlayEndFade(string sourceId) {
             EnsureFadeService();
 
             if (_fadeService == null) {
-                onComplete?.Invoke();
+                FinalizeDialogueEnd(sourceId);
                 return;
             }
 
-            _fadeService.FadeOut(DIALOGUE_FADE_DURATION, onComplete);
+            // Notificar imediatamente que o diálogo está terminando para que
+            // listeners (ex.: animadores de NPC) possam parar a animação de fala
+            // enquanto o fade/hold ocorre.
+            _eventBus?.Publish(new DialogueEndedEvent { NpcId = sourceId });
+
+            _fadeService.FadeOut(DIALOGUE_FADE_DURATION, () => {
+                _endHoldCoroutine = StartCoroutine(HoldBlackThenRelease(sourceId));
+            });
+        }
+
+        private IEnumerator HoldBlackThenRelease(string sourceId) {
+            Clear();
+            ToggleDialogue(false);
+
+            yield return new WaitForSecondsRealtime(1f);
+
+            _fadeService.FadeIn(DIALOGUE_FADE_DURATION, () => {
+                FinalizeDialogueEnd(sourceId);
+                _endHoldCoroutine = null;
+            });
+        }
+
+        // Força o encerramento imediato do diálogo, pulando fades/esperas.
+        public void ForceEndDialogueImmediate() {
+            // Se houver um hold aguardando, pare-o.
+            if (_endHoldCoroutine != null) {
+                try {
+                    StopCoroutine(_endHoldCoroutine);
+                }
+                catch { }
+                _endHoldCoroutine = null;
+            }
+
+            // Tentar limpar overlay de fade imediatamente.
+            EnsureFadeService();
+            if (_fadeService != null) {
+                // FadeIn com zero duration para garantir tela visível
+                _fadeService.FadeIn(0f, null);
+            }
+
+            // Finaliza estado do diálogo imediatamente
+            FinalizeDialogueEnd(_currentDialogueSourceId);
         }
 
         private void EnsureFadeService() {
@@ -248,6 +294,24 @@ namespace FifthSemester.Gameplay.Dialogue {
             }
 
             return false;
+        }
+
+        private void PlayDialogueStartClip() {
+            if (_audioService == null || _linesQueue == null || _linesQueue.Count == 0) {
+                return;
+            }
+
+            ParsedDialogueLine firstLine = _linesQueue.Peek();
+            if (!TryGetCharacter(firstLine.speakerName, out CharacterSO character)) {
+                return;
+            }
+
+            AudioClip clip = character != null ? character.dialogueStartClip : null;
+            if (clip == null) {
+                return;
+            }
+
+            _audioService.PlaySFX(clip);
         }
     }
 }

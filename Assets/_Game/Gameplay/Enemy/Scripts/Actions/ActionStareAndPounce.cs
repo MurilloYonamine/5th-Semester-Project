@@ -4,6 +4,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using FifthSemester.Framework.BehaviourTrees;
+using FifthSemester.Core.Services;
 
 namespace FifthSemester.Gameplay.Enemy {
     public class ActionStareAndPounce : Node {
@@ -16,6 +17,7 @@ namespace FifthSemester.Gameplay.Enemy {
         private NavMeshAgent _agent;
         private Transform _target;
         private Animator _animator;
+        private IAudioService _audioService;
 
         // --- Timers e Configurações ---
         private float _stareTimeRequired = 4f; // Tempo encarando
@@ -25,6 +27,10 @@ namespace FifthSemester.Gameplay.Enemy {
         private float _postLandDelay = 1f; // Tempo que o jogador tem para reagir após o land
         private float _jumpscareRange = 2f; // Distância máxima para iniciar o jumpscare após o post-land delay
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip _jumpSound;
+        [SerializeField] private AudioClip _landSound;
+
         private enum PounceState { Staring, JumpingUp, HoveringInAir, Landing }
         private PounceState _currentState = PounceState.Staring;
 
@@ -32,6 +38,7 @@ namespace FifthSemester.Gameplay.Enemy {
 
         public ActionStareAndPounce(Blackboard blackboard, string name = "Stare And Pounce") : base(name, blackboard) {
             _blackboard = blackboard;
+            ServiceLocator.TryGet<IAudioService>(out _audioService);
         }
 
         public override Status Process() {
@@ -69,6 +76,7 @@ namespace FifthSemester.Gameplay.Enemy {
                 _agent.enabled = false; 
 
                 if (_animator != null) _animator.SetTrigger("Jump");
+                PlaySfx(_jumpSound);
 
                 _currentTimer = 0f;
             }
@@ -117,6 +125,7 @@ namespace FifthSemester.Gameplay.Enemy {
                 }
 
                 if (_animator != null) _animator.SetTrigger("Land");
+                PlaySfx(_landSound);
             }
             return Status.Running;
         }
@@ -173,5 +182,13 @@ namespace FifthSemester.Gameplay.Enemy {
                 _agent.enabled = true;
             }
          }
+
+        private void PlaySfx(AudioClip clip) {
+            if (clip == null || _audioService == null) {
+                return;
+            }
+
+            _audioService.PlaySFX(clip);
+        }
     }
 }

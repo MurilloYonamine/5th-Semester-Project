@@ -34,10 +34,18 @@ namespace FifthSemester.Gameplay.Enemy {
         [SerializeField, Range(0f, 15f)] private float _rotationSpeed = 8f;
         [SerializeField] private float _patrolWaitTime = 2f;
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip[] _footstepClips;
+        [SerializeField] private float _footstepInterval = 0.45f;
+        [SerializeField] private float _minFootstepSpeed = 0.1f;
+
         private BehaviourTree _tree;
         private Blackboard _blackboard;
         private NavMeshAgent _agent;
         private Animator _animator;
+        private IAudioService _audioService;
+
+        private float _footstepTimer;
 
         [Header("Timeline")]
         [SerializeField] private PlayableDirector _jumpscareDirector;
@@ -61,6 +69,7 @@ namespace FifthSemester.Gameplay.Enemy {
         }
         private void Start() {
             if (_playerCamera == null) _playerCamera = Camera.main;
+            ServiceLocator.TryGet<IAudioService>(out _audioService);
             BuildBehaviourTree();
         }
         private void SetupBlackboard() {
@@ -104,6 +113,8 @@ namespace FifthSemester.Gameplay.Enemy {
             if (_animator != null && _agent != null && !_isObserved) {
                 _animator.SetFloat(_speedHash, _agent.velocity.magnitude);
             }
+
+            UpdateFootsteps();
         }
 
         private void CheckIfObservedByPlayer() {
@@ -179,6 +190,31 @@ namespace FifthSemester.Gameplay.Enemy {
                 targetRotation,
                 Time.deltaTime * _rotationSpeed
             );
+        }
+
+        private void UpdateFootsteps() {
+            if (_audioService == null || _footstepClips == null || _footstepClips.Length == 0 || _agent == null) {
+                return;
+            }
+
+            float speed = _agent.velocity.magnitude;
+            if (speed < _minFootstepSpeed || _agent.isStopped) {
+                _footstepTimer = _footstepInterval;
+                return;
+            }
+
+            _footstepTimer += Time.deltaTime;
+            if (_footstepTimer < _footstepInterval) {
+                return;
+            }
+
+            _footstepTimer = 0f;
+            AudioClip clip = _footstepClips[Random.Range(0, _footstepClips.Length)];
+            if (clip == null) {
+                return;
+            }
+
+            _audioService.PlaySFX(clip, volume: 0.4f);
         }
         private void OnDrawGizmos() {
             if (_eyeTransform == null || _playerCamera == null) return;

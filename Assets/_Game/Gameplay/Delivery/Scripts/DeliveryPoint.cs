@@ -27,8 +27,13 @@ namespace FifthSemester.Gameplay.Interactables {
         [SerializeField] private string _deliverPromptText = "entregar";
         [SerializeField] private string _talkPromptText = "conversar";
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip _successSound;
+        [SerializeField] private AudioClip _failureSound;
+
         private IInventoryService<Item> _inventoryService;
         private IEventBus _eventBus;
+        private IAudioService _audioService;
         private bool _isCompleted = false;
 
         public bool IsInteractable => !_isCompleted;
@@ -43,6 +48,7 @@ namespace FifthSemester.Gameplay.Interactables {
         private void Start() {
             _inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
             _eventBus = ServiceLocator.Get<IEventBus>();
+            ServiceLocator.TryGet<IAudioService>(out _audioService);
 
             UpdateInteractionPrompt();
             Highlight(false);
@@ -60,6 +66,10 @@ namespace FifthSemester.Gameplay.Interactables {
             if (TryDeliverItem()) {
                 CompleteDelivery();
                 UpdateInteractionPrompt();
+                PlayFeedback(_successSound);
+            }
+            else {
+                PlayFeedback(_failureSound);
             }
         }
 
@@ -97,6 +107,14 @@ namespace FifthSemester.Gameplay.Interactables {
             }
 
             _interactionPromptText.text = _isCompleted ? _talkPromptText : _deliverPromptText;
+        }
+
+        private void PlayFeedback(AudioClip clip) {
+            if (clip == null || _audioService == null) {
+                return;
+            }
+
+            _audioService.PlaySFX(clip);
         }
     }
 }

@@ -140,12 +140,16 @@ namespace FifthSemester.Player.Components {
             float speed = horizontalVelocity.magnitude;
 
             if (speed < _minFootstepSpeed) {
-                float intervalOnStop = _isCrouched ? _crouchFootstepInterval : _walkFootstepInterval;
-                _footstepTimer = intervalOnStop;
+                _footstepTimer = _walkFootstepInterval;
                 return;
             }
 
-            float interval = _isSprinting ? _sprintFootstepInterval : (_isCrouched ? _crouchFootstepInterval : _walkFootstepInterval);
+            if (_isSprinting || _isCrouched) {
+                _footstepTimer = _walkFootstepInterval;
+                return;
+            }
+
+            float interval = _walkFootstepInterval;
             _footstepTimer += Time.fixedDeltaTime;
 
             if (_footstepTimer >= interval) {

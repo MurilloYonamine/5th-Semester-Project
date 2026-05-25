@@ -22,6 +22,7 @@ Shared/
 ├── README.md              (this file)
 ├── Scripts/
 │   ├── IInteractable.cs   (interaction interface)
+│   ├── IDeferredInteractionCompletion.cs (interaction completion strategy)
 │   ├── AspectRatioController.cs
 │   ├── Floating.cs        (floating animation)
 │   └── [other utilities]
@@ -91,6 +92,26 @@ if (Physics.Raycast(ray, out RaycastHit hit, 3f)) {
     }
 }
 ```
+
+---
+
+### `IDeferredInteractionCompletion.cs`
+
+Interface opcional para interações que só devem concluir depois de um evento posterior (ex.: fim de diálogo).
+
+```csharp
+namespace FifthSemester.Gameplay.Shared {
+    public interface IDeferredInteractionCompletion {
+        bool PublishInteractionOnInput { get; }
+        bool TryCompleteDeferredInteraction(string sourceId);
+    }
+}
+```
+
+Uso esperado:
+- `PlayerInteraction` continua como ponto único de publicação de `ObjectSuccessfullyInteractedEvent`.
+- Objetos com conclusão adiada retornam `PublishInteractionOnInput = false` no clique inicial.
+- Quando o evento de confirmação ocorre (ex.: `DialogueEndedEvent`), `PlayerInteraction` consulta `TryCompleteDeferredInteraction` e publica a interação uma única vez.
 
 ---
 

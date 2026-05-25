@@ -11,9 +11,7 @@ namespace FifthSemester.Gameplay.Map {
             if (string.IsNullOrEmpty(_id)) {
                 _id = gameObject.name;
             }
-        }
 
-        private void Start() {
             _mapService = ServiceLocator.Get<IMapService>();
             _mapService.Register(_id, gameObject);
         }

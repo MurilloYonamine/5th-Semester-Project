@@ -16,13 +16,15 @@ namespace FifthSemester.Player {
         [SerializeField] private LayerMask _interactionLayer;
 
         [Header("Feedback")]
-        [SerializeField] private AudioClip _pickupSound;
+        [SerializeField] private AudioClip _failureSound;
 
         private IInteractable _currentInteractable;
         private PlayerController _playerController;
         private IEventBus _eventBus;
         private IAudioService _audioService;
         private IInventoryService<Item> _inventoryService;
+        private IDeferredInteractionCompletion _pendingDeferredCompletion;
+        private string _pendingInteractableId;
 
         private void Awake() {
             _playerController = GetComponent<PlayerController>();
@@ -45,15 +47,20 @@ namespace FifthSemester.Player {
             _eventBus = ServiceLocator.Get<IEventBus>();
 
             _eventBus?.Subscribe<InteractInputEvent>(Interact);
+            _eventBus?.Subscribe<DialogueEndedEvent>(OnDialogueEnded);
         }
 
         private void OnDisable() {
             _eventBus?.Unsubscribe<InteractInputEvent>(Interact);
+            _eventBus?.Unsubscribe<DialogueEndedEvent>(OnDialogueEnded);
 
             if (_currentInteractable != null) {
                 _currentInteractable.Highlight(false);
                 _currentInteractable = null;
             }
+
+            _pendingDeferredCompletion = null;
+            _pendingInteractableId = null;
         }
 
         private void Update() {
@@ -115,6 +122,7 @@ namespace FifthSemester.Player {
 
         private void Interact(InteractInputEvent evt) {
             if (_currentInteractable == null || !_currentInteractable.IsInteractable) {
+                PlayFailureFeedback();
                 return;
             }
 
@@ -123,35 +131,80 @@ namespace FifthSemester.Player {
             }
             else if (_currentInteractable is DeliveryPoint deliveryPoint) {
                 deliveryPoint.Interact();
+                HandleInteractionCompleted(_currentInteractable);
             }
             else if (_currentInteractable is SavePoint savePoint) {
                 savePoint.SetPlayerController(_playerController);
                 savePoint.Interact();
+                HandleInteractionCompleted(_currentInteractable);
             }
             else {
                 _currentInteractable.Interact();
+                HandleInteractionCompleted(_currentInteractable);
             }
+        }
+
+        private void HandleInteractionCompleted(IInteractable interactable) {
+            if (interactable == null) {
+                return;
+            }
+
+            if (interactable is IDeferredInteractionCompletion deferredCompletion && !deferredCompletion.PublishInteractionOnInput) {
+                _pendingDeferredCompletion = deferredCompletion;
+                _pendingInteractableId = interactable.Id;
+                return;
+            }
+
+            PublishSuccessfulInteraction(interactable.Id);
+        }
+
+        private void OnDialogueEnded(DialogueEndedEvent evt) {
+            if (_pendingDeferredCompletion == null || string.IsNullOrWhiteSpace(_pendingInteractableId)) {
+                return;
+            }
+
+            if (!_pendingDeferredCompletion.TryCompleteDeferredInteraction(evt.NpcId)) {
+                return;
+            }
+
+            string interactableId = _pendingInteractableId;
+            _pendingDeferredCompletion = null;
+            _pendingInteractableId = null;
+            PublishSuccessfulInteraction(interactableId);
+        }
+
+        private void PublishSuccessfulInteraction(string interactableId) {
+            if (string.IsNullOrWhiteSpace(interactableId)) {
+                return;
+            }
+
+            _eventBus?.Publish(new ObjectSuccessfullyInteractedEvent { ObjectId = interactableId });
         }
 
         private void HandleItemPickup(Item item) {
             if (_inventoryService == null) {
                 Debug.LogError("IInventoryService não encontrado. Não é possível pegar o item.");
+                PlayFailureFeedback();
                 return;
             }
 
             bool wasAdded = _inventoryService.AddItem(item);
 
             if (wasAdded) {
-                PlayPickupFeedback();
                 _eventBus?.Publish(new ItemPickedUpEvent(item.Id, item.gameObject));
                 item.Interact();
             }
+            else {
+                PlayFailureFeedback();
+            }
         }
 
-        private void PlayPickupFeedback() {
-            if (_pickupSound != null && _audioService != null) {
-                _audioService.PlaySFX(_pickupSound);
+        private void PlayFailureFeedback() {
+            if (_failureSound == null || _audioService == null) {
+                return;
             }
+
+            _audioService.PlaySFX(_failureSound);
         }
         private void OnDrawGizmos() {
             Camera cam = _playerCamera != null ? _playerCamera : Camera.main;

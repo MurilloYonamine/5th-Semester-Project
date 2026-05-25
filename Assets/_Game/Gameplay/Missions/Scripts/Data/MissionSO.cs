@@ -35,6 +35,10 @@ namespace FifthSemester.Gameplay.Missions {
         [Tooltip("ID do NPC com quem o jogador deve falar.")]
         public string NpcId;
 
+        [ShowIf("IsInteract")]
+        [Tooltip("ID do objeto interagível que conclui a missão.")]
+        public string InteractableTargetId;
+
         [ShowIf("IsCollectItems")]
         [Tooltip("Nome do item que deve ser coletado.")]
         public string TargetItemName;
@@ -72,6 +76,7 @@ namespace FifthSemester.Gameplay.Missions {
         public List<MapAction> MapActions;
 
         private bool IsTalkToNpc() => Type == MissionType.TalkToNpc;
+        private bool IsInteract() => Type == MissionType.Interact;
         private bool IsCollectItems() => Type == MissionType.CollectItems;
         private bool IsCollectAndDeliver() => Type == MissionType.CollectAndDeliver;
         private bool IsPlayCutscene() => Type == MissionType.PlayCutscene;

@@ -40,6 +40,14 @@ Colete X itens e entregue em um ponto específico.
 - `DeliveryPointId` = ex., `"DeliveryZoneA"`
 - `PersistProgress` = true
 
+### Interact
+Interaja com um objeto específico para concluir a missão.
+
+**Configuração `MissionDefinition`:**
+- `Type` = `Interact`
+- `InteractableTargetId` = ex., `"DoorSafeRoom"`
+- `PersistProgress` = true
+
 ## Criando uma MissionDefinition
 
 1. Right-click → Create → Gameplay → Mission
@@ -112,7 +120,8 @@ public class MyCustomMission : MissionBase {
 public enum MissionType {
     CollectItems = 0,
     CollectAndDeliver = 1,
-    MyCustomType = 2
+    Interact = 2,
+    MyCustomType = 3
 }
 ```
 
@@ -171,6 +180,14 @@ Configure no Inspector:
 - `_titleText` → UI.Text para título
 - `_descriptionText` → UI.Text para descrição
 - `_progressText` → UI.Text para progresso
+
+## Efeitos de Mapa
+
+`MissionDefinition.MapActions` permite executar efeitos no mapa quando a missão ativa muda.
+
+- `Activate` e `Deactivate` ligam/desligam qualquer objeto registrado em `IMapService`.
+- `LockDoor`, `UnlockDoor` e `LockAllDoorsExcept` continuam tratando portas.
+- Para ações que não sejam portas, use `TargetObjectId` com o ID registrado no `MapEntity`.
 
 ## Debugging
 

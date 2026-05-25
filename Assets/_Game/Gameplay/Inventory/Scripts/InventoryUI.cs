@@ -16,8 +16,13 @@ namespace FifthSemester.Gameplay.Inventory {
         [SerializeField] private float _highlightScale = 1.2f;
         [SerializeField] private float _animationDuration = 1f;
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip _openSound;
+        [SerializeField] private AudioClip _closeSound;
+
         private IEventBus _eventBus;
         private IInventoryService<Item> _inventoryService;
+        private IAudioService _audioService;
 
         private int _currentIndex = 0;
         private Coroutine _hideDelayCoroutine;
@@ -32,6 +37,7 @@ namespace FifthSemester.Gameplay.Inventory {
         private void Start() {
             _eventBus = ServiceLocator.Get<IEventBus>();
             _inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
+            ServiceLocator.TryGet<IAudioService>(out _audioService);
 
             if (_animator == null && _inventoryCanvasGroup != null) {
                 _animator = _inventoryCanvasGroup.GetComponent<Animator>();
@@ -168,6 +174,7 @@ namespace FifthSemester.Gameplay.Inventory {
             if (_animationCoroutine != null) StopCoroutine(_animationCoroutine);
 
             _inventoryCanvasGroup.alpha = 1f;
+            PlayUISound(_openSound);
 
             if (_animator != null) {
                 _animator.SetBool(IsOpenHash, true);
@@ -182,6 +189,8 @@ namespace FifthSemester.Gameplay.Inventory {
 
         private void HideInventory() {
             if (_inventoryCanvasGroup == null) return;
+
+            PlayUISound(_closeSound);
 
             if (_animator != null) {
                 _animator.SetBool(IsOpenHash, false);
@@ -234,6 +243,14 @@ namespace FifthSemester.Gameplay.Inventory {
                     _slots[i].transform.localScale = _originalScales[i];
                 }
             }
+        }
+
+        private void PlayUISound(AudioClip clip) {
+            if (clip == null || _audioService == null) {
+                return;
+            }
+
+            _audioService.PlaySFX(clip);
         }
     }
 }

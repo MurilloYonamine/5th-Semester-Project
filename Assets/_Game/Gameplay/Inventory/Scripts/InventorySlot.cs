@@ -139,7 +139,7 @@ namespace FifthSemester.Gameplay.Inventory {
                 _previewCamera.enabled = false;
         }
 
-        private void Update() {
+        private void LateUpdate() {
             if (_autoRotate && _currentItem != null) {
                 _currentItem.transform.Rotate(Vector3.up, _rotationSpeed * Time.deltaTime);
                 _previewCamera.Render();

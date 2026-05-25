@@ -20,6 +20,10 @@ namespace FifthSemester.Doors {
         [SerializeField] private float _speed = 5f;
         [SerializeField] private bool _useDoubleDoor;
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip _openSound;
+        [SerializeField] private AudioClip _closeSound;
+
         [ShowIf(nameof(_useDoubleDoor))]
         [SerializeField] private Transform[] _doorMeshes;
 
@@ -29,12 +33,16 @@ namespace FifthSemester.Doors {
         [Header("Map Registry")]
         [SerializeField] private DoorType _doorType = DoorType.None;
 
+        [Header("Mission Interaction")]
+        [SerializeField] private DoorMissionInteractionAdapter _missionInteractionAdapter;
+
         private IMapService _mapService;
         private Quaternion[] _closedRotations;
         private Quaternion[] _targetRotations;
         private Transform[] _activeDoorMeshes;
         private bool _isLocked = false;
         private Color _unlockedColor;
+        private IAudioService _audioService;
 
         public bool IsInteractable { get; private set; } = true;
 
@@ -53,10 +61,16 @@ namespace FifthSemester.Doors {
             CacheDoorMeshes();
             InitializeRotations();
 
+            if (_missionInteractionAdapter == null) {
+                _missionInteractionAdapter = GetComponent<DoorMissionInteractionAdapter>();
+            }
+
             _unlockedColor = new Color32(105, 255, 144, 255); // 69FF90
         }
 
         private void Start() {
+            ServiceLocator.TryGet<IAudioService>(out _audioService);
+
             if (_doorType == DoorType.None) return;
 
             _mapService = ServiceLocator.Get<IMapService>();
@@ -82,7 +96,12 @@ namespace FifthSemester.Doors {
         public void Interact() {
             if (_isLocked) return;
 
+            if (_missionInteractionAdapter != null && _missionInteractionAdapter.TryHandleDoorInteraction()) {
+                return;
+            }
+
             _isOpen = !_isOpen;
+            PlayDoorSound(_isOpen ? _openSound : _closeSound);
             UpdateTargetRotations();
         }
 
@@ -98,6 +117,11 @@ namespace FifthSemester.Doors {
 
         public void Lock() {
             _isLocked = true;
+
+            if (_isOpen) {
+                _isOpen = false;
+                UpdateTargetRotations();
+            }
 
             if (_outline != null)
                 _outline.OutlineColor = Color.red;
@@ -162,6 +186,14 @@ namespace FifthSemester.Doors {
                     _targetRotations[i] = _closedRotations[i];
                 }
             }
+        }
+
+        private void PlayDoorSound(AudioClip clip) {
+            if (clip == null || _audioService == null) {
+                return;
+            }
+
+            _audioService.PlaySFX(clip);
         }
     }
 }

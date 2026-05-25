@@ -20,10 +20,14 @@ namespace FifthSemester.Gameplay.Save {
         [SerializeField] private CheckpointSO _checkpoint;
         [SerializeField] private Outline _outline;
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip _saveSound;
+
         private ISaveService _saveService;
         private IMissionService _missionService;
         private IEventBus _eventBus;
         private IInventoryService<Item> _inventoryService;
+        private IAudioService _audioService;
         private PlayerController _playerController;
 
         public string Id => _checkpoint != null ? _checkpoint.Id : "unknown";
@@ -34,6 +38,7 @@ namespace FifthSemester.Gameplay.Save {
             _missionService = ServiceLocator.Get<IMissionService>() as MissionService;
             _eventBus = ServiceLocator.Get<IEventBus>();
             _inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
+            ServiceLocator.TryGet<IAudioService>(out _audioService);
 
             if (_outline == null) {
                 _outline = GetComponent<Outline>();
@@ -128,6 +133,7 @@ namespace FifthSemester.Gameplay.Save {
             }
 
             _saveService.SaveCheckpoint(_checkpoint.Id, saveData);
+            PlaySaveSound();
             Debug.Log($"{TAG} Game saved at checkpoint: {_checkpoint.DisplayName}");
         }
 
@@ -176,6 +182,14 @@ namespace FifthSemester.Gameplay.Save {
                     Debug.LogWarning($"{TAG} Failed to instantiate item: {itemId}");
                 }
             }
+        }
+
+        private void PlaySaveSound() {
+            if (_saveSound == null || _audioService == null) {
+                return;
+            }
+
+            _audioService.PlaySFX(_saveSound);
         }
     }
 }

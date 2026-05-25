@@ -14,6 +14,10 @@ namespace FifthSemester.Gameplay.Missions {
         public override void Initialize(MissionDefinition definition, IEventBus eventBus, ISaveService saveService) {
             base.Initialize(definition, eventBus, saveService);
 
+            if (string.IsNullOrWhiteSpace(_interactableTargetId) && definition != null) {
+                _interactableTargetId = definition.InteractableTargetId;
+            }
+
             _eventBus.Subscribe<ObjectSuccessfullyInteractedEvent>(OnObjectInteracted);
         }
 

@@ -46,7 +46,6 @@ namespace FifthSemester.Gameplay.Missions {
                 return;
             }
 
-            Debug.Log($"Item coletado: {evt.ItemName}. Verificando progresso...");
             Debug.Log($"Texto Progress: {_progress}");
 
             int current = GetProgressCount() + 1;

@@ -17,10 +17,11 @@ MonoBehaviour:
   Description: "Fale com a Enfermeira Anna no corredor para receber as instru\xE7\xF5es
     do dia."
   NextMission: {fileID: 11400000, guid: a3510c6362266be45b20da76094f87dc, type: 2}
-  Type: 3
+  Type: 4
   UseFadeOnStart: 1
   TargetCutscene: 1
-  NpcId: Enfermeira_A
+  NpcId: M01_Nurse_A
+  InteractableTargetId: 
   TargetItemName: 
   RequiredCount: 1
   CollectItemName: 

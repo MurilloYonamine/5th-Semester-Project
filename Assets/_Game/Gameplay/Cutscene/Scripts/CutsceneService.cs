@@ -11,6 +11,7 @@ using UnityEngine;
 namespace FifthSemester.Gameplay.Dialogue {
 
     public class CutsceneService : MonoBehaviour, ICutsceneService {
+        private const float SKIP_FADE_DURATION = 0.5f;
 
         [SerializeField]
         private List<CutsceneController> _cutscenesInMap;
@@ -23,6 +24,7 @@ namespace FifthSemester.Gameplay.Dialogue {
         private CinemachineCamera _playerCamera;
 
         private IEventBus _eventBus;
+        private IFadeService _fadeService;
 
         private void Awake() {
 
@@ -52,6 +54,7 @@ namespace FifthSemester.Gameplay.Dialogue {
         private void Start() {
 
             _eventBus = ServiceLocator.Get<IEventBus>();
+            ServiceLocator.TryGet<IFadeService>(out _fadeService);
 
             _eventBus?.Subscribe<SkipCutsceneRequestedEvent>(
                 OnSkipRequested
@@ -98,9 +101,21 @@ namespace FifthSemester.Gameplay.Dialogue {
             if (!_activeCutscene.IsPlaying)
                 return;
 
-            _activeCutscene.SkipCutscene();
+            if (_fadeService == null) {
+                ServiceLocator.TryGet<IFadeService>(out _fadeService);
+            }
 
-            _activeCutscene = null;
+            if (_fadeService == null) {
+                _activeCutscene.SkipCutscene();
+                _activeCutscene = null;
+                return;
+            }
+
+            _fadeService.FadeOut(SKIP_FADE_DURATION, () => {
+                _activeCutscene.SkipCutscene();
+                _fadeService.FadeIn(SKIP_FADE_DURATION);
+                _activeCutscene = null;
+            });
         }
     }
 }

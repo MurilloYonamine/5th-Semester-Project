@@ -18,6 +18,7 @@ MonoBehaviour:
     do dia."
   NextMission: {fileID: 11400000, guid: a3510c6362266be45b20da76094f87dc, type: 2}
   Type: 3
+  UseFadeOnStart: 1
   TargetCutscene: 1
   NpcId: Enfermeira_A
   TargetItemName: 
@@ -27,4 +28,5 @@ MonoBehaviour:
   DeliveryPointIds: []
   PersistProgress: 1
   DebugSetupEvents: []
+  EndGamePrefab: {fileID: 0}
   MapActions: []

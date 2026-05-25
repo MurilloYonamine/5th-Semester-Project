@@ -231,6 +231,7 @@ GameObject:
   - component: {fileID: 4238163293328645803}
   - component: {fileID: 1612443701930443696}
   - component: {fileID: 4959825485078694007}
+  - component: {fileID: 7079429973818737727}
   m_Layer: 11
   m_Name: Hint Text
   m_TagString: Untagged
@@ -285,7 +286,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Inventary
+  m_text: Inventory
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d50071cb6b8e8aa4c97948ce29509f6c, type: 2}
   m_sharedMaterial: {fileID: 4594112643080499420, guid: d50071cb6b8e8aa4c97948ce29509f6c, type: 2}
@@ -356,6 +357,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &7079429973818737727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061943605443711710}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dfcd8203c4f6314bbf969360dc1e5dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _localizationKey: hint_inventory
 --- !u!1 &1450624122823287756
 GameObject:
   m_ObjectHideFlags: 0
@@ -596,6 +610,7 @@ GameObject:
   - component: {fileID: 8375594972530688651}
   - component: {fileID: 2543107793460707566}
   - component: {fileID: 8850237791035027626}
+  - component: {fileID: 5735418910243514621}
   m_Layer: 11
   m_Name: Hint Text
   m_TagString: Untagged
@@ -721,6 +736,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5735418910243514621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1538225132988802283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dfcd8203c4f6314bbf969360dc1e5dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _localizationKey: hint_sprint
 --- !u!1 &1608876684521189927
 GameObject:
   m_ObjectHideFlags: 0
@@ -956,6 +984,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5695746914340465831}
   - component: {fileID: 6223911222503370615}
+  - component: {fileID: 2114814842650996541}
   m_Layer: 11
   m_Name: Input Hints
   m_TagString: Untagged
@@ -991,6 +1020,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 116952fe2c247b64ab594090a5904783, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!225 &2114814842650996541
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2056011243632576753}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &3366298011552378764
 GameObject:
   m_ObjectHideFlags: 0
@@ -1002,6 +1043,7 @@ GameObject:
   - component: {fileID: 541064239942563102}
   - component: {fileID: 3144333025203298893}
   - component: {fileID: 588173700378251587}
+  - component: {fileID: 3197999219994858537}
   m_Layer: 11
   m_Name: Hint Text
   m_TagString: Untagged
@@ -1127,6 +1169,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3197999219994858537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3366298011552378764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dfcd8203c4f6314bbf969360dc1e5dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _localizationKey: hint_interact
 --- !u!1 &3852325596754200805
 GameObject:
   m_ObjectHideFlags: 0
@@ -1447,6 +1502,7 @@ GameObject:
   - component: {fileID: 374555386320730178}
   - component: {fileID: 5764150112211829030}
   - component: {fileID: 3371240505674803667}
+  - component: {fileID: 6494509107486794044}
   m_Layer: 11
   m_Name: Hint Text
   m_TagString: Untagged
@@ -1501,7 +1557,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Walk
+  m_text: Move
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d50071cb6b8e8aa4c97948ce29509f6c, type: 2}
   m_sharedMaterial: {fileID: 4594112643080499420, guid: d50071cb6b8e8aa4c97948ce29509f6c, type: 2}
@@ -1572,6 +1628,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &6494509107486794044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5779858038638086679}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dfcd8203c4f6314bbf969360dc1e5dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _localizationKey: hint_move
 --- !u!1 &6808403590232937605
 GameObject:
   m_ObjectHideFlags: 0
@@ -1586,7 +1655,7 @@ GameObject:
   - component: {fileID: 8921434952463605022}
   - component: {fileID: 4010142132238696358}
   m_Layer: 11
-  m_Name: Inventary Input View
+  m_Name: Inventory Input View
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1880,6 +1949,7 @@ GameObject:
   - component: {fileID: 7718616575066919315}
   - component: {fileID: 2956863595234516008}
   - component: {fileID: 648104580735081963}
+  - component: {fileID: 5059883105475924058}
   m_Layer: 11
   m_Name: Hint Text
   m_TagString: Untagged
@@ -2005,6 +2075,19 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &5059883105475924058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8021349102290332923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dfcd8203c4f6314bbf969360dc1e5dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _localizationKey: hint_flash
 --- !u!1 &9109322796230093560
 GameObject:
   m_ObjectHideFlags: 0
@@ -2016,6 +2099,7 @@ GameObject:
   - component: {fileID: 622780300758559453}
   - component: {fileID: 8041061334965624782}
   - component: {fileID: 7724332843327364530}
+  - component: {fileID: 361409166621003010}
   m_Layer: 11
   m_Name: Hint Text
   m_TagString: Untagged
@@ -2141,3 +2225,16 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &361409166621003010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9109322796230093560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dfcd8203c4f6314bbf969360dc1e5dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _localizationKey: hint_pause

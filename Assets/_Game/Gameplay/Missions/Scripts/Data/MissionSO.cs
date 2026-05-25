@@ -10,7 +10,7 @@ using UnityEngine;
 namespace FifthSemester.Gameplay.Missions {
     [CreateAssetMenu(menuName = "Mission/New Mission", fileName = "NewMission")]
     public class MissionDefinition : ScriptableObject {
-        [Header("Identity")]
+        [Header("Identificação")]
         public string MissionId;
         public string Title;
 
@@ -20,48 +20,52 @@ namespace FifthSemester.Gameplay.Missions {
         [Header("Próxima Missão")]
         public MissionDefinition NextMission;
 
-        [Header("Type & Completion")]
+        [Header("Tipo e Conclusão")]
         public MissionType Type;
+
+        [Header("Transição")]
+        [Tooltip("Faz esta missão começar com fade." )]
+        public bool UseFadeOnStart = false;
 
         [ShowIf("Type", MissionType.PlayCutscene)]
         [Tooltip("Qual cutscene deve ser tocada quando esta missão iniciar?")]
         public CutsceneType TargetCutscene;
 
         [ShowIf("IsTalkToNpc")]
-        [Tooltip("NPC ID to talk to")]
+        [Tooltip("ID do NPC com quem o jogador deve falar.")]
         public string NpcId;
 
         [ShowIf("IsCollectItems")]
-        [Tooltip("Item name to collect")]
+        [Tooltip("Nome do item que deve ser coletado.")]
         public string TargetItemName;
 
         [ShowIf("IsCollectItems")]
-        [Tooltip("Number of items to collect")]
+        [Tooltip("Quantidade necessária para concluir a missão.")]
         public int RequiredCount = 1;
 
         [ShowIf("IsCollectAndDeliver")]
-        [Tooltip("Item name to collect")]
+        [Tooltip("Nome do item que deve ser coletado.")]
         public string CollectItemName;
 
         [ShowIf("IsCollectAndDeliver")]
-        [Tooltip("Number of items to collect")]
+        [Tooltip("Quantidade necessária para coleta.")]
         public int CollectCount = 1;
 
         [ShowIf("IsCollectAndDeliver")]
-        [Tooltip("Delivery point IDs for deliver missions")]
+        [Tooltip("IDs dos pontos de entrega da missão.")]
         public string[] DeliveryPointIds;
 
-        [Header("Persistence")]
-        [Tooltip("Save progress for this mission")]
+        [Header("Persistência")]
+        [Tooltip("Salva o progresso desta missão.")]
         public bool PersistProgress = true;
 
-        [Header("Debug Setup")]
-        [Tooltip("Events to apply when skipping to this mission")]
+        [Header("Configuração de Debug")]
+        [Tooltip("Eventos aplicados ao pular para esta missão.")]
         public string[] DebugSetupEvents;
 
-        [Header("End Game Setup")]
+        [Header("Configuração de Fim de Jogo")]
         [ShowIf("Type", MissionType.EndGame)] 
-        [Tooltip("Prefab ou objeto da UI/Video que deve ser instanciado.")]
+        [Tooltip("Prefab ou objeto de UI/vídeo que deve ser instanciado.")]
         public GameObject EndGamePrefab;
 
         [Header("Efeitos no Mapa")]

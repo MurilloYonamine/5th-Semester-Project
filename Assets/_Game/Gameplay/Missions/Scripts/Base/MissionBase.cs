@@ -70,13 +70,11 @@ namespace FifthSemester.Gameplay.Missions {
             }
         }
         public virtual void Cleanup() {
-            if (_isComplete) return;
-
             OnMissionComplete = null;
 
             if (this == null || gameObject == null) return;
 
-            gameObject.SetActive(false);
+            Destroy(gameObject);
         }
 
         protected virtual void SaveProgress() {

@@ -9,23 +9,26 @@ using FifthSemester.Core.Services;
 
 namespace FifthSemester.Gameplay.Missions {
     public class MissionService : MonoBehaviour, IMissionService {
+        private const float START_FADE_DURATION = 1f;
+
         [SerializeField] private MissionSequenceSO _defaultSequence;
 
         private IEventBus _eventBus;
+        private IFadeService _fadeService;
         private ISaveService _saveService;
         private IMission _currentMission;
         private MissionSequenceSO _activeSequence;
         private int _sequenceIndex = -1;
         private MissionDefinition _currentDefinition;
-        public int CurrentIndex { get; private set; } = -1; 
+        public int CurrentIndex { get; private set; } = -1;
         private void Awake() {
             ServiceLocator.Register<IMissionService>(this);
-            EnsureServices();
+            
+            _eventBus = ServiceLocator.Get<IEventBus>();
+            _saveService = ServiceLocator.Get<ISaveService>();
         }
 
         private void Start() {
-            EnsureServices();
-
             SaveData saveData = _saveService?.LoadFromSlot("default");
             int startIndex = saveData?.CurrentMissionIndex ?? 0;
             if (_defaultSequence != null) {
@@ -41,8 +44,6 @@ namespace FifthSemester.Gameplay.Missions {
         }
 
         public void StartMission(MissionDefinition mission) {
-            EnsureServices();
-
             if (mission == null) {
                 Debug.LogError("[MissionService] Tentativa de iniciar uma missão nula.");
                 return;
@@ -73,6 +74,7 @@ namespace FifthSemester.Gameplay.Missions {
                 if (_currentMission is MissionBase missionBase) missionBase.OnMissionComplete += OnMissionComplete;
                 _currentMission.StartMission();
                 PublishMissionUpdate();
+                PlayStartFadeIfNeeded(mission);
             }
         }
 
@@ -85,8 +87,6 @@ namespace FifthSemester.Gameplay.Missions {
         }
 
         private void SetCurrentMission(int index) {
-            EnsureServices();
-
             if (_eventBus == null) return;
             if (_activeSequence == null || _activeSequence.Sequence == null) return;
             if (index < 0 || index >= _activeSequence.Sequence.Count) return;
@@ -106,6 +106,7 @@ namespace FifthSemester.Gameplay.Missions {
                 }
                 _currentMission.StartMission();
                 PublishMissionUpdate();
+                PlayStartFadeIfNeeded(def);
             }
         }
 
@@ -176,7 +177,8 @@ namespace FifthSemester.Gameplay.Missions {
                     if (debugEvent.StartsWith("Item:", System.StringComparison.OrdinalIgnoreCase)) {
                         string itemName = debugEvent.Substring(5);
                         _eventBus?.Publish(new ItemPickedUpEvent(itemName, null));
-                    } else {
+                    }
+                    else {
                         _eventBus?.Publish(new GenericGameEvent(debugEvent));
                     }
                 }
@@ -200,19 +202,19 @@ namespace FifthSemester.Gameplay.Missions {
             _saveService.SaveToSlot("default", saveData);
         }
 
-        private void EnsureServices() {
-            if (_eventBus == null) {
-                _eventBus = ServiceLocator.Get<IEventBus>();
+        private void PlayStartFadeIfNeeded(MissionDefinition mission) {
+            if (mission == null || !mission.UseFadeOnStart) return;
+
+            if (_fadeService == null) {
+                ServiceLocator.TryGet<IFadeService>(out _fadeService);
             }
 
-            if (_saveService == null) {
-                _saveService = ServiceLocator.Get<ISaveService>();
-            }
+            if (_fadeService == null) return;
+
+            _fadeService.FadeIn(START_FADE_DURATION);
         }
 
         public void StartSequence(MissionSequenceSO sequence) {
-            EnsureServices();
-
             if (sequence == null || sequence.Sequence == null || sequence.Sequence.Count == 0) {
                 Debug.LogWarning("[MissionService] Attempted to start an empty or null sequence.");
                 return;

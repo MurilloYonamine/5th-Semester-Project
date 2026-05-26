@@ -18,11 +18,19 @@ namespace FifthSemester.Gameplay.NPC {
 
         private readonly int _speedParameter = Animator.StringToHash("Speed");
 
+        [SerializeField] private float _lookAtPlayerRange = 10f; 
+        private Transform _playerTransform; 
+
+        private bool _isLookingAtPlayer;
+
         private void Start() {
             _agent = GetComponent<NavMeshAgent>();
             _animator = GetComponentInChildren<Animator>();
             _gameStateService = ServiceLocator.Get<IGameStateService>();
             GoToRandomPoint();
+
+            GameObject player = GameObject.FindWithTag("Player");
+            _playerTransform = player.transform;
         }
 
         private void Update() {

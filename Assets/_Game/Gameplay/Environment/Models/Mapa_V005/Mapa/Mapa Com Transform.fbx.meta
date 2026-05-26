@@ -1,9 +1,99 @@
 fileFormatVersion: 2
 guid: 2afcc19f73081cb4987a032dea2e3ebd
 ModelImporter:
-  serializedVersion: 24200
+  serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Parede_banheiros
+    second: {fileID: 2100000, guid: faec4a3520c150e4398c37678786bd0b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Parede_diretoria
+    second: {fileID: 2100000, guid: ba08f9746aae9514f8cacffd24004ee1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Parede_externas
+    second: {fileID: 2100000, guid: 359bd28c8bb55734fa11cea2b929a7c7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "Parede_recep\xE7ao"
+    second: {fileID: 2100000, guid: f685afd19b7084b45bd4da66b001b2e5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "Parede_recrea\xE7ao"
+    second: {fileID: 2100000, guid: 6d16a88cc8741cd4fa6e9dcee1aeb346, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Porta_entrada
+    second: {fileID: 2100000, guid: bfcd59b835e70534fa781edf11093443, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Porta_entrada.001
+    second: {fileID: 2100000, guid: 05e9b6223dc4f604792b24aa135d1d11, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Porta_interna
+    second: {fileID: 2100000, guid: 077ca15b354ecb94a8f2dfc26c599d90, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Suporte_janela
+    second: {fileID: 2100000, guid: 672d22f5a3560ba4b97f3eb614381c4f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Suporte_porta_interna
+    second: {fileID: 2100000, guid: c988105eb0ad0a846b91a644b4239c02, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Vidro_porta_entrada
+    second: {fileID: 2100000, guid: 56d67a08dbe422f4ea6326d3d8b8da63, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Vidro_porta_entrada.001
+    second: {fileID: 2100000, guid: 4f386fef946301f458868c8b6449d776, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: chao
+    second: {fileID: 2100000, guid: fd083d42f71081e4282d968a9c7f8bb4, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "ma\xE7aneta_porta_interna"
+    second: {fileID: 2100000, guid: 9157da4907aad2f4eb4bfaf2676f57c8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "parede_medica\xE7\xE3o"
+    second: {fileID: 2100000, guid: 6d1655a5a26f14b4f9508ddc03c2b698, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: parede_quarto
+    second: {fileID: 2100000, guid: 23c3d0191c3a11d43a1eeae767e26e36, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: paredes_triagem
+    second: {fileID: 2100000, guid: 1df75afc89889174f8a1b7679a36b1d1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vidro
+    second: {fileID: 2100000, guid: cde6301e54ea35d4eaef09e1e952a6be, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -56,9 +146,6 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
-    generateMeshLods: 0
-    meshLodGenerationFlags: 0
-    maximumMeshLod: -1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8

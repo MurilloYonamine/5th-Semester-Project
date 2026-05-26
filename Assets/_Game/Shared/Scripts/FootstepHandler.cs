@@ -11,20 +11,11 @@ namespace FifthSemester.Shared
         private void Start() {
             _audioService = ServiceLocator.Get<IAudioService>();
         }
-
-        public void FootstepRight() {
-            PlayFootstep();
-        }
-
-        public void FootstepLeft() {
-            PlayFootstep();
-        }
-
-        private void PlayFootstep() {
+        public void PlayFootsteps() {
             if (_footstepClips.Length == 0) return;
 
             AudioClip clip = _footstepClips[Random.Range(0, _footstepClips.Length)];
-            _audioService?.PlaySFX(clip, volume: 0.5f);
+            _audioService?.PlaySFX(clip, volume: 0.5f, spatialBlend: 1f);
         }
     }
 }

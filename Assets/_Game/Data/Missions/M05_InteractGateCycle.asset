@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: M05_InteractGateCycle
   m_EditorClassIdentifier: 
   MissionId: M05_InteractGateCycle
-  Title: Interagir com o Portão
-  Description: Fale com o portão para seguir com o ciclo.
+  Title: Interagir com o Portão do Ciclo
+  Description: Ao tocar o portão, a tela escurece e o ciclo reconhece a sua forma.
   NextMission: {fileID: 0}
   Type: 2
   UseFadeOnStart: 0
@@ -29,4 +29,8 @@ MonoBehaviour:
   PersistProgress: 1
   DebugSetupEvents: []
   EndGamePrefab: {fileID: 0}
-  MapActions: []
+  MapActions:
+  - Type: 0
+    TargetDoor: 0
+    DoorsToKeepUnlocked: 
+    TargetObjectId: M05_Interact

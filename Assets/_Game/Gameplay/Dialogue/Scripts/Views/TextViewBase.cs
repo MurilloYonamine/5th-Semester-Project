@@ -1,6 +1,7 @@
 // autor: Murillo Gomes Yonamine
 // data: 24/05/2026
 
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -26,6 +27,7 @@ namespace FifthSemester.Gameplay.Dialogue {
         protected CanvasGroup _canvasGroup;
         private Coroutine _fadeRoutine;
         private Coroutine _typewriterRoutine;
+        private Action _textAnimationCompleted;
 
         protected virtual void Awake() {
             _canvasGroup = GetComponent<CanvasGroup>();
@@ -57,14 +59,21 @@ namespace FifthSemester.Gameplay.Dialogue {
         }
 
         public virtual void AnimateText(string text) {
+            AnimateText(text, null);
+        }
+
+        public virtual void AnimateText(string text, Action onComplete) {
             if (_contentText == null) {
+                onComplete?.Invoke();
                 return;
             }
 
             StopTextAnimation();
+            _textAnimationCompleted = onComplete;
 
             if (!_useTypewriterEffect) {
                 SetTextInstantly(text);
+                InvokeTextAnimationCompleted();
                 return;
             }
 
@@ -84,6 +93,8 @@ namespace FifthSemester.Gameplay.Dialogue {
                 StopCoroutine(_typewriterRoutine);
                 _typewriterRoutine = null;
             }
+
+            _textAnimationCompleted = null;
         }
 
         protected void SetVisibleInstantly(bool visible) {
@@ -100,6 +111,7 @@ namespace FifthSemester.Gameplay.Dialogue {
             _contentText.text = string.Empty;
 
             if (string.IsNullOrEmpty(text)) {
+                InvokeTextAnimationCompleted();
                 yield break;
             }
 
@@ -116,6 +128,14 @@ namespace FifthSemester.Gameplay.Dialogue {
                     yield return null;
                 }
             }
+
+            InvokeTextAnimationCompleted();
+        }
+
+        private void InvokeTextAnimationCompleted() {
+            Action onComplete = _textAnimationCompleted;
+            _textAnimationCompleted = null;
+            onComplete?.Invoke();
         }
 
         private void StartFade(float targetAlpha, bool isInteractive) {

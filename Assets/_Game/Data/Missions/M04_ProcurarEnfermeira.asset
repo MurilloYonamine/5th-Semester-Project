@@ -20,6 +20,7 @@ MonoBehaviour:
   UseFadeOnStart: 0
   TargetCutscene: 0
   NpcId: M04_Nurse_A
+  InteractableTargetId: 
   TargetItemName: 
   RequiredCount: 1
   CollectItemName: Remedio
@@ -38,3 +39,7 @@ MonoBehaviour:
     TargetDoor: 0
     DoorsToKeepUnlocked: 0800000011000000
     TargetObjectId: 
+  - Type: 0
+    TargetDoor: 0
+    DoorsToKeepUnlocked: 
+    TargetObjectId: M05_Interact

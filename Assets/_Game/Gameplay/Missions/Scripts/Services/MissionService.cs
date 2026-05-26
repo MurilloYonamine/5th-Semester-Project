@@ -10,12 +10,13 @@ using FifthSemester.Core.Services;
 namespace FifthSemester.Gameplay.Missions {
     public class MissionService : MonoBehaviour, IMissionService {
         private const float START_FADE_DURATION = 1f;
-
         [SerializeField] private MissionSequenceSO _defaultSequence;
+        [SerializeField] private AudioClip _missionCompleteSFX;
 
         private IEventBus _eventBus;
         private IFadeService _fadeService;
         private ISaveService _saveService;
+        private IAudioService _audioService;
         private IMission _currentMission;
         private MissionSequenceSO _activeSequence;
         private int _sequenceIndex = -1;
@@ -26,11 +27,16 @@ namespace FifthSemester.Gameplay.Missions {
             
             _eventBus = ServiceLocator.Get<IEventBus>();
             _saveService = ServiceLocator.Get<ISaveService>();
+            ServiceLocator.TryGet<IAudioService>(out _audioService);
         }
 
         private void Start() {
-            SaveData saveData = _saveService?.LoadFromSlot("default");
-            int startIndex = saveData?.CurrentMissionIndex ?? 0;
+    #if UNITY_EDITOR
+                int startIndex = 0;
+    #else
+                SaveData saveData = _saveService?.LoadFromSlot("default");
+                int startIndex = saveData?.CurrentMissionIndex ?? 0;
+    #endif
             if (_defaultSequence != null) {
                 StartSequence(_defaultSequence);
                 if (startIndex > 0) {
@@ -132,6 +138,7 @@ namespace FifthSemester.Gameplay.Missions {
         }
 
         public void CompleteCurrentMission() {
+            PlayMissionCompleteSFX();
             if (_activeSequence != null && _activeSequence.Sequence != null) {
                 _sequenceIndex++;
                 if (_sequenceIndex >= _activeSequence.Sequence.Count) {
@@ -154,6 +161,12 @@ namespace FifthSemester.Gameplay.Missions {
             CleanupCurrentMission();
             CurrentIndex = -1;
             _currentDefinition = null;
+        }
+
+        private void PlayMissionCompleteSFX() {
+            if (_missionCompleteSFX == null) return;
+            if (_audioService == null) ServiceLocator.TryGet<IAudioService>(out _audioService);
+            _audioService?.PlaySFX(clip: _missionCompleteSFX);
         }
 
         public void SkipToMission(int missionIndex) {

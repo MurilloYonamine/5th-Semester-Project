@@ -131,6 +131,22 @@ public class LockerProp : MonoBehaviour, IInteractable {
 }
 ```
 
+### Narrative Gate
+
+```csharp
+public class Gate : MonoBehaviour, IInteractable {
+    [SerializeField] private LocalizedTextAsset _captionFiles;
+    [SerializeField] private GateTransitionView _transitionView;
+    [SerializeField] private string _nextSceneName = "Game_Mapa2";
+
+    public void Interact() {
+        // Fade to black, show the localized caption, then load the next map.
+    }
+}
+```
+
+Use this pattern for one-off world transitions that are not doors, such as story gates, map locks, and mission triggers.
+
 ---
 
 ## Common Prop Examples

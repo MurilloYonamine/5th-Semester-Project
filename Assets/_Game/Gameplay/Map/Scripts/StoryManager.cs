@@ -4,8 +4,10 @@
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
+using System.Collections;
 using FifthSemester.Doors;
 using FifthSemester.Gameplay.Missions;
+using FifthSemester.Gameplay.Props;
 using UnityEngine;
 
 namespace FifthSemester.Gameplay.Map {
@@ -27,6 +29,7 @@ namespace FifthSemester.Gameplay.Map {
                 _missionService.StartSequence(_storySequence);
             }
             ApplyMissionEffects();
+            StartCoroutine(ApplyMissionEffectsNextFrame());
         }
 
         private void OnDestroy() {
@@ -35,6 +38,11 @@ namespace FifthSemester.Gameplay.Map {
         }
 
         private void OnMissionUpdated(MissionUpdatedEvent evt) {
+            ApplyMissionEffects();
+        }
+
+        private IEnumerator ApplyMissionEffectsNextFrame() {
+            yield return null;
             ApplyMissionEffects();
         }
 
@@ -68,12 +76,24 @@ namespace FifthSemester.Gameplay.Map {
 
                 if (targetObj == null) continue;
 
+                Gate gate = targetObj.GetComponent<Gate>();
+
                 switch (action.Type) {
                     case MapAction.ActionType.Activate:
-                        targetObj.SetActive(true);
+                        if (gate != null) {
+                            gate.Unlock();
+                        }
+                        else {
+                            targetObj.SetActive(true);
+                        }
                         break;
                     case MapAction.ActionType.Deactivate:
-                        targetObj.SetActive(false);
+                        if (gate != null) {
+                            gate.Lock();
+                        }
+                        else {
+                            targetObj.SetActive(false);
+                        }
                         break;
                     case MapAction.ActionType.LockDoor:
                         targetObj.GetComponent<Door>()?.Lock();

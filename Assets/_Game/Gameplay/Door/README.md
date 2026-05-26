@@ -11,7 +11,6 @@ Door System provides:
 - **Smooth animation**: Lerp-based rotation between closed and open states
 - **Visual feedback**: Outline highlights when looking at door
 - **Interactable protocol**: Implements `IInteractable` interface
-- **Mission dialogue adapter**: Optional deferred completion flow for mission-driven doors
 
 ---
 
@@ -70,19 +69,6 @@ public class Door : MonoBehaviour {
     }
 }
 ```
-
-### `DoorMissionInteractionAdapter.cs`
-
-Componente opcional no mesmo GameObject da porta para cenários de missão em que a interação deve:
-- iniciar diálogo por `IDialogueService<TextAsset>`;
-- adiar a conclusão da interação até o fim do diálogo;
-- manter `PlayerInteraction` como ponto único de publicação de `ObjectSuccessfullyInteractedEvent`.
-
-Fluxo:
-1. Jogador interage com a porta.
-2. `Door` delega para o adapter quando configurado.
-3. Adapter inicia diálogo e marca conclusão adiada.
-4. No `DialogueEndedEvent`, `PlayerInteraction` valida o adapter e só então publica a interação concluída.
 
 ---
 

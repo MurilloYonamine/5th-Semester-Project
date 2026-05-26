@@ -33,9 +33,6 @@ namespace FifthSemester.Doors {
         [Header("Map Registry")]
         [SerializeField] private DoorType _doorType = DoorType.None;
 
-        [Header("Mission Interaction")]
-        [SerializeField] private DoorMissionInteractionAdapter _missionInteractionAdapter;
-
         private IMapService _mapService;
         private Quaternion[] _closedRotations;
         private Quaternion[] _targetRotations;
@@ -60,10 +57,6 @@ namespace FifthSemester.Doors {
 
             CacheDoorMeshes();
             InitializeRotations();
-
-            if (_missionInteractionAdapter == null) {
-                _missionInteractionAdapter = GetComponent<DoorMissionInteractionAdapter>();
-            }
 
             _unlockedColor = new Color32(105, 255, 144, 255); // 69FF90
         }
@@ -95,10 +88,6 @@ namespace FifthSemester.Doors {
 
         public void Interact() {
             if (_isLocked) return;
-
-            if (_missionInteractionAdapter != null && _missionInteractionAdapter.TryHandleDoorInteraction()) {
-                return;
-            }
 
             _isOpen = !_isOpen;
             PlayDoorSound(_isOpen ? _openSound : _closeSound);

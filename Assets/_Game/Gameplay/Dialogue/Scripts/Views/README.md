@@ -6,3 +6,4 @@ Passives UI views for the dialogue system.
 - `DialogueView` renders speaker name, text, and portrait.
 - `DocumentView` renders paged documents.
 - `CaptionView` renders short bottom-screen captions.
+- `GateTransitionView` renders one-off black-screen story transitions with localized text.

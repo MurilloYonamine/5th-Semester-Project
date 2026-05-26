@@ -13,7 +13,7 @@ using UnityEngine.Playables;
 
 namespace FifthSemester.Gameplay.Dialogue {
     public class DialogueService : MonoBehaviour, IDialogueService<TextAsset> {
-        private const float DIALOGUE_FADE_DURATION = 0.5f;
+        private const float DIALOGUE_FADE_DURATION = 1f;
 
         public GameState CurrentState { get; set; } = GameState.Gameplay;
         public DialogueMode CurrentMode { get; private set; }

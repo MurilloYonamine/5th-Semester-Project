@@ -5347,6 +5347,7 @@ MonoBehaviour:
   _lockedText: TRANCADO
   _lockedColor: {r: 1, g: 0, b: 0, a: 1}
   _lockedOutlineColor: {r: 1, g: 0, b: 0, a: 1}
+  _showOutlineWhenLocked: 0
 --- !u!114 &412655790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11058,7 +11059,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _interactionHint: {fileID: 0}
-  <Id>k__BackingField: M4_Nurse_A
+  <Id>k__BackingField: M04_Nurse_A
   _dialogueFiles:
     Portuguese: {fileID: 4900000, guid: 53baeed3161bed340ba4ea869d371145, type: 3}
     English: {fileID: 4900000, guid: 0666c369621073c40a9447a0c388a920, type: 3}
@@ -13711,8 +13712,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1051355628}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.7954735, z: 0, w: 0.60598844}
-  m_LocalPosition: {x: 0.7, y: 0.4, z: -21.2}
+  m_LocalRotation: {x: 0, y: -0.97385716, z: 0, w: 0.22716132}
+  m_LocalPosition: {x: 8.21, y: 0.4, z: -17.76}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -17699,6 +17700,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _defaultSequence: {fileID: 11400000, guid: e6d64b4a069238b40a35424b68491df5, type: 2}
+  _missionCompleteSFX: {fileID: 8300000, guid: 72c8ef316a0b6fc49ac9c1d1f85ab4cf, type: 3}
 --- !u!1 &1304698569
 GameObject:
   m_ObjectHideFlags: 0

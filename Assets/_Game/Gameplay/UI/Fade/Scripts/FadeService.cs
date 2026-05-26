@@ -17,7 +17,7 @@ namespace FifthSemester.Gameplay.UI {
 
             _canvasGroup = GetComponent<CanvasGroup>();
             _canvasGroup.alpha = 0;
-            _canvasGroup.blocksRaycasts = true;
+            _canvasGroup.blocksRaycasts = false;
             _canvasGroup.interactable = false;
         }
 

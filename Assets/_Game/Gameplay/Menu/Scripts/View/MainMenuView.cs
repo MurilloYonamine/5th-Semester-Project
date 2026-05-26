@@ -47,6 +47,7 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public void OnPlay() {
+            _menuService.Hide();
             _gameState.ChangeState(GameState.Gameplay);
             SceneManager.LoadScene("Game");
         }
@@ -74,13 +75,19 @@ namespace FifthSemester.Gameplay.Menu {
 
             saveService.SaveToSlot(chosen, data);
 
-            _gameState.ChangeState(GameState.Gameplay);
-            SceneManager.LoadScene("Game");
-        }
+            _gameState.ChangeState(GameState.Cutscene); 
 
+            var transitioner = GetComponent<GameTransitioner>();
+            if (transitioner != null) {
+                transitioner.StartGameSequence();
+            }
+            else {
+                SceneManager.LoadScene("Game");
+            }
+        }
         public void OnContinue() {
             if (_loadGameView != null) {
-                _menuService.Show(MenuScreen.LoadGame); 
+                _menuService.Show(MenuScreen.LoadGame);
             }
             else {
                 OnPlay();

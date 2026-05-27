@@ -21,8 +21,8 @@ namespace FifthSemester.Gameplay.Menu {
 
         protected override void Start() {
             _saveService = ServiceLocator.Get<ISaveService>();
-            _backButton.onClick.AddListener(OnBack);
             base.Start();
+            _backButton.onClick.AddListener(OnBack);
             Hide();
         }
 
@@ -52,6 +52,7 @@ namespace FifthSemester.Gameplay.Menu {
 
                 _slots[i].Setup(slotId, data,
                     onLoad: () => {
+                        PlayMenuPrimarySfx();
                         SaveLoader.SetPendingSave(data);
                         SceneManager.LoadScene("Gym");
                     },
@@ -64,6 +65,7 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         private void OnBack() {
+            PlayMenuBackSfx();
             _menuService.Show(MenuScreen.MainMenu);
         }
     }

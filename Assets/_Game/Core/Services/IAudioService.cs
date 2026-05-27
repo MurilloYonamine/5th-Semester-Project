@@ -6,6 +6,7 @@ namespace FifthSemester.Core.Services {
     public interface IAudioService {
         AudioSource PlaySFX(string filePath, AudioMixerGroup mixer = null, float volume = 1f, float pitch = 1f, bool loop = false, float spatialBlend = 0.5f, float maxDistance = 500f);
         AudioSource PlaySFX(AudioClip clip, AudioMixerGroup mixer = null, float volume = 1f, float pitch = 1f, bool loop = false, float spatialBlend = 0.5f, string filePath = "", float maxDistance = 500f);
+        AudioTrack PlayTrack(string filePath, int channel = 0, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f);
         AudioTrack PlayTrack(AudioClip clip, int channel = 0, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f, string filePath = "");
         
         AudioTrack PlayAmbience(AudioClip clip, int channel = 0, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f, string filePath = "");

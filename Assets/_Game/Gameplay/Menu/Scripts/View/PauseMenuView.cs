@@ -71,21 +71,26 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public void OnResume() {
+            PlayMenuSecondarySfx();
             _gameState.ChangeState(GameState.Gameplay);
         }
 
         public void OnLoad() {
+            PlayMenuSecondarySfx();
             _menuService.Show(MenuScreen.LoadGame);
         }
         public void OnSettings() {
+            PlayMenuSecondarySfx();
             _menuService.Show(MenuScreen.Settings);
         }
 
         public void OnCredits() {
+            PlayMenuSecondarySfx();
             _menuService.Show(MenuScreen.Credits);
         }
 
         public void OnQuit() {
+            PlayMenuSecondarySfx();
             SceneManager.LoadScene("MainMenu");
         }
     }

@@ -61,6 +61,8 @@ namespace FifthSemester.Gameplay.Menu {
         public void ResetToDefaults() {
             if (_defaultsScreen == null) return;
 
+            PlayMenuSecondarySfx();
+
             _settingsService.FrameRate = _defaultsScreen.FrameRate;
             _settingsService.IsFullscreen = _defaultsScreen.IsFullscreen;
             _settingsService.ResolutionIndex = _defaultsScreen.ResolutionIndex;
@@ -121,6 +123,7 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         private void OnBack() {
+            PlayMenuBackSfx();
             _menuService.Show(MenuScreen.Settings);
         }
 

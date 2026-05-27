@@ -47,6 +47,7 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public void OnPlay() {
+            PlayMenuPrimarySfx();
             _menuService.Hide();
             _gameState.ChangeState(GameState.Gameplay);
             SceneManager.LoadScene("Game");
@@ -75,6 +76,8 @@ namespace FifthSemester.Gameplay.Menu {
 
             saveService.SaveToSlot(chosen, data);
 
+            PlayMenuPrimarySfx();
+
             _gameState.ChangeState(GameState.Cutscene); 
 
             var transitioner = GetComponent<GameTransitioner>();
@@ -87,6 +90,7 @@ namespace FifthSemester.Gameplay.Menu {
         }
         public void OnContinue() {
             if (_loadGameView != null) {
+                PlayMenuSecondarySfx();
                 _menuService.Show(MenuScreen.LoadGame);
             }
             else {
@@ -114,13 +118,16 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public void OnSettings() {
+            PlayMenuSecondarySfx();
             _menuService.Show(MenuScreen.Settings);
         }
 
         public void OnCredits() {
+            PlayMenuSecondarySfx();
             _menuService.Show(MenuScreen.Credits);
         }
         public void OnQuit() {
+            PlayMenuSecondarySfx();
             Application.Quit();
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;

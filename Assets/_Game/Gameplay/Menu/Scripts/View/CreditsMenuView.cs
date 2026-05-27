@@ -16,6 +16,7 @@ namespace FifthSemester.Gameplay.Menu {
             _backButton.onClick.AddListener(OnBack);
         }
         public void OnBack() {
+            PlayMenuBackSfx();
             _menuService.Show(MenuScreen.MainMenu);
         }
     }

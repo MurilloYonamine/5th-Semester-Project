@@ -125,7 +125,7 @@ namespace FifthSemester.Core.Audio {
         /// <param name="volumeCap">Maximum allowed volume.</param>
         /// <param name="pitch">Track pitch.</param>
         /// <returns>AudioTrack created for the track.</returns>
-        private AudioTrack PlayTrack(string filePath, int channel = 0, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f) {
+        public AudioTrack PlayTrack(string filePath, int channel = 0, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f) {
             AudioClip clip = Resources.Load<AudioClip>(filePath);
 
             if (clip == null) {

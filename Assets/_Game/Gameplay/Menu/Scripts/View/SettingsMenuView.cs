@@ -24,12 +24,28 @@ namespace FifthSemester.Gameplay.Menu {
             _backButton.onClick.AddListener(OnBack);
         }
 
-        public void OpenAudioSettings() => _menuService.Show(MenuScreen.Settings_Audio);
-        public void OpenGraphicsSettings() => _menuService.Show(MenuScreen.Settings_Graphics);
-        public void OpenGameplaySettings() => _menuService.Show(MenuScreen.Settings_Gameplay);
-        public void OpenScreenSettings() => _menuService.Show(MenuScreen.Settings_Screen);
+        public void OpenAudioSettings() {
+            PlayMenuSecondarySfx();
+            _menuService.Show(MenuScreen.Settings_Audio);
+        }
+
+        public void OpenGraphicsSettings() {
+            PlayMenuSecondarySfx();
+            _menuService.Show(MenuScreen.Settings_Graphics);
+        }
+
+        public void OpenGameplaySettings() {
+            PlayMenuSecondarySfx();
+            _menuService.Show(MenuScreen.Settings_Gameplay);
+        }
+
+        public void OpenScreenSettings() {
+            PlayMenuSecondarySfx();
+            _menuService.Show(MenuScreen.Settings_Screen);
+        }
 
         public void OnBack() {
+            PlayMenuBackSfx();
             var pauseMenu = _menuService.GetView(MenuScreen.PauseMenu);
             if (pauseMenu != null && pauseMenu.activeSelf) {
                 _menuService.Show(MenuScreen.PauseMenu);

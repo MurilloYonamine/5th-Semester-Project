@@ -12,6 +12,7 @@ Menu System provides:
 - **Prefab-based UI**: Reusable menu screen components
 - **Settings persistence**: Save/load user preferences
 - **State integration**: Pause/resume through menu
+- **Menu audio**: Button feedback and menu music played via `AudioService`
 
 ---
 
@@ -36,6 +37,11 @@ MenuService.cs (orchestrator)
     ├── GraphicsDefault.json
     ├── AudioDefault.json
     └── ScreenDefault.json
+
+Audio resources:
+- `Audio/menu_botao1 (play)` for start/load actions
+- `Audio/menu_botao3` for navigation and back actions
+- `Audio/menu_musica` for the main menu music track
 ```
 
 ---

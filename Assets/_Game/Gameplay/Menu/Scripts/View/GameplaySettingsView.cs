@@ -58,6 +58,8 @@ namespace FifthSemester.Gameplay.Menu {
 
         public void ResetToDefaults() {
             if (_defaultsGameplay == null) return;
+
+            PlayMenuSecondarySfx();
             _settingsService.Language = _defaultsGameplay.Language;
             _settingsService.InvertYAxis = _defaultsGameplay.InvertYAxis;
             _settingsService.Sensibility = _defaultsGameplay.Sensibility;
@@ -65,6 +67,7 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public void OnBack() {
+            PlayMenuBackSfx();
             _menuService.Show(MenuScreen.Settings);
         }
 

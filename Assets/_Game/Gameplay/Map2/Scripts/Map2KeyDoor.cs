@@ -26,8 +26,7 @@ namespace FifthSemester.Gameplay.Map2 {
         [SerializeField] private bool _useDoubleDoor;
 
         [Header("Audio")]
-        [SerializeField] private AudioClip _openSound;
-        [SerializeField] private AudioClip _closeSound;
+        [SerializeField] private AudioClip[] _doorSfx;
         [SerializeField] private AudioClip _lockedSound;
 
         [ShowIf(nameof(_useDoubleDoor))]
@@ -95,7 +94,7 @@ namespace FifthSemester.Gameplay.Map2 {
             }
 
             _isOpen = !_isOpen;
-            PlayDoorSound(_isOpen ? _openSound : _closeSound);
+            PlayDoorSound();
             UpdateTargetRotations();
         }
 
@@ -196,6 +195,20 @@ namespace FifthSemester.Gameplay.Map2 {
 
         private bool IsDoorUnlocked() {
             return !_requiresKey || HasRequiredKey();
+        }
+
+        private void PlayDoorSound() {
+            if (_audioService == null || _doorSfx == null || _doorSfx.Length == 0) {
+                return;
+            }
+
+            int randomIndex = UnityEngine.Random.Range(0, _doorSfx.Length);
+            AudioClip clip = _doorSfx[randomIndex];
+            if (clip == null) {
+                return;
+            }
+
+            _audioService.PlaySFX(clip);
         }
 
         private void PlayDoorSound(AudioClip clip) {

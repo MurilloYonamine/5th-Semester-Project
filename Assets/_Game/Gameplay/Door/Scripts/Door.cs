@@ -21,8 +21,7 @@ namespace FifthSemester.Doors {
         [SerializeField] private bool _useDoubleDoor;
 
         [Header("Audio")]
-        [SerializeField] private AudioClip _openSound;
-        [SerializeField] private AudioClip _closeSound;
+        [SerializeField] private AudioClip[] _doorSfx;
 
         [ShowIf(nameof(_useDoubleDoor))]
         [SerializeField] private Transform[] _doorMeshes;
@@ -93,7 +92,7 @@ namespace FifthSemester.Doors {
             if (_isLocked) return;
 
             _isOpen = !_isOpen;
-            PlayDoorSound(_isOpen ? _openSound : _closeSound);
+            PlayDoorSound();
             UpdateTargetRotations();
         }
 
@@ -179,8 +178,14 @@ namespace FifthSemester.Doors {
             }
         }
 
-        private void PlayDoorSound(AudioClip clip) {
-            if (clip == null || _audioService == null) {
+        private void PlayDoorSound() {
+            if (_audioService == null || _doorSfx == null || _doorSfx.Length == 0) {
+                return;
+            }
+
+            int randomIndex = UnityEngine.Random.Range(0, _doorSfx.Length);
+            AudioClip clip = _doorSfx[randomIndex];
+            if (clip == null) {
                 return;
             }
 

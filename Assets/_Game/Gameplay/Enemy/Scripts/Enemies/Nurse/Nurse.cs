@@ -15,6 +15,7 @@ namespace FifthSemester.Gameplay.Enemy {
         private const string NAV_AGENT_KEY = "NavAgent";
         private const string ANIMATOR_KEY = "Animator";
         private const string JUMPSCARE_DIRECTOR_KEY = "JumpscareDirector";
+        private const string CUTSCENE_ACTIVE_KEY = "CutsceneActive";
         private const string IS_FROZEN_KEY = "IsFrozen";
         private const string IS_OBSERVED_KEY = "HasLineOfSight";
 
@@ -34,11 +35,6 @@ namespace FifthSemester.Gameplay.Enemy {
         [SerializeField, Range(0f, 15f)] private float _rotationSpeed = 8f;
         [SerializeField] private float _patrolWaitTime = 2f;
 
-        [Header("Audio")]
-        [SerializeField] private AudioClip[] _footstepClips;
-        [SerializeField] private float _footstepInterval = 0.45f;
-        [SerializeField] private float _minFootstepSpeed = 0.1f;
-
         private BehaviourTree _tree;
         private Blackboard _blackboard;
         private NavMeshAgent _agent;
@@ -46,6 +42,7 @@ namespace FifthSemester.Gameplay.Enemy {
         private IAudioService _audioService;
 
         private float _footstepTimer;
+        private bool _lastObservedState = false;
 
         [Header("Timeline")]
         [SerializeField] private PlayableDirector _jumpscareDirector;
@@ -61,6 +58,15 @@ namespace FifthSemester.Gameplay.Enemy {
         private void Awake() {
             _agent = GetComponent<NavMeshAgent>();
             _animator = GetComponentInChildren<Animator>();
+
+            if(_target == null)
+                _target = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+            if(_playerCamera == null)
+                _playerCamera = Camera.main;
+
+            if(_animator == null)
+                _animator = GetComponentInChildren<Animator>();
 
             _agent.speed = _normalSpeed;
             _agent.updateRotation = false;
@@ -78,6 +84,7 @@ namespace FifthSemester.Gameplay.Enemy {
             _blackboard.SetData(NAV_AGENT_KEY, _agent);
             _blackboard.SetData(ANIMATOR_KEY, _animator);
             _blackboard.SetData(JUMPSCARE_DIRECTOR_KEY, _jumpscareDirector);
+            _blackboard.SetData(CUTSCENE_ACTIVE_KEY, false);
             _blackboard.SetData(IS_FROZEN_KEY, false);
             _blackboard.SetData(IS_OBSERVED_KEY, false);
 
@@ -104,17 +111,28 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void Update() {
-            CheckIfObservedByPlayer();
-            UpdateState();
+            bool isCutsceneActive = _blackboard != null && _blackboard.HasKey(CUTSCENE_ACTIVE_KEY) && _blackboard.GetData<bool>(CUTSCENE_ACTIVE_KEY);
+
+            if (isCutsceneActive) {
+                _isObserved = false;
+                _lastObservedState = false;
+                _blackboard.SetData(IS_FROZEN_KEY, false);
+                _blackboard.SetData(IS_OBSERVED_KEY, false);
+            }
+            else {
+                CheckIfObservedByPlayer();
+                UpdateState();
+            }
 
             _tree?.Process();
-            HandleRotation();
+            if (!isCutsceneActive) {
+                HandleRotation();
+            }
 
-            if (_animator != null && _agent != null && !_isObserved) {
+            if (_animator != null && _agent != null && !_isObserved && !isCutsceneActive) {
                 _animator.SetFloat(_speedHash, _agent.velocity.magnitude);
             }
 
-            UpdateFootsteps();
         }
 
         private void CheckIfObservedByPlayer() {
@@ -135,6 +153,8 @@ namespace FifthSemester.Gameplay.Enemy {
                     _blackboard.SetData(IS_FROZEN_KEY, true);
                     _blackboard.SetData(IS_OBSERVED_KEY, true);
 
+                    _lastObservedState = true;
+
                     return;
                 }
             }
@@ -143,6 +163,8 @@ namespace FifthSemester.Gameplay.Enemy {
 
             _blackboard.SetData(IS_FROZEN_KEY, false);
             _blackboard.SetData(IS_OBSERVED_KEY, false);
+
+            _lastObservedState = false;
         }
 
         private void UpdateState() {
@@ -192,30 +214,6 @@ namespace FifthSemester.Gameplay.Enemy {
             );
         }
 
-        private void UpdateFootsteps() {
-            if (_audioService == null || _footstepClips == null || _footstepClips.Length == 0 || _agent == null) {
-                return;
-            }
-
-            float speed = _agent.velocity.magnitude;
-            if (speed < _minFootstepSpeed || _agent.isStopped) {
-                _footstepTimer = _footstepInterval;
-                return;
-            }
-
-            _footstepTimer += Time.deltaTime;
-            if (_footstepTimer < _footstepInterval) {
-                return;
-            }
-
-            _footstepTimer = 0f;
-            AudioClip clip = _footstepClips[Random.Range(0, _footstepClips.Length)];
-            if (clip == null) {
-                return;
-            }
-
-            _audioService.PlaySFX(clip, volume: 0.4f);
-        }
         private void OnDrawGizmos() {
             if (_eyeTransform == null || _playerCamera == null) return;
 

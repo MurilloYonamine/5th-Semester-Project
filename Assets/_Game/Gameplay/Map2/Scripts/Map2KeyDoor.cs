@@ -17,6 +17,7 @@ namespace FifthSemester.Gameplay.Map2 {
 
         [Header("Configuração da Chave")]
         [SerializeField] private Map2KeyDefinitionSO _requiredKey;
+        [SerializeField] private bool _requiresKey = true;
 
         [Header("Configurações de Movimento")]
         [SerializeField] private bool _isOpen = false;
@@ -33,7 +34,7 @@ namespace FifthSemester.Gameplay.Map2 {
         [SerializeField] private Transform[] _doorMeshes;
 
         [HideIf(nameof(_useDoubleDoor))]
-        private Transform _doorMesh;
+        [SerializeField] private Transform _doorMesh;
 
         private IInventoryService<Item> _inventoryService;
         private Quaternion[] _closedRotations;
@@ -57,7 +58,8 @@ namespace FifthSemester.Gameplay.Map2 {
                 _textLocal.gameObject.SetActive(false);
             }
 
-            _doorMesh = gameObject.transform;
+            if(_doorMesh == null)
+                _doorMesh = gameObject.transform;
 
             CacheDoorMeshes();
             InitializeRotations();
@@ -87,7 +89,7 @@ namespace FifthSemester.Gameplay.Map2 {
         }
 
         public void Interact() {
-            if (!HasRequiredKey()) {
+            if (_requiresKey && !HasRequiredKey()) {
                 PlayDoorSound(_lockedSound);
                 return;
             }
@@ -103,13 +105,13 @@ namespace FifthSemester.Gameplay.Map2 {
         public void Highlight(bool value) {
             if (_outline != null) {
                 _outline.enabled = value;
-                _outline.OutlineColor = HasRequiredKey() ? _unlockedColor : Color.red;
+                _outline.OutlineColor = IsDoorUnlocked() ? _unlockedColor : Color.red;
             }
 
             if (_textLocal != null) {
                 _textLocal.gameObject.SetActive(value);
-                _textLocal.color = HasRequiredKey() ? _unlockedColor : Color.red;
-                _textLocal.text = HasRequiredKey() ? _defaultText : _defaultText;
+                _textLocal.color = IsDoorUnlocked() ? _unlockedColor : Color.red;
+                _textLocal.text = _defaultText;
             }
         }
 
@@ -184,12 +186,16 @@ namespace FifthSemester.Gameplay.Map2 {
 
         private void UpdateDoorVisuals() {
             if (_outline != null) {
-                _outline.OutlineColor = HasRequiredKey() ? _unlockedColor : Color.red;
+                _outline.OutlineColor = IsDoorUnlocked() ? _unlockedColor : Color.red;
             }
 
             if (_textLocal != null) {
-                _textLocal.color = HasRequiredKey() ? _unlockedColor : Color.red;
+                _textLocal.color = IsDoorUnlocked() ? _unlockedColor : Color.red;
             }
+        }
+
+        private bool IsDoorUnlocked() {
+            return !_requiresKey || HasRequiredKey();
         }
 
         private void PlayDoorSound(AudioClip clip) {

@@ -4,7 +4,7 @@ using UnityEngine.VFX;
 public class SparkSound : MonoBehaviour {
     private VisualEffect _vfx;
     [SerializeField] private AudioClip _audio;
-    [SerializeField] private float _maxDistance = 50f;
+    [SerializeField] private float _maxDistance = 120f;
     private readonly int sparkEventID = Shader.PropertyToID("SparkFired");
     private IAudioService _audioService;
 

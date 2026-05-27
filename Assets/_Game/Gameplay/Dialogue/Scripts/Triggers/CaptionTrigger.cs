@@ -51,7 +51,7 @@ namespace FifthSemester.Gameplay.Dialogue {
             }
 
             _captionView.Show();
-            _captionView.SetCaption(captionFile.text != null ? captionFile.text.Trim() : string.Empty);
+            _captionView.SetCaption(CaptionParser.Parse(captionFile));
         }
 
         public override void StopInteract() {

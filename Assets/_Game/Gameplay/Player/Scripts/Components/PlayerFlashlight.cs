@@ -28,6 +28,7 @@ namespace FifthSemester.Player.Components {
         [SerializeField] private AudioClip _toggleSound;
 
         [SerializeField] private bool _isOn = false;
+        [SerializeField] private bool _hasFlashlight = false;
 
         private IEventBus _eventBus;
         private IAudioService _audioService;
@@ -68,7 +69,7 @@ namespace FifthSemester.Player.Components {
         }
 
         private void HandleFlashlightInput(FlashlightInputEvent evt) {
-            if (!evt.IsPressed) return;
+            if (!evt.IsPressed || !_hasFlashlight) return;
             
             _isOn = !_isOn;
             UpdateLightEnabled();
@@ -188,6 +189,10 @@ namespace FifthSemester.Player.Components {
         private void PlayToggleSound() {
             if (_toggleSound == null || _audioService == null) return;
             _audioService.PlaySFX(_toggleSound);
+        }
+
+        public void EnableFlashlight() {
+            _hasFlashlight = true;
         }
 
 #if UNITY_EDITOR

@@ -55,6 +55,9 @@ namespace FifthSemester.Doors {
                 _defaultText = _textLocal.text;
             }
 
+            if(_doorMesh == null)
+                _doorMesh = gameObject.transform;
+
             CacheDoorMeshes();
             InitializeRotations();
 
@@ -117,7 +120,6 @@ namespace FifthSemester.Doors {
 
             if (_textLocal != null) {
                 _textLocal.color = Color.red;
-                _textLocal.text = "TRANCADA";
             }
         }
 

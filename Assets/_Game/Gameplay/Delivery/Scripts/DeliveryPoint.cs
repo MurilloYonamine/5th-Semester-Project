@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
+using FifthSemester.Gameplay.Dialogue;
 using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Gameplay.Shared;
 using ThirdParty.QuickOutline;
@@ -34,6 +35,7 @@ namespace FifthSemester.Gameplay.Interactables {
         private IInventoryService<Item> _inventoryService;
         private IEventBus _eventBus;
         private IAudioService _audioService;
+        private DialogueTrigger _dialogueTrigger;
         private bool _isCompleted = false;
 
         public bool IsInteractable => !_isCompleted;
@@ -42,6 +44,7 @@ namespace FifthSemester.Gameplay.Interactables {
 
         private void Awake() {
             _outline = GetComponent<Outline>();
+            TryGetComponent(out _dialogueTrigger);
             Highlight(false);
         }
 
@@ -60,6 +63,7 @@ namespace FifthSemester.Gameplay.Interactables {
 
         public void Interact() {
             if (_isCompleted) {
+                TryPlayDialogueTrigger();
                 return;
             }
 
@@ -67,6 +71,7 @@ namespace FifthSemester.Gameplay.Interactables {
                 CompleteDelivery();
                 UpdateInteractionPrompt();
                 PlayFeedback(_successSound);
+                TryPlayDialogueTrigger();
             }
             else {
                 PlayFeedback(_failureSound);
@@ -115,6 +120,14 @@ namespace FifthSemester.Gameplay.Interactables {
             }
 
             _audioService.PlaySFX(clip);
+        }
+
+        private void TryPlayDialogueTrigger() {
+            if (_dialogueTrigger == null || !_dialogueTrigger.IsInteractable) {
+                return;
+            }
+
+            _dialogueTrigger.Interact();
         }
     }
 }

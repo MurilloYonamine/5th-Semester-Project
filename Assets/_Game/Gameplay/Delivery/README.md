@@ -41,6 +41,8 @@ DeliveryService.cs (orchestrator)
 
 Interactive location where player delivers items.
 
+If the same GameObject also has a `DialogueTrigger`, the delivery point can forward the interaction to it after a successful delivery or when the delivery is already completed.
+
 ```csharp
 public class DeliveryPoint : MonoBehaviour, IInteractable {
     [SerializeField] private int _objectiveId;

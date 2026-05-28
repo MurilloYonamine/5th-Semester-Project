@@ -48,9 +48,14 @@ namespace FifthSemester.Gameplay.Menu {
             _canvasGroup.interactable = true;
             _canvasGroup.blocksRaycasts = true;
 
-            EventSystem.current.SetSelectedGameObject(null);
-            if (_focusFirstElement != null) {
-                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
+            // Only auto-select the first element when there is no mouse present.
+            // This prevents a situation where the first element remains focused
+            // while the player hovers another element with the mouse (double highlight).
+            if (!UnityEngine.Input.mousePresent) {
+                EventSystem.current.SetSelectedGameObject(null);
+                if (_focusFirstElement != null) {
+                    EventSystem.current.SetSelectedGameObject(_focusFirstElement);
+                }
             }
         }
 

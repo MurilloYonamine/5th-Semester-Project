@@ -1,11 +1,14 @@
 // Autor: Murillo Gomes Yonamine
 // Data: 05/05/2026
 
+using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using FifthSemester.Core.Services;
+using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Player;
-using System.Collections;
+using FifthSemester.Player.Components;
+using FifthSemester.Gameplay.Missions;
 
 namespace FifthSemester.Gameplay.Save {
     public static class SaveLoader {
@@ -15,6 +18,11 @@ namespace FifthSemester.Gameplay.Save {
             _pending = data;
             SceneManager.sceneLoaded -= OnSceneLoaded;
             SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        public static void ClearPendingSave() {
+            _pending = null;
+            SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
         private static void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
@@ -28,34 +36,53 @@ namespace FifthSemester.Gameplay.Save {
 
         private static IEnumerator ApplySaveDelayed() {
             yield return null;
-            
-            SavePoint[] allPoints = Object.FindObjectsByType<SavePoint>(FindObjectsSortMode.None);
-            for (int i = 0; i < allPoints.Length; i++) {
-                Debug.Log($"  [{i}] ID='{allPoints[i].Id}'");
+            PlayerController player = Object.FindFirstObjectByType<PlayerController>();
+            IMissionService missionService = ServiceLocator.Get<IMissionService>();
+            IInventoryService<Item> inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
+
+            if (player != null) {
+                player.transform.position = _pending.PlayerPosition.ToVector3();
+                player.transform.rotation = _pending.PlayerRotation.ToQuaternion();
+
+                PlayerCamera playerCamera = player.PlayerCamera;
+                if (playerCamera != null) {
+                    Transform cameraTarget = playerCamera.GetCameraTarget();
+                    if (cameraTarget != null) {
+                        cameraTarget.position = _pending.CameraTargetPosition.ToVector3();
+                        cameraTarget.rotation = _pending.CameraTargetRotation.ToQuaternion();
+                    }
+                }
+            } 
+
+            if (missionService != null) {
+                missionService.SkipToMission(_pending.CurrentMissionIndex);
             }
 
-            SavePoint target = GetSavePoint(_pending.LastCheckpointId);
-            PlayerController player = Object.FindFirstObjectByType<PlayerController>();
-
-            if (target != null && player != null) {
-                target.SetPlayerController(player);
-                target.LoadGame(_pending);
-            } 
+            if (inventoryService != null && _pending.InventoryItemIds.Count > 0) {
+                LoadInventoryItems(inventoryService, _pending.InventoryItemIds);
+            }
 
             _pending = null;
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
 
-        private static SavePoint GetSavePoint(string checkpointId) {
-            SavePoint[] savePoints = Object.FindObjectsByType<SavePoint>(FindObjectsSortMode.None);
-
-            for (int index = 0; index < savePoints.Length; index++) {
-                if (savePoints[index].Id == checkpointId) {
-                    return savePoints[index];
-                }
+        private static void LoadInventoryItems(IInventoryService<Item> inventoryService, System.Collections.Generic.IReadOnlyList<string> itemIds) {
+            IItemRegistry<Item> itemRegistry = ServiceLocator.Get<IItemRegistry<Item>>();
+            if (itemRegistry == null) {
+                return;
             }
 
-            return null;
+            for (int i = 0; i < itemIds.Count; i++) {
+                string itemId = itemIds[i];
+                if (string.IsNullOrWhiteSpace(itemId)) {
+                    continue;
+                }
+
+                Item item = itemRegistry.InstantiateItem(itemId);
+                if (item != null) {
+                    inventoryService.AddItem(item);
+                }
+            }
         }
     }
 }

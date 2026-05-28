@@ -19,10 +19,9 @@ namespace FifthSemester.Gameplay.Menu {
 
         [Header("Continue UI")]
         [SerializeField] private GameObject _continueButtonContainer;
-        [SerializeField] private LoadGameView _loadGameView;
-        [SerializeField] private CheckpointSO _initialCheckpoint;
 
         private IGameStateService _gameState;
+        private const string DEFAULT_SLOT = "default";
 
         protected override MenuScreen MenuScreenType => MenuScreen.MainMenu;
 
@@ -55,66 +54,50 @@ namespace FifthSemester.Gameplay.Menu {
 
         public void OnNewGame() {
             var saveService = ServiceLocator.Get<ISaveService>();
-            if (saveService == null || _initialCheckpoint == null) {
-                OnPlay();
-                return;
+            if (saveService != null) {
+                saveService.DeleteSlot(DEFAULT_SLOT);
             }
 
-            string chosen = null;
-            for (int i = 0; i < 3; i++) {
-                string id = $"slot_{i}";
-                if (!saveService.SlotExists(id)) {
-                    chosen = id;
-                    break;
-                }
-            }
-            if (chosen == null) chosen = "slot_0";
-
-            var data = new SaveData() {
-                LastCheckpointId = _initialCheckpoint.Id
-            };
-
-            saveService.SaveToSlot(chosen, data);
-
+            SaveLoader.ClearPendingSave();
             PlayMenuPrimarySfx();
-
-            _gameState.ChangeState(GameState.Cutscene); 
 
             var transitioner = GetComponent<GameTransitioner>();
             if (transitioner != null) {
+                _menuService.Hide();
+                _gameState.ChangeState(GameState.Cutscene);
                 transitioner.StartGameSequence();
             }
             else {
+                _menuService.Hide();
+                _gameState.ChangeState(GameState.Gameplay);
                 SceneManager.LoadScene("Game");
             }
         }
         public void OnContinue() {
-            if (_loadGameView != null) {
-                PlayMenuSecondarySfx();
-                _menuService.Show(MenuScreen.LoadGame);
+            ISaveService saveService = ServiceLocator.Get<ISaveService>();
+            if (saveService == null || !saveService.SlotExists(DEFAULT_SLOT)) {
+                OnNewGame();
+                return;
             }
-            else {
-                OnPlay();
+
+            SaveData saveData = saveService.LoadFromSlot(DEFAULT_SLOT);
+            if (saveData == null) {
+                OnNewGame();
+                return;
             }
+
+            PlayMenuPrimarySfx();
+            SaveLoader.SetPendingSave(saveData);
+            _menuService.Hide();
+            _gameState.ChangeState(GameState.Gameplay);
+            SceneManager.LoadScene("Game");
         }
 
         public void UpdateContinueVisibility() {
             if (_continueButtonContainer == null) return;
 
             ISaveService saveService = ServiceLocator.Get<ISaveService>();
-            _continueButtonContainer.SetActive(HasSavedGame(saveService));
-        }
-
-        private bool HasSavedGame(ISaveService saveService) {
-            if (saveService == null) return false;
-
-            for (int i = 0; i < 3; i++) {
-                if (saveService.SlotExists($"slot_{i}")) {
-                    return true;
-                }
-            }
-
-            return false;
+            _continueButtonContainer.SetActive(saveService != null && saveService.SlotExists(DEFAULT_SLOT));
         }
 
         public void OnSettings() {

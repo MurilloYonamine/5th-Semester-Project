@@ -2,6 +2,11 @@
 
 Sistema de persistência de progresso do jogo usando `PlayerPrefs` com suporte a checkpoints estilo Resident Evil.
 
+Current implementation note:
+- The live flow now uses a single autosave slot (`default`).
+- Manual save/load screens are no longer part of the active menu flow.
+- `SavePoint` is legacy and no longer triggers manual saving.
+
 ## Estrutura
 
 ```
@@ -46,7 +51,7 @@ ServiceLocator.Register<ISaveService>(saveService);
 
 ### SavePoint
 
-Componente para ativar saves manuais (checkpoints interativos).
+Componente legado mantido apenas como marcador de checkpoint.
 
 **Setup:**
 1. Crie GameObject (ex., `CheckpointLibrary`)

@@ -13,6 +13,11 @@ Menu System provides:
 - **Settings persistence**: Save/load user preferences
 - **State integration**: Pause/resume through menu
 - **Menu audio**: Button feedback and menu music played via `AudioService`
+- **Main menu flow**: `New Game` starts fresh, `Continue` loads the latest autosave
+
+Current implementation note:
+- The old load-game screen is no longer part of the live menu flow.
+- Main menu now exposes only new game, continue, settings, credits, and quit.
 
 ---
 

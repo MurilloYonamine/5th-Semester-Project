@@ -34,7 +34,7 @@ namespace FifthSemester.Gameplay.Menu {
             _audioService.PlayTrack(_musicFilePath, _channel, _loop, _startingVolume, _volumeCap, _pitch);
         }
 
-        private void OnDestroy() {
+        public void StopMusic() {
             if (_audioService == null) {
                 ServiceLocator.TryGet<IAudioService>(out _audioService);
             }
@@ -42,6 +42,10 @@ namespace FifthSemester.Gameplay.Menu {
             if (_audioService != null && !string.IsNullOrWhiteSpace(_musicFilePath)) {
                 _audioService.StopTrack(_musicFilePath);
             }
+        }
+
+        private void OnDestroy() {
+            StopMusic();
         }
     }
 }

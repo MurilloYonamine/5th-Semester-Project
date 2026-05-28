@@ -32,10 +32,13 @@ namespace FifthSemester.Gameplay.Menu {
             base.Start();
 
             _resumeButton.onClick.AddListener(OnResume);
-            _loadButton.onClick.AddListener(OnLoad);
             _settingsButton.onClick.AddListener(OnSettings);
             _creditsButton.onClick.AddListener(OnCredits);
             _quitButton.onClick.AddListener(OnQuit);
+
+            if (_loadButton != null) {
+                _loadButton.gameObject.SetActive(false);
+            }
             
             if (_gameState.CurrentState == GameState.Gameplay && _backgroundPanel != null) {
                  _backgroundPanel.alpha = 0f;
@@ -75,10 +78,6 @@ namespace FifthSemester.Gameplay.Menu {
             _gameState.ChangeState(GameState.Gameplay);
         }
 
-        public void OnLoad() {
-            PlayMenuSecondarySfx();
-            _menuService.Show(MenuScreen.LoadGame);
-        }
         public void OnSettings() {
             PlayMenuSecondarySfx();
             _menuService.Show(MenuScreen.Settings);

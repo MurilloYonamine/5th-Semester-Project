@@ -100,13 +100,6 @@ namespace FifthSemester.Player {
                     continue;
                 }
 
-                if (component is SavePoint) {
-                    if (selectedInteractable == null) {
-                        selectedInteractable = interactable;
-                    }
-                    continue;
-                }
-
                 if (component is DialogueTrigger && selectedInteractable == null) {
                     selectedInteractable = interactable;
                     continue;
@@ -131,11 +124,6 @@ namespace FifthSemester.Player {
             }
             else if (_currentInteractable is DeliveryPoint deliveryPoint) {
                 deliveryPoint.Interact();
-                HandleInteractionCompleted(_currentInteractable);
-            }
-            else if (_currentInteractable is SavePoint savePoint) {
-                savePoint.SetPlayerController(_playerController);
-                savePoint.Interact();
                 HandleInteractionCompleted(_currentInteractable);
             }
             else {

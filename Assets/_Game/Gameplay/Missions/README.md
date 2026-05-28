@@ -43,6 +43,16 @@ Na implementação atual, a ordem de entrega também dirige as portas: `Paciente
 - `DeliveryPointId` = ex., `"DeliveryZoneA"`
 - `PersistProgress` = true
 
+### PlayCutscene
+Toca uma cutscene depois que o diálogo ativo termina.
+
+Quando a missão entra em vigor durante um diálogo, a cutscene fica aguardando o evento `DialogueEndedEvent` antes de chamar o `ICutsceneService`. Isso evita que a sequência comece enquanto o último NPC ainda está falando.
+
+**Configuração `MissionDefinition`:**
+- `Type` = `PlayCutscene`
+- `TargetCutscene` = cutscene a ser executada
+- `PersistProgress` = true
+
 ### Interact
 Interaja com um objeto específico para concluir a missão.
 

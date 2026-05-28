@@ -7,6 +7,7 @@ namespace FifthSemester.Gameplay.Missions {
         private bool _itemsCollected;
         private bool _subscribed;
         private IMissionService _missionService;
+        private bool _awaitingCompletionDialogue;
 
         // NOVO: Contador específico para as entregas
         private int _deliveredCount;
@@ -42,6 +43,7 @@ namespace FifthSemester.Gameplay.Missions {
             if (_eventBus != null && !_subscribed) {
                 _eventBus.Subscribe<ItemPickedUpEvent>(OnItemAdded);
                 _eventBus.Subscribe<ItemDeliveredEvent>(OnItemDelivered);
+                _eventBus.Subscribe<DialogueEndedEvent>(OnDialogueEnded);
                 _subscribed = true;
             }
         }
@@ -112,15 +114,66 @@ namespace FifthSemester.Gameplay.Missions {
                 PublishProgress();
 
                 if (_deliveredCount >= RequiredCollectCount) {
-                    Complete();
+                    _awaitingCompletionDialogue = true;
                 }
             }
+        }
+
+        private void OnDialogueEnded(DialogueEndedEvent evt) {
+            if (_isComplete || !_awaitingCompletionDialogue) {
+                return;
+            }
+
+            if (_definition == null || string.IsNullOrWhiteSpace(evt.NpcId)) {
+                return;
+            }
+
+            if (!MatchesDeliveryPoint(evt.NpcId)) {
+                return;
+            }
+
+            _awaitingCompletionDialogue = false;
+            Complete();
+        }
+
+        private bool MatchesDeliveryPoint(string npcId) {
+            if (_definition == null || _definition.DeliveryPointIds == null) {
+                return false;
+            }
+
+            for (int i = 0; i < _definition.DeliveryPointIds.Length; i++) {
+                string deliveryPointId = _definition.DeliveryPointIds[i];
+                if (string.IsNullOrWhiteSpace(deliveryPointId)) {
+                    continue;
+                }
+
+                string[] parts = deliveryPointId.Split(new char[] { ',', ';', '|' }, System.StringSplitOptions.RemoveEmptyEntries);
+                foreach (string partRaw in parts) {
+                    string part = partRaw.Trim();
+                    if (string.IsNullOrEmpty(part)) {
+                        continue;
+                    }
+
+                    if (string.Equals(part, npcId, System.StringComparison.OrdinalIgnoreCase)) {
+                        return true;
+                    }
+
+                    int deliverySuffixIndex = npcId.LastIndexOf('_');
+                    string npcSuffix = deliverySuffixIndex >= 0 && deliverySuffixIndex < npcId.Length - 1 ? npcId.Substring(deliverySuffixIndex + 1) : npcId;
+                    if (string.Equals(part, npcSuffix, System.StringComparison.OrdinalIgnoreCase)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         public override void Cleanup() {
             if (_eventBus != null && _subscribed) {
                 _eventBus.Unsubscribe<ItemPickedUpEvent>(OnItemAdded);
                 _eventBus.Unsubscribe<ItemDeliveredEvent>(OnItemDelivered);
+                _eventBus.Unsubscribe<DialogueEndedEvent>(OnDialogueEnded);
                 _subscribed = false;
             }
 

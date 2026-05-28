@@ -8,6 +8,7 @@ using UnityEngine;
 namespace FifthSemester.Gameplay.Missions {
     public class CutsceneMission : MissionBase {
         private bool _subscribed;
+        private bool _cutscenePending;
 
         public override void Initialize(MissionDefinition definition, IEventBus eventBus, ISaveService saveService) {
             base.Initialize(definition, eventBus, saveService);
@@ -22,18 +23,36 @@ namespace FifthSemester.Gameplay.Missions {
                 _subscribed = true;
             }
 
-            ICutsceneService cutsceneService = ServiceLocator.Get<ICutsceneService>();
-            if (cutsceneService != null) {
-                cutsceneService.PlayCutscene(_definition.TargetCutscene);
+            _cutscenePending = true;
+
+            IDialogueService<TextAsset> dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
+            if (dialogueService == null || !dialogueService.IsDialogueActive) {
+                PlayCutscene();
             }
         }
 
         private void OnDialogueEnded(DialogueEndedEvent evt) {
-            if (_isComplete) return;
+            if (_isComplete || !_cutscenePending) return;
 
-            PublishProgress();
-            Complete();
+            PlayCutscene();
         }
+
+        private void PlayCutscene() {
+            if (!_cutscenePending || _isComplete) {
+                return;
+            }
+
+            _cutscenePending = false;
+
+            ICutsceneService cutsceneService = ServiceLocator.Get<ICutsceneService>();
+            if (cutsceneService == null) {
+                Debug.LogWarning($"[CutsceneMission] ICutsceneService não encontrado para {_definition?.MissionId}.");
+                return;
+            }
+
+            cutsceneService.PlayCutscene(_definition.TargetCutscene);
+        }
+
         private void OnCutsceneEnded(CutsceneEndedEvent evt) {
             if (evt.CutsceneID == _definition.TargetCutscene) {
                 PublishProgress();

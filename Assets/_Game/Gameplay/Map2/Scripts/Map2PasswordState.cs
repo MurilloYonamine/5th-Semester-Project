@@ -37,6 +37,14 @@ namespace FifthSemester.Gameplay.Map2 {
             _targetCode = safeTargetCode;
         }
 
+        public void ForceRevealAll() {
+            if (_revealedPositions != null) {
+                for (int i = 0; i < _revealedPositions.Length; i++) {
+                    _revealedPositions[i] = true;
+                }
+            }
+        }
+
         public bool CanRevealDigit(int digit) {
             if (_revealedPositions == null || _revealedPositions.Length != Length) {
                 _revealedPositions = new bool[Length];

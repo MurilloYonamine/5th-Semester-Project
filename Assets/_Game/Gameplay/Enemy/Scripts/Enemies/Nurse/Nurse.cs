@@ -85,8 +85,6 @@ namespace FifthSemester.Gameplay.Enemy {
             // has a chance to validate lock state before first Update.
             ServiceLocator.TryGet<IInventoryService<Item>>(out _inventoryService);
 
-            Debug.Log($"[Nurse] Awake: agent={( _agent!=null )}, animator={( _animator!=null )}, inventoryCached={( _inventoryService!=null )}");
-
             if(_target == null)
                 _target = GameObject.FindGameObjectWithTag("Player")?.transform;
 
@@ -113,15 +111,12 @@ namespace FifthSemester.Gameplay.Enemy {
                 _desiredSpeed = _agent.speed;
             }
 
-            Debug.Log($"[Nurse] Start: isLockedByKey={_isLockedByKey}, isAggressive={_isAggressive}");
         }
 
         private void OnEnable() {
             IEventBus eventBus = ServiceLocator.Get<IEventBus>();
             eventBus?.Subscribe<InventoryItemAddedEvent>(OnInventoryItemAdded);
             RefreshUnlockState();
-
-            Debug.Log("[Nurse] OnEnable: subscribed to InventoryItemAddedEvent and refreshed lock state");
         }
 
         private void OnDisable() {
@@ -211,17 +206,14 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void OnInventoryItemAdded(InventoryItemAddedEvent evt) {
-            Debug.Log($"[Nurse] OnInventoryItemAdded: item added event received: {evt}");
             RefreshUnlockState();
         }
 
         private void RefreshUnlockState() {
-            Debug.Log("[Nurse] RefreshUnlockState: checking inventory for unlock key");
             if (_unlockKeyDefinition == null) {
                 _isLockedByKey = false;
                 _isAggressive = true;
                 _blackboard?.SetData("IsAggressive", true);
-                Debug.Log("[Nurse] No unlock key defined - nurse remains unlocked and aggressive by default.");
                 RebuildBehaviourTree(includeChase: true);
                 return;
             }
@@ -230,7 +222,6 @@ namespace FifthSemester.Gameplay.Enemy {
             }
 
             if (_inventoryService == null) {
-                Debug.Log("[Nurse] Inventory service not available yet - nurse remains unlocked and passive.");
                 _isLockedByKey = false;
                 _isAggressive = false;
                 _blackboard?.SetData("IsAggressive", false);
@@ -239,7 +230,6 @@ namespace FifthSemester.Gameplay.Enemy {
 
             IReadOnlyList<Item> items = _inventoryService.GetItems();
             if (items == null) {
-                Debug.Log("[Nurse] Inventory returned null items - nurse remains unlocked and passive.");
                 _isLockedByKey = false;
                 _isAggressive = false;
                 _blackboard?.SetData("IsAggressive", false);
@@ -252,9 +242,7 @@ namespace FifthSemester.Gameplay.Enemy {
                     _isAggressive = true;
                     _isLockedByKey = false;
                     _blackboard?.SetData("IsAggressive", true);
-                    Debug.Log("[Nurse] Unlock key found in inventory - enabling aggression.");
                     RebuildBehaviourTree(includeChase: true);
-                    Debug.Log("[Nurse] Behaviour tree rebuilt to include chase sequence.");
                     return;
                 }
             }
@@ -263,12 +251,10 @@ namespace FifthSemester.Gameplay.Enemy {
             _isLockedByKey = false;
             _isAggressive = false;
             _blackboard?.SetData("IsAggressive", false);
-            Debug.Log("[Nurse] Unlock key not found - nurse remains unlocked and passive.");
         }
 
         private void CheckIfObservedByPlayer() {
             if (_playerCamera == null || _eyeTransform == null) {
-                Debug.LogWarning("[Nurse] CheckIfObservedByPlayer: Player camera or eye transform reference is null!");
                 return;
             }
 
@@ -288,14 +274,10 @@ namespace FifthSemester.Gameplay.Enemy {
                 bool blockedByObstacle = Physics.Raycast(origin, dirToCamera, out hitInfo, distToCamera, _obstacleMask);
 
                 if (blockedByObstacle) {
-                    Debug.Log($"[Nurse] Vision blocked by {hitInfo.collider.gameObject.name} (layer={hitInfo.collider.gameObject.layer}) at distance {hitInfo.distance}m");
                     // obstructed -> not observed
                     _isObserved = false;
                     _blackboard.SetData(IS_FROZEN_KEY, false);
                     _blackboard.SetData(IS_OBSERVED_KEY, false);
-                    if (_lastObservedState) {
-                        Debug.Log("[Nurse] Player no longer observing nurse (was blocked by raycast) - resuming behavior.");
-                    }
                     _lastObservedState = false;
                     return;
                 }
@@ -304,13 +286,9 @@ namespace FifthSemester.Gameplay.Enemy {
                 float sphereRadius = 0.18f;
                 bool sphereBlocked = Physics.SphereCast(origin, sphereRadius, dirToCamera, out hitInfo, distToCamera, _obstacleMask);
                 if (sphereBlocked) {
-                    Debug.Log($"[Nurse] Vision spherecast blocked by {hitInfo.collider.gameObject.name} (layer={hitInfo.collider.gameObject.layer})");
                     _isObserved = false;
                     _blackboard.SetData(IS_FROZEN_KEY, false);
                     _blackboard.SetData(IS_OBSERVED_KEY, false);
-                    if (_lastObservedState) {
-                        Debug.Log("[Nurse] Player no longer observing nurse (was blocked by spherecast) - resuming behavior.");
-                    }
                     _lastObservedState = false;
                     return;
                 }
@@ -319,9 +297,6 @@ namespace FifthSemester.Gameplay.Enemy {
                 _isObserved = true;
                 _blackboard.SetData(IS_FROZEN_KEY, false); // Do not freeze rigid in BT nodes
                 _blackboard.SetData(IS_OBSERVED_KEY, true);
-                if (!_lastObservedState) {
-                    Debug.Log($"[Nurse] Player observed nurse! Smooth slow-down behavior activated. Distance: {distToCamera:F2}m.");
-                }
                 _lastObservedState = true;
                 return;
             }
@@ -329,9 +304,6 @@ namespace FifthSemester.Gameplay.Enemy {
             _isObserved = false;
             _blackboard.SetData(IS_FROZEN_KEY, false);
             _blackboard.SetData(IS_OBSERVED_KEY, false);
-            if (_lastObservedState) {
-                Debug.Log("[Nurse] Player no longer observing nurse (not in viewport frustum) - resuming behavior.");
-            }
             _lastObservedState = false;
         }
 
@@ -388,14 +360,12 @@ namespace FifthSemester.Gameplay.Enemy {
                 _agent.SetDestination(destination);
                 _isRetreating = true;
                 _blackboard?.SetData("IsPlayerInRoom", true);
-                Debug.Log($"[Nurse] Retreating to {destination}. BT processing suspended.");
             }
         }
 
         public void ResumeFromRetreat() {
             _isRetreating = false;
             _blackboard?.SetData("IsPlayerInRoom", false);
-            Debug.Log("[Nurse] Resumed from retreat. BT processing active.");
         }
 
         private void OnDrawGizmos() {

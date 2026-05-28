@@ -175,13 +175,70 @@ namespace FifthSemester.Gameplay.Map2 {
 
         private void DeactivateNurse() {
             var nurses = FindObjectsOfType<Nurse>();
-            Debug.Log($"[KeyService] DeactivateNurse: Searching for nurses in scene. Found {nurses.Length} nurse instances.");
             foreach (var nurse in nurses) {
                 if (nurse != null) {
                     nurse.gameObject.SetActive(false);
-                    Debug.Log($"[KeyService] Enfermeira '{nurse.name}' desativada com sucesso após a coleta da chave gatilho.");
                 }
             }
+        }
+
+        public void CheatSetKeysCollected() {
+            _played = true;
+            HasCollectedAllKeys = true;
+            DeactivateNurse();
+
+            if (_inventoryService != null) {
+                // Encontra a chave gatilho na cena
+                Map2KeyItem triggerKey = null;
+                var allKeys = FindObjectsOfType<Map2KeyItem>(true);
+                foreach (var key in allKeys) {
+                    if (key != null && key.KeyDefinition == _triggerKeyDefinition) {
+                        triggerKey = key;
+                        break;
+                    }
+                }
+
+                if (triggerKey != null) {
+                    // Limpa as outras chaves do inventário
+                    var items = _inventoryService.GetItems();
+                    if (items != null) {
+                        List<Map2KeyItem> keysInInventory = new List<Map2KeyItem>();
+                        for (int i = 0; i < items.Count; i++) {
+                            if (items[i] is Map2KeyItem keyItem && keyItem != triggerKey) {
+                                keysInInventory.Add(keyItem);
+                            }
+                        }
+                        for (int i = 0; i < keysInInventory.Count; i++) {
+                            _inventoryService.RemoveItem(keysInInventory[i]);
+                            if (keysInInventory[i] != null) {
+                                keysInInventory[i].gameObject.SetActive(false);
+                            }
+                        }
+                    }
+
+                    // Garante que o jogador tem a chave final no inventário
+                    bool alreadyHasTriggerKey = false;
+                    var currentItems = _inventoryService.GetItems();
+                    if (currentItems != null) {
+                        foreach (var item in currentItems) {
+                            if (item == triggerKey) {
+                                alreadyHasTriggerKey = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!alreadyHasTriggerKey) {
+                        bool added = _inventoryService.AddItem(triggerKey);
+                        if (added) {
+                            _eventBus?.Publish(new ItemPickedUpEvent(triggerKey.Id, triggerKey.gameObject));
+                            triggerKey.Interact();
+                        }
+                    }
+                }
+            }
+
+            Debug.Log("<color=cyan>[CHEAT]</color> Keys marked as collected. Nurse deactivated. No timeline played.");
         }
     }
 }

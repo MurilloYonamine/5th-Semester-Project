@@ -26,8 +26,6 @@ namespace FifthSemester.Gameplay.Enemy {
         private void Awake() {
             _agent = _nurseComponent != null ? _nurseComponent.GetComponent<NavMeshAgent>() : GetComponent<NavMeshAgent>();
             _baseSpeed = _agent != null ? _agent.speed : 3f;
-
-            Debug.Log($"[NurseDirector] Awake: agent={( _agent!=null )}, baseSpeed={_baseSpeed}");
         }
 
         private void OnEnable() {
@@ -36,8 +34,6 @@ namespace FifthSemester.Gameplay.Enemy {
             _eventBus?.Subscribe<FlashlightTargetedEvent>(OnFlashlightTargeted);
             _eventBus?.Subscribe<PlayerEnteredRoomEvent>(OnPlayerEnteredRoom);
             _eventBus?.Subscribe<PlayerExitedRoomEvent>(OnPlayerExitedRoom);
-
-            Debug.Log("[NurseDirector] OnEnable: subscribed to player events");
         }
 
         private void OnDisable() {
@@ -70,7 +66,6 @@ namespace FifthSemester.Gameplay.Enemy {
             if (_nurseComponent == null) return;
             float desiredSpeed = CalculateDesiredSpeed();
             _nurseComponent.TargetSpeed = desiredSpeed;
-            Debug.Log($"[NurseDirector] UpdateAgentSpeed: Calculated desired speed = {desiredSpeed:F2} (Sprinting={_isPlayerSprinting}, Flashlight={_isFlashlightTargeted})");
         }
 
         private void OnPlayerSprintChanged(PlayerSprintChangedEvent evt) {
@@ -139,14 +134,12 @@ namespace FifthSemester.Gameplay.Enemy {
 
             // Command Nurse to retreat and pause BT
             _nurseComponent.RetreatTo(bestRetreatPoint);
-            Debug.Log($"[NurseDirector] Player entered room - retreating to {bestRetreatPoint}");
         }
 
         private void OnPlayerExitedRoom(PlayerExitedRoomEvent evt) {
             if (_nurseComponent != null) {
                 _nurseComponent.ResumeFromRetreat();
                 UpdateAgentSpeed();
-                Debug.Log("[NurseDirector] Player exited room - nurse resuming normal operations.");
             }
         }
     }

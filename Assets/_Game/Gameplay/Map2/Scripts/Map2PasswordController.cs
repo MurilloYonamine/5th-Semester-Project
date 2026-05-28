@@ -61,6 +61,14 @@ namespace FifthSemester.Gameplay.Map2 {
             return _state != null ? _state.GetDisplayCode() : string.Empty;
         }
 
+        public void CheatForceComplete() {
+            if (_state != null) {
+                _state.ForceRevealAll();
+                _state.Save(_saveKey);
+                RefreshView();
+            }
+        }
+
         private void RefreshView() {
             if (_passwordView == null || _state == null) {
                 return;

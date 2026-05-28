@@ -18,6 +18,7 @@ namespace FifthSemester.Gameplay.Map2 {
         [Header("Configurações Visuais")]
         private Outline _outline;
         private TextMeshPro _textLocal;
+        private Collider _collider;
 
         [Header("Configuração da Chave")]
         [SerializeField] private Map2KeyDefinitionSO _requiredKey;
@@ -36,6 +37,7 @@ namespace FifthSemester.Gameplay.Map2 {
         [SerializeField] private float _slideDistance = 1.5f;
         [SerializeField] private float _speed = 5f;
         [SerializeField] private bool _useDoubleDoor;
+        [SerializeField] private Vector3 _slideAxis = new Vector3(1f, 0f, 0f);
 
         [Header("Audio")]
         [SerializeField] private AudioClip[] _doorSfx;
@@ -67,6 +69,7 @@ namespace FifthSemester.Gameplay.Map2 {
         private void Awake() {
             _outline = GetComponent<Outline>();
             _outline.enabled = false;
+            _collider = GetComponent<Collider>();
 
             _textLocal = GetComponentInChildren<TextMeshPro>();
             if (_textLocal != null) {
@@ -107,14 +110,14 @@ namespace FifthSemester.Gameplay.Map2 {
         }
 
         public void Interact() {
-            if (_isBadEndingDoor && !HasDeliveryCutscenePlayed()) {
+            if (_isBadEndingDoor && !HasDeliveryCutscenePlayed() && !Map2CheatController.IsCheatActive) {
                 if (_map2KeyService != null && _map2KeyService.HasCollectedAllKeys) {
                     TriggerBadEnding();
                     return;
                 }
             }
 
-            if (_requiresKey && !HasRequiredKey()) {
+            if (_requiresKey && !IsDoorUnlocked()) {
                 PlayRandomLockedSound();
                 return;
             }
@@ -237,6 +240,14 @@ namespace FifthSemester.Gameplay.Map2 {
                 return;
             }
 
+            if (_navMeshObstacle != null) {
+                _navMeshObstacle.carving = !_isOpen;
+            }
+
+            if (_collider != null) {
+                _collider.isTrigger = _isOpen;
+            }
+
             for (int i = 0; i < _activeDoorMeshes.Length; i++) {
                 if (_activeDoorMeshes[i] == null) {
                     continue;
@@ -245,7 +256,7 @@ namespace FifthSemester.Gameplay.Map2 {
                 if (_isOpen) {
                     if (_useDoubleDoor) {
                         float slideDirection = i % 2 == 0 ? -_slideDistance : _slideDistance;
-                        _targetPositions[i] = _closedPositions[i] + new Vector3(slideDirection, 0f, 0f);
+                        _targetPositions[i] = _closedPositions[i] + _slideAxis * slideDirection;
                         _targetRotations[i] = _closedRotations[i];
                     }
                     else {
@@ -272,7 +283,7 @@ namespace FifthSemester.Gameplay.Map2 {
         }
 
         private bool IsDoorUnlocked() {
-            if (_isBadEndingDoor && !HasDeliveryCutscenePlayed()) {
+            if (_isBadEndingDoor && !HasDeliveryCutscenePlayed() && !Map2CheatController.IsCheatActive) {
                 return false;
             }
 

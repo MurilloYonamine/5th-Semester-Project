@@ -81,7 +81,7 @@ namespace FifthSemester.Gameplay.Map2 {
                 return false;
             }
 
-            Debug.Log($"tocando o ${_lastClipIndex}.");
+
 
             _lastClipIndex = index;
             return true;

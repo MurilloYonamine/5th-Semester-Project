@@ -44,7 +44,6 @@ namespace FifthSemester.Gameplay.Enemy {
             bool isPlayerInSafeLight = _blackboard.HasKey("IsPlayerInSafeLight") && _blackboard.GetData<bool>("IsPlayerInSafeLight");
 
             if (isAggressive && !isPlayerInRoom && !isPlayerInSafeLight) {
-                Debug.Log("[ActionPatrol] Nurse is aggressive and player is no longer in safe zone. Resuming active chase.");
                 return Status.Failure;
             }
 
@@ -54,7 +53,6 @@ namespace FifthSemester.Gameplay.Enemy {
 
             if (_blackboard.HasKey("IsFrozen") && _blackboard.GetData<bool>("IsFrozen")) {
                 if (_agent != null && _agent.isOnNavMesh && !_agent.isStopped) {
-                    Debug.Log("[ActionPatrol] Agent is FROZEN (observed by player). Stopping NavMeshAgent movement.");
                     _agent.isStopped = true;
                     _agent.velocity = Vector3.zero;
                 }
@@ -71,7 +69,6 @@ namespace FifthSemester.Gameplay.Enemy {
             }
 
             if (_agent == null || _playerTransform == null) {
-                Debug.LogWarning("[ActionPatrol] NavMeshAgent ou PlayerTransform ausente no Blackboard.");
                 return Status.Failure;
             }
 

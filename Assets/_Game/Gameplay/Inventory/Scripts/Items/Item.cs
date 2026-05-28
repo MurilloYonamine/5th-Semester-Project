@@ -16,7 +16,7 @@ namespace FifthSemester.Gameplay.Inventory {
         private Outline _outline;
         private BoxCollider _collider;
 
-        [SerializeField] private AudioClip _pickupSound;
+        [SerializeField] private AudioClip[] _pickupSounds;
 
         private void Awake() {
             _outline = GetComponent<Outline>();
@@ -27,18 +27,27 @@ namespace FifthSemester.Gameplay.Inventory {
                 _collider = collider;
             }
 
-            _outline.enabled = false;
+            if (_outline != null) {
+                _outline.enabled = false;
+            }
 
             if (_collider != null)
                 _collider.enabled = true;
         }
 
-        public void Interact() {
-            _outline.enabled = false;
-            _collider.enabled = false;
+        public virtual void Interact() {
+            if (_outline != null) {
+                _outline.enabled = false;
+            }
 
-            if (ServiceLocator.TryGet<IAudioService>(out var audioService) && _pickupSound != null) {
-                audioService.PlaySFX(_pickupSound, volume: 1f);
+            if (_collider != null) {
+                _collider.enabled = false;
+            }
+
+            if (ServiceLocator.TryGet<IAudioService>(out var audioService) && _pickupSounds != null && _pickupSounds.Length > 0) {
+                int idx = UnityEngine.Random.Range(0, _pickupSounds.Length);
+                var clip = _pickupSounds[idx];
+                if (clip != null) audioService.PlaySFX(clip, volume: 1f);
             }
         }
 
@@ -46,6 +55,10 @@ namespace FifthSemester.Gameplay.Inventory {
         }
 
         public void Highlight(bool value) {
+            if (_outline == null && !TryGetComponent(out _outline)) {
+                return;
+            }
+
             _outline.enabled = value;
         }
         public override string ToString() {

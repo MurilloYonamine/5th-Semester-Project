@@ -56,6 +56,7 @@ namespace FifthSemester.Player.Components {
         private float _sprintRemaining;
         private bool _isSprintCooldown;
         private float _sprintCooldownRemaining;
+        private bool _hasPlayedExhaustedSfx;
 
 
         [Header("Crouch State")]
@@ -71,6 +72,10 @@ namespace FifthSemester.Player.Components {
         [FoldoutGroup("Footsteps")]
         [SerializeField] private float _minFootstepSpeed = 0.1f;
         private float _footstepTimer;
+
+        [Header("Sprint Exhausted")]
+        [SerializeField] private AudioClip _exhaustedSfx;
+        [SerializeField, Range(0f, 1f)] private float _exhaustedThreshold = 0.15f;
 
         #region Unity Lifecycle
 
@@ -104,6 +109,7 @@ namespace FifthSemester.Player.Components {
 
         private void Update() {
             HandleSprintStamina();
+            HandleSprintExhaustedSfx();
             _currentState?.Tick();
         }
 
@@ -230,6 +236,24 @@ namespace FifthSemester.Player.Components {
                     _isSprintCooldown = false;
                 }
             }
+        }
+
+        private void HandleSprintExhaustedSfx() {
+            if (!_enableSprint || _unlimitedSprint || _exhaustedSfx == null || _audioService == null) {
+                return;
+            }
+
+            if (SprintPercent <= _exhaustedThreshold) {
+                if (_hasPlayedExhaustedSfx) {
+                    return;
+                }
+
+                _audioService.PlaySFX(_exhaustedSfx, volume: 1f);
+                _hasPlayedExhaustedSfx = true;
+                return;
+            }
+
+            _hasPlayedExhaustedSfx = false;
         }
 
         public bool TryStartSprint() {

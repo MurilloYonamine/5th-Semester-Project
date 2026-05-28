@@ -57,6 +57,7 @@ namespace FifthSemester.Player.Components {
         private bool _isSprintCooldown;
         private float _sprintCooldownRemaining;
         private bool _hasPlayedExhaustedSfx;
+        private AudioSource _exhaustedAudioSource;
 
 
         [Header("Crouch State")]
@@ -248,7 +249,12 @@ namespace FifthSemester.Player.Components {
                     return;
                 }
 
-                _audioService.PlaySFX(_exhaustedSfx, volume: 1f);
+                // Evita que o som ofegante seja sobreposto se o mesmo som já estiver sendo reproduzido
+                if (_exhaustedAudioSource != null && _exhaustedAudioSource.isPlaying) {
+                    return;
+                }
+
+                _exhaustedAudioSource = _audioService.PlaySFX(_exhaustedSfx, volume: 1f);
                 _hasPlayedExhaustedSfx = true;
                 return;
             }

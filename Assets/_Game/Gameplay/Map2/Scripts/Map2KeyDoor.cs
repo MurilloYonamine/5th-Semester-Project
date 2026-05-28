@@ -355,21 +355,38 @@ namespace FifthSemester.Gameplay.Map2 {
         }
 
         private IEnumerator PlayBadEndingVideo(VideoPlayer videoPlayer, GameObject instance) {
-            yield return null;
+            // 1. Fazer Fade Out da Gameplay para a tela preta ANTES do vídeo começar
+            if (ServiceLocator.TryGet<IFadeService>(out var fadeService)) {
+                bool fadeToBlackComplete = false;
+                fadeService.FadeOut(_fadeDuration / 2f, () => fadeToBlackComplete = true);
+                yield return new WaitUntil(() => fadeToBlackComplete);
+            } else {
+                yield return new WaitForSeconds(_fadeDuration / 2f);
+            }
 
+            // 2. Com a tela preta, iniciamos o vídeo e fazemos o Fade In (revelando o vídeo)
+            videoPlayer.Play();
+            if (ServiceLocator.TryGet<IFadeService>(out fadeService)) {
+                bool fadeRevealComplete = false;
+                fadeService.FadeIn(_fadeDuration / 2f, () => fadeRevealComplete = true);
+                yield return new WaitUntil(() => fadeRevealComplete);
+            } else {
+                yield return new WaitForSeconds(_fadeDuration / 2f);
+            }
+
+            // 3. Aguardar o término do vídeo
             bool videoFinished = false;
             videoPlayer.loopPointReached += (vp) => {
                 videoFinished = true;
             };
 
-            videoPlayer.Play();
-
             yield return new WaitUntil(() => videoFinished);
 
-            if (ServiceLocator.TryGet<IFadeService>(out var fadeService)) {
-                bool fadeComplete = false;
-                fadeService.FadeOut(_fadeDuration, () => fadeComplete = true);
-                yield return new WaitUntil(() => fadeComplete);
+            // 4. Fazer Fade Out do Vídeo para a tela preta DEPOIS que o vídeo terminar
+            if (ServiceLocator.TryGet<IFadeService>(out fadeService)) {
+                bool fadeFinalComplete = false;
+                fadeService.FadeOut(_fadeDuration, () => fadeFinalComplete = true);
+                yield return new WaitUntil(() => fadeFinalComplete);
             }
             else {
                 yield return new WaitForSeconds(_fadeDuration);

@@ -31,6 +31,10 @@ namespace FifthSemester.Gameplay.Menu {
 
             _menuService.Show(MenuScreen.MainMenu);
 
+            // Garante que o cursor do mouse esteja visível e destravado no Menu Principal
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+
             _newGameButton.onClick.AddListener(OnNewGame);
             _continueButton.onClick.AddListener(OnContinue);
             _settingsButton.onClick.AddListener(OnSettings);
@@ -43,6 +47,10 @@ namespace FifthSemester.Gameplay.Menu {
         protected override void OnEnable() {
             base.OnEnable();
             UpdateContinueVisibility();
+
+            // Garante que o cursor esteja liberado sempre que o painel for habilitado
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
         }
 
         public void OnPlay() {

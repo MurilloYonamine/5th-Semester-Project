@@ -37,6 +37,10 @@ namespace FifthSemester.Gameplay.Enemy {
         [Header("Timeline")]
         [SerializeField] private PlayableDirector _jumpscareDirector;
 
+        [Header("Catch Up Settings")]
+        [SerializeField] private float _catchUpDistanceThreshold = 25f;
+        [SerializeField] private AudioClip _jumpSound;
+        [SerializeField] private AudioClip _landSound;
 
         [Header("Speed Settings")]
         [SerializeField, Range(0f, 10f)] private float _speed = 1.5f;
@@ -83,6 +87,10 @@ namespace FifthSemester.Gameplay.Enemy {
             Blackboard.SetData("ObstacleMask", _obstacleMask);
             Blackboard.SetData("LoseTargetDistance", _loseTargetDistance);
             Blackboard.SetData(HAS_LINE_OF_SIGHT_KEY, false);
+
+            // Audio parameters
+            Blackboard.SetData("JumpSound", _jumpSound);
+            Blackboard.SetData("LandSound", _landSound);
         }
 
         private void Start() {
@@ -90,6 +98,10 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void BuildBehaviourTree() {
+            var catchUpSequence = new Sequence("CatchUpTeleport");
+            catchUpSequence.AddChild(new ConditionPlayerTooFar(Blackboard, "Is Player Too Far?", _catchUpDistanceThreshold));
+            catchUpSequence.AddChild(new ActionCatchUpTeleport(Blackboard, "Catch Up Teleport"));
+
             var stareAndJumpSequence = new Sequence("StareAndJumpSequence");
             stareAndJumpSequence.AddChild(new ConditionPlayerInSafeLight(Blackboard, "Is Player in Light?"));
             stareAndJumpSequence.AddChild(new ConditionLineOfSight(Blackboard, "Line of Sight Check"));
@@ -112,6 +124,7 @@ namespace FifthSemester.Gameplay.Enemy {
             flashlightChase.AddChild(new ActionChase(Blackboard, "Chase Player (Illuminated)"));
             flashlightChase.AddChild(new ActionPlayJumpscare(Blackboard, "Jumpscare"));
 
+            root.AddChild(catchUpSequence);
             root.AddChild(flashlightChase);
             root.AddChild(stareAndJumpSequence);
             root.AddChild(chaseSequence);

@@ -52,6 +52,12 @@ namespace FifthSemester.Gameplay.Enemy {
                 return Status.Failure;
             }
 
+            // Fallback robusto para quando a Timeline chega ao fim (evita travar na tela caso o Wrap Mode esteja em Hold)
+            if (_started && !_finished && _director.duration > 0f && _director.time >= _director.duration - 0.05f) {
+                _finished = true;
+                SceneManager.LoadScene(MAIN_MENU_SCENE_NAME);
+            }
+
             if (_finished) {
                 FinalizeJumpscare();
                 return Status.Success;

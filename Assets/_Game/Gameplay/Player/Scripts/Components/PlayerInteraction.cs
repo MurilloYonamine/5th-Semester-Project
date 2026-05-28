@@ -26,7 +26,6 @@ namespace FifthSemester.Player {
         private IInventoryService<Item> _inventoryService;
         private IDeferredInteractionCompletion _pendingDeferredCompletion;
         private string _pendingInteractableId;
-        private readonly RaycastHit[] _raycastHits = new RaycastHit[16];
 
         private void Awake() {
             _playerController = GetComponent<PlayerController>();
@@ -81,74 +80,52 @@ namespace FifthSemester.Player {
 
         private IInteractable GetInteractableFromRay() {
             Ray ray = _playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
-            int numHits = Physics.RaycastNonAlloc(ray, _raycastHits, _interactionRange, ~0, QueryTriggerInteraction.Collide);
 
-            IInteractable closestInteractable = null;
-            float closestInteractableDist = float.MaxValue;
-            float closestBlockerDist = float.MaxValue;
-
-            for (int i = 0; i < numHits; i++) {
-                RaycastHit hit = _raycastHits[i];
-                if (hit.collider == null) continue;
-
-                // Check if this collider belongs to an object in the interaction layer
-                bool isInteractableLayer = ((1 << hit.collider.gameObject.layer) & _interactionLayer) != 0;
-
-                if (isInteractableLayer) {
-                    MonoBehaviour[] components = hit.collider.GetComponents<MonoBehaviour>();
-                    IInteractable selectedInteractable = null;
-
-                    for (int j = 0; j < components.Length; j++) {
-                        MonoBehaviour component = components[j];
-                        if (component is not IInteractable interactable || !interactable.IsInteractable) continue;
-
-                        if (component is Item) {
-                            selectedInteractable = interactable;
-                            break;
-                        }
-
-                        if (component is DeliveryPoint) {
-                            selectedInteractable = interactable;
-                            continue;
-                        }
-
-                        if (component is DialogueTrigger && selectedInteractable == null) {
-                            selectedInteractable = interactable;
-                            continue;
-                        }
-
-                        if (selectedInteractable == null) {
-                            selectedInteractable = interactable;
-                        }
-                    }
-
-                    if (selectedInteractable != null) {
-                        if (hit.distance < closestInteractableDist) {
-                            closestInteractableDist = hit.distance;
-                            closestInteractable = selectedInteractable;
-                        }
-                    }
-                }
-
-                // Any solid collider (not a trigger) can act as a physical blocker (like a wall, door frame, etc.)
-                if (!hit.collider.isTrigger) {
-                    if (hit.distance < closestBlockerDist) {
-                        closestBlockerDist = hit.distance;
-                    }
-                }
-            }
-
-            // Clear the array references to prevent memory leaks/holding onto Unity objects
-            for (int i = 0; i < numHits; i++) {
-                _raycastHits[i] = default;
-            }
-
-            // If a solid physical blocker is closer than the closest interactable, then the interactable is blocked (behind a wall)
-            if (closestBlockerDist < closestInteractableDist - 0.001f) {
+            // 1. Find the interactable using the standard interaction layer (exactly as before)
+            if (!Physics.Raycast(ray, out RaycastHit hit, _interactionRange, _interactionLayer)) {
                 return null;
             }
 
-            return closestInteractable;
+            // 2. Perform a targeted Line-of-Sight raycast to check for solid physical obstacles between player camera and impact point
+            float checkDistance = hit.distance - 0.05f; // Subtract 5cm to avoid hitting the interactable's own collider
+            if (checkDistance > 0f) {
+                Vector3 direction = hit.point - ray.origin;
+                int blockerMask = ~(_interactionLayer | (1 << _playerController.gameObject.layer));
+
+                if (Physics.Raycast(ray.origin, direction, out RaycastHit obstacleHit, checkDistance, blockerMask, QueryTriggerInteraction.Ignore)) {
+                    // Direct line of sight is blocked by a physical obstacle (e.g. a wall)
+                    return null;
+                }
+            }
+
+            // 3. Resolve which interactive component to return (preserving original logic)
+            MonoBehaviour[] components = hit.collider.GetComponents<MonoBehaviour>();
+            IInteractable selectedInteractable = null;
+
+            for (int i = 0; i < components.Length; i++) {
+                MonoBehaviour component = components[i];
+                if (component is not IInteractable interactable || !interactable.IsInteractable) continue;
+
+                if (component is Item) {
+                    return interactable;
+                }
+
+                if (component is DeliveryPoint) {
+                    selectedInteractable = interactable;
+                    continue;
+                }
+
+                if (component is DialogueTrigger && selectedInteractable == null) {
+                    selectedInteractable = interactable;
+                    continue;
+                }
+
+                if (selectedInteractable == null) {
+                    selectedInteractable = interactable;
+                }
+            }
+
+            return selectedInteractable;
         }
 
         private void Interact(InteractInputEvent evt) {

@@ -1,7 +1,7 @@
 using FifthSemester.Gameplay.Shared;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.Playables;
 using ThirdParty.QuickOutline;
 using FifthSemester.Core.Services;
 
@@ -22,17 +22,19 @@ namespace FifthSemester.Gameplay.Map2 {
         [SerializeField] private AudioClip _successSound;
         [SerializeField] private AudioClip _failureSound;
 
-        [Header("Events")]
-        [SerializeField] private UnityEvent _onPasswordDelivered;
+        [Header("Timeline")]
+        private PlayableDirector _director;
 
         private Outline _outline;
         private IAudioService _audioService;
         private bool _isCompleted;
+        private bool _hasPlayedDirector;
 
         public bool IsInteractable => !_isCompleted;
 
         private void Awake() {
             _outline = GetComponent<Outline>();
+            _director = GetComponent<PlayableDirector>();
             Highlight(false);
         }
 
@@ -68,7 +70,8 @@ namespace FifthSemester.Gameplay.Map2 {
 
         private void CompleteDelivery() {
             _isCompleted = true;
-            _onPasswordDelivered?.Invoke();
+
+            PlayDirectorIfPasswordComplete();
         }
 
         private void UpdateInteractionPrompt() {
@@ -85,6 +88,16 @@ namespace FifthSemester.Gameplay.Map2 {
             }
 
             _audioService.PlaySFX(clip);
+        }
+
+        private void PlayDirectorIfPasswordComplete() {
+            if (_hasPlayedDirector || _director == null || _passwordController == null || !_passwordController.IsComplete) {
+                return;
+            }
+
+            _hasPlayedDirector = true;
+            _director.time = 0d;
+            _director.Play();
         }
     }
 }

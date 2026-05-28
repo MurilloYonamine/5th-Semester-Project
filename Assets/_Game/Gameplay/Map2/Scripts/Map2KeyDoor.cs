@@ -27,7 +27,7 @@ namespace FifthSemester.Gameplay.Map2 {
 
         [Header("Audio")]
         [SerializeField] private AudioClip[] _doorSfx;
-        [SerializeField] private AudioClip _lockedSound;
+        [SerializeField] private AudioClip[] _lockedSounds;
 
         [ShowIf(nameof(_useDoubleDoor))]
         [SerializeField] private Transform[] _doorMeshes;
@@ -89,7 +89,7 @@ namespace FifthSemester.Gameplay.Map2 {
 
         public void Interact() {
             if (_requiresKey && !HasRequiredKey()) {
-                PlayDoorSound(_lockedSound);
+                PlayRandomLockedSound();
                 return;
             }
 
@@ -217,6 +217,14 @@ namespace FifthSemester.Gameplay.Map2 {
             }
 
             _audioService.PlaySFX(clip);
+        }
+
+        private void PlayRandomLockedSound() {
+            if (_lockedSounds == null || _lockedSounds.Length == 0 || _audioService == null) return;
+
+            int idx = UnityEngine.Random.Range(0, _lockedSounds.Length);
+            AudioClip clip = _lockedSounds[idx];
+            if (clip != null) _audioService.PlaySFX(clip);
         }
     }
 }

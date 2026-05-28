@@ -2,9 +2,13 @@
 // Data: 28/04/2026
 
 using UnityEngine;
+using System.Collections;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
+using FifthSemester.Core.Enums;
 using FifthSemester.Gameplay.Enemy;
+using FifthSemester.Gameplay.Dialogue;
+using FifthSemester.Features.Localization;
 
 namespace FifthSemester.Player.Components {
     public class PlayerFlashlight : MonoBehaviour {
@@ -29,6 +33,17 @@ namespace FifthSemester.Player.Components {
 
         [SerializeField] private bool _isOn = false;
         [SerializeField] private bool _hasFlashlight = false;
+
+        [Header("No Flashlight Warning")]
+        [SerializeField] private LocalizedTextAsset _noFlashlightDialogue;
+        [SerializeField] private CaptionView _captionView;
+        [SerializeField] private int _pressThresholdForWarning = 3;
+        [SerializeField] private float _warningTimeWindow = 2f;
+        [SerializeField] private float _warningDisplayDuration = 3f;
+
+        private int _noFlashlightPressCount = 0;
+        private float _lastNoFlashlightPressTime = 0f;
+        private Coroutine _hideCaptionCoroutine;
 
         private IEventBus _eventBus;
         private IAudioService _audioService;
@@ -57,11 +72,19 @@ namespace FifthSemester.Player.Components {
             _eventBus.Subscribe<LookInputEvent>(HandleLookInput);
 
             _camera = Camera.main;
+
+            if (_captionView == null) {
+                _captionView = FindAnyObjectByType<CaptionView>();
+            }
         }
 
         private void OnDestroy() {
             _eventBus?.Unsubscribe<FlashlightInputEvent>(HandleFlashlightInput);
             _eventBus?.Unsubscribe<LookInputEvent>(HandleLookInput);
+
+            if (_hideCaptionCoroutine != null) {
+                StopCoroutine(_hideCaptionCoroutine);
+            }
         }
 
         private void HandleLookInput(LookInputEvent evt) {
@@ -69,6 +92,20 @@ namespace FifthSemester.Player.Components {
         }
 
         private void HandleFlashlightInput(FlashlightInputEvent evt) {
+            if (evt.IsPressed && !_hasFlashlight) {
+                if (Time.time - _lastNoFlashlightPressTime > _warningTimeWindow) {
+                    _noFlashlightPressCount = 0;
+                }
+                _lastNoFlashlightPressTime = Time.time;
+                _noFlashlightPressCount++;
+
+                if (_noFlashlightPressCount >= _pressThresholdForWarning) {
+                    TriggerNoFlashlightDialogue();
+                    _noFlashlightPressCount = 0;
+                }
+                return;
+            }
+
             if (!evt.IsPressed || !_hasFlashlight) return;
             
             _isOn = !_isOn;
@@ -189,6 +226,40 @@ namespace FifthSemester.Player.Components {
         private void PlayToggleSound() {
             if (_toggleSound == null || _audioService == null) return;
             _audioService.PlaySFX(_toggleSound);
+        }
+
+        private void TriggerNoFlashlightDialogue() {
+            if (_captionView == null) {
+                _captionView = FindAnyObjectByType<CaptionView>();
+            }
+
+            if (_captionView != null) {
+                Language currentLanguage = Language.Portuguese;
+                var settingsService = ServiceLocator.Get<ISettingsService>();
+                if (settingsService != null) {
+                    currentLanguage = settingsService.Language;
+                }
+
+                TextAsset asset = _noFlashlightDialogue.GetAsset(currentLanguage);
+                if (asset != null) {
+                    string parsedText = CaptionParser.Parse(asset);
+                    _captionView.Show();
+                    _captionView.SetCaption(parsedText, () => {
+                        if (_hideCaptionCoroutine != null) {
+                            StopCoroutine(_hideCaptionCoroutine);
+                        }
+                        _hideCaptionCoroutine = StartCoroutine(HideCaptionAfterDelay(_warningDisplayDuration));
+                    });
+                }
+            }
+        }
+
+        private IEnumerator HideCaptionAfterDelay(float delay) {
+            yield return new WaitForSeconds(delay);
+            if (_captionView != null) {
+                _captionView.Hide();
+            }
+            _hideCaptionCoroutine = null;
         }
 
         public void EnableFlashlight() {

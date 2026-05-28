@@ -31,17 +31,30 @@ namespace FifthSemester.Gameplay.Enemy {
             CacheReferences();
 
             if (_agent == null || _target == null) {
+                Debug.LogWarning($"[ActionChase] Failure: agent is null? ({_agent == null}) or target is null? ({_target == null})");
                 StopGlitch(); 
                 return Status.Failure;
             }
 
+            if (_blackboard.HasKey("IsFrozen") && _blackboard.GetData<bool>("IsFrozen")) {
+                if (_agent.isOnNavMesh && !_agent.isStopped) {
+                    Debug.Log("[ActionChase] Agent is FROZEN (observed by player). Stopping NavMeshAgent movement.");
+                    _agent.isStopped = true;
+                    _agent.velocity = Vector3.zero;
+                }
+                StopGlitch();
+                return Status.Running;
+            }
+
             if (_blackboard.HasKey("IsPlayerInRoom") && _blackboard.GetData<bool>("IsPlayerInRoom")) {
+                Debug.Log("[ActionChase] Chase interrupted: Player is in retreat/safe room.");
                 _agent.ResetPath();
                 StopGlitch();
                 return Status.Failure;
             }
 
             if (_blackboard.HasKey(IS_IN_SAFE_LIGHT_KEY) && _blackboard.GetData<bool>(IS_IN_SAFE_LIGHT_KEY)) {
+                Debug.Log("[ActionChase] Chase interrupted: Player is inside a Safe Light zone.");
                 _agent.ResetPath();
                 StopGlitch(); 
                 return Status.Failure;
@@ -53,6 +66,7 @@ namespace FifthSemester.Gameplay.Enemy {
             );
 
             if (distance >= _loseTargetDistance) {
+                Debug.Log($"[ActionChase] Lost target! Distance {distance:F2}m exceeds lose distance {_loseTargetDistance}m.");
                 _agent.ResetPath();
                 StopGlitch();
                 return Status.Failure;
@@ -64,6 +78,7 @@ namespace FifthSemester.Gameplay.Enemy {
             UpdateGlitchProximityEffect();
 
             if (HasReachedTarget()) {
+                Debug.Log("[ActionChase] Successfully reached target player!");
                 return Status.Success;
             }
 
@@ -74,6 +89,9 @@ namespace FifthSemester.Gameplay.Enemy {
             _agent ??= _blackboard.GetData<NavMeshAgent>(NAV_AGENT_KEY);
             _target ??= _blackboard.GetData<Transform>(PLAYER_TARGET_KEY);
             _whiteNoiseService ??= ServiceLocator.Get<IWhiteNoiseService>();
+            if (_blackboard.HasKey("LoseTargetDistance")) {
+                _loseTargetDistance = _blackboard.GetData<float>("LoseTargetDistance");
+            }
         }
 
         private void UpdateGlitchProximityEffect() {

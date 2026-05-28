@@ -20,6 +20,9 @@ namespace FifthSemester.Gameplay.Enemy {
         private float _baseSpeed;
         private IEventBus _eventBus;
 
+        private bool _isPlayerSprinting = false;
+        private bool _isFlashlightTargeted = false;
+
         private void Awake() {
             _agent = _nurseComponent != null ? _nurseComponent.GetComponent<NavMeshAgent>() : GetComponent<NavMeshAgent>();
             _baseSpeed = _agent != null ? _agent.speed : 3f;
@@ -53,29 +56,32 @@ namespace FifthSemester.Gameplay.Enemy {
             }
         }
 
-        private void OnPlayerSprintChanged(PlayerSprintChangedEvent evt) {
-            if (_agent == null) return;
+        private float CalculateDesiredSpeed() {
+            if (_isFlashlightTargeted) {
+                return flashlightPursuitSpeed;
+            }
+            if (_isPlayerSprinting) {
+                return _baseSpeed * sprintMultiplier;
+            }
+            return _baseSpeed;
+        }
 
-            if (evt.IsSprinting) {
-                _agent.speed = _baseSpeed * sprintMultiplier;
-                Debug.Log($"[NurseDirector] Player sprinting - set agent speed to {_agent.speed}");
-            }
-            else {
-                _agent.speed = _baseSpeed;
-                Debug.Log($"[NurseDirector] Player stopped sprinting - reset agent speed to {_agent.speed}");
-            }
+        private void UpdateAgentSpeed() {
+            if (_nurseComponent == null) return;
+            float desiredSpeed = CalculateDesiredSpeed();
+            _nurseComponent.TargetSpeed = desiredSpeed;
+            Debug.Log($"[NurseDirector] UpdateAgentSpeed: Calculated desired speed = {desiredSpeed:F2} (Sprinting={_isPlayerSprinting}, Flashlight={_isFlashlightTargeted})");
+        }
+
+        private void OnPlayerSprintChanged(PlayerSprintChangedEvent evt) {
+            _isPlayerSprinting = evt.IsSprinting;
+            UpdateAgentSpeed();
         }
 
         private void OnFlashlightTargeted(FlashlightTargetedEvent evt) {
-            if (_agent == null) return;
-
-            if (evt.Target == gameObject && evt.IsIlluminated) {
-                _agent.speed = flashlightPursuitSpeed;
-                Debug.Log($"[NurseDirector] Flashlight targeted this - set speed to {flashlightPursuitSpeed}");
-            }
-            else if (evt.Target == gameObject && !evt.IsIlluminated) {
-                _agent.speed = _baseSpeed;
-                Debug.Log($"[NurseDirector] Flashlight no longer on this - reset speed to {_baseSpeed}");
+            if (evt.Target == gameObject) {
+                _isFlashlightTargeted = evt.IsIlluminated;
+                UpdateAgentSpeed();
             }
         }
 
@@ -139,9 +145,7 @@ namespace FifthSemester.Gameplay.Enemy {
         private void OnPlayerExitedRoom(PlayerExitedRoomEvent evt) {
             if (_nurseComponent != null) {
                 _nurseComponent.ResumeFromRetreat();
-                if (_agent != null) {
-                    _agent.speed = _baseSpeed;
-                }
+                UpdateAgentSpeed();
                 Debug.Log("[NurseDirector] Player exited room - nurse resuming normal operations.");
             }
         }

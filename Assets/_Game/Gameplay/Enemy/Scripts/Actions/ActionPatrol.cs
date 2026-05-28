@@ -1,4 +1,4 @@
-﻿// Autor: Murillo Gomes Yonamine
+// Autor: Murillo Gomes Yonamine
 // Data: 28/04/2026
 
 using UnityEngine;
@@ -37,8 +37,33 @@ namespace FifthSemester.Gameplay.Enemy {
         public override Status Process() {
             RefreshDataFromBlackboard();
 
+            // Se a Enfermeira for agressiva e o jogador NÃO estiver em sala segura ou luz segura,
+            // cancela a patrulha e retoma a perseguição ativa imediatamente (wallhack Weeping Angel)
+            bool isAggressive = _blackboard.HasKey("IsAggressive") && _blackboard.GetData<bool>("IsAggressive");
+            bool isPlayerInRoom = _blackboard.HasKey("IsPlayerInRoom") && _blackboard.GetData<bool>("IsPlayerInRoom");
+            bool isPlayerInSafeLight = _blackboard.HasKey("IsPlayerInSafeLight") && _blackboard.GetData<bool>("IsPlayerInSafeLight");
+
+            if (isAggressive && !isPlayerInRoom && !isPlayerInSafeLight) {
+                Debug.Log("[ActionPatrol] Nurse is aggressive and player is no longer in safe zone. Resuming active chase.");
+                return Status.Failure;
+            }
+
             if (_blackboard.GetData<bool>(IS_STUNNED_KEY)) {
                 return Status.Failure;
+            }
+
+            if (_blackboard.HasKey("IsFrozen") && _blackboard.GetData<bool>("IsFrozen")) {
+                if (_agent != null && _agent.isOnNavMesh && !_agent.isStopped) {
+                    Debug.Log("[ActionPatrol] Agent is FROZEN (observed by player). Stopping NavMeshAgent movement.");
+                    _agent.isStopped = true;
+                    _agent.velocity = Vector3.zero;
+                }
+                return Status.Running;
+            }
+
+            // Garante que o agente seja liberado para andar se saiu do estado congelado
+            if (_agent != null && _agent.isOnNavMesh && _agent.isStopped) {
+                _agent.isStopped = false;
             }
 
             if (IsPlayerInLineOfSight()) {

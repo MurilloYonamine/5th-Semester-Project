@@ -32,7 +32,10 @@ namespace FifthSemester.Gameplay.Enemy {
 
         [Header("Vision (Weeping Angel Settings)")]
         [SerializeField] private Transform _eyeTransform;
+        [SerializeField, Range(0f, 120f)] private float _viewDistance = 30f;
+        [SerializeField, Range(0f, 360f)] private float _fovAngle = 90f;
         [SerializeField] private LayerMask _obstacleMask;
+        [SerializeField] private float _loseTargetDistance = 9999f;
 
         [Header("Speed & Rotation Settings")]
         [SerializeField, Range(0f, 15f)] private float _rotationSpeed = 8f;
@@ -64,9 +67,15 @@ namespace FifthSemester.Gameplay.Enemy {
         [SerializeField] private float _speedLerp = 5f;
         private bool _isObserved = false;
         private bool _isLockedByKey = false;
-        private bool _isAggressive = false;
+        [SerializeField] private bool _isAggressive = false;
         private IInventoryService<Item> _inventoryService;
         private bool _isRetreating = false;
+
+        public float TargetSpeed {
+            get => _desiredSpeed;
+            set => _desiredSpeed = value;
+        }
+        private float _desiredSpeed = 2.5f;
 
         private void Awake() {
             _agent = GetComponent<NavMeshAgent>();
@@ -100,6 +109,10 @@ namespace FifthSemester.Gameplay.Enemy {
             BuildBehaviourTree();
             RefreshUnlockState();
 
+            if (_agent != null) {
+                _desiredSpeed = _agent.speed;
+            }
+
             Debug.Log($"[Nurse] Start: isLockedByKey={_isLockedByKey}, isAggressive={_isAggressive}");
         }
 
@@ -128,6 +141,14 @@ namespace FifthSemester.Gameplay.Enemy {
             _blackboard.SetData("IsPlayerInRoom", false);
 
             _blackboard.SetData("PatrolWaitTime", _patrolWaitTime);
+
+            // Populate vision parameters for BT nodes
+            _blackboard.SetData("EyeTransform", _eyeTransform);
+            _blackboard.SetData("ViewDistance", _viewDistance);
+            _blackboard.SetData("FovAngle", _fovAngle);
+            _blackboard.SetData("ObstacleMask", _obstacleMask);
+            _blackboard.SetData("LoseTargetDistance", _loseTargetDistance);
+            _blackboard.SetData("IsAggressive", _isAggressive);
         }
 
         private void BuildBehaviourTree() {
@@ -183,7 +204,7 @@ namespace FifthSemester.Gameplay.Enemy {
                 HandleRotation();
             }
 
-            if (_animator != null && _agent != null && !_isObserved && !isCutsceneActive) {
+            if (_animator != null && _agent != null && !isCutsceneActive) {
                 _animator.SetFloat(_speedHash, _agent.velocity.magnitude);
             }
 
@@ -198,8 +219,10 @@ namespace FifthSemester.Gameplay.Enemy {
             Debug.Log("[Nurse] RefreshUnlockState: checking inventory for unlock key");
             if (_unlockKeyDefinition == null) {
                 _isLockedByKey = false;
-                _isAggressive = false;
-                Debug.Log("[Nurse] No unlock key defined - nurse remains unlocked and passive.");
+                _isAggressive = true;
+                _blackboard?.SetData("IsAggressive", true);
+                Debug.Log("[Nurse] No unlock key defined - nurse remains unlocked and aggressive by default.");
+                RebuildBehaviourTree(includeChase: true);
                 return;
             }
             if (_inventoryService == null) {
@@ -210,6 +233,7 @@ namespace FifthSemester.Gameplay.Enemy {
                 Debug.Log("[Nurse] Inventory service not available yet - nurse remains unlocked and passive.");
                 _isLockedByKey = false;
                 _isAggressive = false;
+                _blackboard?.SetData("IsAggressive", false);
                 return;
             }
 
@@ -218,6 +242,7 @@ namespace FifthSemester.Gameplay.Enemy {
                 Debug.Log("[Nurse] Inventory returned null items - nurse remains unlocked and passive.");
                 _isLockedByKey = false;
                 _isAggressive = false;
+                _blackboard?.SetData("IsAggressive", false);
                 return;
             }
 
@@ -226,6 +251,7 @@ namespace FifthSemester.Gameplay.Enemy {
                     // When the player obtains the key, nurse becomes aggressive (chase + jumpscare)
                     _isAggressive = true;
                     _isLockedByKey = false;
+                    _blackboard?.SetData("IsAggressive", true);
                     Debug.Log("[Nurse] Unlock key found in inventory - enabling aggression.");
                     RebuildBehaviourTree(includeChase: true);
                     Debug.Log("[Nurse] Behaviour tree rebuilt to include chase sequence.");
@@ -236,11 +262,16 @@ namespace FifthSemester.Gameplay.Enemy {
             // Key not found - remain unlocked (patrolling), not aggressive
             _isLockedByKey = false;
             _isAggressive = false;
+            _blackboard?.SetData("IsAggressive", false);
             Debug.Log("[Nurse] Unlock key not found - nurse remains unlocked and passive.");
         }
 
         private void CheckIfObservedByPlayer() {
-            if (_playerCamera == null || _eyeTransform == null) return;
+            if (_playerCamera == null || _eyeTransform == null) {
+                Debug.LogWarning("[Nurse] CheckIfObservedByPlayer: Player camera or eye transform reference is null!");
+                return;
+            }
+
             Vector3 viewportPoint = _playerCamera.WorldToViewportPoint(_eyeTransform.position);
             bool inViewport = viewportPoint.x > 0 && viewportPoint.x < 1 &&
                               viewportPoint.y > 0 && viewportPoint.y < 1 &&
@@ -257,12 +288,14 @@ namespace FifthSemester.Gameplay.Enemy {
                 bool blockedByObstacle = Physics.Raycast(origin, dirToCamera, out hitInfo, distToCamera, _obstacleMask);
 
                 if (blockedByObstacle) {
-                    Debug.Log($"[Nurse] Vision blocked by {hitInfo.collider.gameObject.name} (layer={hitInfo.collider.gameObject.layer})");
+                    Debug.Log($"[Nurse] Vision blocked by {hitInfo.collider.gameObject.name} (layer={hitInfo.collider.gameObject.layer}) at distance {hitInfo.distance}m");
                     // obstructed -> not observed
                     _isObserved = false;
                     _blackboard.SetData(IS_FROZEN_KEY, false);
                     _blackboard.SetData(IS_OBSERVED_KEY, false);
-                    if (_lastObservedState) Debug.Log("[Nurse] Player no longer observing nurse - resuming behavior.");
+                    if (_lastObservedState) {
+                        Debug.Log("[Nurse] Player no longer observing nurse (was blocked by raycast) - resuming behavior.");
+                    }
                     _lastObservedState = false;
                     return;
                 }
@@ -275,25 +308,30 @@ namespace FifthSemester.Gameplay.Enemy {
                     _isObserved = false;
                     _blackboard.SetData(IS_FROZEN_KEY, false);
                     _blackboard.SetData(IS_OBSERVED_KEY, false);
-                    if (_lastObservedState) Debug.Log("[Nurse] Player no longer observing nurse - resuming behavior.");
+                    if (_lastObservedState) {
+                        Debug.Log("[Nurse] Player no longer observing nurse (was blocked by spherecast) - resuming behavior.");
+                    }
                     _lastObservedState = false;
                     return;
                 }
 
                 // No obstacle detected -> observed
                 _isObserved = true;
-                _blackboard.SetData(IS_FROZEN_KEY, true);
+                _blackboard.SetData(IS_FROZEN_KEY, false); // Do not freeze rigid in BT nodes
                 _blackboard.SetData(IS_OBSERVED_KEY, true);
-                if (!_lastObservedState) Debug.Log("[Nurse] Player observed nurse - freezing behavior.");
+                if (!_lastObservedState) {
+                    Debug.Log($"[Nurse] Player observed nurse! Smooth slow-down behavior activated. Distance: {distToCamera:F2}m.");
+                }
                 _lastObservedState = true;
-
                 return;
             }
 
             _isObserved = false;
             _blackboard.SetData(IS_FROZEN_KEY, false);
             _blackboard.SetData(IS_OBSERVED_KEY, false);
-            if (_lastObservedState) Debug.Log("[Nurse] Player no longer observing nurse - resuming behavior.");
+            if (_lastObservedState) {
+                Debug.Log("[Nurse] Player no longer observing nurse (not in viewport frustum) - resuming behavior.");
+            }
             _lastObservedState = false;
         }
 
@@ -302,20 +340,20 @@ namespace FifthSemester.Gameplay.Enemy {
                 return;
             }
 
-            float targetSpeed = _isObserved
-                ? _observedSpeed
-                : _normalSpeed;
+            // A velocidade alvo é a velocidade observada quando vista pelo player, ou a velocidade do diretor
+            float targetSpeed = _isObserved ? _observedSpeed : TargetSpeed;
 
-            _agent.speed = Mathf.Lerp(
-                _agent.speed,
-                targetSpeed,
-                Time.deltaTime * _speedLerp
-            );
+            // Transição suave de velocidade
+            _agent.speed = Mathf.Lerp(_agent.speed, targetSpeed, Time.deltaTime * _speedLerp);
 
-            _agent.isStopped = false;
+            // Garante que o agente não seja pausado fisicamente
+            if (_agent.isStopped) {
+                _agent.isStopped = false;
+            }
 
+            // Garante que o animator esteja despausado e rodando com a velocidade correta
             if (_animator != null) {
-                _animator.SetFloat(_speedHash, _agent.velocity.magnitude);
+                _animator.speed = 1f;
             }
         }
 
@@ -323,14 +361,14 @@ namespace FifthSemester.Gameplay.Enemy {
             if (_target == null) return;
 
             Vector3 direction;
-
             if (_isObserved) {
+                // Roda na direção exata do jogador para encará-lo
                 direction = (_target.position - transform.position).normalized;
             }
             else {
+                // Roda na direção do movimento desejado
                 direction = _agent.desiredVelocity.normalized;
             }
-
             direction.y = 0;
 
             if (direction.sqrMagnitude < 0.01f) return;

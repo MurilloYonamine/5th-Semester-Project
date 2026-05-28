@@ -46,7 +46,11 @@ namespace FifthSemester.Gameplay.Enemy {
                     return Status.Running;
                 }
 
-                return Status.Running;
+                // Se o jumpscare não começou e a distância aumentou (o jogador recuou/fugiu ou congelou a Nurse),
+                // falha este nó para que o Behavior Tree retorne para o estado de perseguição ativa (ActionChase)
+                // e continue seguindo o jogador, em vez de ficar travada infinitamente.
+                Debug.Log($"[ActionPlayJumpscare] Cannot start jumpscare (player is out of range or backed away). Distance: {Vector3.Distance(_agent.transform.position, _target.position):F2}m. Failing node to resume chase.");
+                return Status.Failure;
             }
 
             if (_finished) {

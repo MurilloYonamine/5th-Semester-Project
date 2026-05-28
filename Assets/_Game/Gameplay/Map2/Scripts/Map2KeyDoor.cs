@@ -128,7 +128,10 @@ namespace FifthSemester.Gameplay.Map2 {
         }
 
         public void TryOpenByAI() {
+            Debug.Log($"[Map2KeyDoor] TryOpenByAI called on '{gameObject.name}'. _canBeOpenedByNurse={_canBeOpenedByNurse}, _isOpen={_isOpen}");
+            
             if (!_canBeOpenedByNurse) {
+                Debug.LogWarning($"[Map2KeyDoor] TryOpenByAI aborted: '_canBeOpenedByNurse' is false on door '{gameObject.name}'!");
                 return;
             }
 
@@ -136,10 +139,12 @@ namespace FifthSemester.Gameplay.Map2 {
                 _isOpen = true;
                 PlayDoorSound();
                 UpdateTargetRotations();
+                Debug.Log($"[Map2KeyDoor] TryOpenByAI: Door '{gameObject.name}' successfully opened by Nurse!");
             }
 
             if (_navMeshObstacle != null) {
                 _navMeshObstacle.carving = false;
+                Debug.Log($"[Map2KeyDoor] TryOpenByAI: Disabled carving on '{gameObject.name}' NavMeshObstacle.");
             }
         }
 

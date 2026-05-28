@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.Playables;
 
 namespace FifthSemester.Gameplay.Map2 {
-    [DisallowMultipleComponent]
     public class Map2KeyService : MonoBehaviour, IMap2KeyService {
         [Header("Timeline")]
         [SerializeField] private PlayableDirector _allKeysCollectedTimeline;

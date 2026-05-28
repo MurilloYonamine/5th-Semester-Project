@@ -33,6 +33,9 @@ Colete X itens de um tipo específico.
 ### CollectAndDeliver
 Colete X itens e entregue em um ponto específico.
 
+Quando a coleta termina, a missão pode tocar um SFX de transição antes de entrar na fase de entrega.
+Na implementação atual, a ordem de entrega também dirige as portas: `Paciente_A -> Paciente_B -> Paciente_C -> Paciente_E -> Paciente_S`, com `Paciente_S` mapeado para `Door_RoomP`.
+
 **Configuração `MissionDefinition`:**
 - `Type` = `CollectAndDeliver`
 - `TargetItemName` = ex., `"Package"`

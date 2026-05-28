@@ -4,8 +4,11 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using FifthSemester.Core.Enums;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
+using FifthSemester.Doors;
+using FifthSemester.Gameplay.Map;
 
 namespace FifthSemester.Gameplay.Missions {
     public class MissionService : MonoBehaviour, IMissionService {
@@ -17,6 +20,7 @@ namespace FifthSemester.Gameplay.Missions {
         private IFadeService _fadeService;
         private ISaveService _saveService;
         private IAudioService _audioService;
+        private IMapService _mapService;
         private IMission _currentMission;
         private MissionSequenceSO _activeSequence;
         private int _sequenceIndex = -1;
@@ -28,6 +32,7 @@ namespace FifthSemester.Gameplay.Missions {
             _eventBus = ServiceLocator.Get<IEventBus>();
             _saveService = ServiceLocator.Get<ISaveService>();
             ServiceLocator.TryGet<IAudioService>(out _audioService);
+            ServiceLocator.TryGet<IMapService>(out _mapService);
         }
 
         private void Start() {
@@ -167,6 +172,89 @@ namespace FifthSemester.Gameplay.Missions {
             if (_missionCompleteSFX == null) return;
             if (_audioService == null) ServiceLocator.TryGet<IAudioService>(out _audioService);
             _audioService?.PlaySFX(clip: _missionCompleteSFX);
+        }
+
+        void IMissionService.PlayMissionCompleteSFX() {
+            PlayMissionCompleteSFX();
+        }
+
+        void IMissionService.UpdateCollectAndDeliverDoorState(MissionDefinition definition, int deliveredCount) {
+            UpdateCollectAndDeliverDoorState(definition, deliveredCount);
+        }
+
+        private void UpdateCollectAndDeliverDoorState(MissionDefinition definition, int deliveredCount) {
+            if (definition == null || definition.DeliveryPointIds == null || definition.DeliveryPointIds.Length == 0) {
+                return;
+            }
+
+            if (_mapService == null) {
+                ServiceLocator.TryGet<IMapService>(out _mapService);
+            }
+
+            if (_mapService == null) {
+                return;
+            }
+
+            List<DoorType> orderedDoors = new List<DoorType>();
+
+            for (int i = 0; i < definition.DeliveryPointIds.Length; i++) {
+                DoorType doorType = GetDoorTypeForDeliveryPoint(definition.DeliveryPointIds[i]);
+                if (doorType == DoorType.None || orderedDoors.Contains(doorType)) {
+                    continue;
+                }
+
+                orderedDoors.Add(doorType);
+            }
+
+            if (orderedDoors.Count == 0) {
+                return;
+            }
+
+            if (deliveredCount < 0) {
+                for (int i = 0; i < orderedDoors.Count; i++) {
+                    GameObject doorObject = _mapService.Get(orderedDoors[i]);
+                    Door door = doorObject != null ? doorObject.GetComponent<Door>() : null;
+                    door?.Lock();
+                }
+
+                return;
+            }
+
+            for (int i = 0; i < orderedDoors.Count; i++) {
+                GameObject doorObject = _mapService.Get(orderedDoors[i]);
+                Door door = doorObject != null ? doorObject.GetComponent<Door>() : null;
+                if (door == null) {
+                    continue;
+                }
+
+                if (deliveredCount >= orderedDoors.Count || i <= deliveredCount) {
+                    door.Unlock();
+                }
+                else {
+                    door.Lock();
+                }
+            }
+        }
+
+        private static DoorType GetDoorTypeForDeliveryPoint(string deliveryPointId) {
+            if (string.IsNullOrWhiteSpace(deliveryPointId)) {
+                return DoorType.None;
+            }
+
+            string suffix = deliveryPointId;
+            int underscoreIndex = deliveryPointId.LastIndexOf('_');
+            if (underscoreIndex >= 0 && underscoreIndex < deliveryPointId.Length - 1) {
+                suffix = deliveryPointId.Substring(underscoreIndex + 1);
+            }
+
+            return suffix.ToUpperInvariant() switch {
+                "A" => DoorType.Door_RoomA,
+                "B" => DoorType.Door_RoomB,
+                "C" => DoorType.Door_RoomC,
+                "E" => DoorType.Door_RoomE,
+                "S" => DoorType.Door_RoomP,
+                _ => DoorType.None
+            };
         }
 
         public void SkipToMission(int missionIndex) {

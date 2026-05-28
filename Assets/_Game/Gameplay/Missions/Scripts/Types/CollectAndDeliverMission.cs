@@ -6,6 +6,7 @@ namespace FifthSemester.Gameplay.Missions {
     public class CollectAndDeliverMission : MissionBase {
         private bool _itemsCollected;
         private bool _subscribed;
+        private IMissionService _missionService;
 
         // NOVO: Contador específico para as entregas
         private int _deliveredCount;
@@ -14,9 +15,11 @@ namespace FifthSemester.Gameplay.Missions {
 
         public override void Initialize(MissionDefinition definition, IEventBus eventBus, ISaveService saveService) {
             base.Initialize(definition, eventBus, saveService);
+            ServiceLocator.TryGet<IMissionService>(out _missionService);
 
             int current = GetProgressCount();
             _itemsCollected = current >= RequiredCollectCount;
+            _deliveredCount = _itemsCollected ? current : 0;
 
             // Define o texto inicial dependendo se ainda está a recolher ou se já está a entregar
             if (!_itemsCollected) {
@@ -29,6 +32,7 @@ namespace FifthSemester.Gameplay.Missions {
 
         public override void StartMission() {
             base.StartMission();
+            _missionService?.UpdateCollectAndDeliverDoorState(_definition, _itemsCollected ? _deliveredCount : -1);
 
             if (_eventBus != null && !_subscribed) {
                 _eventBus.Subscribe<ItemPickedUpEvent>(OnItemAdded);
@@ -52,7 +56,10 @@ namespace FifthSemester.Gameplay.Missions {
             _itemsCollected = current >= RequiredCollectCount;
 
             if (_itemsCollected) {
+                _deliveredCount = 0;
                 _progress = $"Entregues: 0/{RequiredCollectCount}";
+                _missionService?.UpdateCollectAndDeliverDoorState(_definition, _deliveredCount);
+                _missionService?.PlayMissionCompleteSFX();
             }
             else {
                 _progress = $"Coletados: {current}/{RequiredCollectCount}";
@@ -77,6 +84,7 @@ namespace FifthSemester.Gameplay.Missions {
             if (deliveryPointMatches && itemMatches) {
                 _deliveredCount++; 
                 _progress = $"Entregues: {_deliveredCount}/{RequiredCollectCount}";
+                _missionService?.UpdateCollectAndDeliverDoorState(_definition, _deliveredCount);
 
                 SaveProgress();
                 PublishProgress();

@@ -10,6 +10,8 @@ namespace FifthSemester.Gameplay.Missions {
         void StartMission(MissionDefinition mission);
         void SkipToMission(int missionIndex);
         void CompleteCurrentMission();
+        void PlayMissionCompleteSFX();
+        void UpdateCollectAndDeliverDoorState(MissionDefinition definition, int deliveredCount);
         void StartSequence(MissionSequenceSO sequence);
     }
 }

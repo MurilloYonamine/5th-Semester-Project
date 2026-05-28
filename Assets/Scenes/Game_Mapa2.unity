@@ -13111,8 +13111,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1051355628}
   serializedVersion: 2
-  m_LocalRotation: {x: 3.9969923e-16, y: 0.9961947, z: -0.08715578, w: 1.9712096e-15}
-  m_LocalPosition: {x: 0.017, y: 1.8010001, z: -68.123}
+  m_LocalRotation: {x: 0, y: -0.9795753, z: 0.0000000043946993, w: -0.20107795}
+  m_LocalPosition: {x: 8.46, y: 1.3199999, z: -52.18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13228,7 +13228,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 60.000004
+  field of view: 40
   orthographic: 0
   orthographic size: 10
   m_Depth: 1
@@ -20891,7 +20891,7 @@ MonoBehaviour:
   _canBeOpenedByNurse: 0
   _isBadEndingDoor: 1
   _passwordDeliveryPoint: {fileID: 133232382}
-  _badEndingPrefab: {fileID: 0}
+  _badEndingPrefab: {fileID: 8495744014885002621, guid: 86038ba73e1d26e4c89d92d019e948e4, type: 3}
   _fadeDuration: 2
   _isOpen: 0
   _openAngle: -90
@@ -27805,7 +27805,7 @@ MonoBehaviour:
   _canBeOpenedByNurse: 0
   _isBadEndingDoor: 1
   _passwordDeliveryPoint: {fileID: 133232382}
-  _badEndingPrefab: {fileID: 0}
+  _badEndingPrefab: {fileID: 8495744014885002621, guid: 86038ba73e1d26e4c89d92d019e948e4, type: 3}
   _fadeDuration: 2
   _isOpen: 0
   _openAngle: -90

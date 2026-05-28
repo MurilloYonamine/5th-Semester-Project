@@ -8,8 +8,8 @@ namespace FifthSemester.Gameplay.Enemy {
     [DisallowMultipleComponent]
     public class NurseDirector : MonoBehaviour {
         [Header("Retreat Settings")]
-        [SerializeField] private float retreatDistance = 8f;
-        [SerializeField] private float retreatDuration = 3f;
+        [SerializeField] private float retreatDistance = 20f;
+        [SerializeField] private Transform[] retreatWaypoints;
 
         [Header("Pursuit Settings")]
         [SerializeField] private float sprintMultiplier = 1.6f;
@@ -21,7 +21,7 @@ namespace FifthSemester.Gameplay.Enemy {
         private IEventBus _eventBus;
 
         private void Awake() {
-            _agent = _nurseComponent.GetComponent<NavMeshAgent>();
+            _agent = _nurseComponent != null ? _nurseComponent.GetComponent<NavMeshAgent>() : GetComponent<NavMeshAgent>();
             _baseSpeed = _agent != null ? _agent.speed : 3f;
 
             Debug.Log($"[NurseDirector] Awake: agent={( _agent!=null )}, baseSpeed={_baseSpeed}");
@@ -32,19 +32,25 @@ namespace FifthSemester.Gameplay.Enemy {
             _eventBus?.Subscribe<PlayerSprintChangedEvent>(OnPlayerSprintChanged);
             _eventBus?.Subscribe<FlashlightTargetedEvent>(OnFlashlightTargeted);
             _eventBus?.Subscribe<PlayerEnteredRoomEvent>(OnPlayerEnteredRoom);
+            _eventBus?.Subscribe<PlayerExitedRoomEvent>(OnPlayerExitedRoom);
 
-            Debug.Log("[NurseDirector] OnEnable: subscribed to player sprint/flashlight/room events");
+            Debug.Log("[NurseDirector] OnEnable: subscribed to player events");
         }
 
         private void OnDisable() {
             _eventBus?.Unsubscribe<PlayerSprintChangedEvent>(OnPlayerSprintChanged);
             _eventBus?.Unsubscribe<FlashlightTargetedEvent>(OnFlashlightTargeted);
             _eventBus?.Unsubscribe<PlayerEnteredRoomEvent>(OnPlayerEnteredRoom);
+            _eventBus?.Unsubscribe<PlayerExitedRoomEvent>(OnPlayerExitedRoom);
         }
 
         private void Start() {
-            if (_agent == null) _agent = GetComponent<NavMeshAgent>();
-            if (_agent != null) _baseSpeed = _agent.speed;
+            if (_agent == null) {
+                _agent = _nurseComponent != null ? _nurseComponent.GetComponent<NavMeshAgent>() : GetComponent<NavMeshAgent>();
+            }
+            if (_agent != null) {
+                _baseSpeed = _agent.speed;
+            }
         }
 
         private void OnPlayerSprintChanged(PlayerSprintChangedEvent evt) {
@@ -74,38 +80,70 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void OnPlayerEnteredRoom(PlayerEnteredRoomEvent evt) {
-            if (evt.Player == null || _agent == null) return;
+            if (evt.Player == null || _agent == null || _nurseComponent == null) return;
 
-            // calcula o ponto de recuo na direção oposta ao player
-            Vector3 dir = (evt.Player.position - transform.position).normalized;
-            Vector3 desired = transform.position - dir * retreatDistance;
+            Vector3 bestRetreatPoint = transform.position;
+            float maxDistToPlayer = -1f;
+            bool foundPoint = false;
 
-            // ajusta para o NavMesh
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(desired, out hit, retreatDistance, NavMesh.AllAreas)) {
-                _agent.SetDestination(hit.position);
+            if (retreatWaypoints != null && retreatWaypoints.Length > 0) {
+                // Use manual waypoints
+                for (int i = 0; i < retreatWaypoints.Length; i++) {
+                    Transform waypoint = retreatWaypoints[i];
+                    if (waypoint == null) continue;
+
+                    float distToPlayer = Vector3.Distance(waypoint.position, evt.Player.position);
+                    if (distToPlayer > maxDistToPlayer) {
+                        maxDistToPlayer = distToPlayer;
+                        bestRetreatPoint = waypoint.position;
+                        foundPoint = true;
+                    }
+                }
             }
             else {
-                _agent.SetDestination(desired);
+                // 100% Automatic Scan Mode on the NavMesh
+                for (int i = 0; i < 12; i++) {
+                    Vector2 randomOffset = UnityEngine.Random.insideUnitCircle.normalized * retreatDistance;
+                    Vector3 candidatePos = transform.position + new Vector3(randomOffset.x, 0f, randomOffset.y);
+
+                    NavMeshHit hit;
+                    if (NavMesh.SamplePosition(candidatePos, out hit, 10f, NavMesh.AllAreas)) {
+                        float distToPlayer = Vector3.Distance(hit.position, evt.Player.position);
+                        if (distToPlayer > maxDistToPlayer) {
+                            maxDistToPlayer = distToPlayer;
+                            bestRetreatPoint = hit.position;
+                            foundPoint = true;
+                        }
+                    }
+                }
             }
 
-            Debug.Log($"[NurseDirector] Player entered room - retreating to {_agent.destination}");
-
-            // desliga temporariamente o componente Nurse (se existir) para evitar que a BT sobrescreva o destino
-            var nurse = GetComponent<Nurse>();
-            if (nurse != null) {
-                StartCoroutine(TemporarilyDisableNurse(nurse));
+            // Fallback safety check
+            if (!foundPoint) {
+                Vector3 dir = (evt.Player.position - transform.position).normalized;
+                Vector3 desired = transform.position - dir * retreatDistance;
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(desired, out hit, retreatDistance, NavMesh.AllAreas)) {
+                    bestRetreatPoint = hit.position;
+                }
+                else {
+                    bestRetreatPoint = desired;
+                }
             }
+
+            // Command Nurse to retreat and pause BT
+            _nurseComponent.RetreatTo(bestRetreatPoint);
+            Debug.Log($"[NurseDirector] Player entered room - retreating to {bestRetreatPoint}");
         }
 
-        private IEnumerator TemporarilyDisableNurse(Nurse nurse) {
-            nurse.enabled = false;
-            Debug.Log("[NurseDirector] Temporarily disabled Nurse component for retreat");
-            yield return new WaitForSeconds(retreatDuration);
-            if (nurse != null) nurse.enabled = true;
-            Debug.Log("[NurseDirector] Re-enabled Nurse component after retreat");
-            // restaura velocidade base
-            if (_agent != null) _agent.speed = _baseSpeed;
+        private void OnPlayerExitedRoom(PlayerExitedRoomEvent evt) {
+            if (_nurseComponent != null) {
+                _nurseComponent.ResumeFromRetreat();
+                if (_agent != null) {
+                    _agent.speed = _baseSpeed;
+                }
+                Debug.Log("[NurseDirector] Player exited room - nurse resuming normal operations.");
+            }
         }
     }
 }

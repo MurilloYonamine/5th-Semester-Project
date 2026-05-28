@@ -14,5 +14,12 @@ namespace FifthSemester.Gameplay.Map {
             var eventBus = ServiceLocator.Get<IEventBus>();
             eventBus?.Publish(new PlayerEnteredRoomEvent(_roomId, other.transform));
         }
+
+        private void OnTriggerExit(Collider other) {
+            if (!other.CompareTag("Player")) return;
+
+            var eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Publish(new PlayerExitedRoomEvent(_roomId, other.transform));
+        }
     }
 }

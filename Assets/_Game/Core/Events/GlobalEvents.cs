@@ -113,6 +113,17 @@ namespace FifthSemester.Core.Events {
         }
     }
 
+    /// Published when the player exits a room trigger.
+    public readonly struct PlayerExitedRoomEvent {
+        public readonly string RoomId;
+        public readonly Transform Player;
+
+        public PlayerExitedRoomEvent(string roomId, Transform player) {
+            RoomId = roomId;
+            Player = player;
+        }
+    }
+
     /// ============= Inventory & Item Events =============
     public readonly struct InventoryToggledEvent {
         public readonly bool IsOpen;

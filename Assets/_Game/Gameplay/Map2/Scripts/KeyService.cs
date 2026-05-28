@@ -39,8 +39,7 @@ namespace FifthSemester.Gameplay.Map2 {
         }
 
         public void UnregisterKey(Map2KeyItem key) {
-            if (key == null) return;
-            _registeredKeys.Remove(key);
+            // Mantém a contagem de chaves registradas estável para evitar disparos prematuros.
         }
 
         private void OnItemPickedUp(ItemPickedUpEvent evt) {

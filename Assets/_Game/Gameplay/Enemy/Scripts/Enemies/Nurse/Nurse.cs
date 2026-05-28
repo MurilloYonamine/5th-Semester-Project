@@ -66,6 +66,7 @@ namespace FifthSemester.Gameplay.Enemy {
         private bool _isLockedByKey = false;
         private bool _isAggressive = false;
         private IInventoryService<Item> _inventoryService;
+        private bool _isRetreating = false;
 
         private void Awake() {
             _agent = GetComponent<NavMeshAgent>();
@@ -124,6 +125,7 @@ namespace FifthSemester.Gameplay.Enemy {
             _blackboard.SetData(CUTSCENE_ACTIVE_KEY, false);
             _blackboard.SetData(IS_FROZEN_KEY, false);
             _blackboard.SetData(IS_OBSERVED_KEY, false);
+            _blackboard.SetData("IsPlayerInRoom", false);
 
             _blackboard.SetData("PatrolWaitTime", _patrolWaitTime);
         }
@@ -174,7 +176,9 @@ namespace FifthSemester.Gameplay.Enemy {
                 UpdateState();
             }
 
-            _tree?.Process();
+            if (!_isRetreating) {
+                _tree?.Process();
+            }
             if (!isCutsceneActive) {
                 HandleRotation();
             }
@@ -338,6 +342,22 @@ namespace FifthSemester.Gameplay.Enemy {
                 targetRotation,
                 Time.deltaTime * _rotationSpeed
             );
+        }
+
+        public void RetreatTo(Vector3 destination) {
+            if (_agent != null && _agent.isOnNavMesh) {
+                _agent.isStopped = false;
+                _agent.SetDestination(destination);
+                _isRetreating = true;
+                _blackboard?.SetData("IsPlayerInRoom", true);
+                Debug.Log($"[Nurse] Retreating to {destination}. BT processing suspended.");
+            }
+        }
+
+        public void ResumeFromRetreat() {
+            _isRetreating = false;
+            _blackboard?.SetData("IsPlayerInRoom", false);
+            Debug.Log("[Nurse] Resumed from retreat. BT processing active.");
         }
 
         private void OnDrawGizmos() {

@@ -100,5 +100,44 @@ namespace FifthSemester.Gameplay.Map2 {
                 }
             }
         }
+
+        public bool TryPrepareForLastKey(Map2KeyItem lastKey) {
+            if (_played || _inventoryService == null) return false;
+
+            var items = _inventoryService.GetItems();
+            if (items == null) return false;
+
+            int keyCount = 0;
+            List<Map2KeyItem> keysInInventory = new List<Map2KeyItem>();
+            for (int i = 0; i < items.Count; i++) {
+                if (items[i] is Map2KeyItem k) {
+                    keyCount++;
+                    keysInInventory.Add(k);
+                }
+            }
+
+            int total = _registeredKeys.Count;
+            if (total <= 0) return false;
+
+            if (keyCount + 1 >= total) {
+                for (int i = 0; i < keysInInventory.Count; i++) {
+                    _inventoryService.RemoveItem(keysInInventory[i]);
+                    if (keysInInventory[i] != null) {
+                        keysInInventory[i].gameObject.SetActive(false);
+                    }
+                }
+
+                _played = true;
+                HasCollectedAllKeys = true;
+
+                if (_allKeysCollectedTimeline != null) {
+                    try { _allKeysCollectedTimeline.Play(); } catch { }
+                }
+                
+                return true;
+            }
+
+            return false;
+        }
     }
 }

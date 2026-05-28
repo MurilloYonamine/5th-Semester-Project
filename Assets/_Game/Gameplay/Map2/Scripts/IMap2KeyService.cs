@@ -3,5 +3,6 @@ namespace FifthSemester.Gameplay.Map2 {
         bool HasCollectedAllKeys { get; }
         void RegisterKey(Map2KeyItem key);
         void UnregisterKey(Map2KeyItem key);
+        bool TryPrepareForLastKey(Map2KeyItem lastKey);
     }
 }

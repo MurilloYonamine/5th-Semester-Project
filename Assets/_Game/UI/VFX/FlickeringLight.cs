@@ -10,15 +10,28 @@ namespace FifthSemester.UI.VFX {
         [SerializeField] private float _toggleDelayVariation = 0.2f;
         [SerializeField] private float _sparkInterval = 3f;
         [SerializeField] private float _sparkIntervalVariation = 1f;
+        
+        [Header("Configurações de Áudio 3D (Espacializado)")]
+        [Tooltip("Som opcional de curto-circuito/piscar de luz.")]
+        [SerializeField] private AudioClip _flickerSound;
+        [Tooltip("Distância máxima para ouvir o som no volume máximo.")]
+        [SerializeField] private float _minDistance = 1.5f;
+        [Tooltip("Distância máxima na qual o som ainda pode ser ouvido.")]
+        [SerializeField] private float _maxDistance = 10f;
+        [Tooltip("Volume geral do som de piscar.")]
+        [SerializeField, Range(0f, 1f)] private float _volume = 0.8f;
+
         private Light _light;
         private Coroutine _toggleCoroutine;
         private Coroutine _sparkLoopCoroutine;
         private GameObject _sparkInstance;
+        private AudioSource _audioSource;
 
         private void Awake() {
             _sparkPrefab = GetComponentInChildren<VisualEffect>()?.gameObject;
             _light = GetComponent<Light>();
             SpawnSparkPrefab();
+            Configure3DAudio();
         }
 
         private void OnEnable() {
@@ -33,6 +46,24 @@ namespace FifthSemester.UI.VFX {
             if (_toggleCoroutine != null) {
                 StopCoroutine(_toggleCoroutine);
             }
+        }
+
+        private void Configure3DAudio() {
+            if (_flickerSound == null) return;
+
+            _audioSource = GetComponent<AudioSource>();
+            if (_audioSource == null) {
+                _audioSource = gameObject.AddComponent<AudioSource>();
+            }
+
+            _audioSource.clip = _flickerSound;
+            _audioSource.spatialBlend = 1.0f; // 1.0 = Áudio 3D Completo (fica mais baixo conforme se distancia)
+            _audioSource.minDistance = _minDistance;
+            _audioSource.maxDistance = _maxDistance;
+            _audioSource.volume = _volume;
+            _audioSource.playOnAwake = false;
+            _audioSource.loop = false;
+            _audioSource.rolloffMode = AudioRolloffMode.Logarithmic;
         }
 
         private void SpawnSparkPrefab() {
@@ -78,6 +109,12 @@ namespace FifthSemester.UI.VFX {
 
         private IEnumerator ToggleLightCoroutine() {
             _light.enabled = false;
+            
+            // Toca o som 3D perfeitamente sincronizado com o piscar da luz
+            if (_audioSource != null && _flickerSound != null) {
+                _audioSource.Play();
+            }
+
             float randomDelay = _toggleDelay + Random.Range(-_toggleDelayVariation, _toggleDelayVariation);
             yield return new WaitForSeconds(randomDelay);
             _light.enabled = true;

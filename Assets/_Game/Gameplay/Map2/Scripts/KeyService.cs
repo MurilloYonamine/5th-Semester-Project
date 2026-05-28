@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Gameplay.Inventory;
+using FifthSemester.Gameplay.Enemy;
 using UnityEngine;
 using UnityEngine.Playables;
 
@@ -66,6 +67,7 @@ namespace FifthSemester.Gameplay.Map2 {
             if (keyCount >= total && _allKeysCollectedTimeline != null) {
                 _played = true;
                 HasCollectedAllKeys = true;
+                DeactivateNurse();
                 try { _allKeysCollectedTimeline.Play(); } catch { }
             }
         }
@@ -98,6 +100,7 @@ namespace FifthSemester.Gameplay.Map2 {
 
                 _played = true;
                 HasCollectedAllKeys = true;
+                DeactivateNurse();
 
                 if (_allKeysCollectedTimeline != null) {
                     try { _allKeysCollectedTimeline.Play(); } catch { }
@@ -107,6 +110,16 @@ namespace FifthSemester.Gameplay.Map2 {
             }
 
             return false;
+        }
+
+        private void DeactivateNurse() {
+            var nurses = FindObjectsOfType<Nurse>();
+            foreach (var nurse in nurses) {
+                if (nurse != null) {
+                    nurse.gameObject.SetActive(false);
+                    Debug.Log($"[KeyService] Enfermeira {nurse.name} desativada após a coleta de todas as chaves.");
+                }
+            }
         }
     }
 }

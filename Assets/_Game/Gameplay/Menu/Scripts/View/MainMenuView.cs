@@ -90,7 +90,9 @@ namespace FifthSemester.Gameplay.Menu {
             SaveLoader.SetPendingSave(saveData);
             _menuService.Hide();
             _gameState.ChangeState(GameState.Gameplay);
-            SceneManager.LoadScene("Game");
+            
+            string sceneToLoad = string.IsNullOrEmpty(saveData.SceneName) ? "Game" : saveData.SceneName;
+            SceneManager.LoadScene(sceneToLoad);
         }
 
         public void UpdateContinueVisibility() {

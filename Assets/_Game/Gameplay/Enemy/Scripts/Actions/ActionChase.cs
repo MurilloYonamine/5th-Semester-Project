@@ -35,11 +35,6 @@ namespace FifthSemester.Gameplay.Enemy {
                 return Status.Failure;
             }
 
-            if (_blackboard.GetData<bool>(IS_STUNNED_KEY)) {
-                StopGlitch();
-                return Status.Failure;
-            }
-
             if (_blackboard.HasKey(IS_IN_SAFE_LIGHT_KEY) && _blackboard.GetData<bool>(IS_IN_SAFE_LIGHT_KEY)) {
                 _agent.ResetPath();
                 StopGlitch(); 

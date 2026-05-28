@@ -4,14 +4,13 @@ using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
 using FifthSemester.Features.Localization;
 using System.Collections;
-using ThirdParty.QuickOutline;
+using UnityEngine.EventSystems;
 using UnityEngine;
 
 namespace FifthSemester.Gameplay.Map2 {
     [RequireComponent(typeof(Collider))]
     [RequireComponent(typeof(SpriteRenderer))]
-    [RequireComponent(typeof(Outline))]
-    public class Map2PasswordDigitInteractable : MonoBehaviour, IInteractable {
+    public class Map2PasswordDigitInteractable : MonoBehaviour, IInteractable, IPointerEnterHandler, IPointerExitHandler {
         private const float CAPTION_DURATION = 2f;
 
         [Header("Configuração do Dígito")]
@@ -26,24 +25,24 @@ namespace FifthSemester.Gameplay.Map2 {
         private ISettingsService _settingsService;
 
         private SpriteRenderer _spriteRenderer;
-        private Outline _outline;
+        private Collider _collider;
         [Header("Highlight")]
-        [SerializeField] private Color _highlightColor = new Color32(255, 220, 120, 255);
+        [SerializeField] private Color _hoverColor = new Color32(255, 100, 100, 255);
 
         private Color _defaultColor = Color.white;
         private Coroutine _hideCaptionRoutine;
+        private bool _hasInteracted;
 
         public string Id => gameObject.name;
 
-        public bool IsInteractable => _passwordController != null && _passwordController.CanRevealDigit(_digit);
+        public bool IsInteractable => !_hasInteracted && _passwordController != null && _passwordController.CanRevealDigit(_digit);
 
         private void Awake() {
             _spriteRenderer = GetComponent<SpriteRenderer>();
-
-            _outline = GetComponent<Outline>();
-            _outline.enabled = false;
-
-            _defaultColor = _outline.OutlineColor;
+            _collider = GetComponent<Collider>();
+            if (_spriteRenderer != null) {
+                _defaultColor = _spriteRenderer.color;
+            }
         }
 
         private void Start() {
@@ -63,7 +62,7 @@ namespace FifthSemester.Gameplay.Map2 {
         }
 
         public void Interact() {
-            if (_passwordController == null) {
+            if (_hasInteracted || _passwordController == null) {
                 return;
             }
 
@@ -71,6 +70,13 @@ namespace FifthSemester.Gameplay.Map2 {
             if (!revealed) {
                 return;
             }
+
+            _hasInteracted = true;
+            if (_collider != null) {
+                _collider.enabled = false;
+            }
+
+            Highlight(false);
 
             if (_discoverCaptionFiles.Portuguese == null && _discoverCaptionFiles.English == null) {
                 Debug.LogError($"[Map2PasswordDigitInteractable] Nenhum texto de legenda configurado em {name}.");
@@ -93,13 +99,19 @@ namespace FifthSemester.Gameplay.Map2 {
         }
 
         public void Highlight(bool value) {
-            if (_spriteRenderer == null) {
-                return;
-            }
+            if (_spriteRenderer == null) return;
 
-            _outline.enabled = value;
+            _spriteRenderer.color = value ? _hoverColor : _defaultColor;
+        }
 
-            _outline.OutlineColor = value ? _highlightColor : _defaultColor;
+        public void OnPointerEnter(PointerEventData eventData) {
+            if (_spriteRenderer == null) return;
+            _spriteRenderer.color = _hoverColor;
+        }
+
+        public void OnPointerExit(PointerEventData eventData) {
+            if (_spriteRenderer == null) return;
+            _spriteRenderer.color = _defaultColor;
         }
 
         private void StartCaptionTimerAfterTyping(string captionText) {

@@ -20,6 +20,13 @@ namespace FifthSemester.Gameplay.Map2 {
         private Color _defaultPasswordColor;
         private Color _defaultMessageColor;
 
+        private Color DefaultPasswordColorWithHalfAlpha => new Color(
+            _defaultPasswordColor.r,
+            _defaultPasswordColor.g,
+            _defaultPasswordColor.b,
+            _defaultPasswordColor.a * 0.5f
+        );
+
         private void Awake() {
             _canvasGroup = GetComponent<CanvasGroup>();
 
@@ -59,7 +66,7 @@ namespace FifthSemester.Gameplay.Map2 {
             }
 
             if (_passwordText != null) {
-                _passwordText.color = solved ? Color.green : _defaultPasswordColor;
+                _passwordText.color = solved ? Color.green : DefaultPasswordColorWithHalfAlpha;
             }
 
             if (_messageText != null) {

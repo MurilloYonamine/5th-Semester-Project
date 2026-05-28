@@ -8,6 +8,8 @@ The **Map2** directory contains the standalone puzzle for map 2: digit sprites, 
 
 Map2 provides:
 - **Password reveal**: Each digit sprite reveals one fixed position in the code
+- **Password styling**: While the password is being revealed, it uses the same base color with half alpha until the puzzle is solved
+- **One-shot digit interactables**: Each digit can be used once and then becomes inactive
 - **Password delivery**: A dedicated interactable can accept the completed password and trigger the next step
 - **Persistent progress**: The revealed code survives scene changes and restarts
 - **Reusable keys**: Key items stay in the inventory and can unlock multiple doors

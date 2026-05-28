@@ -11,5 +11,6 @@ Scripts for the standalone map 2 puzzle.
 - `Map2PasswordDeliveryPoint.cs` — interaction point that accepts the completed password
 - `Map2KeyItem.cs` — reusable inventory key item with key-definition reference
 - `Map2KeyDoor.cs` — door variant that checks the matching key-definition reference
+- `Map2DoorAiTrigger.cs` — trigger bridge that lets Nurse open configured doors before pathing gets blocked
 - `Map2IntroSequence.cs` — local Map 2 startup flow that fades in and then plays the intro timeline
 - `Map2HorrorAmbientPlayer.cs` — random horror ambient player that fires clips at irregular intervals

@@ -10,14 +10,12 @@ namespace FifthSemester.Gameplay.Map2 {
         [Header("Timeline")]
         [SerializeField] private PlayableDirector _allKeysCollectedTimeline;
 
-        [Header("Options")]
-        [Tooltip("Override auto-detected total keys. Use <= 0 to auto-detect.")]
-        [SerializeField] private int _requiredKeys = -1;
-
         private List<Map2KeyItem> _registeredKeys = new List<Map2KeyItem>();
         private IInventoryService<Item> _inventoryService;
         private IEventBus _eventBus;
         private bool _played;
+
+        public bool HasCollectedAllKeys { get; private set; }
 
         private void Awake() {
             ServiceLocator.Register<IMap2KeyService>(this);
@@ -40,8 +38,7 @@ namespace FifthSemester.Gameplay.Map2 {
         }
 
         public void UnregisterKey(Map2KeyItem key) {
-            if (key == null) return;
-            _registeredKeys.Remove(key);
+            // Keep the original list count stable so the total key amount is always based on the list.
         }
 
         private void OnItemPickedUp(ItemPickedUpEvent evt) {
@@ -62,12 +59,45 @@ namespace FifthSemester.Gameplay.Map2 {
                 if (items[i] is Map2KeyItem) keyCount++;
             }
 
-            int total = _requiredKeys > 0 ? _requiredKeys : _registeredKeys.Count;
+            int total = _registeredKeys.Count;
             if (total <= 0) return;
 
-            if (keyCount >= total && _allKeysCollectedTimeline != null) {
+            if (keyCount >= total) {
+                KeepOnlyLatestKey(picked, items);
                 _played = true;
-                try { _allKeysCollectedTimeline.Play(); } catch { }
+                HasCollectedAllKeys = true;
+
+                if (_allKeysCollectedTimeline != null) {
+                    try { _allKeysCollectedTimeline.Play(); } catch { }
+                }
+            }
+        }
+
+        private void KeepOnlyLatestKey(Map2KeyItem latestPicked, IReadOnlyList<Item> items) {
+            if (_inventoryService == null || latestPicked == null || items == null) {
+                return;
+            }
+
+            List<Map2KeyItem> keysToRemove = new List<Map2KeyItem>();
+            for (int i = 0; i < items.Count; i++) {
+                if (items[i] is not Map2KeyItem keyItem) {
+                    continue;
+                }
+
+                if (keyItem == latestPicked) {
+                    continue;
+                }
+
+                keysToRemove.Add(keyItem);
+            }
+
+            for (int i = 0; i < keysToRemove.Count; i++) {
+                Map2KeyItem keyToRemove = keysToRemove[i];
+                _inventoryService.RemoveItem(keyToRemove);
+
+                if (keyToRemove != null) {
+                    keyToRemove.gameObject.SetActive(false);
+                }
             }
         }
     }

@@ -6,6 +6,7 @@ using Sirenix.OdinInspector;
 using TMPro;
 using ThirdParty.QuickOutline;
 using UnityEngine;
+using UnityEngine.AI;
 using System;
 
 namespace FifthSemester.Gameplay.Map2 {
@@ -18,6 +19,7 @@ namespace FifthSemester.Gameplay.Map2 {
         [Header("Configuração da Chave")]
         [SerializeField] private Map2KeyDefinitionSO _requiredKey;
         [SerializeField] private bool _requiresKey = true;
+        [SerializeField] private bool _canBeOpenedByNurse = false;
 
         [Header("Configurações de Movimento")]
         [SerializeField] private bool _isOpen = false;
@@ -28,6 +30,7 @@ namespace FifthSemester.Gameplay.Map2 {
         [Header("Audio")]
         [SerializeField] private AudioClip[] _doorSfx;
         [SerializeField] private AudioClip[] _lockedSounds;
+        [SerializeField] private NavMeshObstacle _navMeshObstacle;
 
         [ShowIf(nameof(_useDoubleDoor))]
         [SerializeField] private Transform[] _doorMeshes;
@@ -36,6 +39,7 @@ namespace FifthSemester.Gameplay.Map2 {
         [SerializeField] private Transform _doorMesh;
 
         private IInventoryService<Item> _inventoryService;
+        private IMap2KeyService _map2KeyService;
         private Quaternion[] _closedRotations;
         private Quaternion[] _targetRotations;
         private Transform[] _activeDoorMeshes;
@@ -44,6 +48,7 @@ namespace FifthSemester.Gameplay.Map2 {
         private string _defaultText;
 
         public bool IsInteractable { get; private set; } = true;
+        public bool CanBeOpenedByNurse => _canBeOpenedByNurse;
 
         public string Id => gameObject.name;
 
@@ -68,6 +73,7 @@ namespace FifthSemester.Gameplay.Map2 {
         private void Start() {
             ServiceLocator.TryGet<IInventoryService<Item>>(out _inventoryService);
             ServiceLocator.TryGet<IAudioService>(out _audioService);
+            ServiceLocator.TryGet<IMap2KeyService>(out _map2KeyService);
 
             UpdateDoorVisuals();
         }
@@ -99,6 +105,38 @@ namespace FifthSemester.Gameplay.Map2 {
         }
 
         public void StopInteract() {
+        }
+
+        public void TryOpenByAI() {
+            if (!_canBeOpenedByNurse) {
+                return;
+            }
+
+            if (!_isOpen) {
+                _isOpen = true;
+                PlayDoorSound();
+                UpdateTargetRotations();
+            }
+
+            if (_navMeshObstacle != null) {
+                _navMeshObstacle.carving = false;
+            }
+        }
+
+        public void TryCloseByAI() {
+            if (!_canBeOpenedByNurse) {
+                return;
+            }
+
+            if (_isOpen) {
+                _isOpen = false;
+                PlayDoorSound();
+                UpdateTargetRotations();
+            }
+
+            if (_navMeshObstacle != null) {
+                _navMeshObstacle.carving = true;
+            }
         }
 
         public void Highlight(bool value) {
@@ -194,7 +232,15 @@ namespace FifthSemester.Gameplay.Map2 {
         }
 
         private bool IsDoorUnlocked() {
-            return !_requiresKey || HasRequiredKey();
+            if (!_requiresKey) {
+                return true;
+            }
+
+            if (_map2KeyService != null && _map2KeyService.HasCollectedAllKeys) {
+                return true;
+            }
+
+            return HasRequiredKey();
         }
 
         private void PlayDoorSound() {

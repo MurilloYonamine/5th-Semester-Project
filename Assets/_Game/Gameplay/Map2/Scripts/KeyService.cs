@@ -15,6 +15,8 @@ namespace FifthSemester.Gameplay.Map2 {
         private IEventBus _eventBus;
         private bool _played;
 
+        public bool HasCollectedAllKeys { get; private set; }
+
         private void Awake() {
             ServiceLocator.Register<IMap2KeyService>(this);
             _eventBus = ServiceLocator.Get<IEventBus>();
@@ -63,6 +65,7 @@ namespace FifthSemester.Gameplay.Map2 {
 
             if (keyCount >= total && _allKeysCollectedTimeline != null) {
                 _played = true;
+                HasCollectedAllKeys = true;
                 try { _allKeysCollectedTimeline.Play(); } catch { }
             }
         }

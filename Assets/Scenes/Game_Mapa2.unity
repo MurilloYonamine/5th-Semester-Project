@@ -510,12 +510,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 25baac5844f10b04ab7b664e13af065b, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &37602186
@@ -738,6 +740,33 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1603370258750928758, guid: 3fc44e855ecece542bbb7ca698d60e4f, type: 3}
   m_PrefabInstance: {fileID: 51082226}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &64471047 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4050278601233958177, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+  m_PrefabInstance: {fileID: 692072778}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &64471048 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6171263918004162812, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+  m_PrefabInstance: {fileID: 692072778}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692072780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d05f3e852f1a3345a2f9c3d1ff4a645, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &64471049 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7618732602075429618, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+  m_PrefabInstance: {fileID: 692072778}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692072781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d05f3e852f1a3345a2f9c3d1ff4a645, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &69117864
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1115,12 +1144,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: bef60e0d826c10549aa2db36682d0a11, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &96949588
@@ -1712,12 +1743,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 935fc847facce514f8a27dc2f9cd7b23, type: 2}
   _requiresKey: 0
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &187713792
@@ -1906,6 +1939,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 59b804849d50d294daac53f23d7d4299, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
@@ -1916,6 +1950,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 578a49a2d2bbc1d4089682b2a3477415, type: 3}
   - {fileID: 8300000, guid: 28070f043f80fa74c86d7e477df7e5cb, type: 3}
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &197200146
@@ -6341,12 +6376,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: bef60e0d826c10549aa2db36682d0a11, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &606638822
@@ -6506,12 +6543,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 935fc847facce514f8a27dc2f9cd7b23, type: 2}
   _requiresKey: 0
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!4 &633241784 stripped
@@ -7282,6 +7321,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 0}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
@@ -7292,6 +7332,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 578a49a2d2bbc1d4089682b2a3477415, type: 3}
   - {fileID: 8300000, guid: 28070f043f80fa74c86d7e477df7e5cb, type: 3}
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &683486886
@@ -7484,6 +7525,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1884716341}
     m_Modifications:
+    - target: {fileID: 6171263918004162812, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      propertyPath: _navMeshObstacle
+      value: 
+      objectReference: {fileID: 692072782}
+    - target: {fileID: 6171263918004162812, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      propertyPath: _canBeOpenedByNurse
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7618732602075429618, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      propertyPath: _navMeshObstacle
+      value: 
+      objectReference: {fileID: 692072782}
+    - target: {fileID: 7618732602075429618, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      propertyPath: _canBeOpenedByNurse
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8839392277912751668, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
       propertyPath: m_Name
       value: Porta Corredor Enfermeiras
@@ -7530,14 +7587,135 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4050278601233958177, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 696537878}
+    - targetCorrespondingSourceObject: {fileID: 4050278601233958177, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1312848993}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9108952268577873963, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 692072783}
+    - targetCorrespondingSourceObject: {fileID: 8054388464577569202, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 692072782}
   m_SourcePrefab: {fileID: 100100000, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
 --- !u!4 &692072779 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9024852470520843510, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
   m_PrefabInstance: {fileID: 692072778}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &692072780 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8054388464577569202, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+  m_PrefabInstance: {fileID: 692072778}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &692072781 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9108952268577873963, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+  m_PrefabInstance: {fileID: 692072778}
+  m_PrefabAsset: {fileID: 0}
+--- !u!208 &692072782
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692072780}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.045000017, y: 1.14, z: 0.645}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.6, y: 0, z: 0}
+  m_TimeToStationary: 0.5
+--- !u!208 &692072783
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692072781}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.045000017, y: 1.14, z: 0.645}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.6, y: 0, z: 0}
+  m_TimeToStationary: 0.5
+--- !u!1 &696537877
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 696537878}
+  - component: {fileID: 696537880}
+  - component: {fileID: 696537879}
+  m_Layer: 0
+  m_Name: Nurse Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &696537878
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696537877}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.997, y: 0, z: 1.285}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 64471047}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &696537879
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696537877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8085678f100df4d919c34b76fe37b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _door: {fileID: 64471049}
+--- !u!65 &696537880
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696537877}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.67, y: 1, z: 1.09}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &700477760
 GameObject:
   m_ObjectHideFlags: 0
@@ -10939,12 +11117,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: bef60e0d826c10549aa2db36682d0a11, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1001 &925663989
@@ -12442,12 +12622,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 25baac5844f10b04ab7b664e13af065b, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!4 &1040735938 stripped
@@ -12710,8 +12892,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1051355628}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.06929887, y: 0.025332943, z: 0.0017603455, w: 0.99727273}
-  m_LocalPosition: {x: 7.2728834, y: 1.273, z: -13.237967}
+  m_LocalRotation: {x: 0.1349223, y: -0.6941153, z: 0.1349223, w: 0.6941153}
+  m_LocalPosition: {x: 9.601, y: 2.183, z: -53.258}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12825,11 +13007,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 27.66063
+  near clip plane: 0.1
+  far clip plane: 5000
+  field of view: 60.000004
   orthographic: 0
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
@@ -13243,12 +13425,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: bef60e0d826c10549aa2db36682d0a11, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &1070320894
@@ -13340,12 +13524,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: bef60e0d826c10549aa2db36682d0a11, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &1084896354
@@ -14043,12 +14229,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 935fc847facce514f8a27dc2f9cd7b23, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &1127574097
@@ -14615,12 +14803,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: bef60e0d826c10549aa2db36682d0a11, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &1146437630
@@ -15516,12 +15706,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 935fc847facce514f8a27dc2f9cd7b23, type: 2}
   _requiresKey: 0
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &1197966810
@@ -15899,12 +16091,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 0}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &1213390807
@@ -16084,12 +16278,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: bef60e0d826c10549aa2db36682d0a11, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &1220940488
@@ -16621,6 +16817,73 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9024852470520843510, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
   m_PrefabInstance: {fileID: 165958043932773251}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1312848992
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1312848993}
+  - component: {fileID: 1312848995}
+  - component: {fileID: 1312848994}
+  m_Layer: 0
+  m_Name: Nurse Collider (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1312848993
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312848992}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.997, y: 0, z: 0.011}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 64471047}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1312848994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312848992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8085678f100df4d919c34b76fe37b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _door: {fileID: 64471048}
+--- !u!65 &1312848995
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1312848992}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.67, y: 1, z: 1.09}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &1316924584 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5695746914340465831, guid: 8af37948d0cd0644db52b253a43a7f7f, type: 3}
@@ -17312,12 +17575,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 25baac5844f10b04ab7b664e13af065b, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &1383749561
@@ -19296,12 +19561,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 25baac5844f10b04ab7b664e13af065b, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!4 &1467739728 stripped
@@ -19518,6 +19785,73 @@ Light:
   m_LightUnit: 1
   m_LuxAtDistance: 1
   m_EnableSpotReflector: 1
+--- !u!1 &1486000141
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1486000142}
+  - component: {fileID: 1486000144}
+  - component: {fileID: 1486000143}
+  m_Layer: 0
+  m_Name: Nurse Collider (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1486000142
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1486000141}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1, y: 0, z: -0.05}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 165958043932773256}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1486000143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1486000141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8085678f100df4d919c34b76fe37b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _door: {fileID: 165958043932773257}
+--- !u!65 &1486000144
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1486000141}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.67, y: 1, z: 1.09}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1486872664
 GameObject:
   m_ObjectHideFlags: 0
@@ -20548,12 +20882,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 935fc847facce514f8a27dc2f9cd7b23, type: 2}
   _requiresKey: 0
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &1568163951
@@ -21766,12 +22102,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: bef60e0d826c10549aa2db36682d0a11, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!114 &1663827783
@@ -22272,6 +22610,73 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.53989244, y: 0.15588109, z: 0.15828514}
   m_Center: {x: -1.0999502, y: 0.07667384, z: 8.136673}
+--- !u!1 &1702405344
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1702405345}
+  - component: {fileID: 1702405347}
+  - component: {fileID: 1702405346}
+  m_Layer: 0
+  m_Name: Nurse Collider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1702405345
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702405344}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1, y: 0, z: 1.32}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 165958043932773256}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1702405346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702405344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f8085678f100df4d919c34b76fe37b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _door: {fileID: 165958043932773258}
+--- !u!65 &1702405347
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702405344}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.67, y: 1, z: 1.09}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1705022788
 GameObject:
   m_ObjectHideFlags: 0
@@ -22754,6 +23159,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 422a5c0b9114b274da1912264bf3c96c, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
@@ -22764,6 +23170,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 578a49a2d2bbc1d4089682b2a3477415, type: 3}
   - {fileID: 8300000, guid: 28070f043f80fa74c86d7e477df7e5cb, type: 3}
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &1728588384
@@ -25509,12 +25916,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 25baac5844f10b04ab7b664e13af065b, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &1906501843
@@ -28213,6 +28622,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 59b804849d50d294daac53f23d7d4299, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
@@ -28223,6 +28633,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 578a49a2d2bbc1d4089682b2a3477415, type: 3}
   - {fileID: 8300000, guid: 28070f043f80fa74c86d7e477df7e5cb, type: 3}
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &2027629737
@@ -29021,12 +29432,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 935fc847facce514f8a27dc2f9cd7b23, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &2071319312
@@ -29510,12 +29923,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: 935fc847facce514f8a27dc2f9cd7b23, type: 2}
   _requiresKey: 0
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!1 &2141251321
@@ -29562,6 +29977,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1884716341}
     m_Modifications:
+    - target: {fileID: 6171263918004162812, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      propertyPath: _canBeOpenedByNurse
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7618732602075429618, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      propertyPath: _canBeOpenedByNurse
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8839392277912751668, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
       propertyPath: m_Name
       value: Porta Corredor Pacientes
@@ -29608,9 +30031,90 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4050278601233958177, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1702405345}
+    - targetCorrespondingSourceObject: {fileID: 4050278601233958177, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1486000142}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9108952268577873963, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 165958043932773255}
+    - targetCorrespondingSourceObject: {fileID: 8054388464577569202, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 165958043932773254}
   m_SourcePrefab: {fileID: 100100000, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+--- !u!1 &165958043932773252 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8054388464577569202, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+  m_PrefabInstance: {fileID: 165958043932773251}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &165958043932773253 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9108952268577873963, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+  m_PrefabInstance: {fileID: 165958043932773251}
+  m_PrefabAsset: {fileID: 0}
+--- !u!208 &165958043932773254
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165958043932773252}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.045000017, y: 1.14, z: 0.645}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.6, y: 0, z: 0}
+  m_TimeToStationary: 0.5
+--- !u!208 &165958043932773255
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165958043932773253}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.045000017, y: 1.14, z: 0.645}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.6, y: 0, z: 0}
+  m_TimeToStationary: 0.5
+--- !u!4 &165958043932773256 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4050278601233958177, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+  m_PrefabInstance: {fileID: 165958043932773251}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &165958043932773257 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6171263918004162812, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+  m_PrefabInstance: {fileID: 165958043932773251}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165958043932773252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d05f3e852f1a3345a2f9c3d1ff4a645, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &165958043932773258 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7618732602075429618, guid: 88fb6c70585840e41bea081bc8b8e1f7, type: 3}
+  m_PrefabInstance: {fileID: 165958043932773251}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 165958043932773253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d05f3e852f1a3345a2f9c3d1ff4a645, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &168094292040221900
 GameObject:
   m_ObjectHideFlags: 0
@@ -33158,12 +33662,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: bef60e0d826c10549aa2db36682d0a11, type: 2}
   _requiresKey: 1
+  _canBeOpenedByNurse: 0
   _isOpen: 0
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
   _doorSfx: []
   _lockedSounds: []
+  _navMeshObstacle: {fileID: 0}
   _doorMeshes: []
   _doorMesh: {fileID: 0}
 --- !u!224 &7664464716366308228

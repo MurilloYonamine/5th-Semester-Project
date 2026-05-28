@@ -2,6 +2,10 @@
 
 Sistema de missões baseado em tipos (enum) com factory pattern. Cada tipo de missão herda de `MissionBase` e define seu próprio comportamento.
 
+Current implementation note:
+- Mission completion and key pickup now trigger the full autosave flow.
+- `SavePoint` no longer participates in manual saving.
+
 ## Estrutura
 
 ```
@@ -155,7 +159,7 @@ public static IMission CreateMission(MissionDefinition definition) {
 
 ## Checkpoints (Save Points)
 
-Crie um GameObject com `SavePoint` component para permitir saves manual:
+Crie um GameObject com `SavePoint` component apenas como marcador de checkpoint legado:
 
 1. Crie GameObject (ex., `SavePointA`)
 2. Adicione componente `SavePoint`

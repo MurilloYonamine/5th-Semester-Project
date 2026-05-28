@@ -10,10 +10,6 @@ namespace FifthSemester.Gameplay.Map2 {
         [Header("Timeline")]
         [SerializeField] private PlayableDirector _allKeysCollectedTimeline;
 
-        [Header("Options")]
-        [Tooltip("Override auto-detected total keys. Use <= 0 to auto-detect.")]
-        [SerializeField] private int _requiredKeys = -1;
-
         private List<Map2KeyItem> _registeredKeys = new List<Map2KeyItem>();
         private IInventoryService<Item> _inventoryService;
         private IEventBus _eventBus;
@@ -62,7 +58,7 @@ namespace FifthSemester.Gameplay.Map2 {
                 if (items[i] is Map2KeyItem) keyCount++;
             }
 
-            int total = _requiredKeys > 0 ? _requiredKeys : _registeredKeys.Count;
+            int total = _registeredKeys.Count;
             if (total <= 0) return;
 
             if (keyCount >= total && _allKeysCollectedTimeline != null) {

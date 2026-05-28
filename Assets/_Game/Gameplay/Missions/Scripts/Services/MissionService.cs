@@ -3,16 +3,22 @@
 
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
+using FifthSemester.Gameplay.Inventory;
+using FifthSemester.Gameplay.Map2;
 using FifthSemester.Doors;
 using FifthSemester.Gameplay.Map;
+using FifthSemester.Player;
+using FifthSemester.Player.Components;
 
 namespace FifthSemester.Gameplay.Missions {
     public class MissionService : MonoBehaviour, IMissionService {
         private const float START_FADE_DURATION = 1f;
+        private const string AUTOSAVE_SLOT = "default";
         [SerializeField] private MissionSequenceSO _defaultSequence;
         [SerializeField] private AudioClip _missionCompleteSFX;
 
@@ -21,10 +27,14 @@ namespace FifthSemester.Gameplay.Missions {
         private ISaveService _saveService;
         private IAudioService _audioService;
         private IMapService _mapService;
+        private IInventoryService<Item> _inventoryService;
         private IMission _currentMission;
         private MissionSequenceSO _activeSequence;
         private int _sequenceIndex = -1;
         private MissionDefinition _currentDefinition;
+        private PlayerController _playerController;
+        private Coroutine _autosaveRoutine;
+        private bool _isAutosaving;
         public int CurrentIndex { get; private set; } = -1;
         private void Awake() {
             ServiceLocator.Register<IMissionService>(this);
@@ -33,15 +43,16 @@ namespace FifthSemester.Gameplay.Missions {
             _saveService = ServiceLocator.Get<ISaveService>();
             ServiceLocator.TryGet<IAudioService>(out _audioService);
             ServiceLocator.TryGet<IMapService>(out _mapService);
+            ServiceLocator.TryGet<IInventoryService<Item>>(out _inventoryService);
         }
 
         private void Start() {
-    #if UNITY_EDITOR
-                int startIndex = 0;
-    #else
-                SaveData saveData = _saveService?.LoadFromSlot("default");
-                int startIndex = saveData?.CurrentMissionIndex ?? 0;
-    #endif
+            _playerController = UnityEngine.Object.FindFirstObjectByType<PlayerController>();
+
+            _eventBus?.Subscribe<ItemPickedUpEvent>(OnItemPickedUp);
+
+            SaveData saveData = _saveService?.LoadFromSlot(AUTOSAVE_SLOT);
+            int startIndex = saveData?.CurrentMissionIndex ?? 0;
             if (_defaultSequence != null) {
                 StartSequence(_defaultSequence);
                 if (startIndex > 0) {
@@ -51,7 +62,20 @@ namespace FifthSemester.Gameplay.Missions {
         }
 
         private void OnDestroy() {
+            _eventBus?.Unsubscribe<ItemPickedUpEvent>(OnItemPickedUp);
             CleanupCurrentMission();
+        }
+
+        private void OnItemPickedUp(ItemPickedUpEvent evt) {
+            if (_isAutosaving || evt.ItemGameObject == null) {
+                return;
+            }
+
+            if (evt.ItemGameObject.GetComponent<Map2KeyItem>() == null) {
+                return;
+            }
+
+            RequestAutosave();
         }
 
         public void StartMission(MissionDefinition mission) {
@@ -147,25 +171,23 @@ namespace FifthSemester.Gameplay.Missions {
             if (_activeSequence != null && _activeSequence.Sequence != null) {
                 _sequenceIndex++;
                 if (_sequenceIndex >= _activeSequence.Sequence.Count) {
-                    Debug.Log("[MissionService] Sequence completed.");
-                    SaveGameState();
                     _activeSequence = null;
                     _sequenceIndex = -1;
                     CurrentIndex = -1;
                     _currentDefinition = null;
+                    RequestAutosave();
                     return;
                 }
 
-                SaveGameState();
                 SetCurrentMission(_sequenceIndex);
+                RequestAutosave();
                 return;
             }
 
-            Debug.Log("[MissionService] Standalone mission completed.");
-            SaveGameState();
             CleanupCurrentMission();
             CurrentIndex = -1;
             _currentDefinition = null;
+            RequestAutosave();
         }
 
         private void PlayMissionCompleteSFX() {
@@ -316,12 +338,88 @@ namespace FifthSemester.Gameplay.Missions {
             }
         }
 
-        private void SaveGameState() {
-            if (_saveService == null) return;
+        private void RequestAutosave() {
+            if (_isAutosaving || _saveService == null) {
+                return;
+            }
 
-            SaveData saveData = _saveService.LoadFromSlot("default") ?? new SaveData();
+            _autosaveRoutine = StartCoroutine(AutosaveRoutine());
+        }
+
+        private IEnumerator AutosaveRoutine() {
+            _isAutosaving = true;
+            _eventBus?.Publish(new AutosaveStartedEvent());
+
+            yield return new WaitForEndOfFrame();
+
+            SaveData saveData = _saveService.LoadFromSlot(AUTOSAVE_SLOT) ?? new SaveData();
+            PopulateSaveData(saveData);
+
+            yield return CaptureScreenshot(saveData);
+
+            _saveService.SaveToSlot(AUTOSAVE_SLOT, saveData);
+            _eventBus?.Publish(new AutosaveCompletedEvent());
+
+            _autosaveRoutine = null;
+            _isAutosaving = false;
+        }
+
+        private void PopulateSaveData(SaveData saveData) {
             saveData.CurrentMissionIndex = CurrentIndex;
-            _saveService.SaveToSlot("default", saveData);
+
+            if (_currentDefinition != null && !string.IsNullOrWhiteSpace(_currentDefinition.MissionId)) {
+                saveData.LastCheckpointId = _currentDefinition.MissionId;
+            }
+
+            PlayerController player = _playerController != null ? _playerController : UnityEngine.Object.FindFirstObjectByType<PlayerController>();
+            if (player != null) {
+                saveData.PlayerPosition = new Vector3Data(player.transform.position);
+                saveData.PlayerRotation = new QuaternionData(player.transform.rotation);
+
+                PlayerCamera playerCamera = player.PlayerCamera;
+                if (playerCamera != null) {
+                    Transform cameraTarget = playerCamera.GetCameraTarget();
+                    if (cameraTarget != null) {
+                        saveData.CameraTargetPosition = new Vector3Data(cameraTarget.position);
+                        saveData.CameraTargetRotation = new QuaternionData(cameraTarget.rotation);
+                    }
+                }
+            }
+
+            if (_inventoryService != null) {
+                IReadOnlyList<Item> items = _inventoryService.GetItems();
+                saveData.InventoryItemIds.Clear();
+
+                for (int i = 0; i < items.Count; i++) {
+                    if (items[i] is MonoBehaviour mono) {
+                        saveData.InventoryItemIds.Add(mono.gameObject.name);
+                    }
+                }
+            }
+        }
+
+        private IEnumerator CaptureScreenshot(SaveData saveData) {
+            Texture2D tex = null;
+
+            try {
+                tex = ScreenCapture.CaptureScreenshotAsTexture();
+                if (tex != null) {
+                    byte[] png = tex.EncodeToPNG();
+                    if (png != null && png.Length > 0) {
+                        saveData.ScreenshotBase64 = Convert.ToBase64String(png);
+                    }
+                }
+            }
+            catch {
+                // Keep the autosave even if screenshot capture fails.
+            }
+            finally {
+                if (tex != null) {
+                    Destroy(tex);
+                }
+            }
+
+            yield return null;
         }
 
         private void PlayStartFadeIfNeeded(MissionDefinition mission) {

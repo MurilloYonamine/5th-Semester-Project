@@ -173,23 +173,15 @@ namespace FifthSemester.Core.Events {
     }
 
     /// ============= Save Events =============
-    public readonly struct SaveConfirmationRequestedEvent {
-        public readonly string CheckpointId;
+    public readonly struct AutosaveStartedEvent {
+        public readonly string Message;
 
-        public SaveConfirmationRequestedEvent(string checkpointId) {
-            CheckpointId = checkpointId;
+        public AutosaveStartedEvent(string message = "Salvando o jogo...") {
+            Message = message;
         }
     }
 
-    public readonly struct SaveConfirmedEvent {
-        public readonly string CheckpointId;
-
-        public SaveConfirmedEvent(string checkpointId) {
-            CheckpointId = checkpointId;
-        }
-    }
-
-    public readonly struct SaveCancelledEvent { }
+    public readonly struct AutosaveCompletedEvent { }
 
     // ============= Settings Events =============
     public struct LanguageChangedEvent {

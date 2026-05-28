@@ -111,6 +111,18 @@ public readonly struct SprintInputEvent {
 }
 ```
 
+##### Save / Autosave Events
+
+These events are used by the autosave flow and the top-right save toast:
+
+```csharp
+public readonly struct AutosaveStartedEvent {
+    public readonly string Message;
+}
+
+public readonly struct AutosaveCompletedEvent { }
+```
+
 #### Event Design Pattern
 
 All events are **readonly structs**:

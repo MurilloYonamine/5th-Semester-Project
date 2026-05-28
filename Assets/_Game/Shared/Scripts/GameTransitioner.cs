@@ -6,6 +6,8 @@ using FifthSemester.Core.Services;
 public class GameTransitioner : MonoBehaviour {
     [SerializeField] private VideoPlayer _videoPlayer;
     [SerializeField] private GameObject _videoCanvas;
+    [Header("Menu Music")]
+    [SerializeField] private string _menuMusicFilePath = "Audio/menu_musica";
 
     private IFadeService _fadeService;
     private bool _isLoadingGame;
@@ -27,6 +29,12 @@ public class GameTransitioner : MonoBehaviour {
     }
 
     public void StartGameSequence() {
+        if (!string.IsNullOrWhiteSpace(_menuMusicFilePath)) {
+            IAudioService audioService = ServiceLocator.Get<IAudioService>();
+            audioService?.StopTrack(_menuMusicFilePath);
+        }
+
+
         _isLoadingGame = false;
         _videoPlayer.GetComponent<CanvasGroup>().alpha = 1f;
         _fadeService.FadeOut(1.0f, OnFadeOutCompleted);

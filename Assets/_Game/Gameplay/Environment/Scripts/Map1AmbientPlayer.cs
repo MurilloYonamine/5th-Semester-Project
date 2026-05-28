@@ -27,7 +27,7 @@ namespace FifthSemester.Gameplay.Environment {
         public void Play() {
             if (_ambientClip == null) return;
 
-            _audioService.PlayAmbience(_ambientClip, startingVolume: 1f, loop: true);
+            _audioService.PlayAmbience(_ambientClip, startingVolume: 1f, loop: _loop);
         }
 
         public void OnDestroy() {

@@ -176,7 +176,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 0
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: 1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -342,11 +342,12 @@ MonoBehaviour:
   _renderTexture: {fileID: 0}
   _previewCamera: {fileID: 7651178964331896510}
   _itemContainer: {fileID: 6975311678803456671}
-  _itemScale: {x: 1, y: 1, z: 1}
-  _itemRotation: {x: -15, y: 45, z: 0}
+  _itemScale: {x: 0.5, y: 0.5, z: 0.5}
+  _itemRotation: {x: 0, y: 45, z: 0}
+  _itemRotationOffset: {x: 0, y: 0, z: 0}
   _cameraDistance: 2
   _autoRotate: 1
-  _rotationSpeed: 70
+  _rotationSpeed: 30
   _backgroundColor: {r: 0.85882354, g: 0.85882354, b: 0.85882354, a: 0}
 --- !u!1 &947469426343173590
 GameObject:
@@ -396,7 +397,7 @@ Canvas:
   m_GameObject: {fileID: 947469426343173590}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 0
   m_Camera: {fileID: 0}
   m_PlaneDistance: 0.11
   m_PixelPerfect: 0
@@ -457,6 +458,8 @@ MonoBehaviour:
   _displayDuration: 3
   _highlightScale: 1.2
   _animationDuration: 1
+  _openSound: {fileID: 0}
+  _closeSound: {fileID: 0}
 --- !u!1 &1302842926930947068
 GameObject:
   m_ObjectHideFlags: 0
@@ -746,11 +749,12 @@ MonoBehaviour:
   _renderTexture: {fileID: 0}
   _previewCamera: {fileID: 3285108611721905338}
   _itemContainer: {fileID: 1022109710303498405}
-  _itemScale: {x: 1, y: 1, z: 1}
-  _itemRotation: {x: -15, y: 45, z: 0}
+  _itemScale: {x: 0.5, y: 0.5, z: 0.5}
+  _itemRotation: {x: 0, y: 45, z: 0}
+  _itemRotationOffset: {x: 0, y: 0, z: 0}
   _cameraDistance: 2
   _autoRotate: 1
-  _rotationSpeed: 70
+  _rotationSpeed: 30
   _backgroundColor: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 0}
 --- !u!1 &2253253102344390706
 GameObject:
@@ -1005,7 +1009,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 0
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: 1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -1131,11 +1135,12 @@ MonoBehaviour:
   _renderTexture: {fileID: 0}
   _previewCamera: {fileID: 5924326306104272541}
   _itemContainer: {fileID: 5541905135141650080}
-  _itemScale: {x: 1, y: 1, z: 1}
-  _itemRotation: {x: -15, y: 45, z: 0}
+  _itemScale: {x: 0.5, y: 0.5, z: 0.5}
+  _itemRotation: {x: 0, y: 45, z: 0}
+  _itemRotationOffset: {x: 0, y: 0, z: 0}
   _cameraDistance: 2
   _autoRotate: 1
-  _rotationSpeed: 70
+  _rotationSpeed: 30
   _backgroundColor: {r: 0.85882354, g: 0.85882354, b: 0.85882354, a: 0}
 --- !u!1 &4433940362618457580
 GameObject:
@@ -1243,7 +1248,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 0
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: 1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -1411,7 +1416,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 0
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: 1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -1976,11 +1981,12 @@ MonoBehaviour:
   _renderTexture: {fileID: 0}
   _previewCamera: {fileID: 1543898810910518819}
   _itemContainer: {fileID: 5140330843322636389}
-  _itemScale: {x: 1, y: 1, z: 1}
-  _itemRotation: {x: -15, y: 45, z: 0}
+  _itemScale: {x: 0.5, y: 0.5, z: 0.5}
+  _itemRotation: {x: 0, y: 45, z: 0}
+  _itemRotationOffset: {x: 0, y: 0, z: 0}
   _cameraDistance: 2
   _autoRotate: 1
-  _rotationSpeed: 70
+  _rotationSpeed: 30
   _backgroundColor: {r: 0.85882354, g: 0.85882354, b: 0.85882354, a: 0}
 --- !u!1 &7307880333973328195
 GameObject:
@@ -2118,11 +2124,12 @@ MonoBehaviour:
   _renderTexture: {fileID: 0}
   _previewCamera: {fileID: 100829408578744207}
   _itemContainer: {fileID: 761690985287354230}
-  _itemScale: {x: 1, y: 1, z: 1}
-  _itemRotation: {x: -15, y: 45, z: 0}
+  _itemScale: {x: 0.5, y: 0.5, z: 0.5}
+  _itemRotation: {x: 0, y: 45, z: 0}
+  _itemRotationOffset: {x: 0, y: 0, z: 0}
   _cameraDistance: 2
   _autoRotate: 1
-  _rotationSpeed: 70
+  _rotationSpeed: 30
   _backgroundColor: {r: 0.85882354, g: 0.85882354, b: 0.85882354, a: 0}
 --- !u!1 &8647952172990550999
 GameObject:
@@ -2260,11 +2267,12 @@ MonoBehaviour:
   _renderTexture: {fileID: 0}
   _previewCamera: {fileID: 6389079199464810242}
   _itemContainer: {fileID: 3645525400905733177}
-  _itemScale: {x: 1, y: 1, z: 1}
-  _itemRotation: {x: -15, y: 45, z: 0}
+  _itemScale: {x: 0.5, y: 0.5, z: 0.5}
+  _itemRotation: {x: 0, y: 45, z: 0}
+  _itemRotationOffset: {x: 0, y: 0, z: 0}
   _cameraDistance: 2
   _autoRotate: 1
-  _rotationSpeed: 70
+  _rotationSpeed: 30
   _backgroundColor: {r: 0.85882354, g: 0.85882354, b: 0.85882354, a: 0}
 --- !u!1 &8813156683239755270
 GameObject:
@@ -2372,7 +2380,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 0
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: 1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -2505,7 +2513,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 0
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: 1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1

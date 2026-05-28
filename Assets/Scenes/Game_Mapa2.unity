@@ -10908,7 +10908,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Arquivos
+  m_text: Diretor
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d50071cb6b8e8aa4c97948ce29509f6c, type: 2}
   m_sharedMaterial: {fileID: 4594112643080499420, guid: d50071cb6b8e8aa4c97948ce29509f6c, type: 2}
@@ -12891,8 +12891,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1051355628}
   serializedVersion: 2
-  m_LocalRotation: {x: 3.9969923e-16, y: 0.9961947, z: -0.08715578, w: 1.9712096e-15}
-  m_LocalPosition: {x: 0.017, y: 1.8010001, z: -68.123}
+  m_LocalRotation: {x: 0, y: -0.9795753, z: 0.0000000043946993, w: -0.20107795}
+  m_LocalPosition: {x: 8.46, y: 1.3199999, z: -52.18}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13008,7 +13008,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 5000
-  field of view: 60.000004
+  field of view: 40
   orthographic: 0
   orthographic size: 10
   m_Depth: 1
@@ -13590,7 +13590,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Diretor
+  m_text: 'Sala de
+
+    Arquvios'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: d50071cb6b8e8aa4c97948ce29509f6c, type: 2}
   m_sharedMaterial: {fileID: 4594112643080499420, guid: d50071cb6b8e8aa4c97948ce29509f6c, type: 2}

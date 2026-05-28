@@ -27,7 +27,7 @@ namespace FifthSemester.Gameplay.Menu {
 
         [Header("TMP Values")]
         [SerializeField] private TextMeshProUGUI _fullscreenValue;
-        private readonly List<int> _fpsValues = new() { 24, 30, 60, -1 };
+        private readonly List<int> _fpsValues = new() { 24, 30, -1 };
 
         protected override MenuScreen MenuScreenType => MenuScreen.Settings_Screen;
 

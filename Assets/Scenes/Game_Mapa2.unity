@@ -648,6 +648,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -1371,6 +1372,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -2211,6 +2213,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -2412,6 +2415,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx:
   - {fileID: 8300000, guid: 6ffecbd2b4bde2946a86c6fd95247b8c, type: 3}
   - {fileID: 8300000, guid: 41e05d20c802876479c6466672883c24, type: 3}
@@ -6370,6 +6374,51 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!1 &448491900
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 448491901}
+  - component: {fileID: 448491902}
+  m_Layer: 0
+  m_Name: Cheat Controller
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &448491901
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 448491900}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1601128337}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &448491902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 448491900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 332e8357292f82841910ac613bc20d44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cheatKey: 57
 --- !u!1 &450814205
 GameObject:
   m_ObjectHideFlags: 0
@@ -7872,6 +7921,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -8132,6 +8182,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -9003,6 +9054,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx:
   - {fileID: 8300000, guid: 6ffecbd2b4bde2946a86c6fd95247b8c, type: 3}
   - {fileID: 8300000, guid: 41e05d20c802876479c6466672883c24, type: 3}
@@ -13434,6 +13486,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -15395,6 +15448,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -15664,8 +15718,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1051355628}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.9795753, z: 0.0000000043946993, w: -0.20107795}
-  m_LocalPosition: {x: 8.46, y: 1.3199999, z: -52.18}
+  m_LocalRotation: {x: -0.015251542, y: 0.9767534, z: 0.07429971, w: 0.20049873}
+  m_LocalPosition: {x: 8.76, y: 1.3645574, z: -52.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -16211,6 +16265,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -16315,6 +16370,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -17929,6 +17985,18 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 807653978}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5893721133354534975, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1668777421}
+    - targetCorrespondingSourceObject: {fileID: 4894702831757788615, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1504440068}
+    - targetCorrespondingSourceObject: {fileID: 8097761999262238808, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1435490902}
+    - targetCorrespondingSourceObject: {fileID: 696080324270828887, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2046333771}
     - targetCorrespondingSourceObject: {fileID: 8484290164152410463, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 591570782}
@@ -18108,6 +18176,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -19164,6 +19233,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -19554,6 +19624,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -19746,6 +19817,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -20879,6 +20951,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 1
+  _slideAxis: {x: 0, y: 0, z: 1}
   _doorSfx:
   - {fileID: 8300000, guid: 5c093aa812ba5664b9dd9d7ee1d069fb, type: 3}
   _lockedSounds: []
@@ -21736,6 +21809,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -23474,6 +23548,32 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1435490898 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8097761999262238808, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
+  m_PrefabInstance: {fileID: 1139276475}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1435490902
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435490898}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5012984, y: 2.6110566, z: 0.07409668}
+  m_Center: {x: 3.4076102, y: 1.4944731, z: -71.62594}
 --- !u!4 &1455728585 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3013229957428415541, guid: c7f8701889dfc5a45b935ab71fee6843, type: 3}
@@ -23925,6 +24025,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -24674,6 +24775,32 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1499148909}
   m_CullTransparentMesh: 1
+--- !u!1 &1504440064 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4894702831757788615, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
+  m_PrefabInstance: {fileID: 1139276475}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1504440068
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1504440064}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.7170806, y: 2.7711713, z: 0.7940674}
+  m_Center: {x: 6.6093197, y: 1.3546427, z: -70.98521}
 --- !u!1 &1506242103
 GameObject:
   m_ObjectHideFlags: 0
@@ -24927,8 +25054,9 @@ MonoBehaviour:
   _isOpen: 0
   _openAngle: -90
   _slideDistance: 1.5
-  _speed: 5
+  _speed: 2.5
   _useDoubleDoor: 1
+  _slideAxis: {x: 0, y: 0, z: 1}
   _doorSfx:
   - {fileID: 8300000, guid: 5c093aa812ba5664b9dd9d7ee1d069fb, type: 3}
   _lockedSounds: []
@@ -25754,6 +25882,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -26366,6 +26495,7 @@ Transform:
   m_Children:
   - {fileID: 1383749562}
   - {fileID: 1874649305}
+  - {fileID: 448491901}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1607843923
@@ -27080,6 +27210,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -27124,6 +27255,32 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.1, y: 2.34, z: 1.4}
   m_Center: {x: 0, y: -0.12, z: 0.54}
+--- !u!1 &1668777417 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5893721133354534975, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
+  m_PrefabInstance: {fileID: 1139276475}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1668777421
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1668777417}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.717081, y: 2.7711713, z: 0.7940674}
+  m_Center: {x: 9.502567, y: 1.3546427, z: -70.98521}
 --- !u!1001 &1675611535
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28261,6 +28418,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx:
   - {fileID: 8300000, guid: 6ffecbd2b4bde2946a86c6fd95247b8c, type: 3}
   - {fileID: 8300000, guid: 41e05d20c802876479c6466672883c24, type: 3}
@@ -29931,7 +30089,7 @@ PlayableDirector:
   m_Enabled: 1
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: 78d8cbcb1ee84044d8f7332a21d89383, type: 2}
-  m_InitialState: 1
+  m_InitialState: 0
   m_WrapMode: 2
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
@@ -31721,6 +31879,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -33209,8 +33368,9 @@ MonoBehaviour:
   _isOpen: 0
   _openAngle: -90
   _slideDistance: 1.5
-  _speed: 5
+  _speed: 2.5
   _useDoubleDoor: 1
+  _slideAxis: {x: 0, y: 0, z: 1}
   _doorSfx:
   - {fileID: 8300000, guid: 5c093aa812ba5664b9dd9d7ee1d069fb, type: 3}
   _lockedSounds: []
@@ -34918,6 +35078,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx:
   - {fileID: 8300000, guid: 6ffecbd2b4bde2946a86c6fd95247b8c, type: 3}
   - {fileID: 8300000, guid: 41e05d20c802876479c6466672883c24, type: 3}
@@ -35114,6 +35275,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a66f4bfe844aa324aa8c214df5bf0c84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2046333767 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 696080324270828887, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
+  m_PrefabInstance: {fileID: 1139276475}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &2046333771
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046333767}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5012984, y: 2.6110566, z: 0.07409668}
+  m_Center: {x: -3.796734, y: 1.4944731, z: -71.59367}
 --- !u!1 &2048832304
 GameObject:
   m_ObjectHideFlags: 0
@@ -35594,6 +35781,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 1
+  _slideAxis: {x: 0, y: 0, z: 1}
   _doorSfx:
   - {fileID: 8300000, guid: 5c093aa812ba5664b9dd9d7ee1d069fb, type: 3}
   _lockedSounds: []
@@ -36218,6 +36406,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}
@@ -39948,6 +40137,7 @@ MonoBehaviour:
   _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _slideAxis: {x: 1, y: 0, z: 0}
   _doorSfx: []
   _lockedSounds: []
   _navMeshObstacle: {fileID: 0}

@@ -14,6 +14,8 @@ namespace FifthSemester.Gameplay.Save {
     public static class SaveLoader {
         private static SaveData _pending;
 
+        public static bool IsPendingSave => _pending != null;
+
         public static void SetPendingSave(SaveData data) {
             _pending = data;
             SceneManager.sceneLoaded -= OnSceneLoaded;

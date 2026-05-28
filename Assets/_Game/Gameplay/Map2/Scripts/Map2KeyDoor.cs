@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using FifthSemester.Core.Services;
+using FifthSemester.Core.States;
 using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Gameplay.Shared;
 using Sirenix.OdinInspector;
@@ -7,6 +9,7 @@ using TMPro;
 using ThirdParty.QuickOutline;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Video;
 using System;
 
 namespace FifthSemester.Gameplay.Map2 {
@@ -21,9 +24,16 @@ namespace FifthSemester.Gameplay.Map2 {
         [SerializeField] private bool _requiresKey = true;
         [SerializeField] private bool _canBeOpenedByNurse = false;
 
+        [Header("Final Ruim")]
+        [SerializeField] private bool _isBadEndingDoor = false;
+        [SerializeField] private Map2PasswordDeliveryPoint _passwordDeliveryPoint;
+        [SerializeField] private GameObject _badEndingPrefab;
+        [SerializeField] private float _fadeDuration = 2f;
+
         [Header("Configurações de Movimento")]
         [SerializeField] private bool _isOpen = false;
         [SerializeField] private float _openAngle = 90f;
+        [SerializeField] private float _slideDistance = 1.5f;
         [SerializeField] private float _speed = 5f;
         [SerializeField] private bool _useDoubleDoor;
 
@@ -42,12 +52,14 @@ namespace FifthSemester.Gameplay.Map2 {
         private IMap2KeyService _map2KeyService;
         private Quaternion[] _closedRotations;
         private Quaternion[] _targetRotations;
+        private Vector3[] _closedPositions;
+        private Vector3[] _targetPositions;
         private Transform[] _activeDoorMeshes;
         private IAudioService _audioService;
         private Color _unlockedColor;
         private string _defaultText;
 
-        public bool IsInteractable { get; private set; } = true;
+        public bool IsInteractable => true;
         public bool CanBeOpenedByNurse => _canBeOpenedByNurse;
 
         public string Id => gameObject.name;
@@ -79,7 +91,7 @@ namespace FifthSemester.Gameplay.Map2 {
         }
 
         private void Update() {
-            if (_activeDoorMeshes == null || _targetRotations == null) {
+            if (_activeDoorMeshes == null || _targetRotations == null || _targetPositions == null) {
                 return;
             }
 
@@ -90,10 +102,18 @@ namespace FifthSemester.Gameplay.Map2 {
                 }
 
                 doorMesh.localRotation = Quaternion.Lerp(doorMesh.localRotation, _targetRotations[i], Time.deltaTime * _speed);
+                doorMesh.localPosition = Vector3.Lerp(doorMesh.localPosition, _targetPositions[i], Time.deltaTime * _speed);
             }
         }
 
         public void Interact() {
+            if (_isBadEndingDoor && !HasDeliveryCutscenePlayed()) {
+                if (_map2KeyService != null && _map2KeyService.HasCollectedAllKeys) {
+                    TriggerBadEnding();
+                    return;
+                }
+            }
+
             if (_requiresKey && !HasRequiredKey()) {
                 PlayRandomLockedSound();
                 return;
@@ -184,11 +204,15 @@ namespace FifthSemester.Gameplay.Map2 {
             if (_activeDoorMeshes == null) {
                 _closedRotations = Array.Empty<Quaternion>();
                 _targetRotations = Array.Empty<Quaternion>();
+                _closedPositions = Array.Empty<Vector3>();
+                _targetPositions = Array.Empty<Vector3>();
                 return;
             }
 
             _closedRotations = new Quaternion[_activeDoorMeshes.Length];
             _targetRotations = new Quaternion[_activeDoorMeshes.Length];
+            _closedPositions = new Vector3[_activeDoorMeshes.Length];
+            _targetPositions = new Vector3[_activeDoorMeshes.Length];
 
             for (int i = 0; i < _activeDoorMeshes.Length; i++) {
                 Transform doorMesh = _activeDoorMeshes[i];
@@ -198,11 +222,13 @@ namespace FifthSemester.Gameplay.Map2 {
 
                 _closedRotations[i] = doorMesh.localRotation;
                 _targetRotations[i] = _closedRotations[i];
+                _closedPositions[i] = doorMesh.localPosition;
+                _targetPositions[i] = _closedPositions[i];
             }
         }
 
         private void UpdateTargetRotations() {
-            if (_activeDoorMeshes == null || _targetRotations == null) {
+            if (_activeDoorMeshes == null || _targetRotations == null || _targetPositions == null) {
                 return;
             }
 
@@ -212,11 +238,20 @@ namespace FifthSemester.Gameplay.Map2 {
                 }
 
                 if (_isOpen) {
-                    float direction = _useDoubleDoor && i % 2 == 1 ? -_openAngle : _openAngle;
-                    _targetRotations[i] = _closedRotations[i] * Quaternion.Euler(0f, direction, 0f);
+                    if (_useDoubleDoor) {
+                        float slideDirection = i % 2 == 0 ? -_slideDistance : _slideDistance;
+                        _targetPositions[i] = _closedPositions[i] + new Vector3(slideDirection, 0f, 0f);
+                        _targetRotations[i] = _closedRotations[i];
+                    }
+                    else {
+                        float direction = _openAngle;
+                        _targetRotations[i] = _closedRotations[i] * Quaternion.Euler(0f, direction, 0f);
+                        _targetPositions[i] = _closedPositions[i];
+                    }
                 }
                 else {
                     _targetRotations[i] = _closedRotations[i];
+                    _targetPositions[i] = _closedPositions[i];
                 }
             }
         }
@@ -232,6 +267,10 @@ namespace FifthSemester.Gameplay.Map2 {
         }
 
         private bool IsDoorUnlocked() {
+            if (_isBadEndingDoor && !HasDeliveryCutscenePlayed()) {
+                return false;
+            }
+
             if (!_requiresKey) {
                 return true;
             }
@@ -241,6 +280,10 @@ namespace FifthSemester.Gameplay.Map2 {
             }
 
             return HasRequiredKey();
+        }
+
+        private bool HasDeliveryCutscenePlayed() {
+            return _passwordDeliveryPoint != null && _passwordDeliveryPoint.HasPlayedDeliveryCutscene;
         }
 
         private void PlayDoorSound() {
@@ -271,6 +314,57 @@ namespace FifthSemester.Gameplay.Map2 {
             int idx = UnityEngine.Random.Range(0, _lockedSounds.Length);
             AudioClip clip = _lockedSounds[idx];
             if (clip != null) _audioService.PlaySFX(clip);
+        }
+
+        private void TriggerBadEnding() {
+            if (_badEndingPrefab == null) {
+                Debug.LogError("[Map2KeyDoor] Prefab de Final Ruim não configurado!");
+                return;
+            }
+
+            if (ServiceLocator.TryGet<IGameStateService>(out var gameStateService)) {
+                gameStateService.ChangeState(GameState.Cutscene);
+            }
+
+            GameObject instance = Instantiate(_badEndingPrefab);
+            VideoPlayer videoPlayer = instance.GetComponentInChildren<VideoPlayer>();
+
+            if (videoPlayer != null) {
+                StartCoroutine(PlayBadEndingVideo(videoPlayer, instance));
+            }
+            else {
+                Debug.LogError("[Map2KeyDoor] Prefab de Final Ruim não contém um VideoPlayer!");
+                LoadMainMenu();
+            }
+        }
+
+        private IEnumerator PlayBadEndingVideo(VideoPlayer videoPlayer, GameObject instance) {
+            yield return null;
+
+            bool videoFinished = false;
+            videoPlayer.loopPointReached += (vp) => {
+                videoFinished = true;
+            };
+
+            videoPlayer.Play();
+
+            yield return new WaitUntil(() => videoFinished);
+
+            if (ServiceLocator.TryGet<IFadeService>(out var fadeService)) {
+                bool fadeComplete = false;
+                fadeService.FadeOut(_fadeDuration, () => fadeComplete = true);
+                yield return new WaitUntil(() => fadeComplete);
+            }
+            else {
+                yield return new WaitForSeconds(_fadeDuration);
+            }
+
+            Destroy(instance);
+            LoadMainMenu();
+        }
+
+        private void LoadMainMenu() {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
         }
     }
 }

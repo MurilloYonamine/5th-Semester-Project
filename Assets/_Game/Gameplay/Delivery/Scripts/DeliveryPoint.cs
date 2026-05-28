@@ -38,6 +38,8 @@ namespace FifthSemester.Gameplay.Interactables {
         private DialogueTrigger _dialogueTrigger;
         private bool _isCompleted = false;
 
+        public bool HasPlayedDeliveryCutscene { get; private set; }
+
         public bool IsInteractable => !_isCompleted;
 
         private Outline _outline;
@@ -127,6 +129,7 @@ namespace FifthSemester.Gameplay.Interactables {
                 return;
             }
 
+            HasPlayedDeliveryCutscene = true;
             _dialogueTrigger.Interact();
         }
     }

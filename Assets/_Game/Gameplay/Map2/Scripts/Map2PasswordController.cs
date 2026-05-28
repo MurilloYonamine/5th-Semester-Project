@@ -1,4 +1,5 @@
 using UnityEngine;
+using FifthSemester.Gameplay.Save;
 
 namespace FifthSemester.Gameplay.Map2 {
     public class Map2PasswordController : MonoBehaviour {
@@ -20,10 +21,10 @@ namespace FifthSemester.Gameplay.Map2 {
         public bool IsComplete => _state != null && _state.IsComplete;
 
         private void Awake() {
-#if UNITY_EDITOR
-            PlayerPrefs.DeleteKey(_saveKey);
-            PlayerPrefs.Save();
-#endif
+            if (!SaveLoader.IsPendingSave) {
+                PlayerPrefs.DeleteKey(_saveKey);
+                PlayerPrefs.Save();
+            }
             _state = Map2PasswordState.LoadOrCreate(_saveKey, _targetCode);
         }
 

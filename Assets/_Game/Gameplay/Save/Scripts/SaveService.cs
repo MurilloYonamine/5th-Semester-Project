@@ -19,6 +19,15 @@ namespace FifthSemester.Gameplay.Save{
             if (data == null) return;
 
             data.Timestamp = DateTime.UtcNow.Ticks / 10000000;
+
+            string activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            if (activeScene != "MainMenu") {
+                data.SceneName = activeScene;
+            }
+            else if (string.IsNullOrEmpty(data.SceneName)) {
+                data.SceneName = "Game";
+            }
+
             string json = JsonUtility.ToJson(data);
             
             PlayerPrefs.SetString($"{SAVE_PREFIX}{slotId}", json);
@@ -67,6 +76,10 @@ namespace FifthSemester.Gameplay.Save{
         private static SaveData Normalize(SaveData data) {
             if (data == null) {
                 return null;
+            }
+
+            if (string.IsNullOrEmpty(data.SceneName)) {
+                data.SceneName = "Game";
             }
 
             data.MissionProgress ??= new Dictionary<string, string>();

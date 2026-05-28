@@ -43,6 +43,8 @@ Interactive location where player delivers items.
 
 If the same GameObject also has a `DialogueTrigger`, the delivery point can forward the interaction to it after a successful delivery or when the delivery is already completed.
 
+`DeliveryPoint` also exposes whether that delivery cutscene has already played, so other systems can react only after the cutscene starts.
+
 ```csharp
 public class DeliveryPoint : MonoBehaviour, IInteractable {
     [SerializeField] private int _objectiveId;

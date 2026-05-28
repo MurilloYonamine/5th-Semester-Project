@@ -30,6 +30,8 @@ namespace FifthSemester.Gameplay.Map2 {
         private bool _isCompleted;
         private bool _hasPlayedDirector;
 
+        public bool HasPlayedDeliveryCutscene => _hasPlayedDirector;
+
         public bool IsInteractable => !_isCompleted;
 
         private void Awake() {

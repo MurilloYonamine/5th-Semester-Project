@@ -30,7 +30,7 @@ MonoBehaviour:
   - Paciente_A
   - Paciente_B
   - Paciente_C
-  - Paciente_S
+  - Paciente_P
   - Paciente_E
   PersistProgress: 1
   DebugSetupEvents: []
@@ -38,9 +38,13 @@ MonoBehaviour:
   MapActions:
   - Type: 4
     TargetDoor: 0
-    DoorsToKeepUnlocked: 080000001100000012000000130000001400000015000000
+    DoorsToKeepUnlocked: 08000000
     TargetObjectId: 
   - Type: 1
     TargetDoor: 0
     DoorsToKeepUnlocked: 
     TargetObjectId: M05_Interact
+  - Type: 2
+    TargetDoor: 20
+    DoorsToKeepUnlocked: 
+    TargetObjectId: 

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1351584299525684218
+--- !u!1 &8337452956948628789
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,41 +8,41 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2142121715603365305}
-  - component: {fileID: 5204764960877252145}
-  - component: {fileID: 2831352358087272242}
-  - component: {fileID: 7006441170196195215}
-  - component: {fileID: 5051134258594071275}
+  - component: {fileID: 5118494835723153391}
+  - component: {fileID: 8411299268696018449}
+  - component: {fileID: 3563961702041219551}
+  - component: {fileID: 2943747396455204901}
+  - component: {fileID: 1061417802401295455}
   m_Layer: 8
-  m_Name: Patient A
+  m_Name: Patient P
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2142121715603365305
+--- !u!4 &5118494835723153391
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1351584299525684218}
+  m_GameObject: {fileID: 8337452956948628789}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 10.3, y: 0, z: -37.18}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 12.417, y: 0.131, z: -51.67}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 2710501277314963314}
+  - {fileID: 508342607652337674}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
---- !u!114 &5204764960877252145
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!114 &8411299268696018449
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1351584299525684218}
+  m_GameObject: {fileID: 8337452956948628789}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
@@ -54,31 +54,31 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
---- !u!114 &2831352358087272242
+--- !u!114 &3563961702041219551
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1351584299525684218}
+  m_GameObject: {fileID: 8337452956948628789}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3b35c2b46c7a50f4b933f48d4b5f0756, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _interactionHint: {fileID: 0}
-  <Id>k__BackingField: Paciente_A
+  <Id>k__BackingField: Paciente_P
   _dialogueFiles:
-    Portuguese: {fileID: 4900000, guid: 0791c24e35de69b4a9959ffcddf6d4e8, type: 3}
-    English: {fileID: 4900000, guid: b89752f3359eccd48af1e0a6e0446637, type: 3}
+    Portuguese: {fileID: 4900000, guid: 53baeed3161bed340ba4ea869d371145, type: 3}
+    English: {fileID: 4900000, guid: 0666c369621073c40a9447a0c388a920, type: 3}
   _director: {fileID: 0}
---- !u!136 &7006441170196195215
+--- !u!136 &2943747396455204901
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1351584299525684218}
+  m_GameObject: {fileID: 8337452956948628789}
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -95,19 +95,19 @@ CapsuleCollider:
   m_Height: 1.7
   m_Direction: 1
   m_Center: {x: 0, y: 0.83, z: -0.01}
---- !u!114 &5051134258594071275
+--- !u!114 &1061417802401295455
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1351584299525684218}
+  m_GameObject: {fileID: 8337452956948628789}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7e26a6eec34c1a14689a09a94a6dd2e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Id>k__BackingField: Paciente_A
+  <Id>k__BackingField: Paciente_P
   _requiredItemId: Remedio
   _consumeItemOnDelivery: 1
   _interactionPromptText: {fileID: 0}
@@ -115,13 +115,13 @@ MonoBehaviour:
   _talkPromptText: conversar
   _successSound: {fileID: 0}
   _failureSound: {fileID: 0}
---- !u!1001 &2456462841425997977
+--- !u!1001 &38077831291166689
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 2142121715603365305}
+    m_TransformParent: {fileID: 5118494835723153391}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 64e56cc6ceb372f47b5a2bb4f5826a58, type: 3}
       propertyPath: m_LocalPosition.x
@@ -180,8 +180,8 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64e56cc6ceb372f47b5a2bb4f5826a58, type: 3}
---- !u!4 &2710501277314963314 stripped
+--- !u!4 &508342607652337674 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 64e56cc6ceb372f47b5a2bb4f5826a58, type: 3}
-  m_PrefabInstance: {fileID: 2456462841425997977}
+  m_PrefabInstance: {fileID: 38077831291166689}
   m_PrefabAsset: {fileID: 0}

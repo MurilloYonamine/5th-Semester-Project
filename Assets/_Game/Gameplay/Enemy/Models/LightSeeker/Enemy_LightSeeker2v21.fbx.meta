@@ -59,7 +59,21 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.49843994
+        functionName: PlayLand
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.49887824
+        functionName: PlayJump
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 2d4307b81c542284d8edfcbfce28e64f, type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
@@ -146,7 +160,14 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0.41167837
+        functionName: PlayLanding
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 2d4307b81c542284d8edfcbfce28e64f, type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

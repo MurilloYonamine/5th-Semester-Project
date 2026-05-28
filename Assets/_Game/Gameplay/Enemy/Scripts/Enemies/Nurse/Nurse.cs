@@ -42,7 +42,7 @@ namespace FifthSemester.Gameplay.Enemy {
         [SerializeField, Range(0.1f, 5f)] private float _jumpscareTriggerDistance = 1.25f;
 
         private BehaviourTree _tree;
-        private Blackboard _blackboard;
+            private Blackboard _blackboard;
         private NavMeshAgent _agent;
         private Animator _animator;
         private IAudioService _audioService;
@@ -63,12 +63,19 @@ namespace FifthSemester.Gameplay.Enemy {
         [SerializeField] private float _observedSpeed = 0.6f;
         [SerializeField] private float _speedLerp = 5f;
         private bool _isObserved = false;
-        private bool _isLockedByKey = true;
+        private bool _isLockedByKey = false;
+        private bool _isAggressive = false;
         private IInventoryService<Item> _inventoryService;
 
         private void Awake() {
             _agent = GetComponent<NavMeshAgent>();
             _animator = GetComponentInChildren<Animator>();
+
+            // Try to cache inventory service early so RefreshUnlockState (called in OnEnable)
+            // has a chance to validate lock state before first Update.
+            ServiceLocator.TryGet<IInventoryService<Item>>(out _inventoryService);
+
+            Debug.Log($"[Nurse] Awake: agent={( _agent!=null )}, animator={( _animator!=null )}, inventoryCached={( _inventoryService!=null )}");
 
             if(_target == null)
                 _target = GameObject.FindGameObjectWithTag("Player")?.transform;
@@ -91,12 +98,16 @@ namespace FifthSemester.Gameplay.Enemy {
             ServiceLocator.TryGet<IAudioService>(out _audioService);
             BuildBehaviourTree();
             RefreshUnlockState();
+
+            Debug.Log($"[Nurse] Start: isLockedByKey={_isLockedByKey}, isAggressive={_isAggressive}");
         }
 
         private void OnEnable() {
             IEventBus eventBus = ServiceLocator.Get<IEventBus>();
             eventBus?.Subscribe<InventoryItemAddedEvent>(OnInventoryItemAdded);
             RefreshUnlockState();
+
+            Debug.Log("[Nurse] OnEnable: subscribed to InventoryItemAddedEvent and refreshed lock state");
         }
 
         private void OnDisable() {
@@ -118,9 +129,13 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void BuildBehaviourTree() {
+            RebuildBehaviourTree(includeChase: _isAggressive);
+        }
+
+        private void RebuildBehaviourTree(bool includeChase) {
             var root = new Selector("NurseRootBehavior");
 
-            if (!_isPhase3Passive) {
+            if (includeChase && !_isPhase3Passive) {
                 var chaseSequence = new Sequence("AggressiveChase");
                 chaseSequence.AddChild(new ActionChase(_blackboard, "Chase Player"));
                 chaseSequence.AddChild(new ActionPlayJumpscare(_blackboard, "Jumpscare"));
@@ -171,69 +186,110 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void OnInventoryItemAdded(InventoryItemAddedEvent evt) {
+            Debug.Log($"[Nurse] OnInventoryItemAdded: item added event received: {evt}");
             RefreshUnlockState();
         }
 
         private void RefreshUnlockState() {
+            Debug.Log("[Nurse] RefreshUnlockState: checking inventory for unlock key");
             if (_unlockKeyDefinition == null) {
                 _isLockedByKey = false;
+                _isAggressive = false;
+                Debug.Log("[Nurse] No unlock key defined - nurse remains unlocked and passive.");
                 return;
             }
-
             if (_inventoryService == null) {
                 ServiceLocator.TryGet<IInventoryService<Item>>(out _inventoryService);
             }
 
             if (_inventoryService == null) {
-                _isLockedByKey = true;
+                Debug.Log("[Nurse] Inventory service not available yet - nurse remains unlocked and passive.");
+                _isLockedByKey = false;
+                _isAggressive = false;
                 return;
             }
 
             IReadOnlyList<Item> items = _inventoryService.GetItems();
             if (items == null) {
-                _isLockedByKey = true;
+                Debug.Log("[Nurse] Inventory returned null items - nurse remains unlocked and passive.");
+                _isLockedByKey = false;
+                _isAggressive = false;
                 return;
             }
 
             for (int i = 0; i < items.Count; i++) {
                 if (items[i] is Map2KeyItem keyItem && keyItem.KeyDefinition == _unlockKeyDefinition) {
+                    // When the player obtains the key, nurse becomes aggressive (chase + jumpscare)
+                    _isAggressive = true;
                     _isLockedByKey = false;
+                    Debug.Log("[Nurse] Unlock key found in inventory - enabling aggression.");
+                    RebuildBehaviourTree(includeChase: true);
+                    Debug.Log("[Nurse] Behaviour tree rebuilt to include chase sequence.");
                     return;
                 }
             }
 
-            _isLockedByKey = true;
+            // Key not found - remain unlocked (patrolling), not aggressive
+            _isLockedByKey = false;
+            _isAggressive = false;
+            Debug.Log("[Nurse] Unlock key not found - nurse remains unlocked and passive.");
         }
 
         private void CheckIfObservedByPlayer() {
             if (_playerCamera == null || _eyeTransform == null) return;
-
             Vector3 viewportPoint = _playerCamera.WorldToViewportPoint(_eyeTransform.position);
             bool inViewport = viewportPoint.x > 0 && viewportPoint.x < 1 &&
                               viewportPoint.y > 0 && viewportPoint.y < 1 &&
                               viewportPoint.z > 0;
 
             if (inViewport) {
-                Vector3 dirToCamera = (_playerCamera.transform.position - _eyeTransform.position).normalized;
-                float distToCamera = Vector3.Distance(_playerCamera.transform.position, _eyeTransform.position);
+                Vector3 origin = _eyeTransform.position;
+                Vector3 dirToCamera = (_playerCamera.transform.position - origin).normalized;
+                float distToCamera = Vector3.Distance(_playerCamera.transform.position, origin);
 
-                if (!Physics.Raycast(_eyeTransform.position, dirToCamera, distToCamera, _obstacleMask)) {
-                    _isObserved = true;
+                RaycastHit hitInfo;
 
-                    _blackboard.SetData(IS_FROZEN_KEY, true);
-                    _blackboard.SetData(IS_OBSERVED_KEY, true);
+                // Primary check: raycast against configured obstacle mask
+                bool blockedByObstacle = Physics.Raycast(origin, dirToCamera, out hitInfo, distToCamera, _obstacleMask);
 
-                    _lastObservedState = true;
-
+                if (blockedByObstacle) {
+                    Debug.Log($"[Nurse] Vision blocked by {hitInfo.collider.gameObject.name} (layer={hitInfo.collider.gameObject.layer})");
+                    // obstructed -> not observed
+                    _isObserved = false;
+                    _blackboard.SetData(IS_FROZEN_KEY, false);
+                    _blackboard.SetData(IS_OBSERVED_KEY, false);
+                    if (_lastObservedState) Debug.Log("[Nurse] Player no longer observing nurse - resuming behavior.");
+                    _lastObservedState = false;
                     return;
                 }
+
+                // Fallback: spherecast to catch thin obstacles or gaps the ray misses
+                float sphereRadius = 0.18f;
+                bool sphereBlocked = Physics.SphereCast(origin, sphereRadius, dirToCamera, out hitInfo, distToCamera, _obstacleMask);
+                if (sphereBlocked) {
+                    Debug.Log($"[Nurse] Vision spherecast blocked by {hitInfo.collider.gameObject.name} (layer={hitInfo.collider.gameObject.layer})");
+                    _isObserved = false;
+                    _blackboard.SetData(IS_FROZEN_KEY, false);
+                    _blackboard.SetData(IS_OBSERVED_KEY, false);
+                    if (_lastObservedState) Debug.Log("[Nurse] Player no longer observing nurse - resuming behavior.");
+                    _lastObservedState = false;
+                    return;
+                }
+
+                // No obstacle detected -> observed
+                _isObserved = true;
+                _blackboard.SetData(IS_FROZEN_KEY, true);
+                _blackboard.SetData(IS_OBSERVED_KEY, true);
+                if (!_lastObservedState) Debug.Log("[Nurse] Player observed nurse - freezing behavior.");
+                _lastObservedState = true;
+
+                return;
             }
 
             _isObserved = false;
-
             _blackboard.SetData(IS_FROZEN_KEY, false);
             _blackboard.SetData(IS_OBSERVED_KEY, false);
-
+            if (_lastObservedState) Debug.Log("[Nurse] Player no longer observing nurse - resuming behavior.");
             _lastObservedState = false;
         }
 

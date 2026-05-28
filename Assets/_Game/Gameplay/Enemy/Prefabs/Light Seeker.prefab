@@ -144,6 +144,7 @@ GameObject:
   - component: {fileID: 8595484458579838916}
   - component: {fileID: 5416403591508183365}
   - component: {fileID: 3141244742309649990}
+  - component: {fileID: 8100353860975445350}
   m_Layer: 7
   m_Name: Light Seeker
   m_TagString: Enemy
@@ -291,6 +292,24 @@ CapsuleCollider:
   m_Height: 2.93
   m_Direction: 1
   m_Center: {x: 0, y: 1.32, z: 0}
+--- !u!114 &8100353860975445350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3525025947299964894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d4307b81c542284d8edfcbfce28e64f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _jumpClips:
+  - {fileID: 8300000, guid: 63be1b0feed84e64e84a159370f04858, type: 3}
+  _landingClips:
+  - {fileID: 8300000, guid: 244514304d5cc0540b6f62c936c7e0c8, type: 3}
+  _jumpVolume: 1
+  _landingVolume: 1
 --- !u!1 &4816037925642230659
 GameObject:
   m_ObjectHideFlags: 0

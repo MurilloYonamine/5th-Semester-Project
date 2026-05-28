@@ -16,14 +16,15 @@ namespace FifthSemester.Gameplay.Enemy {
         [SerializeField] private float flashlightPursuitSpeed = 4f;
 
         private NavMeshAgent _agent;
-        private MonoBehaviour _nurseComponent;
+        [SerializeField] private Nurse _nurseComponent;
         private float _baseSpeed;
         private IEventBus _eventBus;
 
         private void Awake() {
-            _agent = GetComponent<NavMeshAgent>();
-            _nurseComponent = GetComponent<MonoBehaviour>();
+            _agent = _nurseComponent.GetComponent<NavMeshAgent>();
             _baseSpeed = _agent != null ? _agent.speed : 3f;
+
+            Debug.Log($"[NurseDirector] Awake: agent={( _agent!=null )}, baseSpeed={_baseSpeed}");
         }
 
         private void OnEnable() {
@@ -31,6 +32,8 @@ namespace FifthSemester.Gameplay.Enemy {
             _eventBus?.Subscribe<PlayerSprintChangedEvent>(OnPlayerSprintChanged);
             _eventBus?.Subscribe<FlashlightTargetedEvent>(OnFlashlightTargeted);
             _eventBus?.Subscribe<PlayerEnteredRoomEvent>(OnPlayerEnteredRoom);
+
+            Debug.Log("[NurseDirector] OnEnable: subscribed to player sprint/flashlight/room events");
         }
 
         private void OnDisable() {
@@ -49,9 +52,11 @@ namespace FifthSemester.Gameplay.Enemy {
 
             if (evt.IsSprinting) {
                 _agent.speed = _baseSpeed * sprintMultiplier;
+                Debug.Log($"[NurseDirector] Player sprinting - set agent speed to {_agent.speed}");
             }
             else {
                 _agent.speed = _baseSpeed;
+                Debug.Log($"[NurseDirector] Player stopped sprinting - reset agent speed to {_agent.speed}");
             }
         }
 
@@ -60,9 +65,11 @@ namespace FifthSemester.Gameplay.Enemy {
 
             if (evt.Target == gameObject && evt.IsIlluminated) {
                 _agent.speed = flashlightPursuitSpeed;
+                Debug.Log($"[NurseDirector] Flashlight targeted this - set speed to {flashlightPursuitSpeed}");
             }
             else if (evt.Target == gameObject && !evt.IsIlluminated) {
                 _agent.speed = _baseSpeed;
+                Debug.Log($"[NurseDirector] Flashlight no longer on this - reset speed to {_baseSpeed}");
             }
         }
 
@@ -82,6 +89,8 @@ namespace FifthSemester.Gameplay.Enemy {
                 _agent.SetDestination(desired);
             }
 
+            Debug.Log($"[NurseDirector] Player entered room - retreating to {_agent.destination}");
+
             // desliga temporariamente o componente Nurse (se existir) para evitar que a BT sobrescreva o destino
             var nurse = GetComponent<Nurse>();
             if (nurse != null) {
@@ -91,8 +100,10 @@ namespace FifthSemester.Gameplay.Enemy {
 
         private IEnumerator TemporarilyDisableNurse(Nurse nurse) {
             nurse.enabled = false;
+            Debug.Log("[NurseDirector] Temporarily disabled Nurse component for retreat");
             yield return new WaitForSeconds(retreatDuration);
             if (nurse != null) nurse.enabled = true;
+            Debug.Log("[NurseDirector] Re-enabled Nurse component after retreat");
             // restaura velocidade base
             if (_agent != null) _agent.speed = _baseSpeed;
         }

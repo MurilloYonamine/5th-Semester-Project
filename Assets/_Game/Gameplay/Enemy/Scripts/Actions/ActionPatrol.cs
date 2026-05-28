@@ -25,7 +25,6 @@ namespace FifthSemester.Gameplay.Enemy {
         private ActionWait _waitNode;
         private float _waitTime = 1f;
 
-        // --- Configurações da Patrulha ---
         private float _roamRadius = 15f; // Quão longe ele pode ir na patrulha aleatória
         private float _approachDistance = 8f; // Quantos metros ele anda na direção do jogador quando sorteado
         private int _approachThreshold = 50; // Chance (0 a 100). Ex: < 50 Aleatório, >= 50 Vai pro Player.

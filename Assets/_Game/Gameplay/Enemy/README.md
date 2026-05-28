@@ -35,6 +35,7 @@ EnemyController.cs (base class)
 Specific Enemies
 ├── LightSeeker
 ├── PacientEnemy
+├── Nurse
 └── ...
 ```
 
@@ -216,6 +217,12 @@ public class LightSeeker : EnemyController {
 ```
 
 The chase action reads the white noise clip and max volume from the blackboard, then raises the loop volume as the player gets closer.
+
+---
+
+### `Scripts/Enemies/Nurse/Nurse.cs`
+
+The Nurse can remain blocked until a configured `Map2KeyDefinitionSO` is collected. After the matching key enters the inventory, the AI is released and the existing behaviour tree takes over.
 
 ---
 

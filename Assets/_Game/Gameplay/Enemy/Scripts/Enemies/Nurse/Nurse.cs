@@ -4,6 +4,9 @@
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Framework.BehaviourTrees;
+using FifthSemester.Gameplay.Inventory;
+using FifthSemester.Gameplay.Map2;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Playables;
@@ -35,6 +38,9 @@ namespace FifthSemester.Gameplay.Enemy {
         [SerializeField, Range(0f, 15f)] private float _rotationSpeed = 8f;
         [SerializeField] private float _patrolWaitTime = 2f;
 
+        [Header("Jumpscare Settings")]
+        [SerializeField, Range(0.1f, 5f)] private float _jumpscareTriggerDistance = 1.25f;
+
         private BehaviourTree _tree;
         private Blackboard _blackboard;
         private NavMeshAgent _agent;
@@ -47,6 +53,9 @@ namespace FifthSemester.Gameplay.Enemy {
         [Header("Timeline")]
         [SerializeField] private PlayableDirector _jumpscareDirector;
 
+        [Header("Unlock Gate")]
+        [SerializeField] private Map2KeyDefinitionSO _unlockKeyDefinition;
+
         private readonly int _speedHash = Animator.StringToHash("Speed");
 
         [Header("Observation Speed Settings")]
@@ -54,6 +63,8 @@ namespace FifthSemester.Gameplay.Enemy {
         [SerializeField] private float _observedSpeed = 0.6f;
         [SerializeField] private float _speedLerp = 5f;
         private bool _isObserved = false;
+        private bool _isLockedByKey = true;
+        private IInventoryService<Item> _inventoryService;
 
         private void Awake() {
             _agent = GetComponent<NavMeshAgent>();
@@ -70,14 +81,29 @@ namespace FifthSemester.Gameplay.Enemy {
 
             _agent.speed = _normalSpeed;
             _agent.updateRotation = false;
+            _agent.stoppingDistance = _jumpscareTriggerDistance;
 
             SetupBlackboard();
         }
         private void Start() {
             if (_playerCamera == null) _playerCamera = Camera.main;
+            ServiceLocator.TryGet<IInventoryService<Item>>(out _inventoryService);
             ServiceLocator.TryGet<IAudioService>(out _audioService);
             BuildBehaviourTree();
+            RefreshUnlockState();
         }
+
+        private void OnEnable() {
+            IEventBus eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Subscribe<InventoryItemAddedEvent>(OnInventoryItemAdded);
+            RefreshUnlockState();
+        }
+
+        private void OnDisable() {
+            IEventBus eventBus = ServiceLocator.Get<IEventBus>();
+            eventBus?.Unsubscribe<InventoryItemAddedEvent>(OnInventoryItemAdded);
+        }
+
         private void SetupBlackboard() {
             _blackboard = new Blackboard();
             _blackboard.SetData(PLAYER_TARGET_KEY, _target);
@@ -111,6 +137,15 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void Update() {
+            if (_isLockedByKey) {
+                if (_agent != null && _agent.isOnNavMesh) {
+                    _agent.isStopped = true;
+                    _agent.ResetPath();
+                }
+
+                return;
+            }
+
             bool isCutsceneActive = _blackboard != null && _blackboard.HasKey(CUTSCENE_ACTIVE_KEY) && _blackboard.GetData<bool>(CUTSCENE_ACTIVE_KEY);
 
             if (isCutsceneActive) {
@@ -133,6 +168,41 @@ namespace FifthSemester.Gameplay.Enemy {
                 _animator.SetFloat(_speedHash, _agent.velocity.magnitude);
             }
 
+        }
+
+        private void OnInventoryItemAdded(InventoryItemAddedEvent evt) {
+            RefreshUnlockState();
+        }
+
+        private void RefreshUnlockState() {
+            if (_unlockKeyDefinition == null) {
+                _isLockedByKey = false;
+                return;
+            }
+
+            if (_inventoryService == null) {
+                ServiceLocator.TryGet<IInventoryService<Item>>(out _inventoryService);
+            }
+
+            if (_inventoryService == null) {
+                _isLockedByKey = true;
+                return;
+            }
+
+            IReadOnlyList<Item> items = _inventoryService.GetItems();
+            if (items == null) {
+                _isLockedByKey = true;
+                return;
+            }
+
+            for (int i = 0; i < items.Count; i++) {
+                if (items[i] is Map2KeyItem keyItem && keyItem.KeyDefinition == _unlockKeyDefinition) {
+                    _isLockedByKey = false;
+                    return;
+                }
+            }
+
+            _isLockedByKey = true;
         }
 
         private void CheckIfObservedByPlayer() {

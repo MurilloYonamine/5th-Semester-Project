@@ -5,6 +5,7 @@ using UnityEngine;
 using ThirdParty.QuickOutline;
 using FifthSemester.Player;
 using FifthSemester.Gameplay.Shared;
+using FifthSemester.Core.Services;
 
 namespace FifthSemester.Gameplay.Inventory {
     [RequireComponent(typeof(Outline))]
@@ -14,6 +15,8 @@ namespace FifthSemester.Gameplay.Inventory {
         public bool IsInteractable => true;
         private Outline _outline;
         private BoxCollider _collider;
+
+        [SerializeField] private AudioClip _pickupSound;
 
         private void Awake() {
             _outline = GetComponent<Outline>();
@@ -33,6 +36,10 @@ namespace FifthSemester.Gameplay.Inventory {
         public void Interact() {
             _outline.enabled = false;
             _collider.enabled = false;
+
+            if (ServiceLocator.TryGet<IAudioService>(out var audioService) && _pickupSound != null) {
+                audioService.PlaySFX(_pickupSound, volume: 1f);
+            }
         }
 
         public void StopInteract() {

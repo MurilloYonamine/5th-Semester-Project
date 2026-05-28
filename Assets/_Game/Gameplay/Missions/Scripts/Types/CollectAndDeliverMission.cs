@@ -32,7 +32,12 @@ namespace FifthSemester.Gameplay.Missions {
 
         public override void StartMission() {
             base.StartMission();
-            _missionService?.UpdateCollectAndDeliverDoorState(_definition, _itemsCollected ? _deliveredCount : -1);
+            // Always initialize door state to the default (only the first delivery door unlocked),
+            // then apply delivered count if there are already delivered items recorded.
+            _missionService?.UpdateCollectAndDeliverDoorState(_definition, -1);
+            if (_itemsCollected) {
+                _missionService?.UpdateCollectAndDeliverDoorState(_definition, _deliveredCount);
+            }
 
             if (_eventBus != null && !_subscribed) {
                 _eventBus.Subscribe<ItemPickedUpEvent>(OnItemAdded);
@@ -78,7 +83,24 @@ namespace FifthSemester.Gameplay.Missions {
                 return;
             }
 
-            bool deliveryPointMatches = System.Array.Exists(_definition.DeliveryPointIds, id => id == evt.DeliveryPointId);
+            bool deliveryPointMatches = System.Array.Exists(_definition.DeliveryPointIds, id => {
+                if (string.IsNullOrWhiteSpace(id)) return false;
+                string[] parts = id.Split(new char[] { ',', ';', '|' }, System.StringSplitOptions.RemoveEmptyEntries);
+                foreach (string partRaw in parts) {
+                    string part = partRaw.Trim();
+                    if (string.IsNullOrEmpty(part)) continue;
+
+                    // direct match
+                    if (string.Equals(part, evt.DeliveryPointId, System.StringComparison.OrdinalIgnoreCase)) return true;
+
+                    // match by suffix (e.g., DeliveryPointId 'Delivery_A' vs token 'A')
+                    int us = evt.DeliveryPointId.LastIndexOf('_');
+                    string evtSuffix = us >= 0 && us < evt.DeliveryPointId.Length - 1 ? evt.DeliveryPointId.Substring(us + 1) : evt.DeliveryPointId;
+                    if (string.Equals(part, evtSuffix, System.StringComparison.OrdinalIgnoreCase)) return true;
+                }
+
+                return false;
+            });
             bool itemMatches = evt.DeliveredItemId == _definition.CollectItemName;
 
             if (deliveryPointMatches && itemMatches) {

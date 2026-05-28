@@ -559,9 +559,12 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
-  _lockedSound: {fileID: 0}
+  _doorSfx:
+  - {fileID: 8300000, guid: 6ffecbd2b4bde2946a86c6fd95247b8c, type: 3}
+  - {fileID: 8300000, guid: 41e05d20c802876479c6466672883c24, type: 3}
+  - {fileID: 8300000, guid: 578a49a2d2bbc1d4089682b2a3477415, type: 3}
+  - {fileID: 8300000, guid: 28070f043f80fa74c86d7e477df7e5cb, type: 3}
+  _lockedSounds: []
   _doorMeshes: []
   _doorMesh: {fileID: 8841999184705773681}
 --- !u!1 &8253312098479282315
@@ -753,9 +756,12 @@ MonoBehaviour:
   _openAngle: -90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
-  _lockedSound: {fileID: 0}
+  _doorSfx:
+  - {fileID: 8300000, guid: 6ffecbd2b4bde2946a86c6fd95247b8c, type: 3}
+  - {fileID: 8300000, guid: 41e05d20c802876479c6466672883c24, type: 3}
+  - {fileID: 8300000, guid: 578a49a2d2bbc1d4089682b2a3477415, type: 3}
+  - {fileID: 8300000, guid: 28070f043f80fa74c86d7e477df7e5cb, type: 3}
+  _lockedSounds: []
   _doorMeshes: []
   _doorMesh: {fileID: 2838189457713601542}
 --- !u!65 &5764282411782190419

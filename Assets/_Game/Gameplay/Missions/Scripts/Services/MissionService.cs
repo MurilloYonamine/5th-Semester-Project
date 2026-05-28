@@ -210,12 +210,24 @@ namespace FifthSemester.Gameplay.Missions {
                 return;
             }
 
+            if (orderedDoors.Count == 0) {
+                return;
+            }
+
             if (deliveredCount < 0) {
                 for (int i = 0; i < orderedDoors.Count; i++) {
                     GameObject doorObject = _mapService.Get(orderedDoors[i]);
                     Door door = doorObject != null ? doorObject.GetComponent<Door>() : null;
                     door?.Lock();
                 }
+
+                GameObject firstDoorObj = _mapService.Get(orderedDoors[0]);
+                Door firstDoor = firstDoorObj != null ? firstDoorObj.GetComponent<Door>() : null;
+                firstDoor?.Unlock();
+
+                GameObject corredorObjInit = _mapService.Get(DoorType.Door_Corredor);
+                Door corredorInit = corredorObjInit != null ? corredorObjInit.GetComponent<Door>() : null;
+                corredorInit?.Lock();
 
                 return;
             }
@@ -227,12 +239,21 @@ namespace FifthSemester.Gameplay.Missions {
                     continue;
                 }
 
-                if (deliveredCount >= orderedDoors.Count || i <= deliveredCount) {
+                if (i <= deliveredCount) {
                     door.Unlock();
                 }
                 else {
                     door.Lock();
                 }
+            }
+
+            GameObject corredorObj = _mapService.Get(DoorType.Door_Corredor);
+            Door corredor = corredorObj != null ? corredorObj.GetComponent<Door>() : null;
+            if (deliveredCount >= orderedDoors.Count) {
+                corredor?.Unlock();
+            }
+            else {
+                corredor?.Lock();
             }
         }
 
@@ -252,7 +273,7 @@ namespace FifthSemester.Gameplay.Missions {
                 "B" => DoorType.Door_RoomB,
                 "C" => DoorType.Door_RoomC,
                 "E" => DoorType.Door_RoomE,
-                "S" => DoorType.Door_RoomP,
+                "P" => DoorType.Door_RoomP,
                 _ => DoorType.None
             };
         }

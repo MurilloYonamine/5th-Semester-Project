@@ -2,6 +2,7 @@
 // data: 30/03/2026
 
 using FifthSemester.Core.Enums;
+using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Features.Localization;
 using Sirenix.OdinInspector;
@@ -14,6 +15,8 @@ namespace FifthSemester.Gameplay.Dialogue {
     public class DialogueTrigger : TextTriggerBase {
         private IDialogueService<TextAsset> _dialogueService;
         private ISettingsService _settingsService;
+        private IEventBus _eventBus;
+        private string _dialogueId;
 
         [SerializeField, Title("Textos do Diálogo")]
         private LocalizedTextAsset _dialogueFiles;
@@ -21,14 +24,20 @@ namespace FifthSemester.Gameplay.Dialogue {
         public override bool IsInteractable => _dialogueFiles.Portuguese != null || _dialogueFiles.English != null;
 
         [SerializeField] private PlayableDirector _director;
+        [SerializeField] private Animator _animator;
 
         protected override void Awake() {
             base.Awake();
+
+            if (_animator == null) {
+                _animator = GetComponentInChildren<Animator>();
+            }
         }
 
         protected virtual void Start() {
             _dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
             _settingsService = ServiceLocator.Get<ISettingsService>();
+            _eventBus = ServiceLocator.Get<IEventBus>();
 
             if (_dialogueService == null) {
                 Debug.LogError($"[DialogueTrigger] IDialogueService<TextAsset> não encontrado em {name}.");
@@ -41,6 +50,12 @@ namespace FifthSemester.Gameplay.Dialogue {
                 enabled = false;
                 return;
             }
+
+            _eventBus?.Subscribe<DialogueEndedEvent>(OnDialogueEnded);
+        }
+
+        private void OnDisable() {
+            _eventBus?.Unsubscribe<DialogueEndedEvent>(OnDialogueEnded);
         }
 
         protected override bool CanInteract() {
@@ -64,8 +79,13 @@ namespace FifthSemester.Gameplay.Dialogue {
 
             Highlight(false);
 
-            string dialogueId = string.IsNullOrWhiteSpace(Id) ? gameObject.name : Id;
-            _dialogueService.StartDialogue(correctDialogue, _director, dialogueId);
+            _dialogueId = string.IsNullOrWhiteSpace(Id) ? gameObject.name : Id;
+
+            if (_director == null && _animator != null) {
+                _animator.SetBool("IsTalking", true);
+            }
+
+            _dialogueService.StartDialogue(correctDialogue, _director, _dialogueId);
         }
 
         public override void StopInteract() {
@@ -75,6 +95,18 @@ namespace FifthSemester.Gameplay.Dialogue {
         public override void Highlight(bool value) {
             bool isDialogueActive = _dialogueService != null && _dialogueService.IsDialogueActive;
             base.Highlight(!isDialogueActive && value);
+        }
+
+        private void OnDialogueEnded(DialogueEndedEvent evt) {
+            if (_director != null || _animator == null) {
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(evt.NpcId) && evt.NpcId != _dialogueId) {
+                return;
+            }
+
+            _animator.SetBool("IsTalking", false);
         }
     }
 }

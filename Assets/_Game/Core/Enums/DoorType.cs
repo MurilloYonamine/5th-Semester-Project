@@ -27,6 +27,8 @@ namespace FifthSemester.Core.Enums {
         Door_TriagemC,
         Door_TriagemD,
         Door_MainExit,
-        Door_Exit
+        Door_Exit,
+        Door_Corredor,
+        Door_Corredor2,
     }
 }

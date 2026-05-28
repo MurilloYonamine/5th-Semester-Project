@@ -8,6 +8,7 @@ public class GameTransitioner : MonoBehaviour {
     [SerializeField] private GameObject _videoCanvas;
 
     private IFadeService _fadeService;
+    private bool _isLoadingGame;
 
     private void Start() {
         _fadeService = ServiceLocator.Get<IFadeService>();
@@ -15,11 +16,30 @@ public class GameTransitioner : MonoBehaviour {
         _videoPlayer.GetComponent<CanvasGroup>().alpha = 0f;
     }
 
+    private void Update() {
+        if (_videoCanvas == null || !_videoCanvas.activeSelf) {
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)) {
+            SkipVideo();
+        }
+    }
+
     public void StartGameSequence() {
+        _isLoadingGame = false;
         _videoPlayer.GetComponent<CanvasGroup>().alpha = 1f;
         _fadeService.FadeOut(1.0f, OnFadeOutCompleted);
         _videoPlayer.loopPointReached -= OnVideoFinished;
         _videoPlayer.loopPointReached += OnVideoFinished;
+    }
+
+    public void SkipVideo() {
+        if (_isLoadingGame) {
+            return;
+        }
+
+        _fadeService.FadeOut(1.0f, LoadGameScene);
     }
 
     private void OnFadeOutCompleted() {
@@ -36,7 +56,27 @@ public class GameTransitioner : MonoBehaviour {
     }
 
     private void OnVideoFinished(VideoPlayer source) {
-        source.loopPointReached -= OnVideoFinished;
+        LoadGameScene();
+    }
+
+    private void LoadGameScene() {
+        if (_isLoadingGame) {
+            return;
+        }
+
+        _isLoadingGame = true;
+
+        if (_videoPlayer != null) {
+            _videoPlayer.loopPointReached -= OnVideoFinished;
+            _videoPlayer.prepareCompleted -= OnVideoPrepared;
+            _videoPlayer.Stop();
+        }
+
+        if (_videoCanvas != null) {
+            _videoCanvas.SetActive(false);
+        }
+
+        SceneManager.sceneLoaded -= OnSceneLoaded;
         SceneManager.sceneLoaded += OnSceneLoaded;
         SceneManager.LoadScene("Game");
     }

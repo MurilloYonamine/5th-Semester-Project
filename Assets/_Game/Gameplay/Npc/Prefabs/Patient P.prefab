@@ -69,9 +69,10 @@ MonoBehaviour:
   _interactionHint: {fileID: 0}
   <Id>k__BackingField: Paciente_P
   _dialogueFiles:
-    Portuguese: {fileID: 4900000, guid: 53baeed3161bed340ba4ea869d371145, type: 3}
-    English: {fileID: 4900000, guid: 0666c369621073c40a9447a0c388a920, type: 3}
+    Portuguese: {fileID: 4900000, guid: cd3db92b707087d468ec3ad7c014fd77, type: 3}
+    English: {fileID: 4900000, guid: 9e553cd4196a7e847af2d7e8f36b393d, type: 3}
   _director: {fileID: 0}
+  _animator: {fileID: 0}
 --- !u!136 &2943747396455204901
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -91,7 +92,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.22
+  m_Radius: 0.63
   m_Height: 1.7
   m_Direction: 1
   m_Center: {x: 0, y: 0.83, z: -0.01}
@@ -113,7 +114,7 @@ MonoBehaviour:
   _interactionPromptText: {fileID: 0}
   _deliverPromptText: entregar
   _talkPromptText: conversar
-  _successSound: {fileID: 0}
+  _successSound: {fileID: 8300000, guid: 72c8ef316a0b6fc49ac9c1d1f85ab4cf, type: 3}
   _failureSound: {fileID: 0}
 --- !u!1001 &38077831291166689
 PrefabInstance:

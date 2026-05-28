@@ -72,6 +72,7 @@ MonoBehaviour:
     Portuguese: {fileID: 4900000, guid: 0791c24e35de69b4a9959ffcddf6d4e8, type: 3}
     English: {fileID: 4900000, guid: b89752f3359eccd48af1e0a6e0446637, type: 3}
   _director: {fileID: 0}
+  _animator: {fileID: 0}
 --- !u!136 &7006441170196195215
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -91,7 +92,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.22
+  m_Radius: 0.63
   m_Height: 1.7
   m_Direction: 1
   m_Center: {x: 0, y: 0.83, z: -0.01}
@@ -113,7 +114,7 @@ MonoBehaviour:
   _interactionPromptText: {fileID: 0}
   _deliverPromptText: entregar
   _talkPromptText: conversar
-  _successSound: {fileID: 0}
+  _successSound: {fileID: 8300000, guid: 72c8ef316a0b6fc49ac9c1d1f85ab4cf, type: 3}
   _failureSound: {fileID: 0}
 --- !u!1001 &2456462841425997977
 PrefabInstance:

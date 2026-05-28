@@ -5,6 +5,7 @@ using FifthSemester.Gameplay.Interactables;
 using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Gameplay.Save;
 using FifthSemester.Gameplay.Shared;
+using FifthSemester.Gameplay.Map2;
 using UnityEngine;
 
 namespace FifthSemester.Player {
@@ -174,6 +175,12 @@ namespace FifthSemester.Player {
                 Debug.LogError("IInventoryService não encontrado. Não é possível pegar o item.");
                 PlayFailureFeedback();
                 return;
+            }
+
+            if (item is Map2KeyItem keyItem) {
+                if (ServiceLocator.TryGet<IMap2KeyService>(out var keyService)) {
+                    keyService.TryPrepareForLastKey(keyItem);
+                }
             }
 
             bool wasAdded = _inventoryService.AddItem(item);

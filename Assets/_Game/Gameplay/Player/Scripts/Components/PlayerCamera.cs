@@ -92,6 +92,18 @@ namespace FifthSemester.Player.Components {
 
         public Transform GetCameraTarget() => _cameraTarget;
 
+        public void SetRotation(Quaternion rotation) {
+            if (_panTilt == null) return;
+
+            Vector3 euler = rotation.eulerAngles;
+            float yaw = euler.y;
+            float pitch = euler.x;
+            if (pitch > 180f) pitch -= 360f;
+
+            _panTilt.PanAxis.Value = yaw;
+            _panTilt.TiltAxis.Value = pitch;
+        }
+
         private void Update() {
             if (!_cameraCanMove || _vCam == null || _player == null) return;
 

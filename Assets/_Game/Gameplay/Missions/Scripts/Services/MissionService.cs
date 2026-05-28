@@ -391,8 +391,8 @@ namespace FifthSemester.Gameplay.Missions {
                 saveData.InventoryItemIds.Clear();
 
                 for (int i = 0; i < items.Count; i++) {
-                    if (items[i] is MonoBehaviour mono) {
-                        saveData.InventoryItemIds.Add(mono.gameObject.name);
+                    if (items[i] != null) {
+                        saveData.InventoryItemIds.Add(items[i].Id);
                     }
                 }
             }

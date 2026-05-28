@@ -46,6 +46,11 @@ namespace FifthSemester.Gameplay.Save {
                 player.transform.position = _pending.PlayerPosition.ToVector3();
                 player.transform.rotation = _pending.PlayerRotation.ToQuaternion();
 
+                if (player.Rigidbody != null) {
+                    player.Rigidbody.linearVelocity = Vector3.zero;
+                    player.Rigidbody.angularVelocity = Vector3.zero;
+                }
+
                 PlayerCamera playerCamera = player.PlayerCamera;
                 if (playerCamera != null) {
                     Transform cameraTarget = playerCamera.GetCameraTarget();
@@ -53,6 +58,7 @@ namespace FifthSemester.Gameplay.Save {
                         cameraTarget.position = _pending.CameraTargetPosition.ToVector3();
                         cameraTarget.rotation = _pending.CameraTargetRotation.ToQuaternion();
                     }
+                    playerCamera.SetRotation(_pending.CameraTargetRotation.ToQuaternion());
                 }
             } 
 

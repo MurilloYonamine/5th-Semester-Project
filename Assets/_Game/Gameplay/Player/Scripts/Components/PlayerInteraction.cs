@@ -26,6 +26,7 @@ namespace FifthSemester.Player {
         private IInventoryService<Item> _inventoryService;
         private IDeferredInteractionCompletion _pendingDeferredCompletion;
         private string _pendingInteractableId;
+        private DocumentTrigger _activeDocument;
 
         private void Awake() {
             _playerController = GetComponent<PlayerController>();
@@ -62,6 +63,7 @@ namespace FifthSemester.Player {
 
             _pendingDeferredCompletion = null;
             _pendingInteractableId = null;
+            _activeDocument = null;
         }
 
         private void Update() {
@@ -129,6 +131,17 @@ namespace FifthSemester.Player {
         }
 
         private void Interact(InteractInputEvent evt) {
+            if (_activeDocument != null) {
+                DocumentTrigger documentToClose = _activeDocument;
+                _activeDocument = null;
+                documentToClose.Interact();
+
+                if (_currentInteractable != documentToClose) {
+                    documentToClose.Highlight(false);
+                }
+                return;
+            }
+
             if (_currentInteractable == null || !_currentInteractable.IsInteractable) {
                 PlayFailureFeedback();
                 return;
@@ -142,6 +155,9 @@ namespace FifthSemester.Player {
                 HandleInteractionCompleted(_currentInteractable);
             }
             else {
+                if (_currentInteractable is DocumentTrigger documentTrigger) {
+                    _activeDocument = documentTrigger;
+                }
                 _currentInteractable.Interact();
                 HandleInteractionCompleted(_currentInteractable);
             }
@@ -162,6 +178,8 @@ namespace FifthSemester.Player {
         }
 
         private void OnDialogueEnded(DialogueEndedEvent evt) {
+            _activeDocument = null;
+
             if (_pendingDeferredCompletion == null || string.IsNullOrWhiteSpace(_pendingInteractableId)) {
                 return;
             }

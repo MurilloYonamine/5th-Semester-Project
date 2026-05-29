@@ -1,8 +1,9 @@
-﻿// Autor: Murillo Gomes Yonamine
+// Autor: Murillo Gomes Yonamine
 // Data: 28/04/2026
 
 using UnityEngine;
 using FifthSemester.Gameplay.Shared;
+using FifthSemester.Core.Services;
 using ThirdParty.QuickOutline;
 
 namespace FifthSemester.Player.Components {
@@ -13,6 +14,7 @@ namespace FifthSemester.Player.Components {
         [Header("References")]
         [SerializeField] private GameObject _playerFlashlightObject;
         [SerializeField] private PlayerFlashlight _playerFlashlight;
+        [SerializeField] private AudioClip _pickupSound;
 
         private Outline _outline;
         private BoxCollider _collider;
@@ -31,6 +33,10 @@ namespace FifthSemester.Player.Components {
         }
 
         public void Interact() {
+            if (ServiceLocator.TryGet<IAudioService>(out var audioService) && _pickupSound != null) {
+                audioService.PlaySFX(_pickupSound, volume: 1f);
+            }
+
             if (_playerFlashlight != null) {
                 _playerFlashlight.EnableFlashlight();
             }

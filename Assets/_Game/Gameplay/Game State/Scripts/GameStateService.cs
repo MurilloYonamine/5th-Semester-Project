@@ -27,6 +27,9 @@ namespace FifthSemester.Gameplay {
             _eventBus.Subscribe<DialogueStartedEvent>(OnDialogueStarted);
             _eventBus.Subscribe<DialogueEndedEvent>(OnDialogueEnded);
             _eventBus.Subscribe<PauseToggleRequestedEvent>(OnPauseToggled);
+
+            // Força a publicação do estado inicial para sincronizar serviços persistentes (como InputService)
+            _eventBus.Publish(new GameStateChangedEvent(GameState.Gameplay, GameState.Gameplay));
         }
 
         public void ChangeState(GameState newState) {

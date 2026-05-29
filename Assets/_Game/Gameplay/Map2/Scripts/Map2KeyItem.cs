@@ -14,7 +14,9 @@ namespace FifthSemester.Gameplay.Map2 {
 
         private const float CAPTION_DURATION = 0.8f;
 
-        private void Awake() {
+        protected override void Awake() {
+            base.Awake();
+
             if (_captionView == null) {
                 Debug.LogWarning($"[Map2KeyItem] CaptionView não atribuído em {name}.");
             }

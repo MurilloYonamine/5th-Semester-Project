@@ -3,6 +3,7 @@ using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Gameplay.Enemy;
+using FifthSemester.Player.Components;
 using UnityEngine;
 using UnityEngine.Playables;
 
@@ -62,6 +63,9 @@ namespace FifthSemester.Gameplay.Map2 {
             }
 
             Debug.Log($"[KeyService] OnItemPickedUp: Key '{picked.name}' (Definition: {(picked.KeyDefinition != null ? picked.KeyDefinition.name : "None")}) was picked up.");
+
+            // Autosave ao pegar a chave no Mapa 2
+            SaveMap2Progress();
 
             // Se uma chave gatilho foi configurada e esta chave corresponde a ela
             if (_triggerKeyDefinition != null) {
@@ -239,6 +243,44 @@ namespace FifthSemester.Gameplay.Map2 {
             }
 
             Debug.Log("<color=cyan>[CHEAT]</color> Keys marked as collected. Nurse deactivated. No timeline played.");
+        }
+
+        private void SaveMap2Progress() {
+            var saveService = ServiceLocator.Get<ISaveService>();
+            if (saveService == null) return;
+
+            SaveData saveData = saveService.LoadFromSlot("default") ?? new SaveData();
+
+            saveData.SceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            saveData.CurrentMissionIndex = -1; // Sem missão ativa no Mapa 2
+
+            GameObject playerObj = GameObject.FindWithTag("Player");
+            if (playerObj != null) {
+                saveData.PlayerPosition = new Vector3Data(playerObj.transform.position);
+                saveData.PlayerRotation = new QuaternionData(playerObj.transform.rotation);
+
+                var playerCamera = playerObj.GetComponentInChildren<PlayerCamera>();
+                if (playerCamera != null) {
+                    Transform cameraTarget = playerCamera.GetCameraTarget();
+                    if (cameraTarget != null) {
+                        saveData.CameraTargetPosition = new Vector3Data(cameraTarget.position);
+                        saveData.CameraTargetRotation = new QuaternionData(cameraTarget.rotation);
+                    }
+                }
+            }
+
+            if (_inventoryService != null) {
+                IReadOnlyList<Item> items = _inventoryService.GetItems();
+                saveData.InventoryItemIds.Clear();
+                for (int i = 0; i < items.Count; i++) {
+                    if (items[i] != null) {
+                        saveData.InventoryItemIds.Add(items[i].Id);
+                    }
+                }
+            }
+
+            saveService.SaveToSlot("default", saveData);
+            Debug.Log("[KeyService] Autosave concluído com sucesso no Mapa 2!");
         }
     }
 }

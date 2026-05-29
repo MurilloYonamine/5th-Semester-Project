@@ -18,7 +18,7 @@ namespace FifthSemester.Gameplay.Inventory {
 
         [SerializeField] private AudioClip[] _pickupSounds;
 
-        private void Awake() {
+        protected virtual void Awake() {
             _outline = GetComponent<Outline>();
 
             if (!TryGetComponent(out BoxCollider collider)) {

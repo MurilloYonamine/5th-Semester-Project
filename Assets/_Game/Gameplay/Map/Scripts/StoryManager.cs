@@ -49,58 +49,65 @@ namespace FifthSemester.Gameplay.Map {
         private void ApplyMissionEffects() {
             if (_missionService == null || _registry == null) return;
 
-            var mission = _missionService.GetCurrentMission();
-            if (mission == null || mission.MapActions == null) return;
+            int currentIndex = _missionService.CurrentIndex;
+            if (_storySequence == null || _storySequence.Sequence == null) return;
 
-            bool skipDoorLockForTalkToNpc = string.Equals(mission.Type.ToString(), "TalkToNpc", System.StringComparison.Ordinal);
+            int limit = currentIndex >= 0 ? currentIndex : 0;
 
-            foreach (var action in mission.MapActions) {
-                if (skipDoorLockForTalkToNpc &&
-                    (action.Type == MapAction.ActionType.LockDoor || action.Type == MapAction.ActionType.LockAllDoorsExcept)) {
-                    continue;
-                }
+            for (int i = 0; i <= limit && i < _storySequence.Sequence.Count; i++) {
+                var mission = _storySequence.Sequence[i];
+                if (mission == null || mission.MapActions == null) continue;
 
-                if (action.Type == MapAction.ActionType.LockAllDoorsExcept) {
-                    LockAllDoorsExcept(action.DoorsToKeepUnlocked);
-                    continue;
-                }
+                bool skipDoorLockForTalkToNpc = string.Equals(mission.Type.ToString(), "TalkToNpc", System.StringComparison.Ordinal);
 
-                GameObject targetObj = null;
+                foreach (var action in mission.MapActions) {
+                    if (skipDoorLockForTalkToNpc &&
+                        (action.Type == MapAction.ActionType.LockDoor || action.Type == MapAction.ActionType.LockAllDoorsExcept)) {
+                        continue;
+                    }
 
-                if (action.Type == MapAction.ActionType.LockDoor || action.Type == MapAction.ActionType.UnlockDoor) {
-                    targetObj = _registry.Get(action.TargetDoor);
-                }
-                else {
-                    targetObj = _registry.Get(action.TargetObjectId);
-                }
+                    if (action.Type == MapAction.ActionType.LockAllDoorsExcept) {
+                        LockAllDoorsExcept(action.DoorsToKeepUnlocked);
+                        continue;
+                    }
 
-                if (targetObj == null) continue;
+                    GameObject targetObj = null;
 
-                Gate gate = targetObj.GetComponent<Gate>();
+                    if (action.Type == MapAction.ActionType.LockDoor || action.Type == MapAction.ActionType.UnlockDoor) {
+                        targetObj = _registry.Get(action.TargetDoor);
+                    }
+                    else {
+                        targetObj = _registry.Get(action.TargetObjectId);
+                    }
 
-                switch (action.Type) {
-                    case MapAction.ActionType.Activate:
-                        if (gate != null) {
-                            gate.Unlock();
-                        }
-                        else {
-                            targetObj.SetActive(true);
-                        }
-                        break;
-                    case MapAction.ActionType.Deactivate:
-                        if (gate != null) {
-                            gate.Lock();
-                        }
-                        else {
-                            targetObj.SetActive(false);
-                        }
-                        break;
-                    case MapAction.ActionType.LockDoor:
-                        targetObj.GetComponent<Door>()?.Lock();
-                        break;
-                    case MapAction.ActionType.UnlockDoor:
-                        targetObj.GetComponent<Door>()?.Unlock();
-                        break;
+                    if (targetObj == null) continue;
+
+                    Gate gate = targetObj.GetComponent<Gate>();
+
+                    switch (action.Type) {
+                        case MapAction.ActionType.Activate:
+                            if (gate != null) {
+                                gate.Unlock();
+                            }
+                            else {
+                                targetObj.SetActive(true);
+                            }
+                            break;
+                        case MapAction.ActionType.Deactivate:
+                            if (gate != null) {
+                                gate.Lock();
+                            }
+                            else {
+                                targetObj.SetActive(false);
+                            }
+                            break;
+                        case MapAction.ActionType.LockDoor:
+                            targetObj.GetComponent<Door>()?.Lock();
+                            break;
+                        case MapAction.ActionType.UnlockDoor:
+                            targetObj.GetComponent<Door>()?.Unlock();
+                            break;
+                    }
                 }
             }
         }

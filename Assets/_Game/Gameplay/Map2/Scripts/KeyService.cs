@@ -3,6 +3,7 @@ using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Gameplay.Enemy;
+using FifthSemester.Player;
 using FifthSemester.Player.Components;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -255,6 +256,16 @@ namespace FifthSemester.Gameplay.Map2 {
             saveData.CurrentMissionIndex = -1; // Sem missão ativa no Mapa 2
 
             GameObject playerObj = GameObject.FindWithTag("Player");
+            if (playerObj == null) {
+                var allPlayers = Resources.FindObjectsOfTypeAll<PlayerController>();
+                foreach (var p in allPlayers) {
+                    if (p != null && p.gameObject.scene.isLoaded) {
+                        playerObj = p.gameObject;
+                        break;
+                    }
+                }
+            }
+
             if (playerObj != null) {
                 saveData.PlayerPosition = new Vector3Data(playerObj.transform.position);
                 saveData.PlayerRotation = new QuaternionData(playerObj.transform.rotation);
@@ -266,6 +277,15 @@ namespace FifthSemester.Gameplay.Map2 {
                         saveData.CameraTargetPosition = new Vector3Data(cameraTarget.position);
                         saveData.CameraTargetRotation = new QuaternionData(cameraTarget.rotation);
                     }
+                }
+            }
+            else {
+                GameObject spawnPoint = GameObject.Find("PlayerSpawn");
+                if (spawnPoint != null) {
+                    saveData.PlayerPosition = new Vector3Data(spawnPoint.transform.position);
+                    saveData.PlayerRotation = new QuaternionData(spawnPoint.transform.rotation);
+                    saveData.CameraTargetPosition = new Vector3Data(spawnPoint.transform.position);
+                    saveData.CameraTargetRotation = new QuaternionData(spawnPoint.transform.rotation);
                 }
             }
 

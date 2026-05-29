@@ -371,7 +371,20 @@ namespace FifthSemester.Gameplay.Missions {
                 saveData.LastCheckpointId = _currentDefinition.MissionId;
             }
 
-            PlayerController player = _playerController != null ? _playerController : UnityEngine.Object.FindFirstObjectByType<PlayerController>();
+            PlayerController player = _playerController;
+            if (player == null) {
+                player = UnityEngine.Object.FindFirstObjectByType<PlayerController>();
+            }
+            if (player == null) {
+                var allPlayers = Resources.FindObjectsOfTypeAll<PlayerController>();
+                foreach (var p in allPlayers) {
+                    if (p != null && p.gameObject.scene.isLoaded) {
+                        player = p;
+                        break;
+                    }
+                }
+            }
+
             if (player != null) {
                 saveData.PlayerPosition = new Vector3Data(player.transform.position);
                 saveData.PlayerRotation = new QuaternionData(player.transform.rotation);
@@ -382,6 +395,24 @@ namespace FifthSemester.Gameplay.Missions {
                     if (cameraTarget != null) {
                         saveData.CameraTargetPosition = new Vector3Data(cameraTarget.position);
                         saveData.CameraTargetRotation = new QuaternionData(cameraTarget.rotation);
+                    }
+                }
+            }
+            else {
+                GameObject spawnPoint = GameObject.Find("PlayerSpawn");
+                if (spawnPoint != null) {
+                    saveData.PlayerPosition = new Vector3Data(spawnPoint.transform.position);
+                    saveData.PlayerRotation = new QuaternionData(spawnPoint.transform.rotation);
+                    saveData.CameraTargetPosition = new Vector3Data(spawnPoint.transform.position);
+                    saveData.CameraTargetRotation = new QuaternionData(spawnPoint.transform.rotation);
+                }
+                else {
+                    if (saveData.PlayerPosition == null || saveData.PlayerPosition.ToVector3() == Vector3.zero) {
+                        GameObject taggedPlayer = GameObject.FindWithTag("Player");
+                        if (taggedPlayer != null) {
+                            saveData.PlayerPosition = new Vector3Data(taggedPlayer.transform.position);
+                            saveData.PlayerRotation = new QuaternionData(taggedPlayer.transform.rotation);
+                        }
                     }
                 }
             }

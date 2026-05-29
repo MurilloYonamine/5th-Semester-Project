@@ -71,6 +71,11 @@ namespace FifthSemester.Gameplay.Enemy {
         private IInventoryService<Item> _inventoryService;
         private bool _isRetreating = false;
 
+        [Header("Stuck Recovery Settings")]
+        [SerializeField] private float _stuckDurationThreshold = 3.5f;
+        private Vector3 _lastPosition;
+        private float _stuckTimeAccumulator;
+
         public float TargetSpeed {
             get => _desiredSpeed;
             set => _desiredSpeed = value;
@@ -111,6 +116,8 @@ namespace FifthSemester.Gameplay.Enemy {
                 _desiredSpeed = _agent.speed;
             }
 
+            _lastPosition = transform.position;
+            _stuckTimeAccumulator = 0f;
         }
 
         private void OnEnable() {
@@ -203,6 +210,7 @@ namespace FifthSemester.Gameplay.Enemy {
                 _animator.SetFloat(_speedHash, _agent.velocity.magnitude);
             }
 
+            HandleStuckDetection();
         }
 
         private void OnInventoryItemAdded(InventoryItemAddedEvent evt) {
@@ -366,6 +374,59 @@ namespace FifthSemester.Gameplay.Enemy {
         public void ResumeFromRetreat() {
             _isRetreating = false;
             _blackboard?.SetData("IsPlayerInRoom", false);
+        }
+
+        private void HandleStuckDetection() {
+            if (_isLockedByKey) {
+                _stuckTimeAccumulator = 0f;
+                _lastPosition = transform.position;
+                return;
+            }
+
+            bool isCutsceneActive = _blackboard != null && _blackboard.HasKey(CUTSCENE_ACTIVE_KEY) && _blackboard.GetData<bool>(CUTSCENE_ACTIVE_KEY);
+            if (isCutsceneActive || _isRetreating) {
+                _stuckTimeAccumulator = 0f;
+                _lastPosition = transform.position;
+                return;
+            }
+
+            if (_agent != null && _agent.isOnNavMesh && _agent.hasPath && !_agent.isStopped && _desiredSpeed > 0.1f) {
+                float distMoved = Vector3.Distance(transform.position, _lastPosition);
+                _lastPosition = transform.position;
+
+                if (_agent.velocity.magnitude < 0.1f && distMoved < 0.05f) {
+                    _stuckTimeAccumulator += Time.deltaTime;
+                }
+                else {
+                    _stuckTimeAccumulator = 0f;
+                }
+
+                if (_stuckTimeAccumulator >= _stuckDurationThreshold) {
+                    ResolveStuckState();
+                    _stuckTimeAccumulator = 0f;
+                }
+            }
+            else {
+                _stuckTimeAccumulator = 0f;
+                _lastPosition = transform.position;
+            }
+        }
+
+        private void ResolveStuckState() {
+            if (_agent == null || !_agent.isOnNavMesh) return;
+
+            Vector3 currentPos = transform.position;
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(currentPos, out hit, 3.0f, NavMesh.AllAreas)) {
+                _agent.Warp(hit.position);
+                Debug.LogWarning($"[Nurse Unstuck] Nurse was stuck! Warped she to nearest NavMesh position: {hit.position}");
+            }
+
+            if (_agent.hasPath) {
+                Vector3 dest = _agent.destination;
+                _agent.ResetPath();
+                _agent.SetDestination(dest);
+            }
         }
 
         private void OnDrawGizmos() {

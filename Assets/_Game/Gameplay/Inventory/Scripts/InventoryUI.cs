@@ -59,6 +59,7 @@ namespace FifthSemester.Gameplay.Inventory {
                 _inventoryCanvasGroup.alpha = 0f;
                 _inventoryCanvasGroup.interactable = false;
                 _inventoryCanvasGroup.blocksRaycasts = false;
+                _inventoryCanvasGroup.gameObject.SetActive(false);
             }
         }
 
@@ -176,6 +177,7 @@ namespace FifthSemester.Gameplay.Inventory {
             if (_hideDelayCoroutine != null) StopCoroutine(_hideDelayCoroutine);
             if (_animationCoroutine != null) StopCoroutine(_animationCoroutine);
 
+            _inventoryCanvasGroup.gameObject.SetActive(true);
             _inventoryCanvasGroup.alpha = 1f;
             PlayUISound(_openSound);
 
@@ -210,6 +212,7 @@ namespace FifthSemester.Gameplay.Inventory {
             _inventoryCanvasGroup.alpha = 0f;
             _inventoryCanvasGroup.interactable = false;
             _inventoryCanvasGroup.blocksRaycasts = false;
+            _inventoryCanvasGroup.gameObject.SetActive(false);
 
             ResetAllSlots();
         }
@@ -265,6 +268,7 @@ namespace FifthSemester.Gameplay.Inventory {
             _inventoryCanvasGroup.alpha = 0f;
             _inventoryCanvasGroup.interactable = false;
             _inventoryCanvasGroup.blocksRaycasts = false;
+            _inventoryCanvasGroup.gameObject.SetActive(false);
 
             if (_animator != null) {
                 _animator.SetBool(IsOpenHash, false);

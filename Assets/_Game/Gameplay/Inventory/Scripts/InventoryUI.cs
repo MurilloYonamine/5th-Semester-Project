@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.Events;
+using FifthSemester.Core.States;
 
 namespace FifthSemester.Gameplay.Inventory {
     public class InventoryUI : MonoBehaviour {
@@ -51,6 +52,7 @@ namespace FifthSemester.Gameplay.Inventory {
                 _eventBus.Subscribe<InventoryItemRemovedEvent>(HandleItemRemoved);
                 _eventBus.Subscribe<NextInputEvent>(HandleNextInput);
                 _eventBus.Subscribe<PreviousInputEvent>(HandlePreviousInput);
+                _eventBus.Subscribe<GameStateChangedEvent>(HandleGameStateChanged);
             }
 
             if (_inventoryCanvasGroup != null) {
@@ -67,6 +69,7 @@ namespace FifthSemester.Gameplay.Inventory {
                 _eventBus.Unsubscribe<InventoryItemRemovedEvent>(HandleItemRemoved);
                 _eventBus.Unsubscribe<NextInputEvent>(HandleNextInput);
                 _eventBus.Unsubscribe<PreviousInputEvent>(HandlePreviousInput);
+                _eventBus.Unsubscribe<GameStateChangedEvent>(HandleGameStateChanged);
             }
         }
 
@@ -251,6 +254,33 @@ namespace FifthSemester.Gameplay.Inventory {
             }
 
             _audioService.PlaySFX(clip);
+        }
+
+        private void HideInventoryInstant() {
+            if (_inventoryCanvasGroup == null) return;
+
+            if (_hideDelayCoroutine != null) StopCoroutine(_hideDelayCoroutine);
+            if (_animationCoroutine != null) StopCoroutine(_animationCoroutine);
+
+            _inventoryCanvasGroup.alpha = 0f;
+            _inventoryCanvasGroup.interactable = false;
+            _inventoryCanvasGroup.blocksRaycasts = false;
+
+            if (_animator != null) {
+                _animator.SetBool(IsOpenHash, false);
+                _animator.SetBool(IsCloseHash, true);
+            }
+
+            ResetAllSlots();
+        }
+
+        private void HandleGameStateChanged(GameStateChangedEvent evt) {
+            if (evt.CurrentState == GameState.Paused) {
+                if (_inventoryCanvasGroup != null && _inventoryCanvasGroup.alpha > 0) {
+                    HideInventoryInstant();
+                    _eventBus?.Publish(new InventoryToggledEvent(false));
+                }
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ using FifthSemester.Core.Services;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 namespace FifthSemester.Core.Audio {
     /// <summary>
@@ -42,6 +43,19 @@ namespace FifthSemester.Core.Audio {
 
         private void OnDestroy() {
             ServiceLocator.Unregister<IAudioService>();
+        }
+
+        private void OnEnable() {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnDisable() {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+            StopAllAmbience();
+            StopAllSFX();
         }
 
         private void Start() {
@@ -260,9 +274,9 @@ namespace FifthSemester.Core.Audio {
             }
         }
         public void StopAllAmbience() {
-            foreach (Transform child in transform) {
-                if (child.name.ToLower().Contains("ambience")) {
-                    Destroy(child.gameObject);
+            foreach (var channel in channels.Values) {
+                if (channel.ActiveTrack != null && channel.ActiveTrack.Source != null && channel.ActiveTrack.Source.outputAudioMixerGroup == AmbienceMixer) {
+                    channel.StopTrack(immediate: true);
                 }
             }
         }

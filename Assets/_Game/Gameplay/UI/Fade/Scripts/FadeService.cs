@@ -11,6 +11,7 @@ namespace FifthSemester.Gameplay.UI {
     public class FadeService : MonoBehaviour, IFadeService {
         private const string TAG = "<color=orange>[FadeService]</color>";
         private CanvasGroup _canvasGroup;
+        private Coroutine _currentFadeRoutine;
 
         private void Awake() {
             ServiceLocator.Register<IFadeService>(this);
@@ -23,12 +24,18 @@ namespace FifthSemester.Gameplay.UI {
 
         public void FadeIn(float duration, Action onComplete = null) {
             Debug.Log($"{TAG} Starting fade in over {duration} seconds.");
-            StartCoroutine(FadeRoutine(1, 0, duration, onComplete));
+            if (_currentFadeRoutine != null) {
+                StopCoroutine(_currentFadeRoutine);
+            }
+            _currentFadeRoutine = StartCoroutine(FadeRoutine(1, 0, duration, onComplete));
         }
 
         public void FadeOut(float duration, Action onComplete = null) {
             Debug.Log($"{TAG} Starting fade out over {duration} seconds.");
-            StartCoroutine(FadeRoutine(0, 1, duration, onComplete));
+            if (_currentFadeRoutine != null) {
+                StopCoroutine(_currentFadeRoutine);
+            }
+            _currentFadeRoutine = StartCoroutine(FadeRoutine(0, 1, duration, onComplete));
         }
 
         private IEnumerator FadeRoutine(float startAlpha, float endAlpha, float duration, Action onComplete) {
@@ -42,6 +49,7 @@ namespace FifthSemester.Gameplay.UI {
             }
 
             _canvasGroup.alpha = endAlpha;
+            _currentFadeRoutine = null;
             onComplete?.Invoke();
         }
     }

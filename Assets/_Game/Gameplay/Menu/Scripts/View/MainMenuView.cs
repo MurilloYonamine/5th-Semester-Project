@@ -2,6 +2,7 @@ using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.States;
 using FifthSemester.Gameplay.Save;
+using FifthSemester.Gameplay.Inventory;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -65,6 +66,9 @@ namespace FifthSemester.Gameplay.Menu {
             if (saveService != null) {
                 saveService.DeleteSlot(DEFAULT_SLOT);
             }
+
+            var inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
+            inventoryService?.Clear();
 
             SaveLoader.ClearPendingSave();
             PlayMenuPrimarySfx();

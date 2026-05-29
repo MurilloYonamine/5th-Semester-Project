@@ -17,7 +17,12 @@ namespace FifthSemester.Gameplay.Menu {
         }
         public void OnBack() {
             PlayMenuBackSfx();
-            _menuService.Show(MenuScreen.MainMenu);
+            var pauseMenu = _menuService.GetView(MenuScreen.PauseMenu);
+            if (pauseMenu != null && pauseMenu.activeSelf) {
+                _menuService.Show(MenuScreen.PauseMenu);
+            } else {
+                _menuService.Show(MenuScreen.MainMenu);
+            }
         }
     }
 }

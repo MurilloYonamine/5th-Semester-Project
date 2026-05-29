@@ -64,6 +64,9 @@ namespace FifthSemester.Gameplay.Inventory {
         }
 
         public bool HasItem(Item item) => _items.Contains(item);
+        public void Clear() {
+            _items.Clear();
+        }
         public IReadOnlyList<Item> GetItems() => _items.AsReadOnly();
     }
 }

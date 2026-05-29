@@ -95,6 +95,13 @@ public class GameTransitioner : MonoBehaviour {
         }
 
         SceneManager.sceneLoaded -= OnSceneLoaded;
-        _fadeService.FadeIn(1.0f);
+        
+        var activeFadeService = ServiceLocator.Get<IFadeService>();
+        if (activeFadeService != null) {
+            activeFadeService.FadeIn(1.0f);
+        }
+        else {
+            _fadeService?.FadeIn(1.0f);
+        }
     }
 }

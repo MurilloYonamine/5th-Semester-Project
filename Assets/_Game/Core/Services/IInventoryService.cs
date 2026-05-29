@@ -10,6 +10,7 @@ namespace FifthSemester.Core.Services {
         bool AddItem(TItem item);
         bool RemoveItem(TItem item);
         bool HasItem(TItem item);
+        void Clear();
 
         IReadOnlyList<TItem> GetItems();
 

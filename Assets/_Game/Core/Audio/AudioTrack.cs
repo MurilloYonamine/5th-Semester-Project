@@ -11,6 +11,7 @@ namespace FifthSemester.Core.Audio {
         public string Path { get; private set; }
 
         public GameObject Root => source.gameObject;
+        public AudioSource Source => source;
 
         private readonly AudioChannel channel;
         private readonly AudioSource source;

@@ -193,6 +193,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1536
   _jumpscareDirector: {fileID: 8595484458579838916}
+  _jumpscareTriggerDistance: 1.25
+  _catchUpDistanceThreshold: 25
+  _jumpSound: {fileID: 0}
+  _landSound: {fileID: 0}
   _speed: 2
   _sprint: 3
   _slowSpeed: 0.5
@@ -240,6 +244,8 @@ PlayableDirector:
   - key: {fileID: -44064230850751191, guid: 96311b0a6798ea74380ee3a2bb0394e6, type: 2}
     value: {fileID: 8190162607047900300}
   - key: {fileID: -2488840828931255473, guid: 96311b0a6798ea74380ee3a2bb0394e6, type: 2}
+    value: {fileID: 0}
+  - key: {fileID: 3383191669830149452, guid: 96311b0a6798ea74380ee3a2bb0394e6, type: 2}
     value: {fileID: 0}
   m_ExposedReferences:
     m_References:

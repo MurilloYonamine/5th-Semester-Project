@@ -44,6 +44,9 @@ namespace FifthSemester.Gameplay.Menu {
         protected override void Start() {
             base.Start();
 
+            _sensibilitySlider.minValue = 0f;
+            _sensibilitySlider.maxValue = 2f;
+
             _backButton.onClick.AddListener(OnBack);
             _resetDefaultsButton.onClick.AddListener(ResetToDefaults);
 

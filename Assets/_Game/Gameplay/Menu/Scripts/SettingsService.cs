@@ -133,8 +133,8 @@ namespace FifthSemester.Gameplay.Menu {
             set => SetBool("Settings_InvertY", value);
         }
         public float Sensibility {
-            get => PlayerPrefs.GetFloat("Settings_Sensibility", 1f);
-            set { PlayerPrefs.SetFloat("Settings_Sensibility", value); PlayerPrefs.Save(); }
+            get => Mathf.Clamp(PlayerPrefs.GetFloat("Settings_Sensibility", 1f), 0f, 2f);
+            set { PlayerPrefs.SetFloat("Settings_Sensibility", Mathf.Clamp(value, 0f, 2f)); PlayerPrefs.Save(); }
         }
     }
 }

@@ -19,16 +19,23 @@ namespace FifthSemester.Dev {
         }
 
         void Update() {
+<<<<<<< HEAD
 
             _yaw += Input.GetAxis("Mouse X") * lookSensitivity;
             _pitch -= Input.GetAxis("Mouse Y") * lookSensitivity;
 
             _pitch = Mathf.Clamp(_pitch, -89f, 89f);
 
+=======
+            _yaw += Input.GetAxis("Mouse X") * lookSensitivity;
+            _pitch -= Input.GetAxis("Mouse Y") * lookSensitivity;
+            _pitch = Mathf.Clamp(_pitch, -89f, 89f);
+>>>>>>> origin/main
             transform.eulerAngles = new Vector3(_pitch, _yaw, 0f);
 
             float horizontal = Input.GetAxis("Horizontal");
             float vertical = Input.GetAxis("Vertical");
+<<<<<<< HEAD
 
             float up = 0f;
 
@@ -44,6 +51,15 @@ namespace FifthSemester.Dev {
                 (Vector3.up * up);
 
             _controller.Move(move * moveSpeed * Time.deltaTime);
+=======
+            float up = 0f;
+
+            if (Input.GetKey(KeyCode.E)) up += 1f;      
+            if (Input.GetKey(KeyCode.Q)) up -= 1f;     
+
+            Vector3 move = (transform.forward * vertical + transform.right * horizontal + transform.up * up) * moveSpeed;
+            _controller.Move(move * Time.deltaTime);
+>>>>>>> origin/main
         }
     }
 }

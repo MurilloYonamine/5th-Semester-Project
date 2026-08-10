@@ -16,12 +16,19 @@ MonoBehaviour:
   Title: "Entregue os rem\xE9dios aos pacientes"
   Description: "Colete e entregue a medica\xE7\xE3o para os pacientes na ala dos
     quartos."
+<<<<<<< HEAD
   NextMission: {fileID: 11400000, guid: 098f8beac99efe34086b3be36f14ca07, type: 2}
   Type: 1
   UseFadeOnStart: 0
   TargetCutscene: 0
   NpcId: 
   InteractableTargetId: 
+=======
+  NextMission: {fileID: 0}
+  Type: 1
+  TargetCutscene: 0
+  NpcId: 
+>>>>>>> origin/main
   TargetItemName: 
   RequiredCount: 1
   CollectItemName: Remedio
@@ -30,6 +37,7 @@ MonoBehaviour:
   - Paciente_A
   - Paciente_B
   - Paciente_C
+<<<<<<< HEAD
   - Paciente_P
   - Paciente_E
   PersistProgress: 1
@@ -47,4 +55,14 @@ MonoBehaviour:
   - Type: 2
     TargetDoor: 20
     DoorsToKeepUnlocked: 
+=======
+  - Paciente_S
+  - Paciente_E
+  PersistProgress: 1
+  DebugSetupEvents: []
+  MapActions:
+  - Type: 4
+    TargetDoor: 0
+    DoorsToKeepUnlocked: 080000001100000012000000130000001400000015000000
+>>>>>>> origin/main
     TargetObjectId: 

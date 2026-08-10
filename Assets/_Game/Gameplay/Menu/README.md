@@ -12,12 +12,15 @@ Menu System provides:
 - **Prefab-based UI**: Reusable menu screen components
 - **Settings persistence**: Save/load user preferences
 - **State integration**: Pause/resume through menu
+<<<<<<< HEAD
 - **Menu audio**: Button feedback and menu music played via `AudioService`
 - **Main menu flow**: `New Game` starts fresh, `Continue` loads the latest autosave
 
 Current implementation note:
 - The old load-game screen is no longer part of the live menu flow.
 - Main menu now exposes only new game, continue, settings, credits, and quit.
+=======
+>>>>>>> origin/main
 
 ---
 
@@ -42,11 +45,14 @@ MenuService.cs (orchestrator)
     ├── GraphicsDefault.json
     ├── AudioDefault.json
     └── ScreenDefault.json
+<<<<<<< HEAD
 
 Audio resources:
 - `Audio/menu_botao1 (play)` for start/load actions
 - `Audio/menu_botao3` for navigation and back actions
 - `Audio/menu_musica` for the main menu music track
+=======
+>>>>>>> origin/main
 ```
 
 ---

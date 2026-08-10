@@ -8,12 +8,16 @@ using UnityEngine.InputSystem.Utilities;
 namespace FifthSemester.Gameplay.Menu {
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class MenuViewBase : MonoBehaviour, IMenuView {
+<<<<<<< HEAD
         protected const string MENU_PRIMARY_SFX_PATH = "Audio/menu_botao1 (play)";
         protected const string MENU_BACK_SFX_PATH = "Audio/menu_botao2 (back)";
         protected const string MENU_SECONDARY_SFX_PATH = "Audio/menu_botao3";
 
         protected IMenuService _menuService;
         protected IAudioService _audioService;
+=======
+        protected IMenuService _menuService;
+>>>>>>> origin/main
         [SerializeField] protected GameObject _focusFirstElement;
         protected abstract MenuScreen MenuScreenType { get; }
 
@@ -25,7 +29,10 @@ namespace FifthSemester.Gameplay.Menu {
 
         protected virtual void Start() {
             _menuService = ServiceLocator.Get<IMenuService>();
+<<<<<<< HEAD
             ServiceLocator.TryGet<IAudioService>(out _audioService);
+=======
+>>>>>>> origin/main
             _menuService.Register(MenuScreenType, gameObject);
         }
 
@@ -48,6 +55,7 @@ namespace FifthSemester.Gameplay.Menu {
             _canvasGroup.interactable = true;
             _canvasGroup.blocksRaycasts = true;
 
+<<<<<<< HEAD
             // Only auto-select the first element when there is no mouse present.
             // This prevents a situation where the first element remains focused
             // while the player hovers another element with the mouse (double highlight).
@@ -56,6 +64,11 @@ namespace FifthSemester.Gameplay.Menu {
                 if (_focusFirstElement != null) {
                     EventSystem.current.SetSelectedGameObject(_focusFirstElement);
                 }
+=======
+            EventSystem.current.SetSelectedGameObject(null);
+            if (_focusFirstElement != null) {
+                EventSystem.current.SetSelectedGameObject(_focusFirstElement);
+>>>>>>> origin/main
             }
         }
 
@@ -64,6 +77,7 @@ namespace FifthSemester.Gameplay.Menu {
             _canvasGroup.interactable = false;
             _canvasGroup.blocksRaycasts = false;
         }
+<<<<<<< HEAD
 
         protected void PlayMenuPrimarySfx() {
             PlayMenuSfx(MENU_PRIMARY_SFX_PATH);
@@ -84,5 +98,7 @@ namespace FifthSemester.Gameplay.Menu {
 
             _audioService?.PlaySFX(filePath, spatialBlend: 0f);
         }
+=======
+>>>>>>> origin/main
     }
 }

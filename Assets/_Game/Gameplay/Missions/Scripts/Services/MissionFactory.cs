@@ -13,7 +13,10 @@ namespace FifthSemester.Gameplay.Missions {
             IMission mission = definition.Type switch {
                 MissionType.CollectItems => missionGO.AddComponent<CollectItemsMission>(),
                 MissionType.CollectAndDeliver => missionGO.AddComponent<CollectAndDeliverMission>(),
+<<<<<<< HEAD
                 MissionType.Interact => missionGO.AddComponent<InteractMission>(),
+=======
+>>>>>>> origin/main
                 MissionType.TalkToNpc => missionGO.AddComponent<TalkToNpcMission>(),
                 MissionType.PlayCutscene => missionGO.AddComponent<CutsceneMission>(),
                 MissionType.EndGame => missionGO.AddComponent<EndGameMission>(),

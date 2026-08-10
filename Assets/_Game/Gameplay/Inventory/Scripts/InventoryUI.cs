@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.Events;
+<<<<<<< HEAD
 using FifthSemester.Core.States;
+=======
+>>>>>>> origin/main
 
 namespace FifthSemester.Gameplay.Inventory {
     public class InventoryUI : MonoBehaviour {
@@ -17,6 +20,7 @@ namespace FifthSemester.Gameplay.Inventory {
         [SerializeField] private float _highlightScale = 1.2f;
         [SerializeField] private float _animationDuration = 1f;
 
+<<<<<<< HEAD
         [Header("Audio")]
         [SerializeField] private AudioClip _openSound;
         [SerializeField] private AudioClip _closeSound;
@@ -24,6 +28,10 @@ namespace FifthSemester.Gameplay.Inventory {
         private IEventBus _eventBus;
         private IInventoryService<Item> _inventoryService;
         private IAudioService _audioService;
+=======
+        private IEventBus _eventBus;
+        private IInventoryService<Item> _inventoryService;
+>>>>>>> origin/main
 
         private int _currentIndex = 0;
         private Coroutine _hideDelayCoroutine;
@@ -38,7 +46,10 @@ namespace FifthSemester.Gameplay.Inventory {
         private void Start() {
             _eventBus = ServiceLocator.Get<IEventBus>();
             _inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
+<<<<<<< HEAD
             ServiceLocator.TryGet<IAudioService>(out _audioService);
+=======
+>>>>>>> origin/main
 
             if (_animator == null && _inventoryCanvasGroup != null) {
                 _animator = _inventoryCanvasGroup.GetComponent<Animator>();
@@ -52,14 +63,20 @@ namespace FifthSemester.Gameplay.Inventory {
                 _eventBus.Subscribe<InventoryItemRemovedEvent>(HandleItemRemoved);
                 _eventBus.Subscribe<NextInputEvent>(HandleNextInput);
                 _eventBus.Subscribe<PreviousInputEvent>(HandlePreviousInput);
+<<<<<<< HEAD
                 _eventBus.Subscribe<GameStateChangedEvent>(HandleGameStateChanged);
+=======
+>>>>>>> origin/main
             }
 
             if (_inventoryCanvasGroup != null) {
                 _inventoryCanvasGroup.alpha = 0f;
                 _inventoryCanvasGroup.interactable = false;
                 _inventoryCanvasGroup.blocksRaycasts = false;
+<<<<<<< HEAD
                 _inventoryCanvasGroup.gameObject.SetActive(false);
+=======
+>>>>>>> origin/main
             }
         }
 
@@ -70,7 +87,10 @@ namespace FifthSemester.Gameplay.Inventory {
                 _eventBus.Unsubscribe<InventoryItemRemovedEvent>(HandleItemRemoved);
                 _eventBus.Unsubscribe<NextInputEvent>(HandleNextInput);
                 _eventBus.Unsubscribe<PreviousInputEvent>(HandlePreviousInput);
+<<<<<<< HEAD
                 _eventBus.Unsubscribe<GameStateChangedEvent>(HandleGameStateChanged);
+=======
+>>>>>>> origin/main
             }
         }
 
@@ -177,9 +197,13 @@ namespace FifthSemester.Gameplay.Inventory {
             if (_hideDelayCoroutine != null) StopCoroutine(_hideDelayCoroutine);
             if (_animationCoroutine != null) StopCoroutine(_animationCoroutine);
 
+<<<<<<< HEAD
             _inventoryCanvasGroup.gameObject.SetActive(true);
             _inventoryCanvasGroup.alpha = 1f;
             PlayUISound(_openSound);
+=======
+            _inventoryCanvasGroup.alpha = 1f;
+>>>>>>> origin/main
 
             if (_animator != null) {
                 _animator.SetBool(IsOpenHash, true);
@@ -195,8 +219,11 @@ namespace FifthSemester.Gameplay.Inventory {
         private void HideInventory() {
             if (_inventoryCanvasGroup == null) return;
 
+<<<<<<< HEAD
             PlayUISound(_closeSound);
 
+=======
+>>>>>>> origin/main
             if (_animator != null) {
                 _animator.SetBool(IsOpenHash, false);
                 _animator.SetBool(IsCloseHash, true);
@@ -212,7 +239,10 @@ namespace FifthSemester.Gameplay.Inventory {
             _inventoryCanvasGroup.alpha = 0f;
             _inventoryCanvasGroup.interactable = false;
             _inventoryCanvasGroup.blocksRaycasts = false;
+<<<<<<< HEAD
             _inventoryCanvasGroup.gameObject.SetActive(false);
+=======
+>>>>>>> origin/main
 
             ResetAllSlots();
         }
@@ -250,6 +280,7 @@ namespace FifthSemester.Gameplay.Inventory {
                 }
             }
         }
+<<<<<<< HEAD
 
         private void PlayUISound(AudioClip clip) {
             if (clip == null || _audioService == null) {
@@ -286,5 +317,7 @@ namespace FifthSemester.Gameplay.Inventory {
                 }
             }
         }
+=======
+>>>>>>> origin/main
     }
 }

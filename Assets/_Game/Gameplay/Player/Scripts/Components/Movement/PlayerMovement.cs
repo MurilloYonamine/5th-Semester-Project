@@ -56,8 +56,11 @@ namespace FifthSemester.Player.Components {
         private float _sprintRemaining;
         private bool _isSprintCooldown;
         private float _sprintCooldownRemaining;
+<<<<<<< HEAD
         private bool _hasPlayedExhaustedSfx;
         private AudioSource _exhaustedAudioSource;
+=======
+>>>>>>> origin/main
 
 
         [Header("Crouch State")]
@@ -69,15 +72,25 @@ namespace FifthSemester.Player.Components {
         [SerializeField] private AudioClip[] _footstepClips;
         [FoldoutGroup("Footsteps")]
         [SerializeField] private float _walkFootstepInterval = 0.5f;
+<<<<<<< HEAD
         
+=======
+        [FoldoutGroup("Footsteps")]
+        [SerializeField] private float _sprintFootstepInterval = 0.32f;
+        [FoldoutGroup("Footsteps")]
+        [SerializeField] private float _crouchFootstepInterval = 0.7f;
+>>>>>>> origin/main
         [FoldoutGroup("Footsteps")]
         [SerializeField] private float _minFootstepSpeed = 0.1f;
         private float _footstepTimer;
 
+<<<<<<< HEAD
         [Header("Sprint Exhausted")]
         [SerializeField] private AudioClip _exhaustedSfx;
         [SerializeField, Range(0f, 1f)] private float _exhaustedThreshold = 0.15f;
 
+=======
+>>>>>>> origin/main
         #region Unity Lifecycle
 
         private void Awake() {
@@ -110,7 +123,10 @@ namespace FifthSemester.Player.Components {
 
         private void Update() {
             HandleSprintStamina();
+<<<<<<< HEAD
             HandleSprintExhaustedSfx();
+=======
+>>>>>>> origin/main
             _currentState?.Tick();
         }
 
@@ -144,11 +160,20 @@ namespace FifthSemester.Player.Components {
             float speed = horizontalVelocity.magnitude;
 
             if (speed < _minFootstepSpeed) {
+<<<<<<< HEAD
                 _footstepTimer = _walkFootstepInterval;
                 return;
             }
 
             float interval = _walkFootstepInterval;
+=======
+                float intervalOnStop = _isCrouched ? _crouchFootstepInterval : _walkFootstepInterval;
+                _footstepTimer = intervalOnStop;
+                return;
+            }
+
+            float interval = _isSprinting ? _sprintFootstepInterval : (_isCrouched ? _crouchFootstepInterval : _walkFootstepInterval);
+>>>>>>> origin/main
             _footstepTimer += Time.fixedDeltaTime;
 
             if (_footstepTimer >= interval) {
@@ -239,6 +264,7 @@ namespace FifthSemester.Player.Components {
             }
         }
 
+<<<<<<< HEAD
         private void HandleSprintExhaustedSfx() {
             if (!_enableSprint || _unlimitedSprint || _exhaustedSfx == null || _audioService == null) {
                 return;
@@ -262,6 +288,8 @@ namespace FifthSemester.Player.Components {
             _hasPlayedExhaustedSfx = false;
         }
 
+=======
+>>>>>>> origin/main
         public bool TryStartSprint() {
             if (!_enableSprint) {
                 _isSprinting = false;

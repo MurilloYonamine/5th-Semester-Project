@@ -17,11 +17,17 @@ MonoBehaviour:
   Description: "Fale com a Enfermeira Anna no corredor para receber as instru\xE7\xF5es
     do dia."
   NextMission: {fileID: 11400000, guid: a3510c6362266be45b20da76094f87dc, type: 2}
+<<<<<<< HEAD
   Type: 4
   UseFadeOnStart: 1
   TargetCutscene: 1
   NpcId: M01_Nurse_A
   InteractableTargetId: 
+=======
+  Type: 3
+  TargetCutscene: 1
+  NpcId: Enfermeira_A
+>>>>>>> origin/main
   TargetItemName: 
   RequiredCount: 1
   CollectItemName: 
@@ -29,6 +35,7 @@ MonoBehaviour:
   DeliveryPointIds: []
   PersistProgress: 1
   DebugSetupEvents: []
+<<<<<<< HEAD
   EndGamePrefab: {fileID: 0}
   MapActions:
   - Type: 1
@@ -39,3 +46,6 @@ MonoBehaviour:
     TargetDoor: 0
     DoorsToKeepUnlocked: 
     TargetObjectId: M04_Nurse_A
+=======
+  MapActions: []
+>>>>>>> origin/main

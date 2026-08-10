@@ -11,11 +11,17 @@ using UnityEngine.SceneManagement;
 
 namespace FifthSemester.Gameplay.Enemy {
     public class ActionPlayJumpscare : Node {
+<<<<<<< HEAD
         private const float MIN_TRIGGER_DISTANCE = 0.25f;
         private const string NAV_AGENT_KEY = "NavAgent";
         private const string JUMPSCARE_DIRECTOR_KEY = "JumpscareDirector";
         private const string PLAYER_TARGET_KEY = "PlayerTarget";
         private const string CUTSCENE_ACTIVE_KEY = "CutsceneActive";
+=======
+        private const string NAV_AGENT_KEY = "NavAgent";
+        private const string JUMPSCARE_DIRECTOR_KEY = "JumpscareDirector";
+        private const string PLAYER_TARGET_KEY = "PlayerTarget";
+>>>>>>> origin/main
         private const string MAIN_MENU_SCENE_NAME = "MainMenu";
 
         private readonly Blackboard _blackboard;
@@ -46,6 +52,7 @@ namespace FifthSemester.Gameplay.Enemy {
                     return Status.Running;
                 }
 
+<<<<<<< HEAD
                 // Se o jumpscare não começou e a distância aumentou (o jogador recuou/fugiu ou congelou a Nurse),
                 // falha este nó para que o Behavior Tree retorne para o estado de perseguição ativa (ActionChase)
                 // e continue seguindo o jogador, em vez de ficar travada infinitamente.
@@ -56,6 +63,9 @@ namespace FifthSemester.Gameplay.Enemy {
             if (_started && !_finished && _director.duration > 0f && _director.time >= _director.duration - 0.05f) {
                 _finished = true;
                 SceneManager.LoadScene(MAIN_MENU_SCENE_NAME);
+=======
+                return Status.Running;
+>>>>>>> origin/main
             }
 
             if (_finished) {
@@ -76,6 +86,7 @@ namespace FifthSemester.Gameplay.Enemy {
             if (_agent == null || _target == null) return false;
 
             // If the agent has a direct destination near the player, allow jumpscare when close
+<<<<<<< HEAD
             float triggerDistance = Mathf.Max(MIN_TRIGGER_DISTANCE, _agent.stoppingDistance);
 
             // If agent is still calculating a path do not start yet
@@ -86,11 +97,24 @@ namespace FifthSemester.Gameplay.Enemy {
             // Prefer NavMeshAgent remainingDistance when there's an active path
             if (_agent.hasPath) {
                 return _agent.remainingDistance <= triggerDistance;
+=======
+
+            // If agent is still calculating a path do not start yet
+            if (_agent.pathPending) return false;
+
+            // Prefer NavMeshAgent remainingDistance when there's an active path
+            if (_agent.hasPath) {
+                return _agent.remainingDistance <= _agent.stoppingDistance;
+>>>>>>> origin/main
             }
 
             // If there's no path (e.g. agent was teleported on landing), fallback to direct distance check
             float directDistance = Vector3.Distance(_agent.transform.position, _target.position);
+<<<<<<< HEAD
             return directDistance <= triggerDistance;
+=======
+            return directDistance <= Mathf.Max(0.1f, _agent.stoppingDistance);
+>>>>>>> origin/main
         }
 
         private void StartJumpscare() {
@@ -101,14 +125,20 @@ namespace FifthSemester.Gameplay.Enemy {
 
             _director.stopped += OnDirectorStopped;
             _gameStateService?.ChangeState(GameState.Cutscene);
+<<<<<<< HEAD
             _blackboard.SetData(CUTSCENE_ACTIVE_KEY, true);
+=======
+>>>>>>> origin/main
             _director.Play();
             _started = true;
         }
 
         private void FinalizeJumpscare() {
             _director.stopped -= OnDirectorStopped;
+<<<<<<< HEAD
             _blackboard.SetData(CUTSCENE_ACTIVE_KEY, false);
+=======
+>>>>>>> origin/main
             _gameStateService?.ChangeState(GameState.Gameplay);
         }
 
@@ -124,9 +154,12 @@ namespace FifthSemester.Gameplay.Enemy {
         public override void Reset() {
             base.Reset();
             if (_director != null) _director.stopped -= OnDirectorStopped;
+<<<<<<< HEAD
             if (_blackboard != null) {
                 _blackboard.SetData(CUTSCENE_ACTIVE_KEY, false);
             }
+=======
+>>>>>>> origin/main
             _started = false;
             _finished = false;
         }

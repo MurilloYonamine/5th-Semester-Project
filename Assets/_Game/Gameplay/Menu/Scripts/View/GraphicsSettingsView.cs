@@ -75,8 +75,11 @@ namespace FifthSemester.Gameplay.Menu {
         public void ResetToDefaults() {
             if (_defaultsShaders == null) return;
 
+<<<<<<< HEAD
             PlayMenuSecondarySfx();
 
+=======
+>>>>>>> origin/main
             _settingsService.BarrelDistortion = _defaultsShaders.BarrelDistortion;
             _settingsService.Dithering = _defaultsShaders.Dithering;
             _settingsService.Pixelation = _defaultsShaders.Pixelation;
@@ -111,7 +114,10 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public void OnBack() {
+<<<<<<< HEAD
             PlayMenuBackSfx();
+=======
+>>>>>>> origin/main
             _menuService.Show(MenuScreen.Settings);
         }
 

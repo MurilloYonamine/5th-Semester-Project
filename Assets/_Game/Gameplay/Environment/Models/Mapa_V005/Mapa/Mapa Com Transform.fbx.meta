@@ -1,6 +1,7 @@
 fileFormatVersion: 2
 guid: 2afcc19f73081cb4987a032dea2e3ebd
 ModelImporter:
+<<<<<<< HEAD
   serializedVersion: 22200
   internalIDToNameTable: []
   externalObjects:
@@ -94,6 +95,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: vidro
     second: {fileID: 2100000, guid: cde6301e54ea35d4eaef09e1e952a6be, type: 2}
+=======
+  serializedVersion: 24200
+  internalIDToNameTable: []
+  externalObjects: {}
+>>>>>>> origin/main
   materials:
     materialImportMode: 2
     materialName: 0
@@ -146,6 +152,12 @@ ModelImporter:
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
+<<<<<<< HEAD
+=======
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+>>>>>>> origin/main
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8

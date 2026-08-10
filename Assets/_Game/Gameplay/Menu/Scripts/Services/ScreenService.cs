@@ -14,7 +14,10 @@ namespace FifthSemester.Gameplay.Menu {
         public void SetFullscreen(bool isFullscreen) {
             FullScreenMode mode = isFullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
             Screen.fullScreenMode = mode;
+<<<<<<< HEAD
             Screen.fullScreen = isFullscreen;
+=======
+>>>>>>> origin/main
         }
 
         public void SetFrameRate(int frameRate) {

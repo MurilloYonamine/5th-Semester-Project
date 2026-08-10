@@ -20,9 +20,12 @@ namespace FifthSemester.Doors {
         [SerializeField] private float _speed = 5f;
         [SerializeField] private bool _useDoubleDoor;
 
+<<<<<<< HEAD
         [Header("Audio")]
         [SerializeField] private AudioClip[] _doorSfx;
 
+=======
+>>>>>>> origin/main
         [ShowIf(nameof(_useDoubleDoor))]
         [SerializeField] private Transform[] _doorMeshes;
 
@@ -38,7 +41,10 @@ namespace FifthSemester.Doors {
         private Transform[] _activeDoorMeshes;
         private bool _isLocked = false;
         private Color _unlockedColor;
+<<<<<<< HEAD
         private IAudioService _audioService;
+=======
+>>>>>>> origin/main
 
         public bool IsInteractable { get; private set; } = true;
 
@@ -54,9 +60,12 @@ namespace FifthSemester.Doors {
                 _defaultText = _textLocal.text;
             }
 
+<<<<<<< HEAD
             if(_doorMesh == null)
                 _doorMesh = gameObject.transform;
 
+=======
+>>>>>>> origin/main
             CacheDoorMeshes();
             InitializeRotations();
 
@@ -64,8 +73,11 @@ namespace FifthSemester.Doors {
         }
 
         private void Start() {
+<<<<<<< HEAD
             ServiceLocator.TryGet<IAudioService>(out _audioService);
 
+=======
+>>>>>>> origin/main
             if (_doorType == DoorType.None) return;
 
             _mapService = ServiceLocator.Get<IMapService>();
@@ -92,7 +104,10 @@ namespace FifthSemester.Doors {
             if (_isLocked) return;
 
             _isOpen = !_isOpen;
+<<<<<<< HEAD
             PlayDoorSound();
+=======
+>>>>>>> origin/main
             UpdateTargetRotations();
         }
 
@@ -109,16 +124,23 @@ namespace FifthSemester.Doors {
         public void Lock() {
             _isLocked = true;
 
+<<<<<<< HEAD
             if (_isOpen) {
                 _isOpen = false;
                 UpdateTargetRotations();
             }
 
+=======
+>>>>>>> origin/main
             if (_outline != null)
                 _outline.OutlineColor = Color.red;
 
             if (_textLocal != null) {
                 _textLocal.color = Color.red;
+<<<<<<< HEAD
+=======
+                _textLocal.text = "TRANCADA";
+>>>>>>> origin/main
             }
         }
 
@@ -177,6 +199,7 @@ namespace FifthSemester.Doors {
                 }
             }
         }
+<<<<<<< HEAD
 
         private void PlayDoorSound() {
             if (_audioService == null || _doorSfx == null || _doorSfx.Length == 0) {
@@ -191,5 +214,7 @@ namespace FifthSemester.Doors {
 
             _audioService.PlaySFX(clip);
         }
+=======
+>>>>>>> origin/main
     }
 }

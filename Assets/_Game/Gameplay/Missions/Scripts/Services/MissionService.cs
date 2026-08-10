@@ -3,6 +3,7 @@
 
 using UnityEngine;
 using System;
+<<<<<<< HEAD
 using System.Collections;
 using System.Collections.Generic;
 using FifthSemester.Core.Enums;
@@ -58,10 +59,41 @@ namespace FifthSemester.Gameplay.Missions {
                 if (startIndex > 0) {
                     SkipToMission(startIndex);
                 }
+=======
+using FifthSemester.Core.Events;
+using FifthSemester.Core.Services;
+
+namespace FifthSemester.Gameplay.Missions {
+    public class MissionService : MonoBehaviour, IMissionService {
+        [SerializeField] private MissionDefinition[] _missionDefinitions;
+
+        private IEventBus _eventBus;
+        private ISaveService _saveService;
+        private IMission _currentMission;
+        public int CurrentIndex { get; private set; } = -1;
+        public MissionDefinition[] Missions => _missionDefinitions;
+
+        private void Awake() {
+            ServiceLocator.Register<IMissionService>(this);
+            EnsureServices();
+        }
+
+        private void Start() {
+            EnsureServices();
+
+            if (_currentMission != null) return;
+
+            SaveData saveData = _saveService?.LoadFromSlot("default");
+            int startIndex = saveData?.CurrentMissionIndex ?? 0;
+
+            if (_missionDefinitions != null && _missionDefinitions.Length > 0) {
+                SetCurrentMission(startIndex);
+>>>>>>> origin/main
             }
         }
 
         private void OnDestroy() {
+<<<<<<< HEAD
             _eventBus?.Unsubscribe<ItemPickedUpEvent>(OnItemPickedUp);
             CleanupCurrentMission();
         }
@@ -79,11 +111,19 @@ namespace FifthSemester.Gameplay.Missions {
         }
 
         public void StartMission(MissionDefinition mission) {
+=======
+            CleanupCurrentMission();
+        }
+        public void StartMission(MissionDefinition mission) {
+            EnsureServices();
+
+>>>>>>> origin/main
             if (mission == null) {
                 Debug.LogError("[MissionService] Tentativa de iniciar uma missão nula.");
                 return;
             }
 
+<<<<<<< HEAD
             if (_activeSequence != null && _activeSequence.Sequence != null) {
                 int idx = _activeSequence.Sequence.IndexOf(mission);
                 if (idx == -1) {
@@ -132,6 +172,37 @@ namespace FifthSemester.Gameplay.Missions {
             CurrentIndex = index;
             MissionDefinition def = _activeSequence.Sequence[index];
             _currentDefinition = def;
+=======
+            int index = Array.IndexOf(_missionDefinitions, mission);
+
+            if (index == -1) {
+                Debug.LogError($"[MissionService] Missão {mission.name} não encontrada na lista!");
+                return;
+            }
+
+            SetCurrentMission(index);
+        }
+        public MissionDefinition GetCurrentMission() {
+            if (_missionDefinitions == null || CurrentIndex < 0 || CurrentIndex >= _missionDefinitions.Length) return null;
+            return _missionDefinitions[CurrentIndex];
+        }
+
+        private void SetCurrentMission(int index) {
+            EnsureServices();
+
+            if (_eventBus == null) {
+                return;
+            }
+
+            if (_missionDefinitions == null || index < 0 || index >= _missionDefinitions.Length) {
+                return;
+            }
+
+            CleanupCurrentMission();
+
+            CurrentIndex = index;
+            MissionDefinition def = _missionDefinitions[index];
+>>>>>>> origin/main
             _currentMission = MissionFactory.CreateMission(def);
 
             if (_currentMission != null) {
@@ -141,7 +212,10 @@ namespace FifthSemester.Gameplay.Missions {
                 }
                 _currentMission.StartMission();
                 PublishMissionUpdate();
+<<<<<<< HEAD
                 PlayStartFadeIfNeeded(def);
+=======
+>>>>>>> origin/main
             }
         }
 
@@ -167,6 +241,7 @@ namespace FifthSemester.Gameplay.Missions {
         }
 
         public void CompleteCurrentMission() {
+<<<<<<< HEAD
             PlayMissionCompleteSFX();
             if (_activeSequence != null && _activeSequence.Sequence != null) {
                 _sequenceIndex++;
@@ -307,12 +382,33 @@ namespace FifthSemester.Gameplay.Missions {
             }
 
             if (missionIndex < 0 || missionIndex >= _activeSequence.Sequence.Count) {
+=======
+            int next = CurrentIndex + 1;
+            if (_missionDefinitions == null) return;
+
+            if (next >= _missionDefinitions.Length) {
+                Debug.Log("[MissionService] All missions completed.");
+                SaveGameState();
+                return;
+            }
+
+            SaveGameState();
+            SetCurrentMission(next);
+        }
+
+        public void SkipToMission(int missionIndex) {
+            if (_missionDefinitions == null || missionIndex < 0 || missionIndex >= _missionDefinitions.Length) {
+>>>>>>> origin/main
                 Debug.LogWarning($"[MissionService] Invalid mission index: {missionIndex}");
                 return;
             }
 
             for (int i = 0; i <= missionIndex; i++) {
+<<<<<<< HEAD
                 MissionDefinition def = _activeSequence.Sequence[i];
+=======
+                MissionDefinition def = _missionDefinitions[i];
+>>>>>>> origin/main
                 if (def == null || def.DebugSetupEvents == null) continue;
 
                 foreach (string debugEvent in def.DebugSetupEvents) {
@@ -321,8 +417,12 @@ namespace FifthSemester.Gameplay.Missions {
                     if (debugEvent.StartsWith("Item:", System.StringComparison.OrdinalIgnoreCase)) {
                         string itemName = debugEvent.Substring(5);
                         _eventBus?.Publish(new ItemPickedUpEvent(itemName, null));
+<<<<<<< HEAD
                     }
                     else {
+=======
+                    } else {
+>>>>>>> origin/main
                         _eventBus?.Publish(new GenericGameEvent(debugEvent));
                     }
                 }
@@ -338,6 +438,7 @@ namespace FifthSemester.Gameplay.Missions {
             }
         }
 
+<<<<<<< HEAD
         private void RequestAutosave() {
             if (_isAutosaving || _saveService == null) {
                 return;
@@ -474,6 +575,24 @@ namespace FifthSemester.Gameplay.Missions {
             _activeSequence = sequence;
             _sequenceIndex = 0;
             StartMission(_activeSequence.Sequence[_sequenceIndex]);
+=======
+        private void SaveGameState() {
+            if (_saveService == null) return;
+
+            SaveData saveData = _saveService.LoadFromSlot("default") ?? new SaveData();
+            saveData.CurrentMissionIndex = CurrentIndex;
+            _saveService.SaveToSlot("default", saveData);
+        }
+
+        private void EnsureServices() {
+            if (_eventBus == null) {
+                _eventBus = ServiceLocator.Get<IEventBus>();
+            }
+
+            if (_saveService == null) {
+                _saveService = ServiceLocator.Get<ISaveService>();
+            }
+>>>>>>> origin/main
         }
 
     }

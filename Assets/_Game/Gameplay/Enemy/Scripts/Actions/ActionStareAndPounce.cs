@@ -4,7 +4,10 @@
 using UnityEngine;
 using UnityEngine.AI;
 using FifthSemester.Framework.BehaviourTrees;
+<<<<<<< HEAD
 using FifthSemester.Core.Services;
+=======
+>>>>>>> origin/main
 
 namespace FifthSemester.Gameplay.Enemy {
     public class ActionStareAndPounce : Node {
@@ -17,7 +20,10 @@ namespace FifthSemester.Gameplay.Enemy {
         private NavMeshAgent _agent;
         private Transform _target;
         private Animator _animator;
+<<<<<<< HEAD
         private IAudioService _audioService;
+=======
+>>>>>>> origin/main
 
         // --- Timers e Configurações ---
         private float _stareTimeRequired = 4f; // Tempo encarando
@@ -27,10 +33,13 @@ namespace FifthSemester.Gameplay.Enemy {
         private float _postLandDelay = 1f; // Tempo que o jogador tem para reagir após o land
         private float _jumpscareRange = 2f; // Distância máxima para iniciar o jumpscare após o post-land delay
 
+<<<<<<< HEAD
         [Header("Audio")]
         [SerializeField] private AudioClip _jumpSound;
         [SerializeField] private AudioClip _landSound;
 
+=======
+>>>>>>> origin/main
         private enum PounceState { Staring, JumpingUp, HoveringInAir, Landing }
         private PounceState _currentState = PounceState.Staring;
 
@@ -38,7 +47,10 @@ namespace FifthSemester.Gameplay.Enemy {
 
         public ActionStareAndPounce(Blackboard blackboard, string name = "Stare And Pounce") : base(name, blackboard) {
             _blackboard = blackboard;
+<<<<<<< HEAD
             ServiceLocator.TryGet<IAudioService>(out _audioService);
+=======
+>>>>>>> origin/main
         }
 
         public override Status Process() {
@@ -76,7 +88,10 @@ namespace FifthSemester.Gameplay.Enemy {
                 _agent.enabled = false; 
 
                 if (_animator != null) _animator.SetTrigger("Jump");
+<<<<<<< HEAD
                 PlaySfx(_jumpSound);
+=======
+>>>>>>> origin/main
 
                 _currentTimer = 0f;
             }
@@ -125,7 +140,10 @@ namespace FifthSemester.Gameplay.Enemy {
                 }
 
                 if (_animator != null) _animator.SetTrigger("Land");
+<<<<<<< HEAD
                 PlaySfx(_landSound);
+=======
+>>>>>>> origin/main
             }
             return Status.Running;
         }
@@ -182,6 +200,7 @@ namespace FifthSemester.Gameplay.Enemy {
                 _agent.enabled = true;
             }
          }
+<<<<<<< HEAD
 
         private void PlaySfx(AudioClip clip) {
             if (clip == null || _audioService == null) {
@@ -190,5 +209,7 @@ namespace FifthSemester.Gameplay.Enemy {
 
             _audioService.PlaySFX(clip);
         }
+=======
+>>>>>>> origin/main
     }
 }

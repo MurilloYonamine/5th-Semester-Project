@@ -31,11 +31,15 @@ namespace FifthSemester.Gameplay.Enemy {
             CacheReferences();
 
             if (_agent == null || _target == null) {
+<<<<<<< HEAD
                 Debug.LogWarning($"[ActionChase] Failure: agent is null? ({_agent == null}) or target is null? ({_target == null})");
+=======
+>>>>>>> origin/main
                 StopGlitch(); 
                 return Status.Failure;
             }
 
+<<<<<<< HEAD
             if (_blackboard.HasKey("IsFrozen") && _blackboard.GetData<bool>("IsFrozen")) {
                 if (_agent.isOnNavMesh && !_agent.isStopped) {
                     _agent.isStopped = true;
@@ -47,6 +51,9 @@ namespace FifthSemester.Gameplay.Enemy {
 
             if (_blackboard.HasKey("IsPlayerInRoom") && _blackboard.GetData<bool>("IsPlayerInRoom")) {
                 _agent.ResetPath();
+=======
+            if (_blackboard.GetData<bool>(IS_STUNNED_KEY)) {
+>>>>>>> origin/main
                 StopGlitch();
                 return Status.Failure;
             }
@@ -84,9 +91,12 @@ namespace FifthSemester.Gameplay.Enemy {
             _agent ??= _blackboard.GetData<NavMeshAgent>(NAV_AGENT_KEY);
             _target ??= _blackboard.GetData<Transform>(PLAYER_TARGET_KEY);
             _whiteNoiseService ??= ServiceLocator.Get<IWhiteNoiseService>();
+<<<<<<< HEAD
             if (_blackboard.HasKey("LoseTargetDistance")) {
                 _loseTargetDistance = _blackboard.GetData<float>("LoseTargetDistance");
             }
+=======
+>>>>>>> origin/main
         }
 
         private void UpdateGlitchProximityEffect() {

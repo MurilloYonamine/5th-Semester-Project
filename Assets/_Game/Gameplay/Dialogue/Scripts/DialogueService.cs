@@ -6,27 +6,43 @@ using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.States;
 using System;
+<<<<<<< HEAD
 using System.Collections;
 using System.Collections.Generic;
+=======
+using System.Collections.Generic;
+using TMPro;
+>>>>>>> origin/main
 using UnityEngine;
 using UnityEngine.Playables;
 
 namespace FifthSemester.Gameplay.Dialogue {
     public class DialogueService : MonoBehaviour, IDialogueService<TextAsset> {
+<<<<<<< HEAD
         private const float DIALOGUE_FADE_DURATION = 1f;
 
+=======
+>>>>>>> origin/main
         public GameState CurrentState { get; set; } = GameState.Gameplay;
         public DialogueMode CurrentMode { get; private set; }
 
         public bool IsDialogueActive { get; private set; }
 
         private IEventBus _eventBus;
+<<<<<<< HEAD
         private IFadeService _fadeService;
         private IAudioService _audioService;
         private Coroutine _endHoldCoroutine;
 
         [Header("Views")]
         [SerializeField] private DialogueView _dialogueView;
+=======
+
+        [Header("UI")]
+        [SerializeField] private GameObject _dialoguePanel;
+        [SerializeField] private TextMeshProUGUI _nameText;
+        [SerializeField] private TextMeshProUGUI _dialogueText;
+>>>>>>> origin/main
 
         [Header("Speakers")]
         [SerializeField] private List<CharacterSO> _characters = new List<CharacterSO>();
@@ -34,6 +50,11 @@ namespace FifthSemester.Gameplay.Dialogue {
         [Header("Defaults")]
         [SerializeField] private Color _defaultNameColor = Color.white;
         [SerializeField] private Color _defaultTextColor = Color.white;
+<<<<<<< HEAD
+=======
+        [SerializeField] private TMP_FontAsset _defaultNameFont;
+        [SerializeField] private TMP_FontAsset _defaultTextFont;
+>>>>>>> origin/main
 
         private Queue<ParsedDialogueLine> _linesQueue;
         private string _currentDialogueSourceId;
@@ -46,6 +67,7 @@ namespace FifthSemester.Gameplay.Dialogue {
 
         private void Start() {
             _eventBus = ServiceLocator.Get<IEventBus>();
+<<<<<<< HEAD
             ServiceLocator.TryGet<IAudioService>(out _audioService);
 
             if (_eventBus == null) {
@@ -62,6 +84,11 @@ namespace FifthSemester.Gameplay.Dialogue {
 
             _eventBus.Subscribe<DialogueAdvanceRequestedEvent>(OnDialogueAdvanceRequested);
             _eventBus.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
+=======
+
+            _eventBus?.Subscribe<DialogueAdvanceRequestedEvent>(OnDialogueAdvanceRequested);
+            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
+>>>>>>> origin/main
         }
 
         private void OnDisable() {
@@ -69,6 +96,7 @@ namespace FifthSemester.Gameplay.Dialogue {
             _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
         }
 
+<<<<<<< HEAD
         private void ToggleDialogue(bool enable) {
             IsDialogueActive = enable;
 
@@ -79,12 +107,27 @@ namespace FifthSemester.Gameplay.Dialogue {
                 else {
                     _dialogueView.Hide();
                 }
+=======
+        public void ToggleDialogue(bool enable) {
+            IsDialogueActive = enable;
+            if (_dialoguePanel != null) {
+                _dialoguePanel.SetActive(enable);
+>>>>>>> origin/main
             }
         }
 
         private void Clear() {
+<<<<<<< HEAD
             if (_dialogueView != null) {
                 _dialogueView.ClearDialogue();
+=======
+            if (_nameText != null) {
+                _nameText.text = string.Empty;
+            }
+
+            if (_dialogueText != null) {
+                _dialogueText.text = string.Empty;
+>>>>>>> origin/main
             }
         }
 
@@ -93,11 +136,14 @@ namespace FifthSemester.Gameplay.Dialogue {
                 return;
 
             if (CurrentMode == DialogueMode.Cutscene) {
+<<<<<<< HEAD
                 // if (CurrentDirector != null && CurrentDirector.playableGraph.IsValid())
                 // {
                 //     CurrentDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
                 // }
 
+=======
+>>>>>>> origin/main
                 if (_linesQueue != null && _linesQueue.Count > 0) {
                     DisplayNextLine();
                 }
@@ -126,16 +172,21 @@ namespace FifthSemester.Gameplay.Dialogue {
             IsDialogueActive = true;
             _eventBus?.Publish(new DialogueStartedEvent());
 
+<<<<<<< HEAD
             PlayStartFade(() => BeginDialogue());
         }
 
         private void BeginDialogue() {
             if (CurrentDirector != null && CurrentMode == DialogueMode.Cutscene) {
+=======
+            if (CurrentDirector != null) {
+>>>>>>> origin/main
                 ToggleDialogue(false);
                 CurrentDirector.Play();
             }
             else {
                 ToggleDialogue(true);
+<<<<<<< HEAD
                 PlayDialogueStartClip();
                 DisplayNextLine();
 
@@ -145,6 +196,11 @@ namespace FifthSemester.Gameplay.Dialogue {
             }
         }
 
+=======
+                DisplayNextLine();
+            }
+        }
+>>>>>>> origin/main
         public void TimelineShowLine() {
             ToggleDialogue(true);
             DisplayNextLine();
@@ -166,6 +222,7 @@ namespace FifthSemester.Gameplay.Dialogue {
             bool hasCharacter = TryGetCharacter(line.speakerName, out character);
 
             string speakerName = string.IsNullOrWhiteSpace(line.speakerName) ? string.Empty : line.speakerName;
+<<<<<<< HEAD
 
             if (_dialogueView == null) {
                 throw new InvalidOperationException("[DialogueService] DialogueView não está configurado.");
@@ -178,15 +235,27 @@ namespace FifthSemester.Gameplay.Dialogue {
                 hasCharacter ? character.nameColor : _defaultNameColor,
                 hasCharacter ? character.textColor : _defaultTextColor
             );
+=======
+            _nameText.text = speakerName;
+            _nameText.color = hasCharacter ? character.nameColor : _defaultNameColor;
+            _nameText.font = hasCharacter && character.nameFont != null ? character.nameFont : _defaultNameFont;
+
+            _dialogueText.text = line.text;
+            _dialogueText.color = hasCharacter ? character.textColor : _defaultTextColor;
+            _dialogueText.font = hasCharacter && character.textFont != null ? character.textFont : _defaultTextFont;
+>>>>>>> origin/main
         }
 
         public void EndDialogue() {
             string sourceId = _currentDialogueSourceId;
 
+<<<<<<< HEAD
             PlayEndFade(sourceId);
         }
 
         private void FinalizeDialogueEnd(string sourceId) {
+=======
+>>>>>>> origin/main
             Clear();
             ToggleDialogue(false);
 
@@ -205,6 +274,7 @@ namespace FifthSemester.Gameplay.Dialogue {
             CurrentState = evt.CurrentState;
         }
 
+<<<<<<< HEAD
         private void PlayStartFade(Action onComplete) {
             EnsureFadeService();
 
@@ -274,6 +344,8 @@ namespace FifthSemester.Gameplay.Dialogue {
             }
         }
 
+=======
+>>>>>>> origin/main
         private bool TryGetCharacter(string speakerName, out CharacterSO character) {
             character = null;
 
@@ -295,6 +367,7 @@ namespace FifthSemester.Gameplay.Dialogue {
 
             return false;
         }
+<<<<<<< HEAD
 
         private void PlayDialogueStartClip() {
             if (_audioService == null || _linesQueue == null || _linesQueue.Count == 0) {
@@ -313,5 +386,7 @@ namespace FifthSemester.Gameplay.Dialogue {
 
             _audioService.PlaySFX(clip);
         }
+=======
+>>>>>>> origin/main
     }
 }

@@ -10,7 +10,11 @@ using UnityEngine;
 namespace FifthSemester.Gameplay.Map {
     public class MapService : SerializedMonoBehaviour, IMapService {
         [SerializeField]
+<<<<<<< HEAD
         private Dictionary<string, GameObject> _registry;
+=======
+        private readonly Dictionary<string, GameObject> _registry = new();
+>>>>>>> origin/main
 
         private void Awake() {
             ServiceLocator.Register<IMapService>(this);

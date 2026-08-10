@@ -16,6 +16,7 @@ namespace FifthSemester.Gameplay.Menu {
             _backButton.onClick.AddListener(OnBack);
         }
         public void OnBack() {
+<<<<<<< HEAD
             PlayMenuBackSfx();
             var pauseMenu = _menuService.GetView(MenuScreen.PauseMenu);
             if (pauseMenu != null && pauseMenu.activeSelf) {
@@ -23,6 +24,9 @@ namespace FifthSemester.Gameplay.Menu {
             } else {
                 _menuService.Show(MenuScreen.MainMenu);
             }
+=======
+            _menuService.Show(MenuScreen.MainMenu);
+>>>>>>> origin/main
         }
     }
 }

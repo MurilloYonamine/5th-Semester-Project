@@ -4,9 +4,12 @@
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Framework.BehaviourTrees;
+<<<<<<< HEAD
 using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Gameplay.Map2;
 using System.Collections.Generic;
+=======
+>>>>>>> origin/main
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Playables;
@@ -18,7 +21,10 @@ namespace FifthSemester.Gameplay.Enemy {
         private const string NAV_AGENT_KEY = "NavAgent";
         private const string ANIMATOR_KEY = "Animator";
         private const string JUMPSCARE_DIRECTOR_KEY = "JumpscareDirector";
+<<<<<<< HEAD
         private const string CUTSCENE_ACTIVE_KEY = "CutsceneActive";
+=======
+>>>>>>> origin/main
         private const string IS_FROZEN_KEY = "IsFrozen";
         private const string IS_OBSERVED_KEY = "HasLineOfSight";
 
@@ -32,15 +38,20 @@ namespace FifthSemester.Gameplay.Enemy {
 
         [Header("Vision (Weeping Angel Settings)")]
         [SerializeField] private Transform _eyeTransform;
+<<<<<<< HEAD
         [SerializeField, Range(0f, 120f)] private float _viewDistance = 30f;
         [SerializeField, Range(0f, 360f)] private float _fovAngle = 90f;
         [SerializeField] private LayerMask _obstacleMask;
         [SerializeField] private float _loseTargetDistance = 9999f;
+=======
+        [SerializeField] private LayerMask _obstacleMask;
+>>>>>>> origin/main
 
         [Header("Speed & Rotation Settings")]
         [SerializeField, Range(0f, 15f)] private float _rotationSpeed = 8f;
         [SerializeField] private float _patrolWaitTime = 2f;
 
+<<<<<<< HEAD
         [Header("Jumpscare Settings")]
         [SerializeField, Range(0.1f, 5f)] private float _jumpscareTriggerDistance = 1.25f;
 
@@ -52,13 +63,22 @@ namespace FifthSemester.Gameplay.Enemy {
 
         private float _footstepTimer;
         private bool _lastObservedState = false;
+=======
+        private BehaviourTree _tree;
+        private Blackboard _blackboard;
+        private NavMeshAgent _agent;
+        private Animator _animator;
+>>>>>>> origin/main
 
         [Header("Timeline")]
         [SerializeField] private PlayableDirector _jumpscareDirector;
 
+<<<<<<< HEAD
         [Header("Unlock Gate")]
         [SerializeField] private Map2KeyDefinitionSO _unlockKeyDefinition;
 
+=======
+>>>>>>> origin/main
         private readonly int _speedHash = Animator.StringToHash("Speed");
 
         [Header("Observation Speed Settings")]
@@ -66,6 +86,7 @@ namespace FifthSemester.Gameplay.Enemy {
         [SerializeField] private float _observedSpeed = 0.6f;
         [SerializeField] private float _speedLerp = 5f;
         private bool _isObserved = false;
+<<<<<<< HEAD
         private bool _isLockedByKey = false;
         [SerializeField] private bool _isAggressive = false;
         private IInventoryService<Item> _inventoryService;
@@ -81,11 +102,14 @@ namespace FifthSemester.Gameplay.Enemy {
             set => _desiredSpeed = value;
         }
         private float _desiredSpeed = 2.5f;
+=======
+>>>>>>> origin/main
 
         private void Awake() {
             _agent = GetComponent<NavMeshAgent>();
             _animator = GetComponentInChildren<Animator>();
 
+<<<<<<< HEAD
             // Try to cache inventory service early so RefreshUnlockState (called in OnEnable)
             // has a chance to validate lock state before first Update.
             ServiceLocator.TryGet<IInventoryService<Item>>(out _inventoryService);
@@ -102,11 +126,16 @@ namespace FifthSemester.Gameplay.Enemy {
             _agent.speed = _normalSpeed;
             _agent.updateRotation = false;
             _agent.stoppingDistance = _jumpscareTriggerDistance;
+=======
+            _agent.speed = _normalSpeed;
+            _agent.updateRotation = false;
+>>>>>>> origin/main
 
             SetupBlackboard();
         }
         private void Start() {
             if (_playerCamera == null) _playerCamera = Camera.main;
+<<<<<<< HEAD
             ServiceLocator.TryGet<IInventoryService<Item>>(out _inventoryService);
             ServiceLocator.TryGet<IAudioService>(out _audioService);
             BuildBehaviourTree();
@@ -131,12 +160,17 @@ namespace FifthSemester.Gameplay.Enemy {
             eventBus?.Unsubscribe<InventoryItemAddedEvent>(OnInventoryItemAdded);
         }
 
+=======
+            BuildBehaviourTree();
+        }
+>>>>>>> origin/main
         private void SetupBlackboard() {
             _blackboard = new Blackboard();
             _blackboard.SetData(PLAYER_TARGET_KEY, _target);
             _blackboard.SetData(NAV_AGENT_KEY, _agent);
             _blackboard.SetData(ANIMATOR_KEY, _animator);
             _blackboard.SetData(JUMPSCARE_DIRECTOR_KEY, _jumpscareDirector);
+<<<<<<< HEAD
             _blackboard.SetData(CUTSCENE_ACTIVE_KEY, false);
             _blackboard.SetData(IS_FROZEN_KEY, false);
             _blackboard.SetData(IS_OBSERVED_KEY, false);
@@ -161,6 +195,18 @@ namespace FifthSemester.Gameplay.Enemy {
             var root = new Selector("NurseRootBehavior");
 
             if (includeChase && !_isPhase3Passive) {
+=======
+            _blackboard.SetData(IS_FROZEN_KEY, false);
+            _blackboard.SetData(IS_OBSERVED_KEY, false);
+
+            _blackboard.SetData("PatrolWaitTime", _patrolWaitTime);
+        }
+
+        private void BuildBehaviourTree() {
+            var root = new Selector("NurseRootBehavior");
+
+            if (!_isPhase3Passive) {
+>>>>>>> origin/main
                 var chaseSequence = new Sequence("AggressiveChase");
                 chaseSequence.AddChild(new ActionChase(_blackboard, "Chase Player"));
                 chaseSequence.AddChild(new ActionPlayJumpscare(_blackboard, "Jumpscare"));
@@ -177,6 +223,7 @@ namespace FifthSemester.Gameplay.Enemy {
         }
 
         private void Update() {
+<<<<<<< HEAD
             if (_isLockedByKey) {
                 if (_agent != null && _agent.isOnNavMesh) {
                     _agent.isStopped = true;
@@ -265,6 +312,21 @@ namespace FifthSemester.Gameplay.Enemy {
             if (_playerCamera == null || _eyeTransform == null) {
                 return;
             }
+=======
+            CheckIfObservedByPlayer();
+            UpdateState();
+
+            _tree?.Process();
+            HandleRotation();
+
+            if (_animator != null && _agent != null && !_isObserved) {
+                _animator.SetFloat(_speedHash, _agent.velocity.magnitude);
+            }
+        }
+
+        private void CheckIfObservedByPlayer() {
+            if (_playerCamera == null || _eyeTransform == null) return;
+>>>>>>> origin/main
 
             Vector3 viewportPoint = _playerCamera.WorldToViewportPoint(_eyeTransform.position);
             bool inViewport = viewportPoint.x > 0 && viewportPoint.x < 1 &&
@@ -272,6 +334,7 @@ namespace FifthSemester.Gameplay.Enemy {
                               viewportPoint.z > 0;
 
             if (inViewport) {
+<<<<<<< HEAD
                 Vector3 origin = _eyeTransform.position;
                 Vector3 dirToCamera = (_playerCamera.transform.position - origin).normalized;
                 float distToCamera = Vector3.Distance(_playerCamera.transform.position, origin);
@@ -313,6 +376,25 @@ namespace FifthSemester.Gameplay.Enemy {
             _blackboard.SetData(IS_FROZEN_KEY, false);
             _blackboard.SetData(IS_OBSERVED_KEY, false);
             _lastObservedState = false;
+=======
+                Vector3 dirToCamera = (_playerCamera.transform.position - _eyeTransform.position).normalized;
+                float distToCamera = Vector3.Distance(_playerCamera.transform.position, _eyeTransform.position);
+
+                if (!Physics.Raycast(_eyeTransform.position, dirToCamera, distToCamera, _obstacleMask)) {
+                    _isObserved = true;
+
+                    _blackboard.SetData(IS_FROZEN_KEY, true);
+                    _blackboard.SetData(IS_OBSERVED_KEY, true);
+
+                    return;
+                }
+            }
+
+            _isObserved = false;
+
+            _blackboard.SetData(IS_FROZEN_KEY, false);
+            _blackboard.SetData(IS_OBSERVED_KEY, false);
+>>>>>>> origin/main
         }
 
         private void UpdateState() {
@@ -320,6 +402,7 @@ namespace FifthSemester.Gameplay.Enemy {
                 return;
             }
 
+<<<<<<< HEAD
             // A velocidade alvo é a velocidade observada quando vista pelo player, ou a velocidade do diretor
             float targetSpeed = _isObserved ? _observedSpeed : TargetSpeed;
 
@@ -334,6 +417,22 @@ namespace FifthSemester.Gameplay.Enemy {
             // Garante que o animator esteja despausado e rodando com a velocidade correta
             if (_animator != null) {
                 _animator.speed = 1f;
+=======
+            float targetSpeed = _isObserved
+                ? _observedSpeed
+                : _normalSpeed;
+
+            _agent.speed = Mathf.Lerp(
+                _agent.speed,
+                targetSpeed,
+                Time.deltaTime * _speedLerp
+            );
+
+            _agent.isStopped = false;
+
+            if (_animator != null) {
+                _animator.SetFloat(_speedHash, _agent.velocity.magnitude);
+>>>>>>> origin/main
             }
         }
 
@@ -341,6 +440,7 @@ namespace FifthSemester.Gameplay.Enemy {
             if (_target == null) return;
 
             Vector3 direction;
+<<<<<<< HEAD
             if (_isObserved) {
                 // Roda na direção exata do jogador para encará-lo
                 direction = (_target.position - transform.position).normalized;
@@ -349,6 +449,16 @@ namespace FifthSemester.Gameplay.Enemy {
                 // Roda na direção do movimento desejado
                 direction = _agent.desiredVelocity.normalized;
             }
+=======
+
+            if (_isObserved) {
+                direction = (_target.position - transform.position).normalized;
+            }
+            else {
+                direction = _agent.desiredVelocity.normalized;
+            }
+
+>>>>>>> origin/main
             direction.y = 0;
 
             if (direction.sqrMagnitude < 0.01f) return;
@@ -361,6 +471,7 @@ namespace FifthSemester.Gameplay.Enemy {
                 Time.deltaTime * _rotationSpeed
             );
         }
+<<<<<<< HEAD
 
         public void RetreatTo(Vector3 destination) {
             if (_agent != null && _agent.isOnNavMesh) {
@@ -429,6 +540,8 @@ namespace FifthSemester.Gameplay.Enemy {
             }
         }
 
+=======
+>>>>>>> origin/main
         private void OnDrawGizmos() {
             if (_eyeTransform == null || _playerCamera == null) return;
 

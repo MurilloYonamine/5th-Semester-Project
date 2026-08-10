@@ -5,11 +5,18 @@ using FifthSemester.Gameplay.Interactables;
 using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Gameplay.Save;
 using FifthSemester.Gameplay.Shared;
+<<<<<<< HEAD
 using FifthSemester.Gameplay.Map2;
+=======
+>>>>>>> origin/main
 using UnityEngine;
 
 namespace FifthSemester.Player {
     public class PlayerInteraction : MonoBehaviour {
+<<<<<<< HEAD
+=======
+        private const string TAG = "<color=cyan>[PlayerInteraction]</color>";
+>>>>>>> origin/main
         [SerializeField] private Camera _playerCamera;
 
         [Header("Settings")]
@@ -17,13 +24,18 @@ namespace FifthSemester.Player {
         [SerializeField] private LayerMask _interactionLayer;
 
         [Header("Feedback")]
+<<<<<<< HEAD
         [SerializeField] private AudioClip _failureSound;
+=======
+        [SerializeField] private AudioClip _pickupSound;
+>>>>>>> origin/main
 
         private IInteractable _currentInteractable;
         private PlayerController _playerController;
         private IEventBus _eventBus;
         private IAudioService _audioService;
         private IInventoryService<Item> _inventoryService;
+<<<<<<< HEAD
         private IDeferredInteractionCompletion _pendingDeferredCompletion;
         private string _pendingInteractableId;
         private DocumentTrigger _activeDocument;
@@ -41,6 +53,11 @@ namespace FifthSemester.Player {
                 Debug.LogError("[PlayerInteraction] PlayerController ausente no mesmo GameObject.");
                 enabled = false;
             }
+=======
+
+        private void Awake() {
+            _playerController = GetComponent<PlayerController>();
+>>>>>>> origin/main
         }
 
         private void Start() {
@@ -49,21 +66,30 @@ namespace FifthSemester.Player {
             _eventBus = ServiceLocator.Get<IEventBus>();
 
             _eventBus?.Subscribe<InteractInputEvent>(Interact);
+<<<<<<< HEAD
             _eventBus?.Subscribe<DialogueEndedEvent>(OnDialogueEnded);
+=======
+>>>>>>> origin/main
         }
 
         private void OnDisable() {
             _eventBus?.Unsubscribe<InteractInputEvent>(Interact);
+<<<<<<< HEAD
             _eventBus?.Unsubscribe<DialogueEndedEvent>(OnDialogueEnded);
+=======
+>>>>>>> origin/main
 
             if (_currentInteractable != null) {
                 _currentInteractable.Highlight(false);
                 _currentInteractable = null;
             }
+<<<<<<< HEAD
 
             _pendingDeferredCompletion = null;
             _pendingInteractableId = null;
             _activeDocument = null;
+=======
+>>>>>>> origin/main
         }
 
         private void Update() {
@@ -83,11 +109,15 @@ namespace FifthSemester.Player {
         private IInteractable GetInteractableFromRay() {
             Ray ray = _playerCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
 
+<<<<<<< HEAD
             // 1. Find the interactable using the standard interaction layer (exactly as before)
+=======
+>>>>>>> origin/main
             if (!Physics.Raycast(ray, out RaycastHit hit, _interactionRange, _interactionLayer)) {
                 return null;
             }
 
+<<<<<<< HEAD
             // 2. Perform a targeted Line-of-Sight raycast to check for solid physical obstacles between player camera and impact point
             float checkDistance = hit.distance - 0.05f; // Subtract 5cm to avoid hitting the interactable's own collider
             if (checkDistance > 0f) {
@@ -101,6 +131,8 @@ namespace FifthSemester.Player {
             }
 
             // 3. Resolve which interactive component to return (preserving original logic)
+=======
+>>>>>>> origin/main
             MonoBehaviour[] components = hit.collider.GetComponents<MonoBehaviour>();
             IInteractable selectedInteractable = null;
 
@@ -117,6 +149,16 @@ namespace FifthSemester.Player {
                     continue;
                 }
 
+<<<<<<< HEAD
+=======
+                if (component is SavePoint) {
+                    if (selectedInteractable == null) {
+                        selectedInteractable = interactable;
+                    }
+                    continue;
+                }
+
+>>>>>>> origin/main
                 if (component is DialogueTrigger && selectedInteractable == null) {
                     selectedInteractable = interactable;
                     continue;
@@ -131,6 +173,7 @@ namespace FifthSemester.Player {
         }
 
         private void Interact(InteractInputEvent evt) {
+<<<<<<< HEAD
             if (_activeDocument != null) {
                 DocumentTrigger documentToClose = _activeDocument;
                 _activeDocument = null;
@@ -144,11 +187,15 @@ namespace FifthSemester.Player {
 
             if (_currentInteractable == null || !_currentInteractable.IsInteractable) {
                 PlayFailureFeedback();
+=======
+            if (_currentInteractable == null || !_currentInteractable.IsInteractable) {
+>>>>>>> origin/main
                 return;
             }
 
             if (_currentInteractable is Item item) {
                 HandleItemPickup(item);
+<<<<<<< HEAD
             }
             else if (_currentInteractable is DeliveryPoint deliveryPoint) {
                 deliveryPoint.Interact();
@@ -234,6 +281,40 @@ namespace FifthSemester.Player {
             _audioService.PlaySFX(_failureSound);
         }
         private void OnDrawGizmos() {
+=======
+            } else if (_currentInteractable is DeliveryPoint deliveryPoint) {
+                deliveryPoint.Interact();
+            } else if (_currentInteractable is SavePoint savePoint) {
+                savePoint.SetPlayerController(_playerController);
+                savePoint.Interact();
+            } else {
+                _currentInteractable.Interact();
+            }
+        }
+
+        private void HandleItemPickup(Item item) {
+            if (_inventoryService == null) {
+                Debug.LogError("IInventoryService não encontrado. Não é possível pegar o item.");
+                return;
+            }
+
+            bool wasAdded = _inventoryService.AddItem(item);
+
+            if (wasAdded) {
+                PlayPickupFeedback();
+                _eventBus?.Publish(new ItemPickedUpEvent(item.Id, item.gameObject));
+                item.Interact();
+            }
+        }
+
+        private void PlayPickupFeedback() {
+            if (_pickupSound != null && _audioService != null) {
+                _audioService.PlaySFX(_pickupSound);
+            }
+        }
+        private void OnDrawGizmos()
+        {
+>>>>>>> origin/main
             Camera cam = _playerCamera != null ? _playerCamera : Camera.main;
             if (cam == null) return;
 

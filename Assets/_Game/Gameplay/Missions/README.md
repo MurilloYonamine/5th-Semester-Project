@@ -2,10 +2,13 @@
 
 Sistema de missões baseado em tipos (enum) com factory pattern. Cada tipo de missão herda de `MissionBase` e define seu próprio comportamento.
 
+<<<<<<< HEAD
 Current implementation note:
 - Mission completion and key pickup now trigger the full autosave flow.
 - `SavePoint` no longer participates in manual saving.
 
+=======
+>>>>>>> origin/main
 ## Estrutura
 
 ```
@@ -37,9 +40,12 @@ Colete X itens de um tipo específico.
 ### CollectAndDeliver
 Colete X itens e entregue em um ponto específico.
 
+<<<<<<< HEAD
 Quando a coleta termina, a missão pode tocar um SFX de transição antes de entrar na fase de entrega.
 Na implementação atual, a ordem de entrega também dirige as portas: `Paciente_A -> Paciente_B -> Paciente_C -> Paciente_E -> Paciente_S`, com `Paciente_S` mapeado para `Door_RoomP`.
 
+=======
+>>>>>>> origin/main
 **Configuração `MissionDefinition`:**
 - `Type` = `CollectAndDeliver`
 - `TargetItemName` = ex., `"Package"`
@@ -47,6 +53,7 @@ Na implementação atual, a ordem de entrega também dirige as portas: `Paciente
 - `DeliveryPointId` = ex., `"DeliveryZoneA"`
 - `PersistProgress` = true
 
+<<<<<<< HEAD
 ### PlayCutscene
 Toca uma cutscene depois que o diálogo ativo termina.
 
@@ -65,6 +72,8 @@ Interaja com um objeto específico para concluir a missão.
 - `InteractableTargetId` = ex., `"DoorSafeRoom"`
 - `PersistProgress` = true
 
+=======
+>>>>>>> origin/main
 ## Criando uma MissionDefinition
 
 1. Right-click → Create → Gameplay → Mission
@@ -137,8 +146,12 @@ public class MyCustomMission : MissionBase {
 public enum MissionType {
     CollectItems = 0,
     CollectAndDeliver = 1,
+<<<<<<< HEAD
     Interact = 2,
     MyCustomType = 3
+=======
+    MyCustomType = 2
+>>>>>>> origin/main
 }
 ```
 
@@ -159,7 +172,11 @@ public static IMission CreateMission(MissionDefinition definition) {
 
 ## Checkpoints (Save Points)
 
+<<<<<<< HEAD
 Crie um GameObject com `SavePoint` component apenas como marcador de checkpoint legado:
+=======
+Crie um GameObject com `SavePoint` component para permitir saves manual:
+>>>>>>> origin/main
 
 1. Crie GameObject (ex., `SavePointA`)
 2. Adicione componente `SavePoint`
@@ -198,6 +215,7 @@ Configure no Inspector:
 - `_descriptionText` → UI.Text para descrição
 - `_progressText` → UI.Text para progresso
 
+<<<<<<< HEAD
 ## Efeitos de Mapa
 
 `MissionDefinition.MapActions` permite executar efeitos no mapa quando a missão ativa muda.
@@ -206,6 +224,8 @@ Configure no Inspector:
 - `LockDoor`, `UnlockDoor` e `LockAllDoorsExcept` continuam tratando portas.
 - Para ações que não sejam portas, use `TargetObjectId` com o ID registrado no `MapEntity`.
 
+=======
+>>>>>>> origin/main
 ## Debugging
 
 ### Ver progresso em Editor:

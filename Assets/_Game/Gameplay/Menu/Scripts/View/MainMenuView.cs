@@ -2,7 +2,10 @@ using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.States;
 using FifthSemester.Gameplay.Save;
+<<<<<<< HEAD
 using FifthSemester.Gameplay.Inventory;
+=======
+>>>>>>> origin/main
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -20,9 +23,16 @@ namespace FifthSemester.Gameplay.Menu {
 
         [Header("Continue UI")]
         [SerializeField] private GameObject _continueButtonContainer;
+<<<<<<< HEAD
 
         private IGameStateService _gameState;
         private const string DEFAULT_SLOT = "default";
+=======
+        [SerializeField] private LoadGameView _loadGameView;
+        [SerializeField] private CheckpointSO _initialCheckpoint;
+
+        private IGameStateService _gameState;
+>>>>>>> origin/main
 
         protected override MenuScreen MenuScreenType => MenuScreen.MainMenu;
 
@@ -32,10 +42,13 @@ namespace FifthSemester.Gameplay.Menu {
 
             _menuService.Show(MenuScreen.MainMenu);
 
+<<<<<<< HEAD
             // Garante que o cursor do mouse esteja visível e destravado no Menu Principal
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
 
+=======
+>>>>>>> origin/main
             _newGameButton.onClick.AddListener(OnNewGame);
             _continueButton.onClick.AddListener(OnContinue);
             _settingsButton.onClick.AddListener(OnSettings);
@@ -48,6 +61,7 @@ namespace FifthSemester.Gameplay.Menu {
         protected override void OnEnable() {
             base.OnEnable();
             UpdateContinueVisibility();
+<<<<<<< HEAD
 
             // Garante que o cursor esteja liberado sempre que o painel for habilitado
             Cursor.visible = true;
@@ -57,12 +71,18 @@ namespace FifthSemester.Gameplay.Menu {
         public void OnPlay() {
             PlayMenuPrimarySfx();
             _menuService.Hide();
+=======
+        }
+
+        public void OnPlay() {
+>>>>>>> origin/main
             _gameState.ChangeState(GameState.Gameplay);
             SceneManager.LoadScene("Game");
         }
 
         public void OnNewGame() {
             var saveService = ServiceLocator.Get<ISaveService>();
+<<<<<<< HEAD
             if (saveService != null) {
                 saveService.DeleteSlot(DEFAULT_SLOT);
             }
@@ -106,25 +126,85 @@ namespace FifthSemester.Gameplay.Menu {
             string sceneToLoad = string.IsNullOrEmpty(saveData.SceneName) ? "Game" : saveData.SceneName;
             SceneManager.LoadScene(sceneToLoad);
         }
+=======
+            if (saveService == null || _initialCheckpoint == null) {
+                OnPlay();
+                return;
+            }
+
+            string chosen = null;
+            for (int i = 0; i < 3; i++) {
+                string id = $"slot_{i}";
+                if (!saveService.SlotExists(id)) {
+                    chosen = id;
+                    break;
+                }
+            }
+            if (chosen == null) chosen = "slot_0";
+
+            var data = new SaveData() {
+                LastCheckpointId = _initialCheckpoint.Id
+            };
+
+            saveService.SaveToSlot(chosen, data);
+
+            _gameState.ChangeState(GameState.Gameplay);
+            SceneManager.LoadScene("Game");
+        }
+
+        public void OnContinue() {
+            if (_loadGameView != null) {
+                _menuService.Show(MenuScreen.LoadGame); 
+            }
+            else {
+                OnPlay();
+            }
+        }
+>>>>>>> origin/main
 
         public void UpdateContinueVisibility() {
             if (_continueButtonContainer == null) return;
 
             ISaveService saveService = ServiceLocator.Get<ISaveService>();
+<<<<<<< HEAD
             _continueButtonContainer.SetActive(saveService != null && saveService.SlotExists(DEFAULT_SLOT));
         }
 
         public void OnSettings() {
             PlayMenuSecondarySfx();
+=======
+            _continueButtonContainer.SetActive(HasSavedGame(saveService));
+        }
+
+        private bool HasSavedGame(ISaveService saveService) {
+            if (saveService == null) return false;
+
+            for (int i = 0; i < 3; i++) {
+                if (saveService.SlotExists($"slot_{i}")) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void OnSettings() {
+>>>>>>> origin/main
             _menuService.Show(MenuScreen.Settings);
         }
 
         public void OnCredits() {
+<<<<<<< HEAD
             PlayMenuSecondarySfx();
             _menuService.Show(MenuScreen.Credits);
         }
         public void OnQuit() {
             PlayMenuSecondarySfx();
+=======
+            _menuService.Show(MenuScreen.Credits);
+        }
+        public void OnQuit() {
+>>>>>>> origin/main
             Application.Quit();
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;

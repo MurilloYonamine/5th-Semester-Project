@@ -15,7 +15,10 @@ Gameplay/
 ├── Bootstrap/        → Game initialization & service setup
 ├── Game State/       → High-level game state management
 ├── Player/           → Player controller & mechanics
+<<<<<<< HEAD
 ├── UI/               → Shared gameplay HUD and contextual prompts
+=======
+>>>>>>> origin/main
 ├── Enemy/            → Enemy AI with Behaviour Trees
 ├── Dialogue/         → Dialogue system & NPC conversations
 ├── Menu/             → Main menu, settings, UI views

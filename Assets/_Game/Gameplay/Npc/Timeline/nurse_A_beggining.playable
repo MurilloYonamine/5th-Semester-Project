@@ -34,7 +34,11 @@ MonoBehaviour:
   m_InfiniteClipApplyFootIK: 0
   mInfiniteClipLoop: 0
   m_MatchTargetFields: 63
+<<<<<<< HEAD
   m_Position: {x: -14.5, y: 0, z: -24}
+=======
+  m_Position: {x: -14.5, y: 0.15, z: -24}
+>>>>>>> origin/main
   m_EulerAngles: {x: 0, y: 90, z: 0}
   m_AvatarMask: {fileID: 0}
   m_ApplyAvatarMask: 1
@@ -346,7 +350,11 @@ MonoBehaviour:
     m_Start: 15.066666666666666
     m_ClipIn: 0
     m_Asset: {fileID: -7662645533101640768}
+<<<<<<< HEAD
     m_Duration: 9.850000000000001
+=======
+    m_Duration: 6.216666666666669
+>>>>>>> origin/main
     m_TimeScale: 1
     m_ParentTrack: {fileID: -793085554658538050}
     m_EaseInDuration: 0
@@ -466,6 +474,7 @@ AnimationClip:
   m_UseHighQualityCurve: 1
   m_RotationCurves: []
   m_CompressedRotationCurves: []
+<<<<<<< HEAD
   m_EulerCurves:
   - curve:
       serializedVersion: 2
@@ -483,6 +492,9 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     path: _NPC_Enfermeira_017
+=======
+  m_EulerCurves: []
+>>>>>>> origin/main
   m_PositionCurves:
   - curve:
       serializedVersion: 2
@@ -555,6 +567,7 @@ AnimationClip:
       isPPtrCurve: 0
       isIntCurve: 0
       isSerializeReferenceCurve: 0
+<<<<<<< HEAD
     - serializedVersion: 2
       path: 3603362293
       attribute: 4
@@ -564,6 +577,8 @@ AnimationClip:
       isPPtrCurve: 0
       isIntCurve: 0
       isSerializeReferenceCurve: 0
+=======
+>>>>>>> origin/main
     pptrCurveMapping: []
   m_AnimationClipSettings:
     serializedVersion: 2
@@ -739,6 +754,7 @@ AnimationClip:
     classID: 4
     script: {fileID: 0}
     flags: 0
+<<<<<<< HEAD
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -839,6 +855,9 @@ AnimationClip:
     classID: 4
     script: {fileID: 0}
     flags: 0
+=======
+  m_EulerEditorCurves: []
+>>>>>>> origin/main
   m_HasGenericRootTransform: 1
   m_HasMotionFloatCurves: 0
   m_Events: []

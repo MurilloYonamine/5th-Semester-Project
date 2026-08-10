@@ -2,7 +2,10 @@ using FifthSemester.Core.Services;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+<<<<<<< HEAD
 using UnityEngine.SceneManagement;
+=======
+>>>>>>> origin/main
 
 namespace FifthSemester.Core.Audio {
     /// <summary>
@@ -45,6 +48,7 @@ namespace FifthSemester.Core.Audio {
             ServiceLocator.Unregister<IAudioService>();
         }
 
+<<<<<<< HEAD
         private void OnEnable() {
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
@@ -58,6 +62,8 @@ namespace FifthSemester.Core.Audio {
             StopAllSFX();
         }
 
+=======
+>>>>>>> origin/main
         private void Start() {
             ISettingsService settings = ServiceLocator.Get<ISettingsService>();
             if (settings != null) {
@@ -139,7 +145,11 @@ namespace FifthSemester.Core.Audio {
         /// <param name="volumeCap">Maximum allowed volume.</param>
         /// <param name="pitch">Track pitch.</param>
         /// <returns>AudioTrack created for the track.</returns>
+<<<<<<< HEAD
         public AudioTrack PlayTrack(string filePath, int channel = 0, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f) {
+=======
+        private AudioTrack PlayTrack(string filePath, int channel = 0, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f) {
+>>>>>>> origin/main
             AudioClip clip = Resources.Load<AudioClip>(filePath);
 
             if (clip == null) {
@@ -274,9 +284,15 @@ namespace FifthSemester.Core.Audio {
             }
         }
         public void StopAllAmbience() {
+<<<<<<< HEAD
             foreach (var channel in channels.Values) {
                 if (channel.ActiveTrack != null && channel.ActiveTrack.Source != null && channel.ActiveTrack.Source.outputAudioMixerGroup == AmbienceMixer) {
                     channel.StopTrack(immediate: true);
+=======
+            foreach (Transform child in transform) {
+                if (child.name.ToLower().Contains("ambience")) {
+                    Destroy(child.gameObject);
+>>>>>>> origin/main
                 }
             }
         }

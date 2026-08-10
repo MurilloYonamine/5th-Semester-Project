@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // Autor: Murillo Gomes Yonamine
+=======
+﻿// Autor: Murillo Gomes Yonamine
+>>>>>>> origin/main
 // Data: 28/04/2026
 
 using UnityEngine;
@@ -25,6 +29,10 @@ namespace FifthSemester.Gameplay.Enemy {
         private ActionWait _waitNode;
         private float _waitTime = 1f;
 
+<<<<<<< HEAD
+=======
+        // --- Configurações da Patrulha ---
+>>>>>>> origin/main
         private float _roamRadius = 15f; // Quão longe ele pode ir na patrulha aleatória
         private float _approachDistance = 8f; // Quantos metros ele anda na direção do jogador quando sorteado
         private int _approachThreshold = 50; // Chance (0 a 100). Ex: < 50 Aleatório, >= 50 Vai pro Player.
@@ -37,6 +45,7 @@ namespace FifthSemester.Gameplay.Enemy {
         public override Status Process() {
             RefreshDataFromBlackboard();
 
+<<<<<<< HEAD
             // Se a Enfermeira for agressiva e o jogador NÃO estiver em sala segura ou luz segura,
             // cancela a patrulha e retoma a perseguição ativa imediatamente (wallhack Weeping Angel)
             bool isAggressive = _blackboard.HasKey("IsAggressive") && _blackboard.GetData<bool>("IsAggressive");
@@ -47,10 +56,13 @@ namespace FifthSemester.Gameplay.Enemy {
                 return Status.Failure;
             }
 
+=======
+>>>>>>> origin/main
             if (_blackboard.GetData<bool>(IS_STUNNED_KEY)) {
                 return Status.Failure;
             }
 
+<<<<<<< HEAD
             if (_blackboard.HasKey("IsFrozen") && _blackboard.GetData<bool>("IsFrozen")) {
                 if (_agent != null && _agent.isOnNavMesh && !_agent.isStopped) {
                     _agent.isStopped = true;
@@ -64,11 +76,17 @@ namespace FifthSemester.Gameplay.Enemy {
                 _agent.isStopped = false;
             }
 
+=======
+>>>>>>> origin/main
             if (IsPlayerInLineOfSight()) {
                 return Status.Failure;
             }
 
             if (_agent == null || _playerTransform == null) {
+<<<<<<< HEAD
+=======
+                Debug.LogWarning("[ActionPatrol] NavMeshAgent ou PlayerTransform ausente no Blackboard.");
+>>>>>>> origin/main
                 return Status.Failure;
             }
 

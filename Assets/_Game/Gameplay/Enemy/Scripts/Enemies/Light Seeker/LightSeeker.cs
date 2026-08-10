@@ -3,7 +3,10 @@
 
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
+<<<<<<< HEAD
 using FifthSemester.Core.States;
+=======
+>>>>>>> origin/main
 using FifthSemester.Framework.BehaviourTrees;
 using UnityEngine;
 using UnityEngine.AI;
@@ -34,11 +37,15 @@ namespace FifthSemester.Gameplay.Enemy {
         public Blackboard Blackboard { get; private set; }
         private NavMeshAgent _agent;
         private Animator _animator;
+<<<<<<< HEAD
         private IGameStateService _gameStateService;
+=======
+>>>>>>> origin/main
 
         [Header("Timeline")]
         [SerializeField] private PlayableDirector _jumpscareDirector;
 
+<<<<<<< HEAD
         [Header("Jumpscare Settings")]
         [SerializeField, Range(0.1f, 5f)] private float _jumpscareTriggerDistance = 1.25f;
 
@@ -46,6 +53,8 @@ namespace FifthSemester.Gameplay.Enemy {
         [SerializeField] private float _catchUpDistanceThreshold = 25f;
         [SerializeField] private AudioClip _jumpSound;
         [SerializeField] private AudioClip _landSound;
+=======
+>>>>>>> origin/main
 
         [Header("Speed Settings")]
         [SerializeField, Range(0f, 10f)] private float _speed = 1.5f;
@@ -68,7 +77,10 @@ namespace FifthSemester.Gameplay.Enemy {
             }
 
             _agent.speed = _speed;
+<<<<<<< HEAD
             _agent.stoppingDistance = _jumpscareTriggerDistance;
+=======
+>>>>>>> origin/main
 
             SetupBlackboard();
         }
@@ -93,6 +105,7 @@ namespace FifthSemester.Gameplay.Enemy {
             Blackboard.SetData("ObstacleMask", _obstacleMask);
             Blackboard.SetData("LoseTargetDistance", _loseTargetDistance);
             Blackboard.SetData(HAS_LINE_OF_SIGHT_KEY, false);
+<<<<<<< HEAD
 
             // Audio parameters
             Blackboard.SetData("JumpSound", _jumpSound);
@@ -101,14 +114,22 @@ namespace FifthSemester.Gameplay.Enemy {
 
         private void Start() {
             ServiceLocator.TryGet<IGameStateService>(out _gameStateService);
+=======
+        }
+
+        private void Start() {
+>>>>>>> origin/main
             BuildBehaviourTree();
         }
 
         private void BuildBehaviourTree() {
+<<<<<<< HEAD
             var catchUpSequence = new Sequence("CatchUpTeleport");
             catchUpSequence.AddChild(new ConditionPlayerTooFar(Blackboard, "Is Player Too Far?", _catchUpDistanceThreshold));
             catchUpSequence.AddChild(new ActionCatchUpTeleport(Blackboard, "Catch Up Teleport"));
 
+=======
+>>>>>>> origin/main
             var stareAndJumpSequence = new Sequence("StareAndJumpSequence");
             stareAndJumpSequence.AddChild(new ConditionPlayerInSafeLight(Blackboard, "Is Player in Light?"));
             stareAndJumpSequence.AddChild(new ConditionLineOfSight(Blackboard, "Line of Sight Check"));
@@ -116,6 +137,7 @@ namespace FifthSemester.Gameplay.Enemy {
             stareAndJumpSequence.AddChild(new ActionPlayJumpscare(Blackboard, "Jumpscare"));
 
             var chaseSequence = new Sequence("AggressiveChase");
+<<<<<<< HEAD
             chaseSequence.AddChild(new ActionChase(Blackboard, "Chase Player"));
             chaseSequence.AddChild(new ActionPlayJumpscare(Blackboard, "Jumpscare"));
 
@@ -124,11 +146,33 @@ namespace FifthSemester.Gameplay.Enemy {
             root.AddChild(catchUpSequence);
             root.AddChild(stareAndJumpSequence);
             root.AddChild(chaseSequence);
+=======
+            chaseSequence.AddChild(new ConditionLineOfSight(Blackboard, "Line of Sight Check"));
+            chaseSequence.AddChild(new ActionChase(Blackboard, "Chase Player"));
+            chaseSequence.AddChild(new ActionPlayJumpscare(Blackboard, "Jumpscare"));
+
+            var patrolSequence = new Sequence("SearchPatrol");
+            patrolSequence.AddChild(new ActionPatrol(Blackboard, "Patrol Waypoints"));
+
+            var root = new Selector("RootBehavior");
+
+            var flashlightChase = new Sequence("FlashlightChase");
+            flashlightChase.AddChild(new ConditionIsIlluminated(Blackboard, "Is Illuminated?"));
+            flashlightChase.AddChild(new ConditionLineOfSight(Blackboard, "Line of Sight Check"));
+            flashlightChase.AddChild(new ActionChase(Blackboard, "Chase Player (Illuminated)"));
+            flashlightChase.AddChild(new ActionPlayJumpscare(Blackboard, "Jumpscare"));
+
+            root.AddChild(flashlightChase);
+            root.AddChild(stareAndJumpSequence);
+            root.AddChild(chaseSequence);
+            root.AddChild(patrolSequence);
+>>>>>>> origin/main
 
             _tree = new BehaviourTree("LightSeeker Behaviour Tree", root);
         }
 
         private void Update() {
+<<<<<<< HEAD
             bool isCutscene = (_gameStateService != null && _gameStateService.CurrentState == GameState.Cutscene) ||
                               (Blackboard != null && Blackboard.HasKey("CutsceneActive") && Blackboard.GetData<bool>("CutsceneActive"));
 
@@ -148,6 +192,8 @@ namespace FifthSemester.Gameplay.Enemy {
                 Blackboard.SetData(HAS_LINE_OF_SIGHT_KEY, IsPlayerInFOV());
             }
 
+=======
+>>>>>>> origin/main
             _tree?.Process();
 
             if (_animator != null && _agent != null) {

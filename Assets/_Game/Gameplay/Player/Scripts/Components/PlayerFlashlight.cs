@@ -2,6 +2,7 @@
 // Data: 28/04/2026
 
 using UnityEngine;
+<<<<<<< HEAD
 using System.Collections;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
@@ -9,6 +10,11 @@ using FifthSemester.Core.Enums;
 using FifthSemester.Gameplay.Enemy;
 using FifthSemester.Gameplay.Dialogue;
 using FifthSemester.Features.Localization;
+=======
+using FifthSemester.Core.Events;
+using FifthSemester.Core.Services;
+using FifthSemester.Gameplay.Enemy;
+>>>>>>> origin/main
 
 namespace FifthSemester.Player.Components {
     public class PlayerFlashlight : MonoBehaviour {
@@ -32,6 +38,7 @@ namespace FifthSemester.Player.Components {
         [SerializeField] private AudioClip _toggleSound;
 
         [SerializeField] private bool _isOn = false;
+<<<<<<< HEAD
         [SerializeField] private bool _hasFlashlight = false;
 
         [Header("No Flashlight Warning")]
@@ -44,6 +51,8 @@ namespace FifthSemester.Player.Components {
         private int _noFlashlightPressCount = 0;
         private float _lastNoFlashlightPressTime = 0f;
         private Coroutine _hideCaptionCoroutine;
+=======
+>>>>>>> origin/main
 
         private IEventBus _eventBus;
         private IAudioService _audioService;
@@ -72,19 +81,25 @@ namespace FifthSemester.Player.Components {
             _eventBus.Subscribe<LookInputEvent>(HandleLookInput);
 
             _camera = Camera.main;
+<<<<<<< HEAD
 
             if (_captionView == null) {
                 _captionView = FindAnyObjectByType<CaptionView>();
             }
+=======
+>>>>>>> origin/main
         }
 
         private void OnDestroy() {
             _eventBus?.Unsubscribe<FlashlightInputEvent>(HandleFlashlightInput);
             _eventBus?.Unsubscribe<LookInputEvent>(HandleLookInput);
+<<<<<<< HEAD
 
             if (_hideCaptionCoroutine != null) {
                 StopCoroutine(_hideCaptionCoroutine);
             }
+=======
+>>>>>>> origin/main
         }
 
         private void HandleLookInput(LookInputEvent evt) {
@@ -92,6 +107,7 @@ namespace FifthSemester.Player.Components {
         }
 
         private void HandleFlashlightInput(FlashlightInputEvent evt) {
+<<<<<<< HEAD
             if (evt.IsPressed && !_hasFlashlight) {
                 if (Time.time - _lastNoFlashlightPressTime > _warningTimeWindow) {
                     _noFlashlightPressCount = 0;
@@ -107,6 +123,9 @@ namespace FifthSemester.Player.Components {
             }
 
             if (!evt.IsPressed || !_hasFlashlight) return;
+=======
+            if (!evt.IsPressed) return;
+>>>>>>> origin/main
             
             _isOn = !_isOn;
             UpdateLightEnabled();
@@ -228,6 +247,7 @@ namespace FifthSemester.Player.Components {
             _audioService.PlaySFX(_toggleSound);
         }
 
+<<<<<<< HEAD
         private void TriggerNoFlashlightDialogue() {
             if (_captionView == null) {
                 _captionView = FindAnyObjectByType<CaptionView>();
@@ -266,6 +286,8 @@ namespace FifthSemester.Player.Components {
             _hasFlashlight = true;
         }
 
+=======
+>>>>>>> origin/main
 #if UNITY_EDITOR
         private void OnDrawGizmos() {
             if (!_isOn || _lightOrigin == null) return;

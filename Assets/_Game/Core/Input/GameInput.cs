@@ -70,6 +70,27 @@ namespace FifthSemester.Core.Input
                     ""type"": ""Button"",
                     ""id"": ""f1ba0d36-48eb-4cd5-b651-1c94a6531f70"",
                     ""expectedControlType"": """",
+<<<<<<< HEAD
+=======
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Previous"",
+                    ""type"": ""Button"",
+                    ""id"": ""2776c80d-3c14-4091-8c56-d04ced07a2b0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Next"",
+                    ""type"": ""Button"",
+                    ""id"": ""b7230bb6-fc9b-4f52-8b25-f5e19cb2c2ba"",
+                    ""expectedControlType"": """",
+>>>>>>> origin/main
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -79,6 +100,45 @@ namespace FifthSemester.Core.Input
                     ""type"": ""Button"",
                     ""id"": ""641cd816-40e6-41b4-8c3d-04687c349290"",
                     ""expectedControlType"": """",
+<<<<<<< HEAD
+=======
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Zoom"",
+                    ""type"": ""Button"",
+                    ""id"": ""bd9603af-85ff-44da-8f60-85269b4b2b81"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Open Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""436625cb-ece4-43ac-abc7-7630e71545e1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Flash"",
+                    ""type"": ""Button"",
+                    ""id"": ""bc1268b1-1652-4fa3-9ee9-936fd20aaac4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Skip Cutscene"",
+                    ""type"": ""Button"",
+                    ""id"": ""b8de947b-dc43-4957-8ce0-ce6adbc5136f"",
+                    ""expectedControlType"": """",
+>>>>>>> origin/main
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
@@ -297,6 +357,108 @@ namespace FifthSemester.Core.Input
                 },
                 {
                     ""name"": """",
+<<<<<<< HEAD
+=======
+                    ""id"": ""143bb1cd-cc10-4eca-a2f0-a3664166fe91"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""05f6913d-c316-48b2-a6bb-e225f14c7960"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""886e731e-7071-4ae4-95c0-e61739dad6fd"",
+                    ""path"": ""<Touchscreen>/primaryTouch/tap"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Touch"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ee3d0cd2-254e-47a7-a8cb-bc94d9658c54"",
+                    ""path"": ""<Joystick>/trigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Joystick"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8255d333-5683-4943-a58a-ccb207ff1dce"",
+                    ""path"": ""<XRController>/{PrimaryAction}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""XR"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b3c1c7f0-bd20-4ee7-a0f1-899b24bca6d7"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e15ca19d-e649-4852-97d5-7fe8ccc44e94"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Next"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Scroll"",
+                    ""id"": ""3ad82110-7dd0-49c3-b8b6-ebcaf7559816"",
+                    ""path"": ""1DAxis(whichSideWins=1)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Next"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""96902e05-9bbb-47a3-92f1-eb3693b92c64"",
+                    ""path"": ""<Mouse>/scroll/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Next"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+>>>>>>> origin/main
                     ""id"": ""f2e9ba44-c423-42a7-ad56-f20975884794"",
                     ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
@@ -363,6 +525,42 @@ namespace FifthSemester.Core.Input
                 },
                 {
                     ""name"": """",
+<<<<<<< HEAD
+=======
+                    ""id"": ""25060bbd-a3a6-476e-8fba-45ae484aad05"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Previous"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Scroll"",
+                    ""id"": ""72feb67c-d3f9-40b1-ad04-9be1787dad7b"",
+                    ""path"": ""1DAxis(whichSideWins=2)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Previous"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""c48f0002-539c-4dc6-8e8d-c5a681e6ab84"",
+                    ""path"": ""<Mouse>/scroll/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""Previous"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+>>>>>>> origin/main
                     ""id"": ""1c04ea5f-b012-41d1-a6f7-02e963b52893"",
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
@@ -481,6 +679,7 @@ namespace FifthSemester.Core.Input
                     ""action"": ""Skip Cutscene"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+<<<<<<< HEAD
                 },
                 {
                     ""name"": """",
@@ -558,6 +757,8 @@ namespace FifthSemester.Core.Input
                     ""action"": ""InventoryNavigate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+=======
+>>>>>>> origin/main
                 }
             ]
         },
@@ -1332,7 +1533,10 @@ namespace FifthSemester.Core.Input
             m_Player_OpenPause = m_Player.FindAction("Open Pause", throwIfNotFound: true);
             m_Player_Flash = m_Player.FindAction("Flash", throwIfNotFound: true);
             m_Player_SkipCutscene = m_Player.FindAction("Skip Cutscene", throwIfNotFound: true);
+<<<<<<< HEAD
             m_Player_InventoryNavigate = m_Player.FindAction("InventoryNavigate", throwIfNotFound: true);
+=======
+>>>>>>> origin/main
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1426,7 +1630,10 @@ namespace FifthSemester.Core.Input
         private readonly InputAction m_Player_OpenPause;
         private readonly InputAction m_Player_Flash;
         private readonly InputAction m_Player_SkipCutscene;
+<<<<<<< HEAD
         private readonly InputAction m_Player_InventoryNavigate;
+=======
+>>>>>>> origin/main
         public struct PlayerActions
         {
             private @GameInput m_Wrapper;
@@ -1441,7 +1648,10 @@ namespace FifthSemester.Core.Input
             public InputAction @OpenPause => m_Wrapper.m_Player_OpenPause;
             public InputAction @Flash => m_Wrapper.m_Player_Flash;
             public InputAction @SkipCutscene => m_Wrapper.m_Player_SkipCutscene;
+<<<<<<< HEAD
             public InputAction @InventoryNavigate => m_Wrapper.m_Player_InventoryNavigate;
+=======
+>>>>>>> origin/main
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1481,9 +1691,12 @@ namespace FifthSemester.Core.Input
                 @SkipCutscene.started += instance.OnSkipCutscene;
                 @SkipCutscene.performed += instance.OnSkipCutscene;
                 @SkipCutscene.canceled += instance.OnSkipCutscene;
+<<<<<<< HEAD
                 @InventoryNavigate.started += instance.OnInventoryNavigate;
                 @InventoryNavigate.performed += instance.OnInventoryNavigate;
                 @InventoryNavigate.canceled += instance.OnInventoryNavigate;
+=======
+>>>>>>> origin/main
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -1518,9 +1731,12 @@ namespace FifthSemester.Core.Input
                 @SkipCutscene.started -= instance.OnSkipCutscene;
                 @SkipCutscene.performed -= instance.OnSkipCutscene;
                 @SkipCutscene.canceled -= instance.OnSkipCutscene;
+<<<<<<< HEAD
                 @InventoryNavigate.started -= instance.OnInventoryNavigate;
                 @InventoryNavigate.performed -= instance.OnInventoryNavigate;
                 @InventoryNavigate.canceled -= instance.OnInventoryNavigate;
+=======
+>>>>>>> origin/main
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -1745,7 +1961,10 @@ namespace FifthSemester.Core.Input
             void OnOpenPause(InputAction.CallbackContext context);
             void OnFlash(InputAction.CallbackContext context);
             void OnSkipCutscene(InputAction.CallbackContext context);
+<<<<<<< HEAD
             void OnInventoryNavigate(InputAction.CallbackContext context);
+=======
+>>>>>>> origin/main
         }
         public interface IUIActions
         {

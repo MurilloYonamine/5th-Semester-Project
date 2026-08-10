@@ -14,8 +14,12 @@ namespace FifthSemester.Gameplay.Inventory {
 
         [Header("Item Display Settings")]
         [SerializeField] private Vector3 _itemScale = Vector3.one;
+<<<<<<< HEAD
         [SerializeField] private Vector3 _itemRotation = Vector3.zero;
         [SerializeField] private Vector3 _itemRotationOffset = Vector3.zero;
+=======
+        [SerializeField] private Vector3 _itemRotation = new Vector3(-15, 45, 0);
+>>>>>>> origin/main
         [SerializeField] private float _cameraDistance = 2f;
         [SerializeField] private bool _autoRotate = false;
         [SerializeField] private float _rotationSpeed = 30f;
@@ -71,7 +75,11 @@ namespace FifthSemester.Gameplay.Inventory {
             _currentItem.SetActive(true);
 
             _currentItem.transform.localPosition = Vector3.zero;
+<<<<<<< HEAD
             _currentItem.transform.localRotation = Quaternion.Euler(_itemRotation + _itemRotationOffset);
+=======
+            _currentItem.transform.localRotation = Quaternion.Euler(_itemRotation);
+>>>>>>> origin/main
             _currentItem.transform.localScale = _itemScale;
 
             SetLayerRecursively(_currentItem, LayerMask.NameToLayer("InventoryPreview"));
@@ -140,7 +148,11 @@ namespace FifthSemester.Gameplay.Inventory {
                 _previewCamera.enabled = false;
         }
 
+<<<<<<< HEAD
         private void LateUpdate() {
+=======
+        private void Update() {
+>>>>>>> origin/main
             if (_autoRotate && _currentItem != null) {
                 _currentItem.transform.Rotate(Vector3.up, _rotationSpeed * Time.deltaTime);
                 _previewCamera.Render();

@@ -11,7 +11,13 @@ namespace FifthSemester.Gameplay.Map {
             if (string.IsNullOrEmpty(_id)) {
                 _id = gameObject.name;
             }
+<<<<<<< HEAD
 
+=======
+        }
+
+        private void Start() {
+>>>>>>> origin/main
             _mapService = ServiceLocator.Get<IMapService>();
             _mapService.Register(_id, gameObject);
         }

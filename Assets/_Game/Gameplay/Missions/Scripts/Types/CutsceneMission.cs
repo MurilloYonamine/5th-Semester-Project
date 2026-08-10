@@ -8,7 +8,10 @@ using UnityEngine;
 namespace FifthSemester.Gameplay.Missions {
     public class CutsceneMission : MissionBase {
         private bool _subscribed;
+<<<<<<< HEAD
         private bool _cutscenePending;
+=======
+>>>>>>> origin/main
 
         public override void Initialize(MissionDefinition definition, IEventBus eventBus, ISaveService saveService) {
             base.Initialize(definition, eventBus, saveService);
@@ -23,15 +26,22 @@ namespace FifthSemester.Gameplay.Missions {
                 _subscribed = true;
             }
 
+<<<<<<< HEAD
             _cutscenePending = true;
 
             IDialogueService<TextAsset> dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
             if (dialogueService == null || !dialogueService.IsDialogueActive) {
                 PlayCutscene();
+=======
+            ICutsceneService cutsceneService = ServiceLocator.Get<ICutsceneService>();
+            if (cutsceneService != null) {
+                cutsceneService.PlayCutscene(_definition.TargetCutscene);
+>>>>>>> origin/main
             }
         }
 
         private void OnDialogueEnded(DialogueEndedEvent evt) {
+<<<<<<< HEAD
             if (_isComplete || !_cutscenePending) return;
 
             PlayCutscene();
@@ -53,6 +63,13 @@ namespace FifthSemester.Gameplay.Missions {
             cutsceneService.PlayCutscene(_definition.TargetCutscene);
         }
 
+=======
+            if (_isComplete) return;
+
+            PublishProgress();
+            Complete();
+        }
+>>>>>>> origin/main
         private void OnCutsceneEnded(CutsceneEndedEvent evt) {
             if (evt.CutsceneID == _definition.TargetCutscene) {
                 PublishProgress();

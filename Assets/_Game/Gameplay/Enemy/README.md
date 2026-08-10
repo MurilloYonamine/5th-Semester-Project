@@ -35,7 +35,10 @@ EnemyController.cs (base class)
 Specific Enemies
 ├── LightSeeker
 ├── PacientEnemy
+<<<<<<< HEAD
 ├── Nurse
+=======
+>>>>>>> origin/main
 └── ...
 ```
 
@@ -220,12 +223,15 @@ The chase action reads the white noise clip and max volume from the blackboard, 
 
 ---
 
+<<<<<<< HEAD
 ### `Scripts/Enemies/Nurse/Nurse.cs`
 
 The Nurse can remain blocked until a configured `Map2KeyDefinitionSO` is collected. After the matching key enters the inventory, the AI is released and the existing behaviour tree takes over.
 
 ---
 
+=======
+>>>>>>> origin/main
 ## Behaviour Tree Structure
 
 ### Example: Standard Chase Behavior

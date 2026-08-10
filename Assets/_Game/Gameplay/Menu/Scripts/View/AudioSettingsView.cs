@@ -58,8 +58,11 @@ namespace FifthSemester.Gameplay.Menu {
         public void ResetToDefaults() {
             if (_defaultsAudio == null) return;
 
+<<<<<<< HEAD
             PlayMenuSecondarySfx();
 
+=======
+>>>>>>> origin/main
             _settingsService.MasterVolume = _defaultsAudio.MasterVolume;
             _settingsService.MusicVolume = _defaultsAudio.MusicVolume;
             _settingsService.SFXVolume = _defaultsAudio.SFXVolume;
@@ -75,7 +78,10 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public void OnBack() {
+<<<<<<< HEAD
             PlayMenuBackSfx();
+=======
+>>>>>>> origin/main
             _menuService.Show(MenuScreen.Settings);
         }
 

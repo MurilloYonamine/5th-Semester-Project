@@ -102,6 +102,7 @@ namespace FifthSemester.Core.Events {
         }
     }
 
+<<<<<<< HEAD
     /// Published when the player enters a room trigger or doorway.
     public readonly struct PlayerEnteredRoomEvent {
         public readonly string RoomId;
@@ -124,6 +125,8 @@ namespace FifthSemester.Core.Events {
         }
     }
 
+=======
+>>>>>>> origin/main
     /// ============= Inventory & Item Events =============
     public readonly struct InventoryToggledEvent {
         public readonly bool IsOpen;
@@ -184,6 +187,7 @@ namespace FifthSemester.Core.Events {
     }
 
     /// ============= Save Events =============
+<<<<<<< HEAD
     public readonly struct AutosaveStartedEvent {
         public readonly string Message;
 
@@ -193,6 +197,25 @@ namespace FifthSemester.Core.Events {
     }
 
     public readonly struct AutosaveCompletedEvent { }
+=======
+    public readonly struct SaveConfirmationRequestedEvent {
+        public readonly string CheckpointId;
+
+        public SaveConfirmationRequestedEvent(string checkpointId) {
+            CheckpointId = checkpointId;
+        }
+    }
+
+    public readonly struct SaveConfirmedEvent {
+        public readonly string CheckpointId;
+
+        public SaveConfirmedEvent(string checkpointId) {
+            CheckpointId = checkpointId;
+        }
+    }
+
+    public readonly struct SaveCancelledEvent { }
+>>>>>>> origin/main
 
     // ============= Settings Events =============
     public struct LanguageChangedEvent {

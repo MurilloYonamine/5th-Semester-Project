@@ -41,7 +41,10 @@ namespace FifthSemester.Core.Services {
 
     [System.Serializable]
     public class SaveData {
+<<<<<<< HEAD
         public string SceneName = "Game";
+=======
+>>>>>>> origin/main
         public int CurrentMissionIndex;
         public Dictionary<string, string> MissionProgress = new();
         public string LastCheckpointId = "default";

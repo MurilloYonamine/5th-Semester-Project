@@ -131,6 +131,7 @@ public class LockerProp : MonoBehaviour, IInteractable {
 }
 ```
 
+<<<<<<< HEAD
 ### Narrative Gate
 
 ```csharp
@@ -147,6 +148,8 @@ public class Gate : MonoBehaviour, IInteractable {
 
 Use this pattern for one-off world transitions that are not doors, such as story gates, map locks, and mission triggers.
 
+=======
+>>>>>>> origin/main
 ---
 
 ## Common Prop Examples

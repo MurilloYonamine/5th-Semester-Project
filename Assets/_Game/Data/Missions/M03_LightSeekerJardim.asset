@@ -15,12 +15,19 @@ MonoBehaviour:
   MissionId: M03_LightSeekerJardim
   Title: Investigar o Jardim
   Description: Tem algo na janela...
+<<<<<<< HEAD
   NextMission: {fileID: 11400000, guid: d32df546ddd58ef489476e0446e41021, type: 2}
   Type: 4
   UseFadeOnStart: 1
   TargetCutscene: 4
   NpcId: 
   InteractableTargetId: 
+=======
+  NextMission: {fileID: 11400000, guid: e974556fb6ac1494d805e5ffd4e915f5, type: 2}
+  Type: 3
+  TargetCutscene: 4
+  NpcId: 
+>>>>>>> origin/main
   TargetItemName: 
   RequiredCount: 1
   CollectItemName: Remedio
@@ -33,12 +40,16 @@ MonoBehaviour:
   - Paciente_E
   PersistProgress: 1
   DebugSetupEvents: []
+<<<<<<< HEAD
   EndGamePrefab: {fileID: 0}
+=======
+>>>>>>> origin/main
   MapActions:
   - Type: 4
     TargetDoor: 0
     DoorsToKeepUnlocked: 080000001100000012000000130000001400000015000000
     TargetObjectId: 
+<<<<<<< HEAD
   - Type: 1
     TargetDoor: 0
     DoorsToKeepUnlocked: 
@@ -47,3 +58,5 @@ MonoBehaviour:
     TargetDoor: 0
     DoorsToKeepUnlocked: 
     TargetObjectId: M04_Nurse_A
+=======
+>>>>>>> origin/main

@@ -27,7 +27,11 @@ Transform:
   m_GameObject: {fileID: 793597890897091371}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+<<<<<<< HEAD
   m_LocalPosition: {x: 0, y: 0, z: 0}
+=======
+  m_LocalPosition: {x: -0.203, y: -0.48, z: -0.8}
+>>>>>>> origin/main
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -40,6 +44,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 793597890897091371}
+<<<<<<< HEAD
   m_Enabled: 0
   serializedVersion: 11
   m_Type: 0
@@ -48,6 +53,16 @@ Light:
   m_Range: 175
   m_SpotAngle: 46.272728
   m_InnerSpotAngle: 16.377838
+=======
+  m_Enabled: 1
+  serializedVersion: 11
+  m_Type: 0
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Intensity: 30
+  m_Range: 10
+  m_SpotAngle: 30
+  m_InnerSpotAngle: 21.80208
+>>>>>>> origin/main
   m_CookieSize: 10
   m_Shadows:
     m_Type: 0
@@ -146,7 +161,11 @@ Transform:
   m_GameObject: {fileID: 3635258180124108591}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+<<<<<<< HEAD
   m_LocalPosition: {x: 0, y: 0.6, z: 0}
+=======
+  m_LocalPosition: {x: 0.203, y: 0.48, z: 0.8}
+>>>>>>> origin/main
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -178,7 +197,11 @@ Transform:
   m_GameObject: {fileID: 4220880176391897453}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+<<<<<<< HEAD
   m_LocalPosition: {x: 0, y: 0.6, z: 0}
+=======
+  m_LocalPosition: {x: 0, y: 0.57, z: 0.415}
+>>>>>>> origin/main
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -203,7 +226,10 @@ GameObject:
   - component: {fileID: 1264738499897855125}
   - component: {fileID: 9068956016035498350}
   - component: {fileID: 2179027381229980785}
+<<<<<<< HEAD
   - component: {fileID: 3883518301690107207}
+=======
+>>>>>>> origin/main
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -300,7 +326,11 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
+<<<<<<< HEAD
   m_Radius: 0.3
+=======
+  m_Radius: 0.6
+>>>>>>> origin/main
   m_Height: 1.6
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
@@ -312,7 +342,11 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6013639117960123670}
   serializedVersion: 4
+<<<<<<< HEAD
   m_Mass: 2.5
+=======
+  m_Mass: 1
+>>>>>>> origin/main
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -357,16 +391,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _vCam: {fileID: 0}
+<<<<<<< HEAD
   _cameraTarget: {fileID: 5348556779026223557}
+=======
+  _cameraTarget: {fileID: 5752018125564776618}
+>>>>>>> origin/main
   _cameraCanMove: 1
   _mouseSensitivity: 0.25
   _enableZoom: 1
   _holdToZoom: 1
   _zoomFov: 30
   _zoomStepTime: 5
+<<<<<<< HEAD
   _enableHeadBob: 1
   _bobSpeed: 10
   _bobAmount: {x: 0, y: 0.025, z: 0}
+=======
+>>>>>>> origin/main
 --- !u!114 &1000224494361150715
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -379,7 +420,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5858494d20841ec4e8393245a3b151c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+<<<<<<< HEAD
   _enableJump: 0
+=======
+  _enableJump: 1
+>>>>>>> origin/main
   _jumpUpVelocity: 5
   _hangTime: 0.2
   _fallGravityMultiplier: 2
@@ -409,6 +454,7 @@ MonoBehaviour:
   _crouchHeight: 0.75
   _speedReduction: 0.5
   _footstepClips:
+<<<<<<< HEAD
   - {fileID: 8300000, guid: 9f23c2748b8d91f4682725eec6dcd379, type: 3}
   - {fileID: 8300000, guid: 55e95fbee9ec5fe4b82cbf98ac9e1d55, type: 3}
   - {fileID: 8300000, guid: a0cff6ce63439384e9f7c8bc53bb930e, type: 3}
@@ -418,6 +464,17 @@ MonoBehaviour:
   _minFootstepSpeed: 0.1
   _exhaustedSfx: {fileID: 8300000, guid: aada1d49b6ee88844b3d440be6c9e39b, type: 3}
   _exhaustedThreshold: 0.15
+=======
+  - {fileID: 8300000, guid: 7e68c5f45e0571645b74ded7cf385a4e, type: 3}
+  - {fileID: 8300000, guid: f2be7185f0e90f94cab457becedff817, type: 3}
+  - {fileID: 8300000, guid: dbe806a61218cd64f9bb04a16c4e74d8, type: 3}
+  - {fileID: 8300000, guid: e29a9a2796c76bf43ab0bfa6e19239dd, type: 3}
+  - {fileID: 8300000, guid: 0620193909e89a04dba8626e3c7c9685, type: 3}
+  _walkFootstepInterval: 0.5
+  _sprintFootstepInterval: 0.32
+  _crouchFootstepInterval: 0.7
+  _minFootstepSpeed: 0.1
+>>>>>>> origin/main
 --- !u!114 &9068956016035498350
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435,7 +492,11 @@ MonoBehaviour:
   _interactionLayer:
     serializedVersion: 2
     m_Bits: 256
+<<<<<<< HEAD
   _failureSound: {fileID: 0}
+=======
+  _pickupSound: {fileID: 8300000, guid: dee7a077cad72894daecb7887348a370, type: 3}
+>>>>>>> origin/main
 --- !u!114 &2179027381229980785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -458,6 +519,7 @@ MonoBehaviour:
   _aimRadius: 0.4
   _illuminationDelay: 0.12
   _toggleSound: {fileID: 0}
+<<<<<<< HEAD
   _isOn: 0
   _hasFlashlight: 0
   _noFlashlightDialogue:
@@ -481,3 +543,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _crosshair: {fileID: 0}
   _staminaBarRoot: {fileID: 0}
+=======
+>>>>>>> origin/main

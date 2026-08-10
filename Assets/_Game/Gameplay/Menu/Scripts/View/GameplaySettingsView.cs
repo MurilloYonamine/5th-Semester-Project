@@ -44,9 +44,12 @@ namespace FifthSemester.Gameplay.Menu {
         protected override void Start() {
             base.Start();
 
+<<<<<<< HEAD
             _sensibilitySlider.minValue = 0f;
             _sensibilitySlider.maxValue = 2f;
 
+=======
+>>>>>>> origin/main
             _backButton.onClick.AddListener(OnBack);
             _resetDefaultsButton.onClick.AddListener(ResetToDefaults);
 
@@ -61,8 +64,11 @@ namespace FifthSemester.Gameplay.Menu {
 
         public void ResetToDefaults() {
             if (_defaultsGameplay == null) return;
+<<<<<<< HEAD
 
             PlayMenuSecondarySfx();
+=======
+>>>>>>> origin/main
             _settingsService.Language = _defaultsGameplay.Language;
             _settingsService.InvertYAxis = _defaultsGameplay.InvertYAxis;
             _settingsService.Sensibility = _defaultsGameplay.Sensibility;
@@ -70,7 +76,10 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public void OnBack() {
+<<<<<<< HEAD
             PlayMenuBackSfx();
+=======
+>>>>>>> origin/main
             _menuService.Show(MenuScreen.Settings);
         }
 

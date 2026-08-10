@@ -27,9 +27,14 @@ namespace FifthSemester.Gameplay {
             _eventBus.Subscribe<DialogueStartedEvent>(OnDialogueStarted);
             _eventBus.Subscribe<DialogueEndedEvent>(OnDialogueEnded);
             _eventBus.Subscribe<PauseToggleRequestedEvent>(OnPauseToggled);
+<<<<<<< HEAD
 
             // Força a publicação do estado inicial para sincronizar serviços persistentes (como InputService)
             _eventBus.Publish(new GameStateChangedEvent(GameState.Gameplay, GameState.Gameplay));
+=======
+            _eventBus.Subscribe<SaveConfirmedEvent>(OnSaveConfirmed);
+            _eventBus.Subscribe<SaveCancelledEvent>(OnSaveCancelled);
+>>>>>>> origin/main
         }
 
         public void ChangeState(GameState newState) {
@@ -75,11 +80,27 @@ namespace FifthSemester.Gameplay {
             }
         }
 
+<<<<<<< HEAD
+=======
+        private void OnSaveConfirmed(SaveConfirmedEvent evt) {
+            ChangeState(GameState.Gameplay);
+        }
+
+        private void OnSaveCancelled(SaveCancelledEvent evt) {
+            ChangeState(GameState.Gameplay);
+        }
+
+>>>>>>> origin/main
         private void OnDestroy() {
             if (_eventBus != null) {
                 _eventBus.Unsubscribe<DialogueStartedEvent>(OnDialogueStarted);
                 _eventBus.Unsubscribe<DialogueEndedEvent>(OnDialogueEnded);
                 _eventBus.Unsubscribe<PauseToggleRequestedEvent>(OnPauseToggled);
+<<<<<<< HEAD
+=======
+                _eventBus.Unsubscribe<SaveConfirmedEvent>(OnSaveConfirmed);
+                _eventBus.Unsubscribe<SaveCancelledEvent>(OnSaveCancelled);
+>>>>>>> origin/main
             }
         }
     }

@@ -16,6 +16,7 @@ MonoBehaviour:
   m_Retroactive: 0
   m_EmitOnce: 0
   m_Asset: {fileID: 11400000, guid: 9e6a8d5cc54383f4a952c71e32a943ce, type: 2}
+<<<<<<< HEAD
 --- !u!114 &-6698008010712721330
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -28,6 +29,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fde0d25a170598d46a0b9dc16b4527a5, type: 3}
   m_Name: ActivationPlayableAsset
   m_EditorClassIdentifier: 
+=======
+>>>>>>> origin/main
 --- !u!114 &-6543481781707862717
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -47,7 +50,11 @@ MonoBehaviour:
   m_MatchTargetFields: 63
   m_RemoveStartOffset: 1
   m_ApplyFootIK: 1
+<<<<<<< HEAD
   m_Loop: 2
+=======
+  m_Loop: 0
+>>>>>>> origin/main
   m_Version: 1
   m_Rotation: {x: 0, y: 0, z: 0, w: 1}
 --- !u!114 &-6035091417151825261
@@ -69,7 +76,11 @@ MonoBehaviour:
   m_MatchTargetFields: 63
   m_RemoveStartOffset: 1
   m_ApplyFootIK: 0
+<<<<<<< HEAD
   m_Loop: 2
+=======
+  m_Loop: 0
+>>>>>>> origin/main
   m_Version: 1
   m_Rotation: {x: 0, y: 0, z: 0, w: 1}
 --- !u!114 &-2488840828931255473
@@ -92,6 +103,7 @@ MonoBehaviour:
   m_Curves: {fileID: 0}
   m_Parent: {fileID: 11400000}
   m_Children: []
+<<<<<<< HEAD
   m_Clips:
   - m_Version: 1
     m_Start: 0
@@ -162,6 +174,9 @@ MonoBehaviour:
     m_PostExtrapolationTime: 0
     m_PreExtrapolationTime: 0
     m_DisplayName: lightseeker2_jumpscare
+=======
+  m_Clips: []
+>>>>>>> origin/main
   m_Markers:
     m_Objects: []
   m_TrackProperties:
@@ -206,10 +221,17 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
+<<<<<<< HEAD
     m_Start: 0.9583333333333334
     m_ClipIn: 0
     m_Asset: {fileID: -6035091417151825261}
     m_Duration: 5.344337573895852
+=======
+    m_Start: 0
+    m_ClipIn: 0
+    m_Asset: {fileID: -6035091417151825261}
+    m_Duration: 3
+>>>>>>> origin/main
     m_TimeScale: 1
     m_ParentTrack: {fileID: -44064230850751191}
     m_EaseInDuration: 0
@@ -272,7 +294,11 @@ MonoBehaviour:
     m_PostExtrapolationMode: 1
     m_PreExtrapolationMode: 1
     m_PostExtrapolationTime: Infinity
+<<<<<<< HEAD
     m_PreExtrapolationTime: 0.9583333333333334
+=======
+    m_PreExtrapolationTime: 0
+>>>>>>> origin/main
     m_DisplayName: Camera|Jumpscare
   m_Markers:
     m_Objects: []
@@ -312,13 +338,17 @@ MonoBehaviour:
   - {fileID: 4436933490717013525}
   - {fileID: -2488840828931255473}
   - {fileID: -44064230850751191}
+<<<<<<< HEAD
   - {fileID: 3383191669830149452}
+=======
+>>>>>>> origin/main
   m_FixedDuration: 0
   m_EditorSettings:
     m_Framerate: 24
     m_ScenePreview: 1
   m_DurationMode: 0
   m_MarkerTrack: {fileID: 0}
+<<<<<<< HEAD
 --- !u!114 &1337495337452255120
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -429,6 +459,8 @@ MonoBehaviour:
   m_Markers:
     m_Objects: []
   m_PostPlaybackState: 1
+=======
+>>>>>>> origin/main
 --- !u!114 &4436933490717013525
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -451,10 +483,17 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
+<<<<<<< HEAD
     m_Start: 0.958333333333333
     m_ClipIn: 0
     m_Asset: {fileID: -6543481781707862717}
     m_Duration: 5.344337573895852
+=======
+    m_Start: 0
+    m_ClipIn: 0
+    m_Asset: {fileID: -6543481781707862717}
+    m_Duration: 3
+>>>>>>> origin/main
     m_TimeScale: 1
     m_ParentTrack: {fileID: 4436933490717013525}
     m_EaseInDuration: 0
@@ -517,7 +556,11 @@ MonoBehaviour:
     m_PostExtrapolationMode: 1
     m_PreExtrapolationMode: 1
     m_PostExtrapolationTime: Infinity
+<<<<<<< HEAD
     m_PreExtrapolationTime: 0.958333333333333
+=======
+    m_PreExtrapolationTime: 0
+>>>>>>> origin/main
     m_DisplayName: LightSeeker|Jumpscare
   m_Markers:
     m_Objects: []
@@ -561,10 +604,17 @@ MonoBehaviour:
   m_Children: []
   m_Clips:
   - m_Version: 1
+<<<<<<< HEAD
     m_Start: 0.958333333333333
     m_ClipIn: 0
     m_Asset: {fileID: 7850955568374605569}
     m_Duration: 5.344337573895852
+=======
+    m_Start: 0
+    m_ClipIn: 0
+    m_Asset: {fileID: 7850955568374605569}
+    m_Duration: 3
+>>>>>>> origin/main
     m_TimeScale: 1
     m_ParentTrack: {fileID: 6835531949962785237}
     m_EaseInDuration: 0
@@ -628,7 +678,11 @@ MonoBehaviour:
     m_PreExtrapolationMode: 0
     m_PostExtrapolationTime: 0
     m_PreExtrapolationTime: 0
+<<<<<<< HEAD
     m_DisplayName: Lightseeker Jumpscare Camera
+=======
+    m_DisplayName: Jumpscare Camera
+>>>>>>> origin/main
   m_Markers:
     m_Objects: []
   TrackPriority: 0

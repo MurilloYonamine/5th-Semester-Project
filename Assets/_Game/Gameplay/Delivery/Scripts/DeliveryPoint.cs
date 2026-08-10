@@ -6,7 +6,10 @@ using UnityEngine;
 using UnityEngine.Events;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
+<<<<<<< HEAD
 using FifthSemester.Gameplay.Dialogue;
+=======
+>>>>>>> origin/main
 using FifthSemester.Gameplay.Inventory;
 using FifthSemester.Gameplay.Shared;
 using ThirdParty.QuickOutline;
@@ -28,6 +31,7 @@ namespace FifthSemester.Gameplay.Interactables {
         [SerializeField] private string _deliverPromptText = "entregar";
         [SerializeField] private string _talkPromptText = "conversar";
 
+<<<<<<< HEAD
         [Header("Audio")]
         [SerializeField] private AudioClip _successSound;
         [SerializeField] private AudioClip _failureSound;
@@ -40,20 +44,32 @@ namespace FifthSemester.Gameplay.Interactables {
 
         public bool HasPlayedDeliveryCutscene { get; private set; }
 
+=======
+        private IInventoryService<Item> _inventoryService;
+        private IEventBus _eventBus;
+        private bool _isCompleted = false;
+
+>>>>>>> origin/main
         public bool IsInteractable => !_isCompleted;
 
         private Outline _outline;
 
         private void Awake() {
             _outline = GetComponent<Outline>();
+<<<<<<< HEAD
             TryGetComponent(out _dialogueTrigger);
+=======
+>>>>>>> origin/main
             Highlight(false);
         }
 
         private void Start() {
             _inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
             _eventBus = ServiceLocator.Get<IEventBus>();
+<<<<<<< HEAD
             ServiceLocator.TryGet<IAudioService>(out _audioService);
+=======
+>>>>>>> origin/main
 
             UpdateInteractionPrompt();
             Highlight(false);
@@ -65,18 +81,24 @@ namespace FifthSemester.Gameplay.Interactables {
 
         public void Interact() {
             if (_isCompleted) {
+<<<<<<< HEAD
                 TryPlayDialogueTrigger();
+=======
+>>>>>>> origin/main
                 return;
             }
 
             if (TryDeliverItem()) {
                 CompleteDelivery();
                 UpdateInteractionPrompt();
+<<<<<<< HEAD
                 PlayFeedback(_successSound);
                 TryPlayDialogueTrigger();
             }
             else {
                 PlayFeedback(_failureSound);
+=======
+>>>>>>> origin/main
             }
         }
 
@@ -115,6 +137,7 @@ namespace FifthSemester.Gameplay.Interactables {
 
             _interactionPromptText.text = _isCompleted ? _talkPromptText : _deliverPromptText;
         }
+<<<<<<< HEAD
 
         private void PlayFeedback(AudioClip clip) {
             if (clip == null || _audioService == null) {
@@ -132,5 +155,7 @@ namespace FifthSemester.Gameplay.Interactables {
             HasPlayedDeliveryCutscene = true;
             _dialogueTrigger.Interact();
         }
+=======
+>>>>>>> origin/main
     }
 }

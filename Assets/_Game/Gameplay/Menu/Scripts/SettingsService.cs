@@ -7,6 +7,11 @@ using UnityEngine;
 namespace FifthSemester.Gameplay.Menu {
     public class SettingsService : ISettingsService {
 
+<<<<<<< HEAD
+=======
+
+        // Funções auxiliares para salvar e ler booleanos no PlayerPrefs
+>>>>>>> origin/main
         private bool GetBool(string key, bool defaultValue = false) {
             return PlayerPrefs.GetInt(key, defaultValue ? 1 : 0) == 1;
         }
@@ -17,6 +22,7 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public SettingsService() {
+<<<<<<< HEAD
             ApplyStartupScreenSettings();
         }
 
@@ -30,6 +36,9 @@ namespace FifthSemester.Gameplay.Menu {
             else {
                 Screen.fullScreen = IsFullscreen;
             }
+=======
+            Application.targetFrameRate = FrameRate;
+>>>>>>> origin/main
         }
 
         // ====== Audio ======
@@ -93,7 +102,10 @@ namespace FifthSemester.Gameplay.Menu {
             get => GetBool("Settings_Fullscreen", true);
             set {
                 SetBool("Settings_Fullscreen", value);
+<<<<<<< HEAD
                 Screen.fullScreenMode = value ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
+=======
+>>>>>>> origin/main
                 Screen.fullScreen = value;
             }
         }
@@ -112,6 +124,12 @@ namespace FifthSemester.Gameplay.Menu {
             new Vector2Int(320, 240),
             new Vector2Int(640, 480),
             new Vector2Int(800, 600),
+<<<<<<< HEAD
+=======
+            new Vector2Int(1024, 768),
+            new Vector2Int(1280, 960),
+            new Vector2Int(1600, 1200),
+>>>>>>> origin/main
         };
 
         // ===== Gameplay ======
@@ -133,8 +151,13 @@ namespace FifthSemester.Gameplay.Menu {
             set => SetBool("Settings_InvertY", value);
         }
         public float Sensibility {
+<<<<<<< HEAD
             get => Mathf.Clamp(PlayerPrefs.GetFloat("Settings_Sensibility", 1f), 0f, 2f);
             set { PlayerPrefs.SetFloat("Settings_Sensibility", Mathf.Clamp(value, 0f, 2f)); PlayerPrefs.Save(); }
+=======
+            get => PlayerPrefs.GetFloat("Settings_Sensibility", 1f);
+            set { PlayerPrefs.SetFloat("Settings_Sensibility", value); PlayerPrefs.Save(); }
+>>>>>>> origin/main
         }
     }
 }

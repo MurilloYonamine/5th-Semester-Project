@@ -12,6 +12,9 @@ namespace FifthSemester.Gameplay.Dialogue {
         public Color textColor = Color.white;
         public TMP_FontAsset nameFont;
         public TMP_FontAsset textFont;
+<<<<<<< HEAD
         public AudioClip dialogueStartClip;
+=======
+>>>>>>> origin/main
     }
 }

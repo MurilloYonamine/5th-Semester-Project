@@ -10,7 +10,10 @@ using UnityEngine;
 
 namespace FifthSemester.Features.Localization {
     public class LocalizationService : MonoBehaviour, ILocalizationService {
+<<<<<<< HEAD
         private const string TAG = "<color=magenta>[LocalizationService]</color>";
+=======
+>>>>>>> origin/main
         private const string _csvPath = "Assets/_Game/Data/Localization/LocalizedText.csv";
 
         [Header("Ficheiro de Textos")]
@@ -57,7 +60,11 @@ namespace FifthSemester.Features.Localization {
             if (_localizedTexts.TryGetValue(key, out string translatedText)) {
                 return translatedText;
             }
+<<<<<<< HEAD
             Debug.LogWarning($"{TAG} Chave não encontrada: {key}");
+=======
+            Debug.LogWarning($"[Localization] Chave não encontrada: {key}");
+>>>>>>> origin/main
             return $"[{key}]"; 
         }
 
@@ -65,7 +72,11 @@ namespace FifthSemester.Features.Localization {
             _localizedTexts.Clear();
 
             if (_csvFile == null) {
+<<<<<<< HEAD
                 Debug.LogError($"{TAG} Ficheiro CSV não atribuído no Inspector!");
+=======
+                Debug.LogError("[Localization] Ficheiro CSV não atribuído no Inspector!");
+>>>>>>> origin/main
                 return;
             }
 
@@ -84,7 +95,11 @@ namespace FifthSemester.Features.Localization {
             }
 
             if (languageIndex == -1) {
+<<<<<<< HEAD
                 Debug.LogError($"{TAG} Idioma '{targetLanguage}' não encontrado no cabeçalho do CSV!");
+=======
+                Debug.LogError($"[Localization] Idioma '{targetLanguage}' não encontrado no cabeçalho do CSV!");
+>>>>>>> origin/main
                 return;
             }
 
@@ -101,7 +116,11 @@ namespace FifthSemester.Features.Localization {
                 }
             }
 
+<<<<<<< HEAD
             Debug.Log($"{TAG} Idioma carregado com sucesso: {targetLanguage} ({_localizedTexts.Count} textos).");
+=======
+            Debug.Log($"[Localization] Idioma carregado com sucesso: {targetLanguage} ({_localizedTexts.Count} textos).");
+>>>>>>> origin/main
         }
         private string GetLangCode(Language lang) {
             return lang switch {

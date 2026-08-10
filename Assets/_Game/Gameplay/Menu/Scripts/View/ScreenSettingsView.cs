@@ -27,7 +27,11 @@ namespace FifthSemester.Gameplay.Menu {
 
         [Header("TMP Values")]
         [SerializeField] private TextMeshProUGUI _fullscreenValue;
+<<<<<<< HEAD
         private readonly List<int> _fpsValues = new() { 24, 30, -1 };
+=======
+        private readonly List<int> _fpsValues = new() { 24, 30, 60, -1 };
+>>>>>>> origin/main
 
         protected override MenuScreen MenuScreenType => MenuScreen.Settings_Screen;
 
@@ -61,8 +65,11 @@ namespace FifthSemester.Gameplay.Menu {
         public void ResetToDefaults() {
             if (_defaultsScreen == null) return;
 
+<<<<<<< HEAD
             PlayMenuSecondarySfx();
 
+=======
+>>>>>>> origin/main
             _settingsService.FrameRate = _defaultsScreen.FrameRate;
             _settingsService.IsFullscreen = _defaultsScreen.IsFullscreen;
             _settingsService.ResolutionIndex = _defaultsScreen.ResolutionIndex;
@@ -123,7 +130,10 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         private void OnBack() {
+<<<<<<< HEAD
             PlayMenuBackSfx();
+=======
+>>>>>>> origin/main
             _menuService.Show(MenuScreen.Settings);
         }
 

@@ -4,7 +4,10 @@ using FifthSemester.Core.States;
 using FifthSemester.Core.Events;
 using UnityEngine;
 using UnityEngine.UI;
+<<<<<<< HEAD
 using UnityEngine.SceneManagement;
+=======
+>>>>>>> origin/main
 
 namespace FifthSemester.Gameplay.Menu {
     public class PauseMenuView : MenuViewBase {
@@ -32,6 +35,7 @@ namespace FifthSemester.Gameplay.Menu {
             base.Start();
 
             _resumeButton.onClick.AddListener(OnResume);
+<<<<<<< HEAD
             _settingsButton.onClick.AddListener(OnSettings);
             _creditsButton.onClick.AddListener(OnCredits);
             _quitButton.onClick.AddListener(OnQuit);
@@ -39,6 +43,12 @@ namespace FifthSemester.Gameplay.Menu {
             if (_loadButton != null) {
                 _loadButton.gameObject.SetActive(false);
             }
+=======
+            _loadButton.onClick.AddListener(OnLoad);
+            _settingsButton.onClick.AddListener(OnSettings);
+            _creditsButton.onClick.AddListener(OnCredits);
+            _quitButton.onClick.AddListener(OnQuit);
+>>>>>>> origin/main
             
             if (_gameState.CurrentState == GameState.Gameplay && _backgroundPanel != null) {
                  _backgroundPanel.alpha = 0f;
@@ -74,23 +84,39 @@ namespace FifthSemester.Gameplay.Menu {
         }
 
         public void OnResume() {
+<<<<<<< HEAD
             PlayMenuSecondarySfx();
             _gameState.ChangeState(GameState.Gameplay);
         }
 
         public void OnSettings() {
             PlayMenuSecondarySfx();
+=======
+            _gameState.ChangeState(GameState.Gameplay);
+        }
+
+        public void OnLoad() {
+            _menuService.Show(MenuScreen.LoadGame);
+        }
+        public void OnSettings() {
+>>>>>>> origin/main
             _menuService.Show(MenuScreen.Settings);
         }
 
         public void OnCredits() {
+<<<<<<< HEAD
             PlayMenuSecondarySfx();
+=======
+>>>>>>> origin/main
             _menuService.Show(MenuScreen.Credits);
         }
 
         public void OnQuit() {
+<<<<<<< HEAD
             PlayMenuSecondarySfx();
             SceneManager.LoadScene("MainMenu");
+=======
+>>>>>>> origin/main
         }
     }
 }

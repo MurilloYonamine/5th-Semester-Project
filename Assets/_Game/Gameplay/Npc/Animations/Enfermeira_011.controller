@@ -127,7 +127,11 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: Speed
+<<<<<<< HEAD
     m_EventTreshold: 0
+=======
+    m_EventTreshold: 0.2
+>>>>>>> origin/main
   - m_ConditionMode: 2
     m_ConditionEvent: IsTalking
     m_EventTreshold: 0

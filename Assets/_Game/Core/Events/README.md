@@ -111,6 +111,7 @@ public readonly struct SprintInputEvent {
 }
 ```
 
+<<<<<<< HEAD
 ##### Save / Autosave Events
 
 These events are used by the autosave flow and the top-right save toast:
@@ -123,6 +124,8 @@ public readonly struct AutosaveStartedEvent {
 public readonly struct AutosaveCompletedEvent { }
 ```
 
+=======
+>>>>>>> origin/main
 #### Event Design Pattern
 
 All events are **readonly structs**:

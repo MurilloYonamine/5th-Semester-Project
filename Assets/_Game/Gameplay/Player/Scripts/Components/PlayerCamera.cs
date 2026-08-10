@@ -5,7 +5,10 @@ using UnityEngine;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.Input;
 using FifthSemester.Core.Events;
+<<<<<<< HEAD
 using FifthSemester.Core.States;
+=======
+>>>>>>> origin/main
 using Sirenix.OdinInspector;
 using Unity.Cinemachine;
 
@@ -48,7 +51,10 @@ namespace FifthSemester.Player.Components {
         private IEventBus _eventBus;
         private IGameplayService _gameplayService;
         private IInputService _inputService;
+<<<<<<< HEAD
         private IGameStateService _gameStateService;
+=======
+>>>>>>> origin/main
 
         private CinemachinePanTilt _panTilt;
 
@@ -72,14 +78,20 @@ namespace FifthSemester.Player.Components {
         private void Start() {
             _gameplayService = ServiceLocator.Get<IGameplayService>();
             _inputService = ServiceLocator.Get<IInputService>();
+<<<<<<< HEAD
             _gameStateService = ServiceLocator.Get<IGameStateService>();
+=======
+>>>>>>> origin/main
 
             _eventBus = ServiceLocator.Get<IEventBus>();
             _eventBus?.Subscribe<LookInputEvent>(HandleLookInput);
             _eventBus?.Subscribe<ZoomInputEvent>(HandleZoomInput);
+<<<<<<< HEAD
             _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
 
             ApplyGameState(_gameStateService != null ? _gameStateService.CurrentState : GameState.Gameplay);
+=======
+>>>>>>> origin/main
 
             Cursor.lockState = CursorLockMode.Locked;
         }
@@ -87,11 +99,15 @@ namespace FifthSemester.Player.Components {
         private void OnDisable() {
             _eventBus?.Unsubscribe<LookInputEvent>(HandleLookInput);
             _eventBus?.Unsubscribe<ZoomInputEvent>(HandleZoomInput);
+<<<<<<< HEAD
             _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
+=======
+>>>>>>> origin/main
         }
 
         public Transform GetCameraTarget() => _cameraTarget;
 
+<<<<<<< HEAD
         public void SetRotation(Quaternion rotation) {
             if (_panTilt == null) return;
 
@@ -104,6 +120,8 @@ namespace FifthSemester.Player.Components {
             _panTilt.TiltAxis.Value = pitch;
         }
 
+=======
+>>>>>>> origin/main
         private void Update() {
             if (!_cameraCanMove || _vCam == null || _player == null) return;
 
@@ -125,6 +143,7 @@ namespace FifthSemester.Player.Components {
             _zoomPressed = evt.IsPressed;
         }
 
+<<<<<<< HEAD
         private void OnGameStateChanged(GameStateChangedEvent evt) {
             ApplyGameState(evt.CurrentState);
         }
@@ -140,6 +159,8 @@ namespace FifthSemester.Player.Components {
             }
         }
 
+=======
+>>>>>>> origin/main
         private void ApplyRotation() {
             if (_panTilt == null) return;
 

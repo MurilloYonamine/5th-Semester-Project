@@ -13,9 +13,12 @@ namespace FifthSemester.Core.Services {
         void DisplayNextLine();
         void EndDialogue();
 
+<<<<<<< HEAD
             // Força o encerramento imediato do diálogo, pulando fades/esperas.
             void ForceEndDialogueImmediate();
 
+=======
+>>>>>>> origin/main
         void OnGameStateChanged(GameStateChangedEvent evt);
         void TimelineShowLine();
     }

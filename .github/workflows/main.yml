@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  PROJECT_NAME: 5th-Semester-Project
+  GAME_NAME: Photossync
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -20,6 +20,11 @@ jobs:
         with:
           lfs: true
           fetch-depth: 0 
+
+      - name: Pull LFS Assets
+        run: |
+          git lfs install
+          git lfs pull
 
       - uses: actions/cache@v4
         with:
@@ -34,19 +39,19 @@ jobs:
           UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           targetPlatform: StandaloneWindows64
-          buildName: Build
+          buildName: ${{ env.GAME_NAME }}
 
-      - name: Zip Build
+      - name: Zip Temporary Build
         run: |
-          cd build
-          zip -r "../${PROJECT_NAME}_Windows_temp.zip" .
-          cd ..
+          cd build/StandaloneWindows64
+          zip -r "../../${GAME_NAME}_temp.zip" .
+          cd ../..
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: build-zip
-          path: ${{ env.PROJECT_NAME }}_Windows_temp.zip          
+          path: ${{ env.GAME_NAME }}_temp.zip          
 
   release:
     name: Semantic Release 🧠
@@ -71,11 +76,29 @@ jobs:
         with:
           branches: main
 
-      - name: Rename & Upload Release Asset
+      - name: Rename Executable & Package Release Zip
         if: steps.semantic.outputs.new_release_published == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SEMVER: ${{ steps.semantic.outputs.new_release_version }}
         run: |
-          mv ${PROJECT_NAME}_Windows_temp.zip ${PROJECT_NAME}_Windows_${SEMVER}.zip
-          gh release upload v${SEMVER} ${PROJECT_NAME}_Windows_${SEMVER}.zip
+          TAG="v${SEMVER}"
+          FOLDER_NAME="${GAME_NAME}_${TAG}"
+          RELEASE_ZIP="${FOLDER_NAME}.zip"
+          
+          # Unzip temporary build into a named folder (ex: Photossync_v1.0.0)
+          mkdir -p "dist/${FOLDER_NAME}"
+          unzip -q ${GAME_NAME}_temp.zip -d "dist/${FOLDER_NAME}"
+          
+          # Rename executable inside folder (ex: Photossync_v1.0.0.exe)
+          if [ -f "dist/${FOLDER_NAME}/${GAME_NAME}.exe" ]; then
+            mv "dist/${FOLDER_NAME}/${GAME_NAME}.exe" "dist/${FOLDER_NAME}/${FOLDER_NAME}.exe"
+          fi
+          
+          # Zip root folder so extracting zip yields Photossync_v1.0.0/ folder
+          cd dist
+          zip -r "../${RELEASE_ZIP}" "${FOLDER_NAME}"
+          cd ..
+          
+          # Upload final zip to GitHub Release
+          gh release upload "${TAG}" "${RELEASE_ZIP}"

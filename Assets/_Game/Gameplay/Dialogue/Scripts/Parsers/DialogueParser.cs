@@ -4,7 +4,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     public static class DialogueParser {
         public static Queue<ParsedDialogueLine> Parse(TextAsset file) {
             Queue<ParsedDialogueLine> parsedLines = new Queue<ParsedDialogueLine>();

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     public struct DocumentData {
         public string Title;
         public string[] Pages;

@@ -4,7 +4,7 @@
 using System;
 using UnityEngine;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     [Serializable]
     public class DialogueLine {
         public CharacterSO speaker;

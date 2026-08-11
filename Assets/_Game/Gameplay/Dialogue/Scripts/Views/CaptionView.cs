@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     public class CaptionView : TextViewBase {
         private const float LINE_DELAY = 1f;
 

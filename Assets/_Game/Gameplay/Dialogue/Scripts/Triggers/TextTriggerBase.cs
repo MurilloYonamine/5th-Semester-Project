@@ -1,11 +1,12 @@
+using FifthSemester.Shared;
 // autor: Murillo Gomes Yonamine
 // data: 24/05/2026
 
-using FifthSemester.Gameplay.Shared;
+
 using ThirdParty.QuickOutline;
 using UnityEngine;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     [RequireComponent(typeof(Collider))]
     public abstract class TextTriggerBase : MonoBehaviour, IInteractable {
         [Header("Interaction")]

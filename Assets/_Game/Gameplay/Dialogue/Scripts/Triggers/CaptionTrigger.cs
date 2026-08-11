@@ -3,10 +3,10 @@
 
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
-using FifthSemester.Features.Localization;
+
 using UnityEngine;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     [RequireComponent(typeof(Collider))]
     public class CaptionTrigger : TextTriggerBase {
         [Header("Caption")]

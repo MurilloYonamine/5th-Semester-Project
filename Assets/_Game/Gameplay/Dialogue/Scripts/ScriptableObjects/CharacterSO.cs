@@ -4,7 +4,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     [CreateAssetMenu(menuName = "Dialogue/Character")]
     public class CharacterSO : ScriptableObject {
         public string characterName;

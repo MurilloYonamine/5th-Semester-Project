@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     [RequireComponent(typeof(CanvasGroup))]
     public class GateTransitionView : TextViewBase {
         [Header("Gate Transition")]

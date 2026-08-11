@@ -3,7 +3,7 @@
 
 using UnityEngine;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     internal static class TextAssetParserUtility {
         internal static bool HasContent(TextAsset textAsset) {
             return textAsset != null && !string.IsNullOrWhiteSpace(textAsset.text);

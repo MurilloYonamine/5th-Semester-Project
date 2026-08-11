@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     public static class CaptionParser {
         public static string Parse(TextAsset captionAsset) {
             if (!TextAssetParserUtility.HasContent(captionAsset)) {

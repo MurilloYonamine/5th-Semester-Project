@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     public class DialogueView : TextViewBase {
         [SerializeField] private TMP_Text _speakerNameText;
 

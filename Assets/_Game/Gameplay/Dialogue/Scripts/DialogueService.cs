@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Playables;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     public class DialogueService : MonoBehaviour, IDialogueService<TextAsset> {
         private const float DIALOGUE_FADE_DURATION = 1f;
 

@@ -7,7 +7,7 @@ using TMPro;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class TextViewBase : MonoBehaviour {
         [Header("Animation")]

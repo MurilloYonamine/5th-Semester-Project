@@ -1,0 +1,290 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using FifthSemester.Core.Services;
+using FifthSemester.Core.Events;
+using FifthSemester.Core.States;
+
+namespace FifthSemester.Gameplay {
+    public class InventoryUI : MonoBehaviour {
+        [Header("References")]
+        [SerializeField] private InventorySlot[] _slots;
+        [SerializeField] private CanvasGroup _inventoryCanvasGroup;
+        [SerializeField] private Animator _animator;
+
+        [Header("Display Settings")]
+        [SerializeField] private float _displayDuration = 3f;
+        [SerializeField] private float _highlightScale = 1.2f;
+        [SerializeField] private float _animationDuration = 1f;
+
+        [Header("Audio")]
+        [SerializeField] private AudioClip _openSound;
+        [SerializeField] private AudioClip _closeSound;
+
+        private IEventBus _eventBus;
+        private IInventoryService<Item> _inventoryService;
+        private IAudioService _audioService;
+
+        private int _currentIndex = 0;
+        private Coroutine _hideDelayCoroutine;
+        private Coroutine _animationCoroutine;
+        private Vector3[] _originalScales;
+
+        private static readonly int IsOpenHash = Animator.StringToHash("IsOpen");
+        private static readonly int IsCloseHash = Animator.StringToHash("IsClose");
+
+        private bool _manualOpen = false;
+
+        private void Start() {
+            _eventBus = ServiceLocator.Get<IEventBus>();
+            _inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
+            ServiceLocator.TryGet<IAudioService>(out _audioService);
+
+            if (_animator == null && _inventoryCanvasGroup != null) {
+                _animator = _inventoryCanvasGroup.GetComponent<Animator>();
+            }
+
+            InitializeSlots();
+
+            if (_eventBus != null) {
+                _eventBus.Subscribe<InventoryToggledEvent>(HandleInventoryToggled);
+                _eventBus.Subscribe<InventoryItemAddedEvent>(HandleItemAdded);
+                _eventBus.Subscribe<InventoryItemRemovedEvent>(HandleItemRemoved);
+                _eventBus.Subscribe<NextInputEvent>(HandleNextInput);
+                _eventBus.Subscribe<PreviousInputEvent>(HandlePreviousInput);
+                _eventBus.Subscribe<GameStateChangedEvent>(HandleGameStateChanged);
+            }
+
+            if (_inventoryCanvasGroup != null) {
+                _inventoryCanvasGroup.alpha = 0f;
+                _inventoryCanvasGroup.interactable = false;
+                _inventoryCanvasGroup.blocksRaycasts = false;
+                _inventoryCanvasGroup.gameObject.SetActive(false);
+            }
+        }
+
+        private void OnDestroy() {
+            if (_eventBus != null) {
+                _eventBus.Unsubscribe<InventoryToggledEvent>(HandleInventoryToggled);
+                _eventBus.Unsubscribe<InventoryItemAddedEvent>(HandleItemAdded);
+                _eventBus.Unsubscribe<InventoryItemRemovedEvent>(HandleItemRemoved);
+                _eventBus.Unsubscribe<NextInputEvent>(HandleNextInput);
+                _eventBus.Unsubscribe<PreviousInputEvent>(HandlePreviousInput);
+                _eventBus.Unsubscribe<GameStateChangedEvent>(HandleGameStateChanged);
+            }
+        }
+
+        private void InitializeSlots() {
+            if (_slots == null || _slots.Length == 0) return;
+
+            _originalScales = new Vector3[_slots.Length];
+            for (int i = 0; i < _slots.Length; i++) {
+                if (_slots[i] != null) {
+                    _originalScales[i] = _slots[i].transform.localScale;
+                }
+            }
+        }
+
+        private void HandleInventoryToggled(InventoryToggledEvent inventory) {
+            if (inventory.IsOpen) ShowInventory();
+            else HideInventory();
+        }
+
+        private void HandleItemAdded(InventoryItemAddedEvent item) {
+            RefreshInventorySlots();
+            ShowInventory();
+        }
+
+        private void HandleItemRemoved(InventoryItemRemovedEvent item) {
+            RefreshInventorySlots();
+
+            if (HasItems()) {
+                ShowInventory();
+            }
+            else {
+                HideInventory();
+            }
+        }
+
+        private void HandleNextInput(NextInputEvent evt) {
+            if (_inventoryCanvasGroup != null && _inventoryCanvasGroup.alpha > 0)
+                NavigateNext();
+        }
+
+        private void HandlePreviousInput(PreviousInputEvent evt) {
+            if (_inventoryCanvasGroup != null && _inventoryCanvasGroup.alpha > 0)
+                NavigatePrevious();
+        }
+
+        private void RefreshInventorySlots() {
+            if (_slots == null || _inventoryService == null) return;
+
+            IReadOnlyList<Item> items = _inventoryService.GetItems();
+            int itemCount = items != null ? items.Count : 0;
+            int visibleCount = Mathf.Min(itemCount, _slots.Length);
+
+            ResetAllSlots();
+
+            for (int i = 0; i < _slots.Length; i++) {
+                if (_slots[i] != null) {
+                    _slots[i].ClearItem();
+                }
+            }
+
+            for (int i = 0; i < visibleCount; i++) {
+                if (_slots[i] != null) {
+                    _slots[i].SetItem(items[i]);
+                }
+            }
+
+            if (visibleCount <= 0) {
+                _currentIndex = 0;
+                return;
+            }
+
+            if (_currentIndex < 0 || _currentIndex >= visibleCount) {
+                _currentIndex = Mathf.Clamp(_currentIndex, 0, visibleCount - 1);
+            }
+
+            HighlightSlot(_currentIndex);
+        }
+
+        private bool HasItems() {
+            return _inventoryService != null && _inventoryService.GetItems() != null && _inventoryService.GetItems().Count > 0;
+        }
+
+        public void NavigateNext() {
+            if (_slots == null || _slots.Length == 0) return;
+
+            ResetSlotScale(_currentIndex);
+            _currentIndex = (_currentIndex + 1) % _slots.Length;
+            HighlightSlot(_currentIndex);
+            ResetHideTimer();
+        }
+
+        public void NavigatePrevious() {
+            if (_slots == null || _slots.Length == 0) return;
+
+            ResetSlotScale(_currentIndex);
+            _currentIndex = (_currentIndex - 1 + _slots.Length) % _slots.Length;
+            HighlightSlot(_currentIndex);
+            ResetHideTimer();
+        }
+
+        private void ShowInventory() {
+            if (_inventoryCanvasGroup == null) return;
+
+            if (_hideDelayCoroutine != null) StopCoroutine(_hideDelayCoroutine);
+            if (_animationCoroutine != null) StopCoroutine(_animationCoroutine);
+
+            _inventoryCanvasGroup.gameObject.SetActive(true);
+            _inventoryCanvasGroup.alpha = 1f;
+            PlayUISound(_openSound);
+
+            if (_animator != null) {
+                _animator.SetBool(IsOpenHash, true);
+                _animator.SetBool(IsCloseHash, false);
+            }
+
+            HighlightSlot(_currentIndex);
+
+            if (!_manualOpen)
+                ResetHideTimer(); 
+        }
+
+        private void HideInventory() {
+            if (_inventoryCanvasGroup == null) return;
+
+            PlayUISound(_closeSound);
+
+            if (_animator != null) {
+                _animator.SetBool(IsOpenHash, false);
+                _animator.SetBool(IsCloseHash, true);
+            }
+
+            if (_animationCoroutine != null) StopCoroutine(_animationCoroutine);
+            _animationCoroutine = StartCoroutine(HideAfterAnimation());
+        }
+
+        private IEnumerator HideAfterAnimation() {
+            yield return new WaitForSeconds(_animationDuration);
+
+            _inventoryCanvasGroup.alpha = 0f;
+            _inventoryCanvasGroup.interactable = false;
+            _inventoryCanvasGroup.blocksRaycasts = false;
+            _inventoryCanvasGroup.gameObject.SetActive(false);
+
+            ResetAllSlots();
+        }
+
+        private void ResetHideTimer() {
+            if (_manualOpen) return;
+
+            if (_hideDelayCoroutine != null) StopCoroutine(_hideDelayCoroutine);
+            _hideDelayCoroutine = StartCoroutine(HideAfterDelay());
+        }
+
+        private IEnumerator HideAfterDelay() {
+            yield return new WaitForSeconds(_displayDuration);
+            HideInventory();
+
+            _eventBus?.Publish(new InventoryToggledEvent(false));
+        }
+
+        private void HighlightSlot(int index) {
+            if (_slots == null || index < 0 || index >= _slots.Length || _slots[index] == null) return;
+            _slots[index].transform.localScale = _originalScales[index] * _highlightScale;
+        }
+
+        private void ResetSlotScale(int index) {
+            if (_slots == null || index < 0 || index >= _slots.Length || _slots[index] == null) return;
+            _slots[index].transform.localScale = _originalScales[index];
+        }
+
+        private void ResetAllSlots() {
+            if (_slots == null || _originalScales == null) return;
+
+            for (int i = 0; i < _slots.Length; i++) {
+                if (_slots[i] != null) {
+                    _slots[i].transform.localScale = _originalScales[i];
+                }
+            }
+        }
+
+        private void PlayUISound(AudioClip clip) {
+            if (clip == null || _audioService == null) {
+                return;
+            }
+
+            _audioService.PlaySFX(clip);
+        }
+
+        private void HideInventoryInstant() {
+            if (_inventoryCanvasGroup == null) return;
+
+            if (_hideDelayCoroutine != null) StopCoroutine(_hideDelayCoroutine);
+            if (_animationCoroutine != null) StopCoroutine(_animationCoroutine);
+
+            _inventoryCanvasGroup.alpha = 0f;
+            _inventoryCanvasGroup.interactable = false;
+            _inventoryCanvasGroup.blocksRaycasts = false;
+            _inventoryCanvasGroup.gameObject.SetActive(false);
+
+            if (_animator != null) {
+                _animator.SetBool(IsOpenHash, false);
+                _animator.SetBool(IsCloseHash, true);
+            }
+
+            ResetAllSlots();
+        }
+
+        private void HandleGameStateChanged(GameStateChangedEvent evt) {
+            if (evt.CurrentState == GameState.Paused) {
+                if (_inventoryCanvasGroup != null && _inventoryCanvasGroup.alpha > 0) {
+                    HideInventoryInstant();
+                    _eventBus?.Publish(new InventoryToggledEvent(false));
+                }
+            }
+        }
+    }
+}

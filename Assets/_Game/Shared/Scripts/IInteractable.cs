@@ -3,7 +3,7 @@
 
 using UnityEngine;
 
-namespace FifthSemester.Gameplay.Shared {
+namespace FifthSemester.Shared {
     public interface IInteractable {
         string Id { get; }
 

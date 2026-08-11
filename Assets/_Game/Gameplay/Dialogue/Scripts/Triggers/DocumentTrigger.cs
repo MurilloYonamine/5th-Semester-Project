@@ -3,12 +3,12 @@
 
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
-using FifthSemester.Features.Localization;
+
 using ThirdParty.QuickOutline;
 using UnityEngine;
 using FifthSemester.Core.Events;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     [RequireComponent(typeof(Outline))]
     public class DocumentTrigger : TextTriggerBase {
         [SerializeField] private DocumentView _documentView;

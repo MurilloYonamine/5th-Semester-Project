@@ -4,7 +4,7 @@
 using TMPro;
 using UnityEngine;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     public class DocumentView : TextViewBase {
         [Header("Document")]
         [SerializeField] private TMP_Text _titleText;

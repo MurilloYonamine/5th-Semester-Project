@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using System.Collections;
 
-namespace FifthSemester.Framework.UI {
+namespace FifthSemester.Framework {
     public class OptionSelector : Selectable {
         [Header("UI")]
         [SerializeField] private TextMeshProUGUI _value;

@@ -4,13 +4,13 @@
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
-using FifthSemester.Features.Localization;
+
 using Sirenix.OdinInspector;
 using ThirdParty.QuickOutline;
 using UnityEngine;
 using UnityEngine.Playables;
 
-namespace FifthSemester.Gameplay.Dialogue {
+namespace FifthSemester.Gameplay {
     [RequireComponent(typeof(Outline))]
     public class DialogueTrigger : TextTriggerBase {
         private IDialogueService<TextAsset> _dialogueService;

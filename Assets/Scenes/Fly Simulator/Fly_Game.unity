@@ -496,6 +496,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: dbe806a61218cd64f9bb04a16c4e74d8, type: 3}
   - {fileID: 8300000, guid: e29a9a2796c76bf43ab0bfa6e19239dd, type: 3}
   - {fileID: 8300000, guid: 0620193909e89a04dba8626e3c7c9685, type: 3}
+  _footstepVolume: 1.5
 --- !u!1 &33746969
 GameObject:
   m_ObjectHideFlags: 0
@@ -719,6 +720,7 @@ MonoBehaviour:
     Portuguese: {fileID: 4900000, guid: cd3db92b707087d468ec3ad7c014fd77, type: 3}
     English: {fileID: 4900000, guid: 9e553cd4196a7e847af2d7e8f36b393d, type: 3}
   _director: {fileID: 0}
+  _animator: {fileID: 0}
 --- !u!114 &58905478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1825,6 +1827,7 @@ MonoBehaviour:
     Portuguese: {fileID: 4900000, guid: 1a4ddc23198518742948da8f93d868a4, type: 3}
     English: {fileID: 4900000, guid: f4310956720b25a4ca012200808b221b, type: 3}
   _director: {fileID: 0}
+  _animator: {fileID: 0}
 --- !u!114 &257207827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2664,6 +2667,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: dbe806a61218cd64f9bb04a16c4e74d8, type: 3}
   - {fileID: 8300000, guid: e29a9a2796c76bf43ab0bfa6e19239dd, type: 3}
   - {fileID: 8300000, guid: 0620193909e89a04dba8626e3c7c9685, type: 3}
+  _footstepVolume: 1.5
 --- !u!1 &400993849
 GameObject:
   m_ObjectHideFlags: 0
@@ -3026,6 +3030,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: dbe806a61218cd64f9bb04a16c4e74d8, type: 3}
   - {fileID: 8300000, guid: e29a9a2796c76bf43ab0bfa6e19239dd, type: 3}
   - {fileID: 8300000, guid: 0620193909e89a04dba8626e3c7c9685, type: 3}
+  _footstepVolume: 1.5
 --- !u!1 &433307139
 GameObject:
   m_ObjectHideFlags: 0
@@ -3928,7 +3933,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -7878,6 +7883,7 @@ MonoBehaviour:
     Portuguese: {fileID: 4900000, guid: db6ed4104ff7f534e9934c08fef1e52e, type: 3}
     English: {fileID: 4900000, guid: 1cf251ac9103d11428a7841ab7dad1a0, type: 3}
   _director: {fileID: 0}
+  _animator: {fileID: 0}
 --- !u!114 &987883740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11871,6 +11877,7 @@ MonoBehaviour:
     Portuguese: {fileID: 4900000, guid: 53ffcc75e15f3514f876ff25ec61bbdd, type: 3}
     English: {fileID: 4900000, guid: 9491464f1f07aca4a8289b56812fb934, type: 3}
   _director: {fileID: 0}
+  _animator: {fileID: 0}
 --- !u!114 &1421703925
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18580,9 +18587,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1351584299525684218, guid: c80b1bb2ccb220440bf9ca4a9938f1f0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1646064230}
-    - targetCorrespondingSourceObject: {fileID: 4616751096126493759, guid: c80b1bb2ccb220440bf9ca4a9938f1f0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: c80b1bb2ccb220440bf9ca4a9938f1f0, type: 3}
 --- !u!23 &3177942738260894105
 MeshRenderer:
@@ -21011,22 +21015,6 @@ PrefabInstance:
     - target: {fileID: 200718858544839447, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1567646709355168383, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1851131841977367590, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4800163602248328390, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7070937917260731526, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8211225332758187324, guid: a877754a05e827e4680dbc74b6cf2c5a, type: 3}
       propertyPath: m_Name

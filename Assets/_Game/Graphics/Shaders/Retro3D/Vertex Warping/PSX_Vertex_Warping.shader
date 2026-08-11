@@ -71,13 +71,15 @@ Shader "PSX/Vertex_Warping"
                 float4 clipPos = TransformObjectToHClip(input.positionOS.xyz);
 
                 // PS1 Vertex Jitter / Quantizacao de Vertices no Espaco de Tela
-                if (clipPos.w != 0.0 && _JitterIntensity > 0.0)
+                if (clipPos.w != 0.0 && _JitterIntensity > 0.001)
                 {
                     float2 screenPos = clipPos.xy / clipPos.w;
-                    float2 grid = _SnapResolution * (_ScreenParams.xy / _ScreenParams.y);
+                    // Interpola a resolução da grade: 0.0 = sem jitter (liso), 1.0 = PS1 snap completo
+                    float effectiveRes = lerp(10000.0, _SnapResolution, saturate(_JitterIntensity));
+                    float2 grid = effectiveRes * (_ScreenParams.xy / _ScreenParams.y);
                     
-                    screenPos = floor(screenPos * grid + 0.5) / grid;
-                    clipPos.xy = lerp(clipPos.xy, screenPos * clipPos.w, _JitterIntensity);
+                    float2 snappedPos = floor(screenPos * grid + 0.5) / grid;
+                    clipPos.xy = snappedPos * clipPos.w;
                 }
 
                 output.positionCS = clipPos;

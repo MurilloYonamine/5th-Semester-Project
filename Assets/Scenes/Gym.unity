@@ -5637,6 +5637,7 @@ MonoBehaviour:
     Portuguese: {fileID: 4900000, guid: cd3db92b707087d468ec3ad7c014fd77, type: 3}
     English: {fileID: 4900000, guid: 9e553cd4196a7e847af2d7e8f36b393d, type: 3}
   _director: {fileID: 0}
+  _animator: {fileID: 0}
 --- !u!114 &58905478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9133,6 +9134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Id>k__BackingField: Remedio
+  _pickupSounds: []
 --- !u!114 &118451879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9524,6 +9526,7 @@ MonoBehaviour:
   _itemContainer: {fileID: 1098201953}
   _itemScale: {x: 1, y: 1, z: 1}
   _itemRotation: {x: -15, y: 45, z: 0}
+  _itemRotationOffset: {x: 0, y: 0, z: 0}
   _cameraDistance: 2
   _autoRotate: 1
   _rotationSpeed: 30
@@ -10818,6 +10821,7 @@ MonoBehaviour:
   _itemContainer: {fileID: 1651504437}
   _itemScale: {x: 1, y: 1, z: 1}
   _itemRotation: {x: -15, y: 45, z: 0}
+  _itemRotationOffset: {x: 0, y: 0, z: 0}
   _cameraDistance: 2
   _autoRotate: 1
   _rotationSpeed: 30
@@ -11081,8 +11085,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 150853970}
   _doorType: 4
@@ -11162,6 +11165,7 @@ MonoBehaviour:
   _itemContainer: {fileID: 640271584}
   _itemScale: {x: 1, y: 1, z: 1}
   _itemRotation: {x: -15, y: 45, z: 0}
+  _itemRotationOffset: {x: 0, y: 0, z: 0}
   _cameraDistance: 2
   _autoRotate: 1
   _rotationSpeed: 30
@@ -11622,8 +11626,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 166933669}
   _doorType: 7
@@ -11720,8 +11723,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 167188294}
   _doorType: 3
@@ -16167,6 +16169,7 @@ MonoBehaviour:
     Portuguese: {fileID: 4900000, guid: 1a4ddc23198518742948da8f93d868a4, type: 3}
     English: {fileID: 4900000, guid: f4310956720b25a4ca012200808b221b, type: 3}
   _director: {fileID: 0}
+  _animator: {fileID: 0}
 --- !u!114 &257207827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20981,29 +20984,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 462328e3e7ca7e34a897d50632786d0e, type: 3}
---- !u!1 &343798986 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7661296692246884063, guid: 7b94a3926032c034d98a48fb6e3c3f15, type: 3}
-  m_PrefabInstance: {fileID: 843777918}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &343798989
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 343798986}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 572269dcd6e04774bb42a1c80630267e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _footstepClips:
-  - {fileID: 8300000, guid: 7e68c5f45e0571645b74ded7cf385a4e, type: 3}
-  - {fileID: 8300000, guid: f2be7185f0e90f94cab457becedff817, type: 3}
-  - {fileID: 8300000, guid: dbe806a61218cd64f9bb04a16c4e74d8, type: 3}
-  - {fileID: 8300000, guid: e29a9a2796c76bf43ab0bfa6e19239dd, type: 3}
-  - {fileID: 8300000, guid: 0620193909e89a04dba8626e3c7c9685, type: 3}
 --- !u!1 &349250632
 GameObject:
   m_ObjectHideFlags: 0
@@ -24285,8 +24265,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 382269127}
   _doorType: 10
@@ -26331,6 +26310,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Id>k__BackingField: Remedio
+  _pickupSounds: []
 --- !u!114 &423660062
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28013,8 +27993,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 443870317}
   _doorType: 6
@@ -31107,8 +31086,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 487966583}
   _doorType: 12
@@ -34286,8 +34264,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 535514135}
   _doorType: 17
@@ -38348,8 +38325,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 584057822}
   _doorType: 22
@@ -41674,8 +41650,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 659869622}
   _doorType: 8
@@ -41772,8 +41747,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 660733412}
   _doorType: 21
@@ -42845,8 +42819,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 682972007}
   _doorType: 14
@@ -44661,6 +44634,7 @@ MonoBehaviour:
   _itemContainer: {fileID: 2008909819}
   _itemScale: {x: 1, y: 1, z: 1}
   _itemRotation: {x: -15, y: 45, z: 0}
+  _itemRotationOffset: {x: 0, y: 0, z: 0}
   _cameraDistance: 2
   _autoRotate: 1
   _rotationSpeed: 30
@@ -48591,8 +48565,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 743003417}
   _doorType: 18
@@ -56330,9 +56303,37 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1051355633}
     - target: {fileID: 7246011383171597552, guid: 7b94a3926032c034d98a48fb6e3c3f15, type: 3}
+      propertyPath: m_SceneBindings.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7246011383171597552, guid: 7b94a3926032c034d98a48fb6e3c3f15, type: 3}
+      propertyPath: m_SceneBindings.Array.data[4].key
+      value: 
+      objectReference: {fileID: 3815841303637479682, guid: 562f1c5043f3aae48b23343d63d1a35c, type: 2}
+    - target: {fileID: 7246011383171597552, guid: 7b94a3926032c034d98a48fb6e3c3f15, type: 3}
       propertyPath: m_SceneBindings.Array.data[0].value
       value: 
       objectReference: {fileID: 1051355630}
+    - target: {fileID: 7332556875368661602, guid: 7b94a3926032c034d98a48fb6e3c3f15, type: 3}
+      propertyPath: '_footstepClips.Array.data[0]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7332556875368661602, guid: 7b94a3926032c034d98a48fb6e3c3f15, type: 3}
+      propertyPath: '_footstepClips.Array.data[1]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7332556875368661602, guid: 7b94a3926032c034d98a48fb6e3c3f15, type: 3}
+      propertyPath: '_footstepClips.Array.data[2]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7332556875368661602, guid: 7b94a3926032c034d98a48fb6e3c3f15, type: 3}
+      propertyPath: '_footstepClips.Array.data[3]'
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7332556875368661602, guid: 7b94a3926032c034d98a48fb6e3c3f15, type: 3}
+      propertyPath: '_footstepClips.Array.data[4]'
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 9193715167786527679, guid: 7b94a3926032c034d98a48fb6e3c3f15, type: 3}
       propertyPath: m_LocalPosition.x
       value: -8.666667
@@ -56377,10 +56378,7 @@ PrefabInstance:
     - {fileID: 3900074346232454679, guid: 7b94a3926032c034d98a48fb6e3c3f15, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7661296692246884063, guid: 7b94a3926032c034d98a48fb6e3c3f15, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 343798989}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7b94a3926032c034d98a48fb6e3c3f15, type: 3}
 --- !u!1 &852230374
 GameObject:
@@ -65039,8 +65037,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 925766680}
   _doorType: 20
@@ -69869,6 +69866,7 @@ MonoBehaviour:
     Portuguese: {fileID: 4900000, guid: db6ed4104ff7f534e9934c08fef1e52e, type: 3}
     English: {fileID: 4900000, guid: 1cf251ac9103d11428a7841ab7dad1a0, type: 3}
   _director: {fileID: 0}
+  _animator: {fileID: 0}
 --- !u!114 &987883740
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69968,6 +69966,7 @@ MonoBehaviour:
   _itemContainer: {fileID: 1814949252}
   _itemScale: {x: 1, y: 1, z: 1}
   _itemRotation: {x: -15, y: 45, z: 0}
+  _itemRotationOffset: {x: 0, y: 0, z: 0}
   _cameraDistance: 2
   _autoRotate: 1
   _rotationSpeed: 30
@@ -74854,8 +74853,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1051355628}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.00000014528631, y: 0.9975944, z: 0.06932122, w: -0.0000020861623}
-  m_LocalPosition: {x: -8.663667, y: 1.273, z: -15.041907}
+  m_LocalRotation: {x: 0, y: -0.5302892, z: 0, w: 0.8478169}
+  m_LocalPosition: {x: 0.7, y: 0.4, z: -20}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -74970,11 +74969,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 27.66063
+  near clip plane: 0.1
+  far clip plane: 5000
+  field of view: 60.000004
   orthographic: 0
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
@@ -89767,8 +89766,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 1170572819}
   _doorType: 24
@@ -96414,8 +96412,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 1238367874}
   _doorType: 13
@@ -97048,7 +97045,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -120, y: 230}
+  m_AnchoredPosition: {x: -119.99997, y: 230}
   m_SizeDelta: {x: -279.99994, y: -550}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1247912385
@@ -105621,8 +105618,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 1346968163}
   _doorType: 2
@@ -107161,8 +107157,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 1373524716}
   _doorType: 19
@@ -107979,6 +107974,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: dbe806a61218cd64f9bb04a16c4e74d8, type: 3}
   - {fileID: 8300000, guid: e29a9a2796c76bf43ab0bfa6e19239dd, type: 3}
   - {fileID: 8300000, guid: 0620193909e89a04dba8626e3c7c9685, type: 3}
+  _footstepVolume: 1.5
 --- !u!136 &1389967661
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -108933,8 +108929,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 1406904044}
   _doorType: 1
@@ -110605,6 +110600,7 @@ MonoBehaviour:
     Portuguese: {fileID: 4900000, guid: 53ffcc75e15f3514f876ff25ec61bbdd, type: 3}
     English: {fileID: 4900000, guid: 9491464f1f07aca4a8289b56812fb934, type: 3}
   _director: {fileID: 0}
+  _animator: {fileID: 0}
 --- !u!114 &1421703925
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113110,6 +113106,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Id>k__BackingField: Remedio
+  _pickupSounds: []
 --- !u!114 &1484506972
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116189,6 +116186,7 @@ MonoBehaviour:
   _itemContainer: {fileID: 612304505}
   _itemScale: {x: 1, y: 1, z: 1}
   _itemRotation: {x: -15, y: 45, z: 0}
+  _itemRotationOffset: {x: 0, y: 0, z: 0}
   _cameraDistance: 2
   _autoRotate: 1
   _rotationSpeed: 30
@@ -122782,6 +122780,7 @@ MonoBehaviour:
     Portuguese: {fileID: 4900000, guid: 0791c24e35de69b4a9959ffcddf6d4e8, type: 3}
     English: {fileID: 4900000, guid: b89752f3359eccd48af1e0a6e0446637, type: 3}
   _director: {fileID: 916837865}
+  _animator: {fileID: 0}
 --- !u!114 &1646064228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125141,10 +125140,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4616751096126493759, guid: c80b1bb2ccb220440bf9ca4a9938f1f0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c80b1bb2ccb220440bf9ca4a9938f1f0, type: 3}
 --- !u!43 &1686936462
 Mesh:
@@ -132150,6 +132146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Id>k__BackingField: Remedio
+  _pickupSounds: []
 --- !u!114 &1775750348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138237,8 +138234,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 1864290011}
   _doorType: 9
@@ -140145,6 +140141,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <Id>k__BackingField: Remedio
+  _pickupSounds: []
 --- !u!114 &1880346024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -140718,8 +140715,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 1893910552}
   _doorType: 23
@@ -141145,8 +141141,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 1905570089}
   _doorType: 15
@@ -141275,8 +141270,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 1908398697}
   _doorType: 11
@@ -142673,8 +142667,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 1916119729}
   _doorType: 5
@@ -156453,8 +156446,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 2063390653}
   _doorType: 16
@@ -161798,8 +161790,7 @@ MonoBehaviour:
   _openAngle: 90
   _speed: 5
   _useDoubleDoor: 0
-  _openSound: {fileID: 0}
-  _closeSound: {fileID: 0}
+  _doorSfx: []
   _doorMeshes: []
   _doorMesh: {fileID: 2121958723}
   _doorType: 25

@@ -465,6 +465,7 @@ MonoBehaviour:
   - {fileID: -6288072647309666549}
   - {fileID: 7518938298396184218}
   - {fileID: -1410297666881709256}
+  - {fileID: 2433400973696121888}
 --- !u!114 &853819529557874667
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -775,6 +776,85 @@ MonoBehaviour:
   contribution:
     m_OverrideState: 1
     m_Value: 0
+--- !u!114 &2433400973696121888
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f0c76b8178cc6394c871b5a9be9e2a66, type: 3}
+  m_Name: PSXVolume
+  m_EditorClassIdentifier: 
+  active: 1
+  activeEffect:
+    m_OverrideState: 1
+    m_Value: 1
+  enablePixelation:
+    m_OverrideState: 1
+    m_Value: 1
+  pixelResolutionX:
+    m_OverrideState: 1
+    m_Value: 320
+  pixelResolutionY:
+    m_OverrideState: 1
+    m_Value: 240
+  enableBarrelDistortion:
+    m_OverrideState: 1
+    m_Value: 1
+  barrelStrength:
+    m_OverrideState: 1
+    m_Value: 0.12
+  barrelTightness:
+    m_OverrideState: 1
+    m_Value: 3
+  barrelZoom:
+    m_OverrideState: 1
+    m_Value: 0.98
+  cornerVignette:
+    m_OverrideState: 1
+    m_Value: 0.4
+  enableDithering:
+    m_OverrideState: 1
+    m_Value: 1
+  ditherSpread:
+    m_OverrideState: 1
+    m_Value: 16
+  ditherStrength:
+    m_OverrideState: 1
+    m_Value: 0.7
+  enableChromaBleed:
+    m_OverrideState: 1
+    m_Value: 1
+  bleedSpread:
+    m_OverrideState: 1
+    m_Value: 0.005
+  enableScanlines:
+    m_OverrideState: 1
+    m_Value: 1
+  scanlineCount:
+    m_OverrideState: 1
+    m_Value: 240
+  scanlineIntensity:
+    m_OverrideState: 1
+    m_Value: 0.3
+  rollingBandSpeed:
+    m_OverrideState: 1
+    m_Value: 1
+  rollingBandIntensity:
+    m_OverrideState: 1
+    m_Value: 0.1
+  enableGlitch:
+    m_OverrideState: 1
+    m_Value: 0
+  glitchAmount:
+    m_OverrideState: 1
+    m_Value: 0.01
+  vhsTapeGrain:
+    m_OverrideState: 1
+    m_Value: 0.1
 --- !u!114 &3959858460715838825
 MonoBehaviour:
   m_ObjectHideFlags: 3

@@ -55,8 +55,9 @@ Shader "PSX/VHS"
                 // Distortion de fita analógica (Wobble horizontal)
                 float wave = sin(uv.y * 30.0 + time) * 0.002 + sin(uv.y * 80.0 - time * 2.0) * 0.001;
 
-                // Ruído de tracking de borda inferior (típico de cabeçote de VHS nas linhas inferiores)
-                float trackingArea = step(uv.y, 0.12);
+                // Ruido de tracking de borda inferior (tipico de cabecote de VHS nas linhas inferiores)
+                // step(0.88, uv.y) = apenas pixels com y > 88% da tela (parte de baixo)
+                float trackingArea = step(0.88, uv.y);
                 float trackingNoise = Hash12(float2(uv.x * 100.0, time)) * trackingArea * _TrackingNoise;
                 float trackingShift = (Hash12(float2(floor(uv.y * 50.0), time)) - 0.5) * 0.04 * trackingArea;
 

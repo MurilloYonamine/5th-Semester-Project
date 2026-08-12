@@ -43,6 +43,14 @@ namespace FifthSemester.UI
         public ClampedFloatParameter glitchAmount = new ClampedFloatParameter(0.01f, 0f, 0.1f);
         public ClampedFloatParameter vhsTapeGrain = new ClampedFloatParameter(0.1f, 0f, 1f);
 
+        [Header("Distance Fog (World Shaders)")]
+        public BoolParameter enableFog = new BoolParameter(false);
+        public ColorParameter fogColor = new ColorParameter(new Color(0.1f, 0.05f, 0.15f, 1f), true, false, false);
+        public ClampedFloatParameter fogStart = new ClampedFloatParameter(5f, 0f, 100f);
+        public ClampedFloatParameter fogEnd = new ClampedFloatParameter(30f, 1f, 500f);
+        public BoolParameter fogExponential = new BoolParameter(false);
+        public ClampedFloatParameter fogDensity = new ClampedFloatParameter(0.02f, 0f, 0.1f);
+
         public bool IsActive() => activeEffect.value;
 
         public bool IsTileCompatible() => false;

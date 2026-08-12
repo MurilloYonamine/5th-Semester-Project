@@ -794,7 +794,7 @@ MonoBehaviour:
     m_Value: 1
   enablePixelation:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   pixelResolutionX:
     m_OverrideState: 1
     m_Value: 320
@@ -855,6 +855,24 @@ MonoBehaviour:
   vhsTapeGrain:
     m_OverrideState: 1
     m_Value: 0.1
+  enableFog:
+    m_OverrideState: 1
+    m_Value: 1
+  fogColor:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 0.7019608, b: 0.83137256, a: 1}
+  fogStart:
+    m_OverrideState: 1
+    m_Value: 7
+  fogEnd:
+    m_OverrideState: 1
+    m_Value: 44
+  fogExponential:
+    m_OverrideState: 1
+    m_Value: 1
+  fogDensity:
+    m_OverrideState: 1
+    m_Value: 0.0227
 --- !u!114 &3959858460715838825
 MonoBehaviour:
   m_ObjectHideFlags: 3

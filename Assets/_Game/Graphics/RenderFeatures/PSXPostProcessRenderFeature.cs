@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 #if UNITY_6000_0_OR_NEWER
@@ -84,14 +84,28 @@ namespace FifthSemester.UI
                 _material.SetFloat("_EnableGlitch", psxVolume.enableGlitch.value ? 1.0f : 0.0f);
                 _material.SetFloat("_GlitchAmount", psxVolume.glitchAmount.value);
                 _material.SetFloat("_VhsGrain", psxVolume.vhsTapeGrain.value);
+
+                // Fog global: publicado via Shader.SetGlobal para afetar todos os shaders PSX da cena
+                // Os shaders de objeto (Vertex_Warping, DitheredTransparency) leem esses valores
+                // automaticamente — sem precisar configurar material por material
+                Shader.SetGlobalFloat("_FogGlobalEnabled", psxVolume.enableFog.value ? 1.0f : 0.0f);
+                Shader.SetGlobalColor("_FogColor", psxVolume.fogColor.value);
+                Shader.SetGlobalFloat("_FogStart", psxVolume.fogStart.value);
+                Shader.SetGlobalFloat("_FogEnd", psxVolume.fogEnd.value);
+                Shader.SetGlobalFloat("_FogDensity", psxVolume.fogDensity.value);
+                // _FogExponential e lido pelos shaders como float (0 = linear, 1 = exponencial)
+                Shader.SetGlobalFloat("_FogExponential", psxVolume.fogExponential.value ? 1.0f : 0.0f);
             }
 
+#pragma warning disable CS0618, CS0672
+            [System.Obsolete]
             public override void OnCameraSetup(CommandBuffer cmd, ref RenderingData renderingData)
             {
                 ConfigureInput(ScriptableRenderPassInput.Color);
             }
+#pragma warning restore CS0618, CS0672
 
-            #if UNITY_6000_0_OR_NEWER
+#if UNITY_6000_0_OR_NEWER
             private class PassData
             {
                 public Material material;
@@ -137,8 +151,10 @@ namespace FifthSemester.UI
 
                 resourceData.cameraColor = destination;
             }
-            #endif
+#endif
 
+#pragma warning disable CS0618, CS0672
+            [System.Obsolete]
             public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
             {
                 if (_material == null) return;
@@ -158,20 +174,21 @@ namespace FifthSemester.UI
 
                 cmd.GetTemporaryRT(tempTextureId, desc);
 
-                #if UNITY_2022_1_OR_NEWER
+#if UNITY_2022_1_OR_NEWER
                 RTHandle cameraTarget = renderingData.cameraData.renderer.cameraColorTargetHandle;
                 Blitter.BlitCameraTexture(cmd, cameraTarget, cameraTarget, _material, 0);
-                #else
+#else
                 RenderTargetIdentifier cameraTarget = renderingData.cameraData.renderer.cameraColorTarget;
                 cmd.Blit(cameraTarget, tempTextureId, _material, 0);
                 cmd.Blit(tempTextureId, cameraTarget);
-                #endif
+#endif
 
                 cmd.ReleaseTemporaryRT(tempTextureId);
 
                 context.ExecuteCommandBuffer(cmd);
                 CommandBufferPool.Release(cmd);
             }
+#pragma warning restore CS0618, CS0672
         }
     }
 }

@@ -42,8 +42,9 @@ Shader "PSX/ScanLines_Hard"
             {
                 half4 col = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearClamp, input.texcoord);
                 
-                // Linhas nítidas de varredura CRT (Hard Scanlines)
-                float lineWave = abs(sin(input.texcoord.y * _Count * 3.14159265));
+                // Linhas nitidas de varredura CRT (Hard Scanlines)
+                // sin() * 0.5 + 0.5 mantem a frequencia correta (abs duplicaria)
+                float lineWave = sin(input.texcoord.y * _Count * 3.14159265) * 0.5 + 0.5;
                 float scanline = pow(lineWave, _Hardness);
 
                 float3 finalColor = lerp(col.rgb * (1.0 - _Intensity), col.rgb, scanline);

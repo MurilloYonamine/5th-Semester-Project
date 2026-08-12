@@ -133,15 +133,21 @@ Shader "PSX/CRT_Composite"
 
             half4 Frag(Varyings input) : SV_Target
             {
-                float2 uv = input.texcoord;
+                // rawUV preserva as coordenadas originais de tela para dithering e scanlines
+                // Isso evita que esses efeitos sejam distorcidos pelo barrel ou pela pixelacao
+                float2 rawUV = input.texcoord;
+                float2 uv = rawUV;
 
-                // 1. Barrel Distortion CRT
+                // 1. Barrel Distortion CRT (com correcao de aspect ratio para curvatura circular)
                 float edgeMask = 1.0;
                 #if defined(_BARREL_ON)
                 if (_EnableBarrel > 0.5)
                 {
+                    float aspect = _ScreenParams.x / _ScreenParams.y;
                     float2 centeredUV = uv - 0.5;
-                    float r2 = dot(centeredUV, centeredUV);
+                    // Aspect ratio so entra no calculo do raio, nao na distorcao do UV de sample
+                    float2 aspectUV = centeredUV * float2(aspect, 1.0);
+                    float r2 = dot(aspectUV, aspectUV);
                     float distortion = 1.0 + _BarrelStrength * pow(abs(r2), _BarrelTightness * 0.5);
                     uv = (centeredUV * distortion) * _BarrelZoom + 0.5;
 
@@ -191,8 +197,9 @@ Shader "PSX/CRT_Composite"
                     float3 yiqL = RGB2YIQ(leftCol);
                     float3 yiqR = RGB2YIQ(rightCol);
 
-                    // Borra o sinal I e Q (Crominância) horizontalmente mantendo o Y (Luminância) nítido
-                    float3 finalYIQ = float3(yiqC.x, (yiqL.y + yiqC.y + yiqR.y) / 3.0, (yiqL.z + yiqC.z + yiqR.z) / 3.0);
+                    // Borra o sinal I e Q (Crominancia) horizontalmente mantendo o Y (Luminancia) nitido
+                    // Peso triangular (L:1 C:2 R:1) — consistente com PSX_ChromaBleed.shader
+                    float3 finalYIQ = float3(yiqC.x, (yiqL.y + yiqC.y * 2.0 + yiqR.y) * 0.25, (yiqL.z + yiqC.z * 2.0 + yiqR.z) * 0.25);
                     color = YIQ2RGB(finalYIQ);
                 }
                 else
@@ -204,10 +211,12 @@ Shader "PSX/CRT_Composite"
                 #endif
 
                 // 5. Bayer Dithering
+                // IMPORTANTE: usa rawUV (nao o uv pixelado/distorcido) para alinhar a matriz Bayer
+                // ao grid de pixels fisicos da tela — evita o padrao de Moire circular
                 #if defined(_DITHER_ON)
                 if (_EnableDither > 0.5)
                 {
-                    uint2 pixelPos = (uint2)(uv * _ScreenParams.xy);
+                    uint2 pixelPos = (uint2)(rawUV * _ScreenParams.xy);
                     float dither = BAYER_4X4[pixelPos.x % 4][pixelPos.y % 4] - 0.5;
                     float3 dithered = color + (dither * _DitherStrength / _DitherSpread);
                     color = floor(dithered * _DitherSpread) / _DitherSpread;
@@ -215,13 +224,15 @@ Shader "PSX/CRT_Composite"
                 #endif
 
                 // 6. Scanlines & Rolling Bands
+                // usa rawUV.y para linhas horizontais retas de TV CRT
+                // (uv ja foi distorcido pelo barrel — usalo aqui curvaria as linhas)
                 #if defined(_SCANLINES_ON)
                 if (_EnableScanlines > 0.5)
                 {
-                    float scanline = sin(uv.y * _ScanlineCount * 3.14159) * 0.5 + 0.5;
+                    float scanline = sin(rawUV.y * _ScanlineCount * 3.14159) * 0.5 + 0.5;
                     color *= lerp(1.0 - _ScanlineIntensity, 1.0, scanline);
 
-                    float roll = sin(uv.y * 10.0 - _Time.y * _RollingBandSpeed) * 0.5 + 0.5;
+                    float roll = sin(rawUV.y * 10.0 - _Time.y * _RollingBandSpeed) * 0.5 + 0.5;
                     color = lerp(color, color * 0.7, roll * _RollingBandIntensity);
                 }
                 #endif

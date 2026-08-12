@@ -66,7 +66,8 @@ Shader "PSX/ChromaBleed"
                 float3 yiqL = RGB2YIQ(cLeft);
                 float3 yiqR = RGB2YIQ(cRight);
 
-                // Borra apenas o sinal de cor (I e Q) mantendo a luminância (Y) afiada
+                // Borra apenas o sinal de cor (I e Q) mantendo a luminancia (Y) afiada
+                // Peso triangular (L:1 C:2 R:1) — mais fiel ao sinal NTSC
                 float3 blendedYIQ = float3(
                     yiqC.x, 
                     (yiqL.y + yiqC.y * 2.0 + yiqR.y) * 0.25, 

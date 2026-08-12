@@ -42,10 +42,15 @@ Shader "PSX/BarrelDistortion"
 
             half4 Frag(Varyings input) : SV_Target
             {
+                float aspect = _ScreenParams.x / _ScreenParams.y;
                 float2 uv = input.texcoord - 0.5;
-                float r2 = dot(uv, uv);
+
+                // Correcao de aspect ratio: calcula o raio em espaco de pixels reais
+                // Sem isso, o raio fica oval em telas nao-quadradas (ex: 16:9, 4:3)
+                float2 aspectUV = uv * float2(aspect, 1.0);
+                float r2 = dot(aspectUV, aspectUV);
                 
-                // Formula de distorção de lente (Olho de peixe CRT)
+                // Formula de distorcao de lente (Olho de peixe CRT)
                 float distortion = 1.0 + _Strength * pow(abs(r2), _Tightness * 0.5);
                 float2 distUV = (uv * distortion) * _Zoom + 0.5;
 

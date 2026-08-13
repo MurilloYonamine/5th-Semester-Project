@@ -1,4 +1,4 @@
-﻿Shader "PSX/DitheredTransparency"
+Shader "PSX/DitheredTransparency"
 {
     Properties
     {
@@ -35,15 +35,22 @@
             #pragma fragment Frag
             #pragma shader_feature_local _UNLIT_MODE
             #pragma shader_feature_local _FOG_ON
+            #pragma multi_compile _ _ADDITIONAL_LIGHTS
+            #pragma multi_compile _ LIGHTMAP_ON
+            #pragma multi_compile _ DYNAMICLIGHTMAP_ON
+            #pragma multi_compile _ DIRLIGHTMAP_COMBINED
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE
+            #pragma multi_compile _ _SHADOWS_SOFT
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
             struct Attributes
             {
-                float4 positionOS : POSITION;
-                float3 normalOS   : NORMAL;
-                float2 uv         : TEXCOORD0;
+                float4 positionOS       : POSITION;
+                float3 normalOS         : NORMAL;
+                float2 uv               : TEXCOORD0;
+                float2 staticLightmapUV : TEXCOORD1;
             };
 
             struct Varyings
@@ -52,6 +59,8 @@
                 float2 uv         : TEXCOORD0;
                 float3 normalWS   : TEXCOORD1;
                 float  fogFactor  : TEXCOORD2;
+                float3 positionWS : TEXCOORD3;
+                DECLARE_LIGHTMAP_OR_SH(staticLightmapUV, vertexSH, 4);
             };
 
             TEXTURE2D(_MainTex);
@@ -100,11 +109,16 @@
                 output.normalWS = TransformObjectToWorldNormal(input.normalOS);
                 output.uv = TRANSFORM_TEX(input.uv, _MainTex);
 
+                float3 worldPos = TransformObjectToWorld(input.positionOS.xyz);
+                output.positionWS = worldPos;
+
+                OUTPUT_LIGHTMAP_UV(input.staticLightmapUV, unity_LightmapST, output.staticLightmapUV);
+                OUTPUT_SH(output.normalWS.xyz, output.vertexSH);
+
                 // Fog calculated per vert (master enable via PSXVolume _FogGlobalEnabled, toggle per material via _FOG_ON)
                 #if defined(_FOG_ON)
                     if (_FogGlobalEnabled > 0.5)
                     {
-                        float3 worldPos = TransformObjectToWorld(input.positionOS.xyz);
                         float dist = length(worldPos - _WorldSpaceCameraPos.xyz);
                         if (_FogExponential > 0.5)
                             output.fogFactor = 1.0 - saturate(exp(-_FogDensity * dist));
@@ -139,10 +153,21 @@
                 #if defined(_UNLIT_MODE)
                     half3 lighting = half3(1, 1, 1);
                 #else
+                    half3 bakedGI = SAMPLE_GI(input.staticLightmapUV, input.vertexSH, input.normalWS);
+
                     Light mainLight = GetMainLight();
                     half NdotL = saturate(dot(input.normalWS, mainLight.direction));
-                    half3 lighting = mainLight.color * NdotL + SampleSH(input.normalWS);
-                    lighting = max(lighting, half3(0.4, 0.4, 0.4));
+                    half3 lighting = mainLight.color * (NdotL * mainLight.distanceAttenuation * mainLight.shadowAttenuation) + bakedGI;
+
+                    #if defined(_ADDITIONAL_LIGHTS)
+                    uint pixelLightCount = GetAdditionalLightsCount();
+                    for (uint lightIndex = 0u; lightIndex < pixelLightCount; ++lightIndex)
+                    {
+                        Light light = GetAdditionalLight(lightIndex, input.positionWS);
+                        half addNdotL = saturate(dot(input.normalWS, light.direction));
+                        lighting += light.color * (addNdotL * light.distanceAttenuation * light.shadowAttenuation);
+                    }
+                    #endif
                 #endif
 
                 half3 finalColor = albedo * lighting;

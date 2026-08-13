@@ -7,8 +7,8 @@ using UnityEngine;
 
 namespace FifthSemester.Gameplay {
     public class CutsceneMission : MissionBase {
+        private const string TAG = "<color=yellow><b>[CutsceneMission]</b></color>";
         private bool _subscribed;
-        private bool _cutscenePending;
 
         public override void Initialize(MissionDefinition definition, IEventBus eventBus, ISaveService saveService) {
             base.Initialize(definition, eventBus, saveService);
@@ -18,35 +18,21 @@ namespace FifthSemester.Gameplay {
             base.StartMission();
 
             if (_eventBus != null && !_subscribed) {
-                _eventBus.Subscribe<DialogueEndedEvent>(OnDialogueEnded);
                 _eventBus.Subscribe<CutsceneEndedEvent>(OnCutsceneEnded);
                 _subscribed = true;
             }
-
-            _cutscenePending = true;
-
-            IDialogueService<TextAsset> dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
-            if (dialogueService == null || !dialogueService.IsDialogueActive) {
-                PlayCutscene();
-            }
-        }
-
-        private void OnDialogueEnded(DialogueEndedEvent evt) {
-            if (_isComplete || !_cutscenePending) return;
 
             PlayCutscene();
         }
 
         private void PlayCutscene() {
-            if (!_cutscenePending || _isComplete) {
+            if (_isComplete) {
                 return;
             }
 
-            _cutscenePending = false;
-
             ICutsceneService cutsceneService = ServiceLocator.Get<ICutsceneService>();
             if (cutsceneService == null) {
-                Debug.LogWarning($"[CutsceneMission] ICutsceneService não encontrado para {_definition?.MissionId}.");
+                Debug.LogWarning($"{TAG} ICutsceneService not found for {_definition?.MissionId}.");
                 return;
             }
 
@@ -59,9 +45,9 @@ namespace FifthSemester.Gameplay {
                 Complete();
             }
         }
+
         public override void Cleanup() {
             if (_eventBus != null && _subscribed) {
-                _eventBus.Unsubscribe<DialogueEndedEvent>(OnDialogueEnded);
                 _eventBus.Unsubscribe<CutsceneEndedEvent>(OnCutsceneEnded);
                 _subscribed = false;
             }
@@ -70,7 +56,6 @@ namespace FifthSemester.Gameplay {
 
         private void OnDestroy() {
             if (_eventBus != null && _subscribed) {
-                _eventBus.Unsubscribe<DialogueEndedEvent>(OnDialogueEnded);
                 _eventBus.Unsubscribe<CutsceneEndedEvent>(OnCutsceneEnded);
                 _subscribed = false;
             }

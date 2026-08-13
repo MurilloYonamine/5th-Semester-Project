@@ -14,6 +14,7 @@ namespace FifthSemester.Gameplay {
     public class SaveLoaderRunner : MonoBehaviour { }
 
     public static class SaveLoader {
+        private const string TAG = "<color=yellow><b>[SaveLoader]</b></color>";
         private static SaveData _pending;
 
         public static bool IsPendingSave => _pending != null;
@@ -62,7 +63,7 @@ namespace FifthSemester.Gameplay {
             IMissionService missionService = ServiceLocator.Get<IMissionService>();
             IInventoryService<Item> inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
 
-            if (player != null) {
+            if (player != null && _pending != null) {
                 Vector3 targetPos = _pending.PlayerPosition.ToVector3();
                 Quaternion targetRot = _pending.PlayerRotation.ToQuaternion();
 
@@ -99,11 +100,11 @@ namespace FifthSemester.Gameplay {
                 }
             } 
 
-            if (missionService != null) {
+            if (missionService != null && _pending != null) {
                 missionService.SkipToMission(_pending.CurrentMissionIndex);
             }
 
-            if (inventoryService != null && _pending.InventoryItemIds.Count > 0) {
+            if (inventoryService != null && _pending != null && _pending.InventoryItemIds.Count > 0) {
                 LoadInventoryItems(inventoryService, _pending.InventoryItemIds);
             }
 

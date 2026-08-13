@@ -13,6 +13,7 @@ using UnityEngine.Playables;
 
 namespace FifthSemester.Gameplay {
     public class CutsceneController : MonoBehaviour {
+        private const string TAG = "<color=yellow><b>[CutsceneController]</b></color>";
 
         [SerializeField, Title("Identificação")]
         public CutsceneType CutsceneID = CutsceneType.OpeningCutscene;
@@ -47,8 +48,10 @@ namespace FifthSemester.Gameplay {
         public void PlayCutscene() {
             IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
 
-            if (gameStateService == null)
+            if (gameStateService == null) {
+                Debug.LogWarning($"{TAG} IGameStateService not found.");
                 return;
+            }
 
             gameStateService.ChangeState(GameState.Cutscene);
 
@@ -61,7 +64,8 @@ namespace FifthSemester.Gameplay {
                 _director.Play();
             }
 
-            if (_hasDialogue && _dialogueFiles.Portuguese != null || _dialogueFiles.English != null) {
+            bool hasDialogueFiles = _dialogueFiles.Portuguese != null || _dialogueFiles.English != null;
+            if (_hasDialogue || hasDialogueFiles) {
                 IDialogueService<TextAsset> dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
                 ISettingsService settingsService = ServiceLocator.Get<ISettingsService>();
 
@@ -73,7 +77,7 @@ namespace FifthSemester.Gameplay {
                         dialogueService.StartDialogue(correctDialogue, _director, null, DialogueMode.Cutscene);
                     }
                     else {
-                        Debug.LogWarning($"Cutscene {CutsceneID} está marcada para ter diálogo, mas faltam arquivos de texto!");
+                        Debug.LogWarning($"{TAG} Cutscene {CutsceneID} has dialogue configured but missing text assets.");
                     }
                 }
             }
@@ -105,16 +109,18 @@ namespace FifthSemester.Gameplay {
         }
 
         private void FinishCutscene() {
-            if (_hasDialogue) {
-                EndCutsceneDialogue();
+            if (!_isPlaying) {
+                return;
             }
+
+            _isPlaying = false;
+
+            EndCutsceneDialogue();
 
             RestorePlayerCamera();
 
             IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
             gameStateService?.ChangeState(GameState.Gameplay);
-
-            _isPlaying = false;
 
             IEventBus eventBus = ServiceLocator.Get<IEventBus>();
             eventBus?.Publish(new CutsceneEndedEvent { CutsceneID = CutsceneID });

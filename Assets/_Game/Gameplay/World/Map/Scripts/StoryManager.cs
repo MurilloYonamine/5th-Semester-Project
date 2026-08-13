@@ -12,6 +12,7 @@ using UnityEngine;
 
 namespace FifthSemester.Gameplay {
     public class StoryManager : MonoBehaviour {
+        private const string TAG = "<color=yellow><b>[StoryManager]</b></color>";
         [SerializeField] private MissionSequenceSO _storySequence;
         private IMissionService _missionService;
         private IMapService _registry;
@@ -25,9 +26,11 @@ namespace FifthSemester.Gameplay {
             if (_eventBus != null) {
                 _eventBus.Subscribe<MissionUpdatedEvent>(OnMissionUpdated);
             }
-            if (_missionService != null) {
+
+            if (_missionService != null && _missionService.CurrentIndex < 0 && !SaveLoader.IsPendingSave) {
                 _missionService.StartSequence(_storySequence);
             }
+
             ApplyMissionEffects();
             StartCoroutine(ApplyMissionEffectsNextFrame());
         }

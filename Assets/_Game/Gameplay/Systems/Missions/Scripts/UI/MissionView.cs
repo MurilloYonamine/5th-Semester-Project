@@ -42,6 +42,9 @@ namespace FifthSemester.Gameplay {
 
             _canvasGroup.interactable = false;
             _canvasGroup.blocksRaycasts = false;
+
+            RefreshCurrentMission();
+            StartCoroutine(RefreshAfterDelay());
         }
 
         private void OnDestroy() {
@@ -54,10 +57,38 @@ namespace FifthSemester.Gameplay {
             }
         }
 
+        private System.Collections.IEnumerator RefreshAfterDelay() {
+            yield return null;
+            RefreshCurrentMission();
+            yield return new WaitForSeconds(0.1f);
+            RefreshCurrentMission();
+        }
+
+        private void RefreshCurrentMission() {
+            IMissionService missionService = ServiceLocator.Get<IMissionService>();
+            if (missionService == null) return;
+
+            MissionDefinition current = missionService.GetCurrentMission();
+            if (current != null) {
+                _currentMissionId = current.MissionId;
+                if (_missionTitleText != null) _missionTitleText.text = current.Title;
+                if (_missionDescriptionText != null) _missionDescriptionText.text = current.Description;
+
+                if (missionService.CurrentMission != null) {
+                    UpdateProgressText(missionService.CurrentMission.Progress);
+                }
+            }
+        }
+
         private void OnMissionUpdated(MissionUpdatedEvent evt) {
             _currentMissionId = evt.MissionId;
-            _missionTitleText.text = evt.Title;
-            _missionDescriptionText.text = evt.Description;
+            if (_missionTitleText != null) _missionTitleText.text = evt.Title;
+            if (_missionDescriptionText != null) _missionDescriptionText.text = evt.Description;
+
+            IMissionService missionService = ServiceLocator.Get<IMissionService>();
+            if (missionService?.CurrentMission != null) {
+                UpdateProgressText(missionService.CurrentMission.Progress);
+            }
         }
 
         private void OnMissionProgress(MissionProgressEvent evt) {
@@ -65,12 +96,19 @@ namespace FifthSemester.Gameplay {
                 return;
             }
 
-            if (string.IsNullOrEmpty(evt.Progress)) {
+            _currentMissionId = evt.MissionId;
+            UpdateProgressText(evt.Progress);
+        }
+
+        private void UpdateProgressText(string progress) {
+            if (_missionProgressionText == null) return;
+
+            if (string.IsNullOrWhiteSpace(progress)) {
                 _missionProgressionText.gameObject.SetActive(false);
             }
             else {
                 _missionProgressionText.gameObject.SetActive(true);
-                _missionProgressionText.text = evt.Progress;
+                _missionProgressionText.text = progress;
             }
         }
 

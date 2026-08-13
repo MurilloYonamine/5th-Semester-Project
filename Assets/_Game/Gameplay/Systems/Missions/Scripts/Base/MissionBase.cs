@@ -47,13 +47,11 @@ namespace FifthSemester.Gameplay {
             Debug.Log($"Mission '{MissionId}' completed!");
 
             if (_definition.PersistProgress && _saveService != null) {
-                SaveData saveData = _saveService.LoadFromSlot("default") ?? new SaveData();
-
-                if (saveData.MissionProgress.ContainsKey(MissionId)) {
+                SaveData saveData = _saveService.LoadFromSlot("default");
+                if (saveData != null && saveData.MissionProgress.ContainsKey(MissionId)) {
                     saveData.MissionProgress.Remove(MissionId);
+                    _saveService.SaveToSlot("default", saveData);
                 }
-
-                _saveService.SaveToSlot("default", saveData);
             }
 
             PublishProgress();
@@ -80,7 +78,8 @@ namespace FifthSemester.Gameplay {
         protected virtual void SaveProgress() {
             if (_definition == null || !_definition.PersistProgress || _saveService == null) return;
 
-            SaveData saveData = _saveService.LoadFromSlot("default") ?? new SaveData();
+            SaveData saveData = _saveService.LoadFromSlot("default");
+            if (saveData == null) return;
             saveData.MissionProgress[MissionId] = _progress ?? string.Empty;
             _saveService.SaveToSlot("default", saveData);
         }

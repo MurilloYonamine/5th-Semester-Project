@@ -77,25 +77,17 @@ namespace FifthSemester.Gameplay {
         }
 
         public void PlayCutscene(CutsceneType type) {
-
             if (_cutsceneDictionary.TryGetValue(type, out var cutscene)) {
-
                 _activeCutscene = cutscene;
-
                 cutscene.SetPlayerCamera(_playerCamera);
-
                 cutscene.PlayCutscene();
             }
             else {
-
-                Debug.LogError(
-                    $"{TAG} Cutscene {type} not found in current scene!"
-                );
+                Debug.LogError($"{TAG} Cutscene {type} not found in current scene!");
             }
         }
 
         public void SkipActiveCutscene() {
-
             if (_activeCutscene == null)
                 return;
 
@@ -113,7 +105,7 @@ namespace FifthSemester.Gameplay {
             }
 
             _fadeService.FadeOut(SKIP_FADE_DURATION, () => {
-                _activeCutscene.SkipCutscene();
+                _activeCutscene?.SkipCutscene();
 
                 var dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
                 dialogueService?.ForceEndDialogueImmediate();

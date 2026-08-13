@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 #if UNITY_6000_0_OR_NEWER
@@ -16,20 +16,23 @@ namespace FifthSemester.UI
         {
             public RenderPassEvent renderPassEvent = RenderPassEvent.AfterRenderingTransparents;
             public Shader customShader;
+            public Material customMaterial;
         }
 
         public Settings settings = new Settings();
 
         private PSXRenderPass _pass;
 
-        public override void Create()
-        {
-            if (settings.customShader == null)
-            {
-                settings.customShader = Shader.Find("PSX/CRT_Composite");
+        public override void Create() {
+            if (settings.customMaterial != null) {
+                _pass = new PSXRenderPass(settings.customMaterial, settings.renderPassEvent);
             }
-
-            _pass = new PSXRenderPass(settings.customShader, settings.renderPassEvent);
+            else {
+                if (settings.customShader == null) {
+                    settings.customShader = Shader.Find("PSX/CRT_Composite");
+                }
+                _pass = new PSXRenderPass(settings.customShader, settings.renderPassEvent);
+            }
         }
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
@@ -47,11 +50,14 @@ namespace FifthSemester.UI
         {
             private Material _material;
 
-            public PSXRenderPass(Shader shader, RenderPassEvent passEvent)
-            {
+            public PSXRenderPass(Material material, RenderPassEvent passEvent) {
                 this.renderPassEvent = passEvent;
-                if (shader != null)
-                {
+                _material = material;
+            }
+
+            public PSXRenderPass(Shader shader, RenderPassEvent passEvent) {
+                this.renderPassEvent = passEvent;
+                if (shader != null) {
                     _material = CoreUtils.CreateEngineMaterial(shader);
                 }
             }

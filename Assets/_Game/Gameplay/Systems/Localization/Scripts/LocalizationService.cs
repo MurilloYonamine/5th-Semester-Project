@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace FifthSemester.Gameplay {
     public class LocalizationService : MonoBehaviour, ILocalizationService {
-        private const string TAG = "<color=magenta>[LocalizationService]</color>";
+        private const string TAG = "<color=yellow><b>[LocalizationService]</b></color>";
         private const string _csvPath = "Assets/_Game/Data/Localization/LocalizedText.csv";
 
         [Header("Ficheiro de Textos")]
@@ -57,7 +57,7 @@ namespace FifthSemester.Gameplay {
             if (_localizedTexts.TryGetValue(key, out string translatedText)) {
                 return translatedText;
             }
-            Debug.LogWarning($"{TAG} Chave não encontrada: {key}");
+            Debug.LogWarning($"{TAG} Key not found: {key}");
             return $"[{key}]"; 
         }
 
@@ -65,7 +65,7 @@ namespace FifthSemester.Gameplay {
             _localizedTexts.Clear();
 
             if (_csvFile == null) {
-                Debug.LogError($"{TAG} Ficheiro CSV não atribuído no Inspector!");
+                Debug.LogError($"{TAG} CSV file is not assigned in the Inspector!");
                 return;
             }
 
@@ -84,7 +84,7 @@ namespace FifthSemester.Gameplay {
             }
 
             if (languageIndex == -1) {
-                Debug.LogError($"{TAG} Idioma '{targetLanguage}' não encontrado no cabeçalho do CSV!");
+                Debug.LogError($"{TAG} Language '{targetLanguage}' not found in CSV header!");
                 return;
             }
 
@@ -101,7 +101,7 @@ namespace FifthSemester.Gameplay {
                 }
             }
 
-            Debug.Log($"{TAG} Idioma carregado com sucesso: {targetLanguage} ({_localizedTexts.Count} textos).");
+            Debug.Log($"{TAG} Language loaded successfully: {targetLanguage} ({_localizedTexts.Count} texts).");
         }
         private string GetLangCode(Language lang) {
             return lang switch {

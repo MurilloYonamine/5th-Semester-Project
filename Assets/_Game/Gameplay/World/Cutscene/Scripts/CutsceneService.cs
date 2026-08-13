@@ -11,6 +11,7 @@ using UnityEngine;
 namespace FifthSemester.Gameplay {
 
     public class CutsceneService : MonoBehaviour, ICutsceneService {
+        private const string TAG = "<color=yellow><b>[CutsceneService]</b></color>";
         private const float SKIP_FADE_DURATION = 1f;
 
         [SerializeField]
@@ -76,25 +77,17 @@ namespace FifthSemester.Gameplay {
         }
 
         public void PlayCutscene(CutsceneType type) {
-
             if (_cutsceneDictionary.TryGetValue(type, out var cutscene)) {
-
                 _activeCutscene = cutscene;
-
                 cutscene.SetPlayerCamera(_playerCamera);
-
                 cutscene.PlayCutscene();
             }
             else {
-
-                Debug.LogError(
-                    $"Cutscene {type} não encontrada na cena atual!"
-                );
+                Debug.LogError($"{TAG} Cutscene {type} not found in current scene!");
             }
         }
 
         public void SkipActiveCutscene() {
-
             if (_activeCutscene == null)
                 return;
 
@@ -112,7 +105,7 @@ namespace FifthSemester.Gameplay {
             }
 
             _fadeService.FadeOut(SKIP_FADE_DURATION, () => {
-                _activeCutscene.SkipCutscene();
+                _activeCutscene?.SkipCutscene();
 
                 var dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
                 dialogueService?.ForceEndDialogueImmediate();

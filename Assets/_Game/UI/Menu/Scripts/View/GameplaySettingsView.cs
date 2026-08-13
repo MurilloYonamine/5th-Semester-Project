@@ -117,5 +117,10 @@ namespace FifthSemester.UI {
             string key = isInverted ? "general_yes" : "general_no";
             _invertYAxisLabel.text = _localizationService.GetText(key);
         }
+
+        protected override void OnDestroy() {
+            base.OnDestroy();
+            ServiceLocator.Unregister<IGameplayService>();
+        }
     }
 }

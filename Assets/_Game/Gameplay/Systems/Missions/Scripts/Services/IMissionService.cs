@@ -6,6 +6,7 @@ using System;
 namespace FifthSemester.Gameplay {
     public interface IMissionService {
         int CurrentIndex { get; }
+        IMission CurrentMission { get; }
         MissionDefinition GetCurrentMission();
         void StartMission(MissionDefinition mission);
         void SkipToMission(int missionIndex);

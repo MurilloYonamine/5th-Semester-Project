@@ -139,5 +139,10 @@ namespace FifthSemester.UI {
             if (fpsIdx < 0) fpsIdx = 0;
             _fpsSelector.Initialize(GetFPSOptions(), fpsIdx);
         }
+
+        protected override void OnDestroy() {
+            base.OnDestroy();
+            ServiceLocator.Unregister<IScreenService>();
+        }
     }
 }

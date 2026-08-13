@@ -8,6 +8,7 @@ using FifthSemester.Core.Services;
 
 namespace FifthSemester.Gameplay{
     public class SaveService : ISaveService {
+        private const string TAG = "<color=yellow><b>[SaveService]</b></color>";
         private const string SAVE_PREFIX = "save_";
         private const string AUTOSAVE_SLOT = "default";
 
@@ -16,7 +17,10 @@ namespace FifthSemester.Gameplay{
         public SaveService() { }
 
         public void SaveToSlot(string slotId, SaveData data) {
-            if (data == null) return;
+            if (data == null) {
+                Debug.LogWarning($"{TAG} Attempted to save null SaveData to slot '{slotId}'.");
+                return;
+            }
 
             data.Timestamp = DateTime.UtcNow.Ticks / 10000000;
 

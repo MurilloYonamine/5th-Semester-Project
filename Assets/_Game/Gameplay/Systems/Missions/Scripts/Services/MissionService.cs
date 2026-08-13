@@ -17,6 +17,7 @@ using FifthSemester.Doors;
 
 namespace FifthSemester.Gameplay {
     public class MissionService : MonoBehaviour, IMissionService {
+        private const string TAG = "<color=yellow><b>[MissionService]</b></color>";
         private const float START_FADE_DURATION = 1f;
         private const string AUTOSAVE_SLOT = "default";
         [SerializeField] private MissionSequenceSO _defaultSequence;
@@ -36,14 +37,17 @@ namespace FifthSemester.Gameplay {
         private Coroutine _autosaveRoutine;
         private bool _isAutosaving;
         public int CurrentIndex { get; private set; } = -1;
+        public IMission CurrentMission => _currentMission;
+
         private void Awake() {
             ServiceLocator.Register<IMissionService>(this);
             
             _eventBus = ServiceLocator.Get<IEventBus>();
             _saveService = ServiceLocator.Get<ISaveService>();
+            _inventoryService = ServiceLocator.Get<IInventoryService<Item>>();
+            ServiceLocator.TryGet<IFadeService>(out _fadeService);
             ServiceLocator.TryGet<IAudioService>(out _audioService);
             ServiceLocator.TryGet<IMapService>(out _mapService);
-            ServiceLocator.TryGet<IInventoryService<Item>>(out _inventoryService);
         }
 
         private void Start() {
@@ -51,17 +55,33 @@ namespace FifthSemester.Gameplay {
 
             _eventBus?.Subscribe<ItemPickedUpEvent>(OnItemPickedUp);
 
+            if (SaveLoader.IsPendingSave) {
+                if (_defaultSequence != null) {
+                    _activeSequence = _defaultSequence;
+                }
+                return;
+            }
+
+            if (CurrentIndex >= 0) {
+                return;
+            }
+
             SaveData saveData = _saveService?.LoadFromSlot(AUTOSAVE_SLOT);
             int startIndex = saveData?.CurrentMissionIndex ?? 0;
+
             if (_defaultSequence != null) {
-                StartSequence(_defaultSequence);
+                _activeSequence = _defaultSequence;
                 if (startIndex > 0) {
                     SkipToMission(startIndex);
+                }
+                else {
+                    StartSequence(_defaultSequence);
                 }
             }
         }
 
         private void OnDestroy() {
+            ServiceLocator.Unregister<IMissionService>();
             _eventBus?.Unsubscribe<ItemPickedUpEvent>(OnItemPickedUp);
             CleanupCurrentMission();
         }
@@ -80,14 +100,14 @@ namespace FifthSemester.Gameplay {
 
         public void StartMission(MissionDefinition mission) {
             if (mission == null) {
-                Debug.LogError("[MissionService] Tentativa de iniciar uma missão nula.");
+                Debug.LogError($"{TAG} Attempted to start a null mission.");
                 return;
             }
 
             if (_activeSequence != null && _activeSequence.Sequence != null) {
                 int idx = _activeSequence.Sequence.IndexOf(mission);
                 if (idx == -1) {
-                    Debug.LogWarning("[MissionService] Mission not found in active sequence, starting standalone.");
+                    Debug.LogWarning($"{TAG} Mission '{mission.MissionId}' not found in active sequence, starting standalone.");
                     StartStandaloneMission(mission);
                     return;
                 }
@@ -107,8 +127,8 @@ namespace FifthSemester.Gameplay {
             if (_currentMission != null) {
                 _currentMission.Initialize(mission, _eventBus, _saveService);
                 if (_currentMission is MissionBase missionBase) missionBase.OnMissionComplete += OnMissionComplete;
-                _currentMission.StartMission();
                 PublishMissionUpdate();
+                _currentMission.StartMission();
                 PlayStartFadeIfNeeded(mission);
             }
         }
@@ -139,8 +159,8 @@ namespace FifthSemester.Gameplay {
                 if (_currentMission is MissionBase missionBase) {
                     missionBase.OnMissionComplete += OnMissionComplete;
                 }
-                _currentMission.StartMission();
                 PublishMissionUpdate();
+                _currentMission.StartMission();
                 PlayStartFadeIfNeeded(def);
             }
         }
@@ -168,6 +188,7 @@ namespace FifthSemester.Gameplay {
 
         public void CompleteCurrentMission() {
             PlayMissionCompleteSFX();
+
             if (_activeSequence != null && _activeSequence.Sequence != null) {
                 _sequenceIndex++;
                 if (_sequenceIndex >= _activeSequence.Sequence.Count) {
@@ -301,13 +322,17 @@ namespace FifthSemester.Gameplay {
         }
 
         public void SkipToMission(int missionIndex) {
+            if (_activeSequence == null) {
+                _activeSequence = _defaultSequence;
+            }
+
             if (_activeSequence == null || _activeSequence.Sequence == null) {
-                Debug.LogWarning("[MissionService] No active sequence to skip within.");
+                Debug.LogWarning($"{TAG} No active sequence to skip within.");
                 return;
             }
 
             if (missionIndex < 0 || missionIndex >= _activeSequence.Sequence.Count) {
-                Debug.LogWarning($"[MissionService] Invalid mission index: {missionIndex}");
+                Debug.LogWarning($"{TAG} Invalid mission index: {missionIndex}");
                 return;
             }
 
@@ -339,21 +364,26 @@ namespace FifthSemester.Gameplay {
         }
 
         private void RequestAutosave() {
-            if (_isAutosaving || _saveService == null) {
+            if (_saveService == null) {
                 return;
             }
 
-            _autosaveRoutine = StartCoroutine(AutosaveRoutine());
+            SaveData saveData = _saveService.LoadFromSlot(AUTOSAVE_SLOT) ?? new SaveData();
+            PopulateSaveData(saveData);
+            _saveService.SaveToSlot(AUTOSAVE_SLOT, saveData);
+
+            if (_autosaveRoutine != null) {
+                StopCoroutine(_autosaveRoutine);
+            }
+
+            _autosaveRoutine = StartCoroutine(AutosaveScreenshotRoutine(saveData));
         }
 
-        private IEnumerator AutosaveRoutine() {
+        private IEnumerator AutosaveScreenshotRoutine(SaveData saveData) {
             _isAutosaving = true;
             _eventBus?.Publish(new AutosaveStartedEvent());
 
             yield return new WaitForEndOfFrame();
-
-            SaveData saveData = _saveService.LoadFromSlot(AUTOSAVE_SLOT) ?? new SaveData();
-            PopulateSaveData(saveData);
 
             yield return CaptureScreenshot(saveData);
 
@@ -365,6 +395,7 @@ namespace FifthSemester.Gameplay {
         }
 
         private void PopulateSaveData(SaveData saveData) {
+            saveData.SceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
             saveData.CurrentMissionIndex = CurrentIndex;
 
             if (_currentDefinition != null && !string.IsNullOrWhiteSpace(_currentDefinition.MissionId)) {
@@ -467,7 +498,7 @@ namespace FifthSemester.Gameplay {
 
         public void StartSequence(MissionSequenceSO sequence) {
             if (sequence == null || sequence.Sequence == null || sequence.Sequence.Count == 0) {
-                Debug.LogWarning("[MissionService] Attempted to start an empty or null sequence.");
+                Debug.LogWarning($"{TAG} Attempted to start an empty or null sequence.");
                 return;
             }
 

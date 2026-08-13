@@ -13,6 +13,8 @@ using FifthSemester.Core.Services;
 namespace FifthSemester.Gameplay.UI {
     [RequireComponent(typeof(CanvasGroup))]
     public class InputDeviceService : MonoBehaviour, IInputDeviceService {
+        private const string TAG = "<color=yellow><b>[InputDeviceService]</b></color>";
+
         public DeviceDisplayType CurrentDevice { get; private set; } = DeviceDisplayType.Keyboard;
         public event Action<DeviceDisplayType> OnDeviceChanged;
 
@@ -37,6 +39,8 @@ namespace FifthSemester.Gameplay.UI {
         }
 
         private void OnDestroy() {
+            ServiceLocator.Unregister<IInputDeviceService>();
+
             if (_onEventHandler != null) {
                 InputSystem.onEvent -= _onEventHandler;
                 _onEventHandler = null;

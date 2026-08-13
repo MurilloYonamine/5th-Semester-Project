@@ -17,6 +17,7 @@ using FifthSemester.Doors;
 
 namespace FifthSemester.Gameplay {
     public class MissionService : MonoBehaviour, IMissionService {
+        private const string TAG = "<color=yellow><b>[MissionService]</b></color>";
         private const float START_FADE_DURATION = 1f;
         private const string AUTOSAVE_SLOT = "default";
         [SerializeField] private MissionSequenceSO _defaultSequence;
@@ -62,6 +63,7 @@ namespace FifthSemester.Gameplay {
         }
 
         private void OnDestroy() {
+            ServiceLocator.Unregister<IMissionService>();
             _eventBus?.Unsubscribe<ItemPickedUpEvent>(OnItemPickedUp);
             CleanupCurrentMission();
         }

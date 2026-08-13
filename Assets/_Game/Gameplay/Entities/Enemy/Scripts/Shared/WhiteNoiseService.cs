@@ -6,6 +6,8 @@ using UnityEngine;
 
 namespace FifthSemester.Core.Services {
     public class WhiteNoiseService : MonoBehaviour, IWhiteNoiseService {
+        private const string TAG = "<color=yellow><b>[WhiteNoiseService]</b></color>";
+
         [Header("Audio")]
         [SerializeField] private AudioClip _whiteNoiseClip;
 

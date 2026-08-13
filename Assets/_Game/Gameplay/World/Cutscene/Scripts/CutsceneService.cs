@@ -11,6 +11,7 @@ using UnityEngine;
 namespace FifthSemester.Gameplay {
 
     public class CutsceneService : MonoBehaviour, ICutsceneService {
+        private const string TAG = "<color=yellow><b>[CutsceneService]</b></color>";
         private const float SKIP_FADE_DURATION = 1f;
 
         [SerializeField]
@@ -88,7 +89,7 @@ namespace FifthSemester.Gameplay {
             else {
 
                 Debug.LogError(
-                    $"Cutscene {type} não encontrada na cena atual!"
+                    $"{TAG} Cutscene {type} not found in current scene!"
                 );
             }
         }

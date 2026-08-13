@@ -9,11 +9,17 @@ using UnityEngine;
 
 namespace FifthSemester.Gameplay {
     public class MapService : SerializedMonoBehaviour, IMapService {
+        private const string TAG = "<color=yellow><b>[MapService]</b></color>";
+
         [SerializeField]
         private Dictionary<string, GameObject> _registry;
 
         private void Awake() {
             ServiceLocator.Register<IMapService>(this);
+        }
+
+        private void OnDestroy() {
+            ServiceLocator.Unregister<IMapService>();
         }
 
         public void Register(string id, GameObject obj) {

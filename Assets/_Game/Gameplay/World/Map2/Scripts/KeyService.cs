@@ -10,6 +10,8 @@ using UnityEngine.Playables;
 
 namespace FifthSemester.Gameplay {
     public class KeyService : MonoBehaviour, IMap2KeyService {
+        private const string TAG = "<color=yellow><b>[KeyService]</b></color>";
+
         [Header("Timeline")]
         [SerializeField] private PlayableDirector _allKeysCollectedTimeline;
 
@@ -35,8 +37,8 @@ namespace FifthSemester.Gameplay {
         }
 
         private void OnDestroy() {
+            ServiceLocator.Unregister<IMap2KeyService>();
             _eventBus?.Unsubscribe<ItemPickedUpEvent>(OnItemPickedUp);
-            ServiceLocator.TryGet<IMap2KeyService>(out var dummy);
         }
 
         public void RegisterKey(Map2KeyItem key) {

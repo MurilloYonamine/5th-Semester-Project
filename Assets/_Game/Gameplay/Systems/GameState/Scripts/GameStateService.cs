@@ -6,7 +6,7 @@ using FifthSemester.Core.Input;
 
 namespace FifthSemester.Gameplay {
     public class GameStateService : MonoBehaviour, IGameStateService {
-        private const string TAG = "<color=yellow>[GameStateService]</color>";
+        private const string TAG = "<color=yellow><b>[GameStateService]</b></color>";
         public GameState CurrentState { get; set; } = GameState.Gameplay;
         private GameState _previousState;
 
@@ -50,7 +50,7 @@ namespace FifthSemester.Gameplay {
                 Cursor.lockState = CursorLockMode.Locked;
             }
 
-            Debug.Log($"{TAG} Mudou de {_previousState} para {CurrentState}");
+            Debug.Log($"{TAG} State changed from {_previousState} to {CurrentState}");
             _eventBus.Publish(new GameStateChangedEvent(_previousState, CurrentState));
         }
 
@@ -76,6 +76,8 @@ namespace FifthSemester.Gameplay {
         }
 
         private void OnDestroy() {
+            ServiceLocator.Unregister<IGameStateService>();
+
             if (_eventBus != null) {
                 _eventBus.Unsubscribe<DialogueStartedEvent>(OnDialogueStarted);
                 _eventBus.Unsubscribe<DialogueEndedEvent>(OnDialogueEnded);

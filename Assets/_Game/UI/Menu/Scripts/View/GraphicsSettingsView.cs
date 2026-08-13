@@ -107,6 +107,7 @@ namespace FifthSemester.UI {
 
         protected override void OnDestroy() {
             base.OnDestroy();
+            ServiceLocator.Unregister<IGraphicsService>();
             _menuService?.Unregister(MenuScreen.Settings_Graphics);
         }
 

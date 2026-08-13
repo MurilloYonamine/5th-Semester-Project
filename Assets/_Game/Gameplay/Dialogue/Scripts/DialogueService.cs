@@ -13,6 +13,7 @@ using UnityEngine.Playables;
 
 namespace FifthSemester.Gameplay {
     public class DialogueService : MonoBehaviour, IDialogueService<TextAsset> {
+        private const string TAG = "<color=yellow><b>[DialogueService]</b></color>";
         private const float DIALOGUE_FADE_DURATION = 1f;
 
         public GameState CurrentState { get; set; } = GameState.Gameplay;
@@ -49,13 +50,13 @@ namespace FifthSemester.Gameplay {
             ServiceLocator.TryGet<IAudioService>(out _audioService);
 
             if (_eventBus == null) {
-                Debug.LogError("[DialogueService] IEventBus não encontrado.");
+                Debug.LogError($"{TAG} IEventBus not found.");
                 enabled = false;
                 return;
             }
 
             if (_dialogueView == null) {
-                Debug.LogError("[DialogueService] DialogueView não atribuído.");
+                Debug.LogError($"{TAG} DialogueView not assigned.");
                 enabled = false;
                 return;
             }
@@ -67,6 +68,10 @@ namespace FifthSemester.Gameplay {
         private void OnDisable() {
             _eventBus?.Unsubscribe<DialogueAdvanceRequestedEvent>(OnDialogueAdvanceRequested);
             _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
+        }
+
+        private void OnDestroy() {
+            ServiceLocator.Unregister<IDialogueService<TextAsset>>();
         }
 
         private void ToggleDialogue(bool enable) {

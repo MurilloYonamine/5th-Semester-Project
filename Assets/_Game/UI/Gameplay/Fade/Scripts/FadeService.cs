@@ -9,7 +9,7 @@ using FifthSemester.Core.Services;
 namespace FifthSemester.Gameplay.UI {
     [RequireComponent(typeof(CanvasGroup))]
     public class FadeService : MonoBehaviour, IFadeService {
-        private const string TAG = "<color=orange>[FadeService]</color>";
+        private const string TAG = "<color=yellow><b>[FadeService]</b></color>";
         private CanvasGroup _canvasGroup;
         private Coroutine _currentFadeRoutine;
 
@@ -20,6 +20,10 @@ namespace FifthSemester.Gameplay.UI {
             _canvasGroup.alpha = 0;
             _canvasGroup.blocksRaycasts = false;
             _canvasGroup.interactable = false;
+        }
+
+        private void OnDestroy() {
+            ServiceLocator.Unregister<IFadeService>();
         }
 
         public void FadeIn(float duration, Action onComplete = null) {

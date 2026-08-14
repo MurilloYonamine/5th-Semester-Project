@@ -1,5 +1,5 @@
-// autor: Murillo Gomes Yonamine
-// data: 30/03/2026
+// Autor: Murillo Gomes Yonamine
+// Data: 14/08/2026
 
 using FifthSemester.Core.Enums;
 using FifthSemester.Core.Events;
@@ -25,12 +25,27 @@ namespace FifthSemester.Gameplay {
 
         [SerializeField] private PlayableDirector _director;
         [SerializeField] private Animator _animator;
+        [SerializeField] private NPCMovement _npcMovement;
+
+        [Header("Look at Player Settings")]
+        [SerializeField] private bool _lookAtPlayer = true;
+        [SerializeField] private float _turnSpeed = 6f;
+
+        private bool _isInteracting;
+        private Transform _playerTransform;
 
         protected override void Awake() {
             base.Awake();
 
             if (_animator == null) {
                 _animator = GetComponentInChildren<Animator>();
+            }
+
+            if (_npcMovement == null) {
+                _npcMovement = GetComponent<NPCMovement>();
+                if (_npcMovement == null) {
+                    _npcMovement = GetComponentInParent<NPCMovement>();
+                }
             }
         }
 
@@ -56,6 +71,26 @@ namespace FifthSemester.Gameplay {
 
         private void OnDisable() {
             _eventBus?.Unsubscribe<DialogueEndedEvent>(OnDialogueEnded);
+            _isInteracting = false;
+        }
+
+        private void Update() {
+            if (!_isInteracting || !_lookAtPlayer || _npcMovement != null) return;
+
+            if (_playerTransform == null) {
+                GameObject player = GameObject.FindWithTag("Player");
+                if (player != null) _playerTransform = player.transform;
+                else if (Camera.main != null) _playerTransform = Camera.main.transform;
+            }
+
+            if (_playerTransform != null) {
+                Vector3 direction = _playerTransform.position - transform.position;
+                direction.y = 0f;
+                if (direction.sqrMagnitude > 0.001f) {
+                    Quaternion targetRotation = Quaternion.LookRotation(direction.normalized);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _turnSpeed);
+                }
+            }
         }
 
         protected override bool CanInteract() {
@@ -81,6 +116,21 @@ namespace FifthSemester.Gameplay {
 
             _dialogueId = string.IsNullOrWhiteSpace(Id) ? gameObject.name : Id;
 
+            Transform playerTransform = null;
+            GameObject playerObj = GameObject.FindWithTag("Player");
+            if (playerObj != null) {
+                playerTransform = playerObj.transform;
+            } else if (Camera.main != null) {
+                playerTransform = Camera.main.transform;
+            }
+
+            _playerTransform = playerTransform;
+            _isInteracting = true;
+
+            if (_npcMovement != null) {
+                _npcMovement.StartTalking(playerTransform);
+            }
+
             if (_director == null && _animator != null) {
                 _animator.SetBool("IsTalking", true);
             }
@@ -89,7 +139,13 @@ namespace FifthSemester.Gameplay {
         }
 
         public override void StopInteract() {
-            _dialogueService.EndDialogue();
+            _isInteracting = false;
+
+            if (_npcMovement != null) {
+                _npcMovement.StopTalking();
+            }
+
+            _dialogueService?.EndDialogue();
         }
 
         public override void Highlight(bool value) {
@@ -98,11 +154,17 @@ namespace FifthSemester.Gameplay {
         }
 
         private void OnDialogueEnded(DialogueEndedEvent evt) {
-            if (_director != null || _animator == null) {
+            if (!string.IsNullOrWhiteSpace(evt.NpcId) && evt.NpcId != _dialogueId) {
                 return;
             }
 
-            if (!string.IsNullOrWhiteSpace(evt.NpcId) && evt.NpcId != _dialogueId) {
+            _isInteracting = false;
+
+            if (_npcMovement != null) {
+                _npcMovement.StopTalking();
+            }
+
+            if (_director != null || _animator == null) {
                 return;
             }
 

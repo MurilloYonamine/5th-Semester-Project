@@ -6,6 +6,7 @@ Shader "PSX/Vertex_Warping"
         [HideInInspector] _BaseMap ("Base Map", 2D) = "white" {}
         _Color ("Color Tint", Color) = (1, 1, 1, 1)
         [HideInInspector] _BaseColor ("Base Color", Color) = (1, 1, 1, 1)
+        [Enum(UnityEngine.Rendering.CullMode)] _Cull ("Render Face", Float) = 2
         _SnapResolution ("Grid Snap Resolution (Pixels)", Range(32.0, 1024.0)) = 240.0
         _JitterIntensity ("Jitter Intensity", Range(0.0, 1.0)) = 1.0
         [Toggle(_UNLIT_MODE)] _UnlitMode ("Unlit Mode (Ignorar Luz)", Float) = 0.0
@@ -27,12 +28,13 @@ Shader "PSX/Vertex_Warping"
         }
 
         LOD 100
-        Cull Back
+        Cull [_Cull]
 
         Pass
         {
             Name "PSXVertexWarpingPass"
             Tags { "LightMode" = "UniversalForward" }
+            Cull [_Cull]
 
             HLSLPROGRAM
             #pragma vertex Vert
@@ -82,6 +84,7 @@ Shader "PSX/Vertex_Warping"
                 float _SnapResolution;
                 float _JitterIntensity;
                 float _AffineStrength;
+                float _Cull;
             CBUFFER_END
 
             // Uniforms globais de fog publicados pelo PSXPostProcessRenderFeature via Shader.SetGlobal

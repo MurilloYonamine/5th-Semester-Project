@@ -61,10 +61,11 @@ namespace FifthSemester.Gameplay {
                 var mission = _storySequence.Sequence[i];
                 if (mission == null || mission.MapActions == null) continue;
 
-                bool skipDoorLockForTalkToNpc = string.Equals(mission.Type.ToString(), "TalkToNpc", System.StringComparison.Ordinal);
+                bool skipDoorLock = string.Equals(mission.Type.ToString(), "TalkToNpc", System.StringComparison.Ordinal)
+                                 || string.Equals(mission.Type.ToString(), "CollectAndDeliver", System.StringComparison.Ordinal);
 
                 foreach (var action in mission.MapActions) {
-                    if (skipDoorLockForTalkToNpc &&
+                    if (skipDoorLock &&
                         (action.Type == MapAction.ActionType.LockDoor || action.Type == MapAction.ActionType.LockAllDoorsExcept)) {
                         continue;
                     }

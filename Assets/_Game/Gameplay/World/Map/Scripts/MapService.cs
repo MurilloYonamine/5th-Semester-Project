@@ -24,8 +24,14 @@ namespace FifthSemester.Gameplay {
 
         public void Register(string id, GameObject obj) {
             if (string.IsNullOrEmpty(id) || obj == null) return;
-            if (_registry.ContainsKey(id)) return;
+            if (_registry == null) _registry = new Dictionary<string, GameObject>();
+            if (_registry.ContainsKey(id)) {
+                _registry[id] = obj;
+                Debug.Log($"{TAG} Updated registration for '{id}' -> GameObject '{obj.name}'");
+                return;
+            }
             _registry.Add(id, obj);
+            Debug.Log($"{TAG} Registered '{id}' -> GameObject '{obj.name}' (Total registered: {_registry.Count})");
         }
 
         public void Register(DoorType doorType, GameObject obj) {
@@ -34,9 +40,10 @@ namespace FifthSemester.Gameplay {
         }
 
         public void Unregister(string id) {
-            if (string.IsNullOrEmpty(id)) return;
+            if (string.IsNullOrEmpty(id) || _registry == null) return;
             if (!_registry.ContainsKey(id)) return;
             _registry.Remove(id);
+            Debug.Log($"{TAG} Unregistered '{id}'");
         }
 
         public void Unregister(DoorType doorType) {
@@ -45,7 +52,7 @@ namespace FifthSemester.Gameplay {
         }
 
         public GameObject Get(string id) {
-            if (string.IsNullOrEmpty(id)) return null;
+            if (string.IsNullOrEmpty(id) || _registry == null) return null;
             _registry.TryGetValue(id, out GameObject obj);
             return obj;
         }

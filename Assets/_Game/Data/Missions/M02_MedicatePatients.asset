@@ -30,8 +30,8 @@ MonoBehaviour:
   - Paciente_A
   - Paciente_B
   - Paciente_C
-  - Paciente_P
   - Paciente_E
+  - Paciente_P
   PersistProgress: 1
   DebugSetupEvents: []
   EndGamePrefab: {fileID: 0}
@@ -48,3 +48,11 @@ MonoBehaviour:
     TargetDoor: 20
     DoorsToKeepUnlocked: 
     TargetObjectId: 
+  - Type: 1
+    TargetDoor: 0
+    DoorsToKeepUnlocked: 
+    TargetObjectId: M01_Nurse_A
+  - Type: 0
+    TargetDoor: 0
+    DoorsToKeepUnlocked: 
+    TargetObjectId: M04_Nurse_A

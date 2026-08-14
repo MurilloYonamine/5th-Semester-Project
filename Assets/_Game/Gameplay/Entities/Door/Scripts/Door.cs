@@ -77,6 +77,7 @@ namespace FifthSemester.Doors {
 
             _mapService = ServiceLocator.Get<IMapService>();
             _mapService?.Register(_doorType, gameObject);
+            Debug.Log($"[Door] Registered door '{gameObject.name}' with DoorType '{_doorType}' in MapService.");
         }
 
         private void OnDestroy() {
@@ -96,9 +97,13 @@ namespace FifthSemester.Doors {
         }
 
         public void Interact() {
-            if (_isLocked) return;
+            if (_isLocked) {
+                Debug.Log($"[Door] Player tried to open LOCKED door '{gameObject.name}' (DoorType: {_doorType}).");
+                return;
+            }
 
             _isOpen = !_isOpen;
+            Debug.Log($"[Door] Player opened/closed door '{gameObject.name}' (DoorType: {_doorType}). _isOpen is now {_isOpen}.");
             PlayDoorSound();
             UpdateTargetPositions();
         }
@@ -127,6 +132,8 @@ namespace FifthSemester.Doors {
             if (_textLocal != null) {
                 _textLocal.color = Color.red;
             }
+
+            Debug.Log($"[Door] Door '{gameObject.name}' (DoorType: {_doorType}) is now LOCKED.");
         }
 
         public void Unlock() {
@@ -139,6 +146,8 @@ namespace FifthSemester.Doors {
                 _textLocal.color = _unlockedColor;
                 _textLocal.text = _defaultText;
             }
+
+            Debug.Log($"[Door] Door '{gameObject.name}' (DoorType: {_doorType}) is now UNLOCKED.");
         }
 
         private void CacheDoorMeshes() {

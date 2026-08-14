@@ -227,6 +227,7 @@ namespace FifthSemester.Gameplay {
 
         private void UpdateCollectAndDeliverDoorState(MissionDefinition definition, int deliveredCount) {
             if (definition == null || definition.DeliveryPointIds == null || definition.DeliveryPointIds.Length == 0) {
+                Debug.LogWarning($"{TAG} UpdateCollectAndDeliverDoorState aborted: definition or DeliveryPointIds is null/empty.");
                 return;
             }
 
@@ -235,6 +236,7 @@ namespace FifthSemester.Gameplay {
             }
 
             if (_mapService == null) {
+                Debug.LogError($"{TAG} UpdateCollectAndDeliverDoorState aborted: IMapService not found in ServiceLocator!");
                 return;
             }
 
@@ -249,11 +251,10 @@ namespace FifthSemester.Gameplay {
                 orderedDoors.Add(doorType);
             }
 
-            if (orderedDoors.Count == 0) {
-                return;
-            }
+            Debug.Log($"{TAG} UpdateCollectAndDeliverDoorState: deliveredCount={deliveredCount}, resolved {orderedDoors.Count} doors: [{string.Join(", ", orderedDoors)}]");
 
             if (orderedDoors.Count == 0) {
+                Debug.LogWarning($"{TAG} UpdateCollectAndDeliverDoorState: No valid DoorTypes resolved from DeliveryPointIds [{string.Join(", ", definition.DeliveryPointIds)}]");
                 return;
             }
 
@@ -261,16 +262,18 @@ namespace FifthSemester.Gameplay {
                 for (int i = 0; i < orderedDoors.Count; i++) {
                     GameObject doorObject = _mapService.Get(orderedDoors[i]);
                     Door door = doorObject != null ? doorObject.GetComponent<Door>() : null;
-                    door?.Lock();
+                    if (door != null) {
+                        door.Lock();
+                        Debug.Log($"{TAG} [Init] Locked patient door '{orderedDoors[i]}' on GameObject '{doorObject.name}'.");
+                    } else {
+                        Debug.LogWarning($"{TAG} [Init] Could not find GameObject/Door in MapService for '{orderedDoors[i]}'. Make sure this door is in the scene and registered!");
+                    }
                 }
 
-                GameObject firstDoorObj = _mapService.Get(orderedDoors[0]);
-                Door firstDoor = firstDoorObj != null ? firstDoorObj.GetComponent<Door>() : null;
-                firstDoor?.Unlock();
-
-                GameObject corredorObjInit = _mapService.Get(DoorType.Door_Corredor);
-                Door corredorInit = corredorObjInit != null ? corredorObjInit.GetComponent<Door>() : null;
-                corredorInit?.Lock();
+                // Corridor doors remain locked until all medicines are collected
+                SetDoorLockState(DoorType.Door_Corredor, true, "[Init] Locked corridor door 1");
+                SetDoorLockState(DoorType.Door_Corredor2, true, "[Init] Locked corridor door 2");
+                SetDoorLockState(DoorType.Door_MedRoom, false, "[Init] Unlocked med room door");
 
                 return;
             }
@@ -279,24 +282,39 @@ namespace FifthSemester.Gameplay {
                 GameObject doorObject = _mapService.Get(orderedDoors[i]);
                 Door door = doorObject != null ? doorObject.GetComponent<Door>() : null;
                 if (door == null) {
+                    Debug.LogWarning($"{TAG} Door '{orderedDoors[i]}' not found in MapService (GameObject: {(doorObject != null ? doorObject.name : "null")}).");
                     continue;
                 }
 
                 if (i <= deliveredCount) {
                     door.Unlock();
+                    Debug.Log($"{TAG} UNLOCKED door '{orderedDoors[i]}' (room index {i} <= deliveredCount {deliveredCount}) on '{doorObject.name}'.");
                 }
                 else {
                     door.Lock();
+                    Debug.Log($"{TAG} LOCKED door '{orderedDoors[i]}' (room index {i} > deliveredCount {deliveredCount}) on '{doorObject.name}'.");
                 }
             }
 
-            GameObject corredorObj = _mapService.Get(DoorType.Door_Corredor);
-            Door corredor = corredorObj != null ? corredorObj.GetComponent<Door>() : null;
-            if (deliveredCount >= orderedDoors.Count) {
-                corredor?.Unlock();
-            }
-            else {
-                corredor?.Lock();
+            // When all medicines are collected (deliveredCount >= 0), unlock corridor doors so player can access all hallways
+            SetDoorLockState(DoorType.Door_Corredor, false, "All medicines collected! UNLOCKED");
+            SetDoorLockState(DoorType.Door_Corredor2, false, "All medicines collected! UNLOCKED");
+        }
+
+        private void SetDoorLockState(DoorType doorType, bool isLocked, string logPrefix) {
+            if (_mapService == null) return;
+            GameObject doorObj = _mapService.Get(doorType);
+            Door door = doorObj != null ? doorObj.GetComponent<Door>() : null;
+            if (door != null) {
+                if (isLocked) {
+                    door.Lock();
+                    Debug.Log($"{TAG} {logPrefix} '{doorType}' on GameObject '{doorObj.name}'.");
+                } else {
+                    door.Unlock();
+                    Debug.Log($"{TAG} {logPrefix} '{doorType}' on GameObject '{doorObj.name}'.");
+                }
+            } else {
+                Debug.LogWarning($"{TAG} Door '{doorType}' not found in MapService.");
             }
         }
 

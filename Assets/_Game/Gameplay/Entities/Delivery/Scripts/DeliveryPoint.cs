@@ -65,18 +65,22 @@ namespace FifthSemester.Gameplay {
         }
 
         public void Interact() {
+            Debug.Log($"{TAG} Interact triggered on DeliveryPoint '{Id}'. _isCompleted={_isCompleted}, _requiredItemId='{_requiredItemId}'");
+
             if (_isCompleted) {
                 TryPlayDialogueTrigger();
                 return;
             }
 
             if (TryDeliverItem()) {
+                Debug.Log($"{TAG} Delivery SUCCESS on '{Id}' with item '{_requiredItemId}'.");
                 CompleteDelivery();
                 UpdateInteractionPrompt();
                 PlayFeedback(_successSound);
                 TryPlayDialogueTrigger();
             }
             else {
+                Debug.LogWarning($"{TAG} Delivery FAILED on '{Id}'. Required item '{_requiredItemId}' not found in inventory.");
                 PlayFeedback(_failureSound);
             }
         }
@@ -87,15 +91,21 @@ namespace FifthSemester.Gameplay {
 
         private bool TryDeliverItem() {
             if (_inventoryService == null) {
-                Debug.LogError($"{TAG} IInventoryService não encontrado no Service Locator.");
+                Debug.LogError($"{TAG} IInventoryService not found in Service Locator.");
                 return false;
             }
 
             var items = _inventoryService.GetItems();
+            if (items == null) {
+                Debug.LogWarning($"{TAG} Inventory items list is null.");
+                return false;
+            }
+
             foreach (var item in items) {
-                if (item.Id == _requiredItemId) {
+                if (item != null && string.Equals(item.Id, _requiredItemId, System.StringComparison.OrdinalIgnoreCase)) {
                     if (_consumeItemOnDelivery) {
                         _inventoryService.RemoveItem(item);
+                        Debug.Log($"{TAG} Consumed item '{item.Id}' from inventory.");
                     }
                     return true;
                 }
@@ -106,6 +116,7 @@ namespace FifthSemester.Gameplay {
 
         private void CompleteDelivery() {
             _isCompleted = true;
+            Debug.Log($"{TAG} Publishing ItemDeliveredEvent: DeliveryPointId='{Id}', DeliveredItemId='{_requiredItemId}'");
             _eventBus?.Publish(new ItemDeliveredEvent(Id, _requiredItemId));
         }
 

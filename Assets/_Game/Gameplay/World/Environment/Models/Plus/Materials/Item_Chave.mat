@@ -11,7 +11,8 @@ Material:
   m_Shader: {fileID: 4800000, guid: a4695d13b016719468f4e58d7607093b, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _UNLIT_MODE
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -84,6 +85,7 @@ Material:
     m_Floats:
     - _AddPrecomputedVelocity: 0
     - _AffineMapping: 0
+    - _AffineStrength: 1
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _Ambient: 20
@@ -101,6 +103,7 @@ Material:
     - _DstBlend: 0
     - _DstBlendAlpha: 0
     - _EnvironmentReflections: 1
+    - _FogEnabled: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -121,7 +124,8 @@ Material:
     - _SrcBlendAlpha: 1
     - _Surface: 0
     - _UVSec: 0
-    - _UnlitMode: 0
+    - _UnlitMode: 1
+    - _VertexColor: 0
     - _WorkflowMode: 1
     - _ZTest: 4
     - _ZWrite: 1

@@ -10,18 +10,18 @@ namespace FifthSemester.Core.Audio {
         public string Name { get; private set; }
         public string Path { get; private set; }
 
-        public GameObject Root => source.gameObject;
+        public GameObject Root => source != null ? source.gameObject : null;
         public AudioSource Source => source;
 
         private readonly AudioChannel channel;
         private readonly AudioSource source;
 
         public float VolumeCap { get; private set; }
-        public float Pitch { get { return source.pitch; } set { source.pitch = value; } }
-        public float Volume { get { return source.volume; } set { source.volume = value; } }
+        public float Pitch { get { return source != null ? source.pitch : 1f; } set { if (source != null) source.pitch = value; } }
+        public float Volume { get { return source != null ? source.volume : 0f; } set { if (source != null) source.volume = value; } }
 
-        public bool Loop => source.loop;
-        public bool IsPlaying => source.isPlaying;
+        public bool Loop => source != null && source.loop;
+        public bool IsPlaying => source != null && source.isPlaying;
 
         /// <summary>
         /// Initializes a new AudioTrack, creating its AudioSource and setting all playback parameters.
@@ -35,19 +35,20 @@ namespace FifthSemester.Core.Audio {
         /// <param name="mixer">The AudioMixerGroup for output.</param>
         /// <param name="filePath">File path of the audio clip.</param>
         public AudioTrack(AudioClip clip, bool loop, float startingVolume, float volumeCap, float pitch, AudioChannel channel, AudioMixerGroup mixer, string filePath) {
-            Name = clip.name;
+            Name = clip != null ? clip.name : string.Empty;
             Path = filePath;
 
             this.channel = channel;
             this.VolumeCap = volumeCap;
 
             source = CreateSource();
-            source.clip = clip;
-            source.loop = loop;
-            source.volume = startingVolume;
-            source.pitch = pitch;
-
-            source.outputAudioMixerGroup = mixer;
+            if (source != null) {
+                source.clip = clip;
+                source.loop = loop;
+                source.volume = startingVolume;
+                source.pitch = pitch;
+                source.outputAudioMixerGroup = mixer;
+            }
         }
 
         /// <summary>
@@ -55,6 +56,8 @@ namespace FifthSemester.Core.Audio {
         /// </summary>
         /// <returns>The created AudioSource component.</returns>
         private AudioSource CreateSource() {
+            if (channel == null || channel.TrackContainer == null) return null;
+
             GameObject sourceObject = new GameObject(string.Format(TRACK_NAME_FORMAT, Name));
             sourceObject.transform.SetParent(channel.TrackContainer);
             AudioSource source = sourceObject.AddComponent<AudioSource>();
@@ -66,14 +69,18 @@ namespace FifthSemester.Core.Audio {
         /// Starts playback of the audio track.
         /// </summary>
         public void Play() {
-            source.Play();
+            if (source != null) {
+                source.Play();
+            }
         }
 
         /// <summary>
         /// Stops playback of the audio track.
         /// </summary>
         public void Stop() {
-            source.Stop();
+            if (source != null) {
+                source.Stop();
+            }
         }
     }
 }

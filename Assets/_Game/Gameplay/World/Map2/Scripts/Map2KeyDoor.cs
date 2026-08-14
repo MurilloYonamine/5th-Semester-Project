@@ -1,10 +1,9 @@
 using FifthSemester.Shared;
 using System.Collections;
 using System.Collections.Generic;
+using FifthSemester.Core.Enums;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.States;
-
-
 using Sirenix.OdinInspector;
 using TMPro;
 using ThirdParty.QuickOutline;
@@ -34,10 +33,13 @@ namespace FifthSemester.Gameplay {
 
         [Header("Configurações de Movimento")]
         [SerializeField] private bool _isOpen = false;
-        [SerializeField] private float _openAngle = 90f;
         [SerializeField] private float _slideDistance = 1.5f;
         [SerializeField] private float _speed = 5f;
-        [SerializeField] private bool _useDoubleDoor;
+        [SerializeField] private bool _useDoubleDoor = false;
+
+        [HideIf(nameof(_useDoubleDoor))]
+        [SerializeField] private DoorOpenDirection _openDirection = DoorOpenDirection.Right;
+
         [SerializeField] private Vector3 _slideAxis = new Vector3(1f, 0f, 0f);
 
         [Header("Audio")]
@@ -53,8 +55,6 @@ namespace FifthSemester.Gameplay {
 
         private IInventoryService<Item> _inventoryService;
         private IMap2KeyService _map2KeyService;
-        private Quaternion[] _closedRotations;
-        private Quaternion[] _targetRotations;
         private Vector3[] _closedPositions;
         private Vector3[] _targetPositions;
         private Transform[] _activeDoorMeshes;
@@ -69,7 +69,9 @@ namespace FifthSemester.Gameplay {
 
         private void Awake() {
             _outline = GetComponent<Outline>();
-            _outline.enabled = false;
+            if (_outline != null) {
+                _outline.enabled = false;
+            }
             _collider = GetComponent<Collider>();
 
             _textLocal = GetComponentInChildren<TextMeshPro>();
@@ -78,11 +80,11 @@ namespace FifthSemester.Gameplay {
                 _textLocal.gameObject.SetActive(false);
             }
 
-            if(_doorMesh == null)
+            if (_doorMesh == null)
                 _doorMesh = gameObject.transform;
 
             CacheDoorMeshes();
-            InitializeRotations();
+            InitializePositions();
             _unlockedColor = new Color32(105, 255, 144, 255);
         }
 
@@ -95,7 +97,7 @@ namespace FifthSemester.Gameplay {
         }
 
         private void Update() {
-            if (_activeDoorMeshes == null || _targetRotations == null || _targetPositions == null) {
+            if (_activeDoorMeshes == null || _targetPositions == null) {
                 return;
             }
 
@@ -105,7 +107,6 @@ namespace FifthSemester.Gameplay {
                     continue;
                 }
 
-                doorMesh.localRotation = Quaternion.Lerp(doorMesh.localRotation, _targetRotations[i], Time.deltaTime * _speed);
                 doorMesh.localPosition = Vector3.Lerp(doorMesh.localPosition, _targetPositions[i], Time.deltaTime * _speed);
             }
         }
@@ -125,7 +126,7 @@ namespace FifthSemester.Gameplay {
 
             _isOpen = !_isOpen;
             PlayDoorSound();
-            UpdateTargetRotations();
+            UpdateTargetPositions();
         }
 
         public void StopInteract() {
@@ -142,7 +143,7 @@ namespace FifthSemester.Gameplay {
             if (!_isOpen) {
                 _isOpen = true;
                 PlayDoorSound();
-                UpdateTargetRotations();
+                UpdateTargetPositions();
                 Debug.Log($"[Map2KeyDoor] TryOpenByAI: Door '{gameObject.name}' successfully opened by Nurse!");
             }
 
@@ -160,7 +161,7 @@ namespace FifthSemester.Gameplay {
             if (_isOpen) {
                 _isOpen = false;
                 PlayDoorSound();
-                UpdateTargetRotations();
+                UpdateTargetPositions();
             }
 
             if (_navMeshObstacle != null) {
@@ -206,20 +207,16 @@ namespace FifthSemester.Gameplay {
                 return;
             }
 
-            _activeDoorMeshes = _doorMesh != null ? new[] { _doorMesh } : Array.Empty<Transform>();
+            _activeDoorMeshes = _doorMesh != null ? new[] { _doorMesh } : new[] { transform };
         }
 
-        private void InitializeRotations() {
+        private void InitializePositions() {
             if (_activeDoorMeshes == null) {
-                _closedRotations = Array.Empty<Quaternion>();
-                _targetRotations = Array.Empty<Quaternion>();
                 _closedPositions = Array.Empty<Vector3>();
                 _targetPositions = Array.Empty<Vector3>();
                 return;
             }
 
-            _closedRotations = new Quaternion[_activeDoorMeshes.Length];
-            _targetRotations = new Quaternion[_activeDoorMeshes.Length];
             _closedPositions = new Vector3[_activeDoorMeshes.Length];
             _targetPositions = new Vector3[_activeDoorMeshes.Length];
 
@@ -229,15 +226,22 @@ namespace FifthSemester.Gameplay {
                     continue;
                 }
 
-                _closedRotations[i] = doorMesh.localRotation;
-                _targetRotations[i] = _closedRotations[i];
                 _closedPositions[i] = doorMesh.localPosition;
                 _targetPositions[i] = _closedPositions[i];
             }
+
+            if (_isOpen) {
+                UpdateTargetPositions();
+                for (int i = 0; i < _activeDoorMeshes.Length; i++) {
+                    if (_activeDoorMeshes[i] != null) {
+                        _activeDoorMeshes[i].localPosition = _targetPositions[i];
+                    }
+                }
+            }
         }
 
-        private void UpdateTargetRotations() {
-            if (_activeDoorMeshes == null || _targetRotations == null || _targetPositions == null) {
+        private void UpdateTargetPositions() {
+            if (_activeDoorMeshes == null || _targetPositions == null) {
                 return;
             }
 
@@ -258,16 +262,13 @@ namespace FifthSemester.Gameplay {
                     if (_useDoubleDoor) {
                         float slideDirection = i % 2 == 0 ? -_slideDistance : _slideDistance;
                         _targetPositions[i] = _closedPositions[i] + _slideAxis * slideDirection;
-                        _targetRotations[i] = _closedRotations[i];
                     }
                     else {
-                        float direction = _openAngle;
-                        _targetRotations[i] = _closedRotations[i] * Quaternion.Euler(0f, direction, 0f);
-                        _targetPositions[i] = _closedPositions[i];
+                        float slideDirection = _openDirection == DoorOpenDirection.Left ? -_slideDistance : _slideDistance;
+                        _targetPositions[i] = _closedPositions[i] + _slideAxis * slideDirection;
                     }
                 }
                 else {
-                    _targetRotations[i] = _closedRotations[i];
                     _targetPositions[i] = _closedPositions[i];
                 }
             }

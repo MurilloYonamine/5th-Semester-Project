@@ -33,8 +33,11 @@ namespace FifthSemester.Core.Audio
             ChannelIndex = channel;
             _audioService = audioService;
 
-            TrackContainer = new GameObject(string.Format(TRACK_CONTAINER_NAME_FORMAT, channel)).transform;
-            TrackContainer.SetParent(_audioService.transform);
+            if (_audioService != null)
+            {
+                TrackContainer = new GameObject(string.Format(TRACK_CONTAINER_NAME_FORMAT, channel)).transform;
+                TrackContainer.SetParent(_audioService.transform);
+            }
         }
 
         /// <summary>
@@ -49,6 +52,8 @@ namespace FifthSemester.Core.Audio
         /// <returns>The AudioTrack being played.</returns>
         public AudioTrack PlayTrack(AudioClip clip, bool loop, float startingVolume, float volumeCap, float pitch, AudioMixerGroup mixer, string filePath)
         {
+            if (clip == null) return null;
+
             if (TryGetTrack(clip.name, out AudioTrack existingTrack))
             {
                 if (!existingTrack.IsPlaying)
@@ -77,11 +82,17 @@ namespace FifthSemester.Core.Audio
         /// <returns>True if the track exists, false otherwise.</returns>
         public bool TryGetTrack(string trackName, out AudioTrack value)
         {
+            if (string.IsNullOrEmpty(trackName))
+            {
+                value = null;
+                return false;
+            }
+
             trackName = trackName.ToLower();
 
             foreach (var track in _tracks)
             {
-                if (track.Name.ToLower() == trackName)
+                if (track != null && track.Name != null && track.Name.ToLower() == trackName)
                 {
                     value = track;
                     return true;
@@ -98,6 +109,8 @@ namespace FifthSemester.Core.Audio
         /// <param name="track">The track to set as active.</param>
         private void SetAsActiveTrack(AudioTrack track)
         {
+            if (track == null) return;
+
             if (!_tracks.Contains(track))
             {
                 _tracks.Add(track);
@@ -113,6 +126,11 @@ namespace FifthSemester.Core.Audio
         /// </summary>
         private void TryStartVolumeLeveling()
         {
+            if (_audioService == null || !_audioService.isActiveAndEnabled)
+            {
+                return;
+            }
+
             if (!IsLevelingVolume)
             {
                 co_volumeLeveling = _audioService.StartCoroutine(VolumeLeveling());
@@ -130,6 +148,11 @@ namespace FifthSemester.Core.Audio
                 for (int i = _tracks.Count - 1; i >= 0; i--)
                 {
                     AudioTrack track = _tracks[i];
+                    if (track == null)
+                    {
+                        _tracks.RemoveAt(i);
+                        continue;
+                    }
 
                     float targetVol = ActiveTrack == track ? track.VolumeCap : 0;
 
@@ -147,12 +170,18 @@ namespace FifthSemester.Core.Audio
 
             co_volumeLeveling = null;
         }
+
         /// <summary>
         /// Determines if the volume leveling coroutine should continue running.
         /// </summary>
         /// <returns>True if leveling should continue, false otherwise.</returns>
         private bool ShouldContinueVolumeLeveling()
         {
+            if (_audioService == null || !_audioService.isActiveAndEnabled)
+            {
+                return false;
+            }
+
             bool hasActiveTrack = ActiveTrack != null;
             bool multipleTracksOrVolumeNotMax = hasActiveTrack && (_tracks.Count > 1 || ActiveTrack.Volume != ActiveTrack.VolumeCap);
             bool noActiveTrackButHasTracks = !hasActiveTrack && _tracks.Count > 0;
@@ -161,18 +190,24 @@ namespace FifthSemester.Core.Audio
 
             return shouldContinue;
         }
+
         /// <summary>
         /// Removes and destroys the specified track from this channel.
         /// </summary>
         /// <param name="track">The track to destroy.</param>
         private void DestroyTrack(AudioTrack track)
         {
+            if (track == null) return;
+
             if (_tracks.Contains(track))
             {
                 _tracks.Remove(track);
             }
 
-            Object.Destroy(track.Root);
+            if (track.Root != null)
+            {
+                Object.Destroy(track.Root);
+            }
         }
 
         /// <summary>
@@ -183,7 +218,7 @@ namespace FifthSemester.Core.Audio
         {
             if (ActiveTrack == null) return;
 
-            if (immediate)
+            if (immediate || _audioService == null || !_audioService.isActiveAndEnabled)
             {
                 DestroyTrack(ActiveTrack);
                 ActiveTrack = null;

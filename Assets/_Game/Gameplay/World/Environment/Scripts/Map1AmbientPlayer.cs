@@ -17,7 +17,7 @@ namespace FifthSemester.Gameplay {
         private IAudioService _audioService;
 
         private void Awake() {
-            _audioService = ServiceLocator.Get<IAudioService>();
+            ServiceLocator.TryGet<IAudioService>(out _audioService);
         }
 
         private void Start() {
@@ -27,10 +27,20 @@ namespace FifthSemester.Gameplay {
         public void Play() {
             if (_ambientClip == null) return;
 
-            _audioService.PlayAmbience(_ambientClip, startingVolume: 1f, loop: _loop);
+            if (_audioService == null && !ServiceLocator.TryGet<IAudioService>(out _audioService)) {
+                return;
+            }
+
+            _audioService.PlayAmbience(_ambientClip, startingVolume: _volume, loop: _loop);
         }
 
         public void OnDestroy() {
+            if (_ambientClip == null) return;
+
+            if (_audioService is Object unityObj && unityObj == null) {
+                return;
+            }
+
             if (_audioService != null) {
                 _audioService.StopAmbience(_ambientClip);
             }

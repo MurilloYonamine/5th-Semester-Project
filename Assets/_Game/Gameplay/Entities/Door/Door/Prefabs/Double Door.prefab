@@ -555,10 +555,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: c8a60cd8391e60d4bae3a33e5bdd99e2, type: 2}
   _requiresKey: 1
-  _isOpen: 0
-  _openAngle: 90
+  _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _openDirection: 1
+  _slideAxis: {x: 0, y: 0, z: 1}
   _doorSfx:
   - {fileID: 8300000, guid: 6ffecbd2b4bde2946a86c6fd95247b8c, type: 3}
   - {fileID: 8300000, guid: 41e05d20c802876479c6466672883c24, type: 3}
@@ -752,10 +753,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _requiredKey: {fileID: 11400000, guid: c8a60cd8391e60d4bae3a33e5bdd99e2, type: 2}
   _requiresKey: 1
-  _isOpen: 0
-  _openAngle: -90
+  _slideDistance: 1.5
   _speed: 5
   _useDoubleDoor: 0
+  _openDirection: 0
+  _slideAxis: {x: 0, y: 0, z: 1}
   _doorSfx:
   - {fileID: 8300000, guid: 6ffecbd2b4bde2946a86c6fd95247b8c, type: 3}
   - {fileID: 8300000, guid: 41e05d20c802876479c6466672883c24, type: 3}

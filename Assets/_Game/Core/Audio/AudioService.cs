@@ -9,6 +9,7 @@ namespace FifthSemester.Core.Audio {
     /// Central audio manager for the project. Handles music and SFX playback, channel management, volume control, and AudioMixer routing.
     /// </summary>
     public class AudioService : MonoBehaviour, IAudioService {
+        private const string TAG = "<color=yellow><b>[AudioService]</b></color>";
 
         [Header("Audio Mixer Parameter Names")]
         public const string MASTER_VOLUME_PARAMETER_NAME = "MasterVolume";
@@ -30,7 +31,6 @@ namespace FifthSemester.Core.Audio {
         private const string SFX_PARENT_NAME = "SFX";
         private const string SFX_NAME_FORMAT = "SFX - [{0}]";
         private Transform _sfxRoot;
-
 
         public Dictionary<int, AudioChannel> channels = new Dictionary<int, AudioChannel>();
 
@@ -67,135 +67,116 @@ namespace FifthSemester.Core.Audio {
                 SetAmbienceVolume(settings.AmbienceVolume);
             }
         }
+
         #region Play Audio
         /// <summary>
         /// Plays a sound effect (SFX) from a file path in the Resources folder.
         /// </summary>
-        /// <param name="filePath">Audio file path in the Resources folder.</param>
-        /// <param name="mixer">Audio mixer to use (optional).</param>
-        /// <param name="volume">Audio volume.</param>
-        /// <param name="pitch">Audio pitch.</param>
-        /// <param name="loop">Whether the audio should loop.</param>
-        /// <returns>AudioSource created for the SFX.</returns>
-        public AudioSource PlaySFX(string filePath, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false, float spatialBlend = 0.5f, float maxDistance = 500f) {
+        public AudioSource PlaySFX(string filePath, AudioMixerGroup mixer = null, float volume = 1f, float pitch = 1f, bool loop = false, float spatialBlend = 0.5f, float maxDistance = 500f) {
             AudioClip clip = Resources.Load<AudioClip>(filePath);
 
             if (clip == null) {
-                Debug.LogError($"Could not load audio file '{filePath}'. Please make sure this exists in the Resources directory!");
+                Debug.LogError($"{TAG} Could not load audio file '{filePath}'. Please make sure this exists in the Resources directory!");
                 return null;
             }
 
             return PlaySFX(clip, mixer, volume, pitch, loop, spatialBlend, filePath, maxDistance);
         }
+
         /// <summary>
         /// Plays a sound effect (SFX) from an AudioClip.
         /// </summary>
-        /// <param name="clip">AudioClip to play.</param>
-        /// <param name="mixer">Audio mixer to use (optional).</param>
-        /// <param name="volume">Audio volume.</param>
-        /// <param name="pitch">Audio pitch.</param>
-        /// <param name="loop">Whether the audio should loop.</param>
-        /// <param name="filePath">File name or path (optional).</param>
-        /// <returns>AudioSource created for the SFX.</returns>
-        public AudioSource PlaySFX(AudioClip clip, AudioMixerGroup mixer = null, float volume = 1, float pitch = 1, bool loop = false, float spatialBlend = 0.5f, string filePath = "", float maxDistance = 500f) {
-            string fileName = clip != null ? clip.name : "NULL_CLIP";
+        public AudioSource PlaySFX(AudioClip clip, AudioMixerGroup mixer = null, float volume = 1f, float pitch = 1f, bool loop = false, float spatialBlend = 0.5f, string filePath = "", float maxDistance = 500f) {
+            if (clip == null || this == null || !isActiveAndEnabled || _sfxRoot == null) return null;
 
-            if (filePath != string.Empty) {
-                fileName = filePath;
-            }
+            AudioMixerGroup targetMixer = mixer != null ? mixer : SFXMixer;
 
-            AudioSource audioSource = new GameObject(string.Format(SFX_NAME_FORMAT, fileName)).AddComponent<AudioSource>();
-            audioSource.transform.SetParent(_sfxRoot);
-            audioSource.transform.position = _sfxRoot.position;
+            GameObject effectObject = new GameObject(string.Format(SFX_NAME_FORMAT, clip.name));
+            effectObject.transform.SetParent(_sfxRoot);
 
-            audioSource.clip = clip;
+            AudioSource source = effectObject.AddComponent<AudioSource>();
+            source.clip = clip;
+            source.volume = volume;
+            source.pitch = pitch;
+            source.loop = loop;
+            source.spatialBlend = spatialBlend;
+            source.maxDistance = maxDistance;
+            source.outputAudioMixerGroup = targetMixer;
 
-            if (mixer == null) {
-                mixer = SFXMixer;
-            }
-
-            audioSource.outputAudioMixerGroup = mixer;
-            audioSource.volume = volume;
-            audioSource.pitch = pitch;
-            audioSource.spatialBlend = spatialBlend;
-            audioSource.maxDistance = maxDistance;
-            audioSource.loop = loop;
-
-            audioSource.Play();
+            source.Play();
 
             if (!loop) {
-                Destroy(audioSource.gameObject, (clip.length / pitch) + 1);
+                Destroy(effectObject, clip.length / ((pitch <= 0) ? 1 : pitch));
             }
 
-            return audioSource;
+            return source;
         }
+
         /// <summary>
-        /// Plays an audio track (music) from a file path in the Resources folder on a specific channel.
+        /// Plays an audio track on the specified channel, creating it if needed.
         /// </summary>
-        /// <param name="filePath">Audio file path in the Resources folder.</param>
-        /// <param name="channel">Channel number.</param>
-        /// <param name="loop">Whether the track should loop.</param>
-        /// <param name="startingVolume">Initial track volume.</param>
-        /// <param name="volumeCap">Maximum allowed volume.</param>
-        /// <param name="pitch">Track pitch.</param>
-        /// <returns>AudioTrack created for the track.</returns>
         public AudioTrack PlayTrack(string filePath, int channel = 0, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f) {
             AudioClip clip = Resources.Load<AudioClip>(filePath);
 
             if (clip == null) {
-                Debug.LogError($"Could not load audio file '{filePath}'. Please make sure this exists in the Resources directory!");
+                Debug.LogError($"{TAG} Could not load audio file '{filePath}'. Please make sure this exists in the Resources directory!");
                 return null;
             }
 
-            return PlayTrack(clip, channel, loop, startingVolume, volumeCap, pitch, filePath);
-
+            return PlayTrack(clip, channel, loop, startingVolume, volumeCap, pitch, filePath: filePath);
         }
+
         /// <summary>
-        /// Plays an audio track (music) from an AudioClip on a specific channel.
+        /// Plays an audio track on the specified channel using an AudioClip.
         /// </summary>
-        /// <param name="clip">AudioClip to play.</param>
-        /// <param name="channel">Channel number.</param>
-        /// <param name="loop">Whether the track should loop.</param>
-        /// <param name="startingVolume">Initial track volume.</param>
-        /// <param name="volumeCap">Maximum allowed volume.</param>
-        /// <param name="pitch">Track pitch.</param>
-        /// <param name="filePath">File name or path (optional).</param>
-        /// <returns>AudioTrack created for the track.</returns>
         public AudioTrack PlayTrack(AudioClip clip, int channel = 0, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f, string filePath = "") {
-            AudioChannel audioChannel = TryGetChannel(
-                channelNumber: channel,
-                createIfDoesNotExist: true
-            );
-
-            return audioChannel.PlayTrack(clip, loop, startingVolume, volumeCap, pitch, MusicMixer, filePath);
+            return PlayTrack(clip, channel, loop, startingVolume, volumeCap, pitch, MusicMixer, filePath);
         }
 
-        public AudioTrack PlayAmbience(string filePath, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f) {
-            AudioClip clip = Resources.Load<AudioClip>(filePath);
+        public AudioTrack PlayTrack(AudioClip clip, int channel, bool loop, float startingVolume, float volumeCap, float pitch, AudioMixerGroup mixer, string filePath = "") {
+            if (clip == null || this == null || !isActiveAndEnabled) return null;
 
-            if (clip == null) {
-                Debug.LogError($"Could not load audio file '{filePath}'. Please make sure this exists in the Resources directory!");
-                return null;
-            }
+            AudioMixerGroup targetMixer = mixer != null ? mixer : MusicMixer;
 
-            return PlayAmbience(clip, 10, loop, startingVolume, volumeCap, pitch, filePath);
-        }
+            AudioChannel audioChannel = TryGetChannel(channel, createIfDoesNotExist: true);
 
-        public AudioTrack PlayAmbience(AudioClip clip, int channel = 10, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f, string filePath = "") {
-            AudioChannel audioChannel = TryGetChannel(
-              channelNumber: channel,
-              createIfDoesNotExist: true
+            if (audioChannel == null) return null;
+
+            AudioTrack track = audioChannel.PlayTrack(
+                clip: clip,
+                loop: loop,
+                startingVolume: startingVolume,
+                volumeCap: volumeCap,
+                pitch: pitch,
+                mixer: targetMixer,
+                filePath: filePath
             );
 
-            return audioChannel.PlayTrack(clip, loop, startingVolume, volumeCap, pitch, AmbienceMixer, filePath);
+            return track;
+        }
+
+        public AudioTrack PlayAmbience(AudioClip clip, int channel = 0, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f, string filePath = "") {
+            int channelIndex = channel == 0 ? 1 : channel;
+            return PlayTrack(
+                clip: clip,
+                channel: channelIndex,
+                loop: loop,
+                startingVolume: startingVolume,
+                volumeCap: volumeCap,
+                pitch: pitch,
+                mixer: AmbienceMixer,
+                filePath: filePath
+            );
         }
         #endregion
+
         #region Stop Audio
         /// <summary>
-        /// Stops the audio track on a specific channel.
+        /// Stops the audio track on the specified channel.
         /// </summary>
-        /// <param name="channelNumber">Channel number.</param>
         public void StopTrack(int channelNumber) {
+            if (this == null) return;
+
             AudioChannel channel = TryGetChannel(
                 channelNumber: channelNumber,
                 createIfDoesNotExist: false
@@ -203,58 +184,70 @@ namespace FifthSemester.Core.Audio {
 
             channel?.StopTrack();
         }
+
         /// <summary>
         /// Stops the audio track with the specified name.
         /// </summary>
-        /// <param name="trackName">Track name.</param>
         public void StopTrack(string trackName) {
+            if (string.IsNullOrEmpty(trackName) || this == null || channels == null) return;
+
             trackName = trackName.ToLower();
 
             foreach (var channel in channels.Values) {
-                if (channel.TryGetTrack(trackName, out AudioTrack track)) {
+                if (channel != null && channel.TryGetTrack(trackName, out AudioTrack track)) {
                     channel.StopTrack();
                     return;
                 }
             }
         }
+
         /// <summary>
         /// Stops all audio tracks on all channels.
         /// </summary>
         public void StopAllTracks() {
+            if (this == null || channels == null) return;
+
             foreach (var channel in channels.Values) {
-                channel.StopTrack();
+                channel?.StopTrack();
             }
         }
+
         /// <summary>
         /// Stops a specific sound effect (SFX) by AudioClip.
         /// </summary>
-        /// <param name="clip">AudioClip of the SFX to stop.</param>
         public void StopSFX(AudioClip clip) {
             if (clip == null) return;
 
             StopSFX(clip.name);
         }
+
         /// <summary>
         /// Stops a specific sound effect (SFX) by name.
         /// </summary>
-        /// <param name="sfxName">SFX name.</param>
         public void StopSFX(string sfxName) {
+            if (string.IsNullOrEmpty(sfxName) || this == null || _sfxRoot == null) return;
+
             sfxName = sfxName.ToLower();
 
             AudioSource[] sources = _sfxRoot.GetComponentsInChildren<AudioSource>();
             foreach (var source in sources) {
-                if (source.clip != null && source.clip.name.ToLower() == sfxName) {
+                if (source != null && source.clip != null && source.clip.name.ToLower() == sfxName) {
                     Destroy(source.gameObject);
                     return;
                 }
             }
         }
+
         /// <summary>
         /// Stops all currently playing sound effects (SFX).
         /// </summary>
         public void StopAllSFX() {
+            if (this == null || _sfxRoot == null) return;
+
             foreach (Transform child in _sfxRoot) {
-                Destroy(child.gameObject);
+                if (child != null) {
+                    Destroy(child.gameObject);
+                }
             }
         }
 
@@ -263,31 +256,37 @@ namespace FifthSemester.Core.Audio {
 
             StopAmbience(clip.name);
         }
+
         public void StopAmbience(string ambienceName) {
+            if (string.IsNullOrEmpty(ambienceName) || this == null || channels == null) return;
+
             ambienceName = ambienceName.ToLower();
 
             foreach (var channel in channels.Values) {
-                if (channel.TryGetTrack(ambienceName, out AudioTrack track)) {
+                if (channel != null && channel.TryGetTrack(ambienceName, out AudioTrack track)) {
                     channel.StopTrack(); 
                     return;
                 }
             }
         }
+
         public void StopAllAmbience() {
+            if (this == null || channels == null) return;
+
             foreach (var channel in channels.Values) {
-                if (channel.ActiveTrack != null && channel.ActiveTrack.Source != null && channel.ActiveTrack.Source.outputAudioMixerGroup == AmbienceMixer) {
+                if (channel != null && channel.ActiveTrack != null && channel.ActiveTrack.Source != null && channel.ActiveTrack.Source.outputAudioMixerGroup == AmbienceMixer) {
                     channel.StopTrack(immediate: true);
                 }
             }
         }
         #endregion
+
         #region Set Volumes
         /// <summary>
         /// Sets the master volume of the mixer.
         /// </summary>
-        /// <param name="volume">Volume value (0 to 1).</param>
-        /// <param name="muted">Whether to mute the audio.</param>
         public void SetMasterVolume(float volume, bool muted = false) {
+            if (MasterMixer == null || MasterMixer.audioMixer == null) return;
             float dbVolume = (volume <= 0) ? -80f : Mathf.Log10(volume / 100f) * 20f;
             MasterMixer.audioMixer.SetFloat(MASTER_VOLUME_PARAMETER_NAME, dbVolume);
         }
@@ -295,44 +294,39 @@ namespace FifthSemester.Core.Audio {
         /// <summary>
         /// Sets the music volume of the mixer.
         /// </summary>
-        /// <param name="volume">Volume value (0 to 1).</param>
-        /// <param name="muted">Whether to mute the audio.</param>
         public void SetMusicVolume(float volume, bool muted = false) {
+            if (MusicMixer == null || MusicMixer.audioMixer == null) return;
             float dbVolume = (volume <= 0) ? -80f : Mathf.Log10(volume / 100f) * 20f;
             MusicMixer.audioMixer.SetFloat(MUSIC_VOLUME_PARAMETER_NAME, dbVolume);
         }
+
         /// <summary>
         /// Sets the sound effects (SFX) volume of the mixer.
         /// </summary>
-        /// <param name="volume">Volume value (0 to 1).</param>
-        /// <param name="muted">Whether to mute the audio.</param>
         public void SetSFXVolume(float volume, bool muted = false) {
+            if (SFXMixer == null || SFXMixer.audioMixer == null) return;
             float dbVolume = (volume <= 0) ? -80f : Mathf.Log10(volume / 100f) * 20f;
             SFXMixer.audioMixer.SetFloat(SFX_VOLUME_PARAMETER_NAME, dbVolume);
         }
+
         /// <summary>
         /// Sets the ambience volume of the mixer.
         /// </summary>
-        /// <param name="volume">Volume value (0 to 1).</param>
-        /// <param name="muted">Whether to mute the audio.</param>
         public void SetAmbienceVolume(float volume, bool muted = false) {
+            if (AmbienceMixer == null || AmbienceMixer.audioMixer == null) return;
             float dbVolume = (volume <= 0) ? -80f : Mathf.Log10(volume / 100f) * 20f;
             AmbienceMixer.audioMixer.SetFloat(AMBIENCE_VOLUME_PARAMETER_NAME, dbVolume);
         }
-
         #endregion
 
         /// <summary>
         /// Tries to get an audio channel by number. Creates a new channel if it doesn't exist and createIfDoesNotExist is true.
         /// </summary>
-        /// <param name="channelNumber">Channel number.</param>
-        /// <param name="createIfDoesNotExist">Whether to create the channel if it doesn't exist.</param>
-        /// <returns>Corresponding AudioChannel or null.</returns>
         public AudioChannel TryGetChannel(int channelNumber, bool createIfDoesNotExist = false) {
             if (channels.TryGetValue(channelNumber, out AudioChannel channel)) {
                 return channel;
             }
-            else if (createIfDoesNotExist) {
+            else if (createIfDoesNotExist && this != null && isActiveAndEnabled) {
                 channel = new AudioChannel(channelNumber, this);
                 channels.Add(channelNumber, channel);
                 return channel;

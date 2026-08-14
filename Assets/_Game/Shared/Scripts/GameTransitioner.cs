@@ -33,16 +33,9 @@ namespace FifthSemester.Shared
                 Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Escape) ||
                 Input.GetKeyDown(KeyCode.E) ||
                 Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) ||
-                (UnityEngine.InputSystem.Keyboard.current != null && (
-                    UnityEngine.InputSystem.Keyboard.current.enterKey.wasPressedThisFrame ||
-                    UnityEngine.InputSystem.Keyboard.current.numpadEnterKey.wasPressedThisFrame ||
-                    UnityEngine.InputSystem.Keyboard.current.spaceKey.wasPressedThisFrame ||
-                    UnityEngine.InputSystem.Keyboard.current.escapeKey.wasPressedThisFrame ||
-                    UnityEngine.InputSystem.Keyboard.current.eKey.wasPressedThisFrame)) ||
-                (UnityEngine.InputSystem.Gamepad.current != null && (
-                    UnityEngine.InputSystem.Gamepad.current.buttonEast.wasPressedThisFrame ||
-                    UnityEngine.InputSystem.Gamepad.current.buttonSouth.wasPressedThisFrame ||
-                    UnityEngine.InputSystem.Gamepad.current.startButton.wasPressedThisFrame)))
+                Input.GetKeyDown(KeyCode.JoystickButton0) ||
+                Input.GetKeyDown(KeyCode.JoystickButton1) ||
+                Input.GetKeyDown(KeyCode.JoystickButton7))
             {
                 SkipVideo();
             }

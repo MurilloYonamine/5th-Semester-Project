@@ -20,6 +20,7 @@ namespace FifthSemester.Gameplay {
         private Dictionary<CutsceneType, CutsceneController> _cutsceneDictionary;
 
         private CutsceneController _activeCutscene;
+        private bool _isSkipping;
 
         [SerializeField]
         private CinemachineCamera _playerCamera;
@@ -60,6 +61,9 @@ namespace FifthSemester.Gameplay {
             _eventBus?.Subscribe<SkipCutsceneRequestedEvent>(
                 OnSkipRequested
             );
+            _eventBus?.Subscribe<CutsceneEndedEvent>(
+                OnCutsceneEnded
+            );
         }
 
         private void OnDestroy() {
@@ -69,6 +73,9 @@ namespace FifthSemester.Gameplay {
             _eventBus?.Unsubscribe<SkipCutsceneRequestedEvent>(
                 OnSkipRequested
             );
+            _eventBus?.Unsubscribe<CutsceneEndedEvent>(
+                OnCutsceneEnded
+            );
         }
 
         private void OnSkipRequested(SkipCutsceneRequestedEvent evt) {
@@ -76,7 +83,16 @@ namespace FifthSemester.Gameplay {
             SkipActiveCutscene();
         }
 
+        private void OnCutsceneEnded(CutsceneEndedEvent evt) {
+            if (_activeCutscene != null && _activeCutscene.CutsceneID == evt.CutsceneID) {
+                _activeCutscene = null;
+            }
+            _isSkipping = false;
+        }
+
         public void PlayCutscene(CutsceneType type) {
+            _isSkipping = false;
+
             if (_cutsceneDictionary.TryGetValue(type, out var cutscene)) {
                 _activeCutscene = cutscene;
                 cutscene.SetPlayerCamera(_playerCamera);
@@ -88,30 +104,40 @@ namespace FifthSemester.Gameplay {
         }
 
         public void SkipActiveCutscene() {
-            if (_activeCutscene == null)
+            if (_isSkipping)
                 return;
 
-            if (!_activeCutscene.IsPlaying)
+            if (_activeCutscene == null || !_activeCutscene.IsPlaying)
                 return;
 
             if (_fadeService == null) {
                 ServiceLocator.TryGet<IFadeService>(out _fadeService);
             }
 
+            _isSkipping = true;
+
             if (_fadeService == null) {
-                _activeCutscene.SkipCutscene();
+                var cutsceneToSkip = _activeCutscene;
                 _activeCutscene = null;
+                cutsceneToSkip.SkipCutscene();
+
+                var dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
+                dialogueService?.ForceEndDialogueImmediate();
+
+                _isSkipping = false;
                 return;
             }
 
             _fadeService.FadeOut(SKIP_FADE_DURATION, () => {
-                _activeCutscene?.SkipCutscene();
+                var cutsceneToSkip = _activeCutscene;
+                _activeCutscene = null;
+                cutsceneToSkip?.SkipCutscene();
 
                 var dialogueService = ServiceLocator.Get<IDialogueService<TextAsset>>();
                 dialogueService?.ForceEndDialogueImmediate();
 
                 _fadeService.FadeIn(SKIP_FADE_DURATION);
-                _activeCutscene = null;
+                _isSkipping = false;
             });
         }
     }

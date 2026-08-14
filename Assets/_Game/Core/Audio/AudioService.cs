@@ -54,6 +54,7 @@ namespace FifthSemester.Core.Audio {
         }
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+            StopAllTracks(immediate: true);
             StopAllAmbience();
             StopAllSFX();
         }
@@ -174,7 +175,7 @@ namespace FifthSemester.Core.Audio {
         /// <summary>
         /// Stops the audio track on the specified channel.
         /// </summary>
-        public void StopTrack(int channelNumber) {
+        public void StopTrack(int channelNumber, bool immediate = false) {
             if (this == null) return;
 
             AudioChannel channel = TryGetChannel(
@@ -182,20 +183,18 @@ namespace FifthSemester.Core.Audio {
                 createIfDoesNotExist: false
             );
 
-            channel?.StopTrack();
+            channel?.StopTrack(immediate);
         }
 
         /// <summary>
         /// Stops the audio track with the specified name.
         /// </summary>
-        public void StopTrack(string trackName) {
+        public void StopTrack(string trackName, bool immediate = false) {
             if (string.IsNullOrEmpty(trackName) || this == null || channels == null) return;
-
-            trackName = trackName.ToLower();
 
             foreach (var channel in channels.Values) {
                 if (channel != null && channel.TryGetTrack(trackName, out AudioTrack track)) {
-                    channel.StopTrack();
+                    channel.StopTrack(immediate);
                     return;
                 }
             }
@@ -204,11 +203,11 @@ namespace FifthSemester.Core.Audio {
         /// <summary>
         /// Stops all audio tracks on all channels.
         /// </summary>
-        public void StopAllTracks() {
+        public void StopAllTracks(bool immediate = false) {
             if (this == null || channels == null) return;
 
             foreach (var channel in channels.Values) {
-                channel?.StopTrack();
+                channel?.StopTrack(immediate);
             }
         }
 

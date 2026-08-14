@@ -12,9 +12,9 @@ namespace FifthSemester.Core.Services {
         AudioTrack PlayAmbience(AudioClip clip, int channel = 0, bool loop = true, float startingVolume = 0f, float volumeCap = 1f, float pitch = 1f, string filePath = "");
         
 
-        void StopTrack(int channelNumber);
-        void StopTrack(string trackName);
-        void StopAllTracks();
+        void StopTrack(int channelNumber, bool immediate = false);
+        void StopTrack(string trackName, bool immediate = false);
+        void StopAllTracks(bool immediate = false);
 
         void StopSFX(AudioClip clip);
         void StopSFX(string sfxName);

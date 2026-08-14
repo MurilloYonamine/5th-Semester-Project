@@ -188,6 +188,11 @@ namespace FifthSemester.Gameplay {
         public void EndDialogue() {
             string sourceId = _currentDialogueSourceId;
 
+            if (CurrentMode == DialogueMode.Cutscene) {
+                FinalizeDialogueEnd(sourceId);
+                return;
+            }
+
             PlayEndFade(sourceId);
         }
 
@@ -260,13 +265,6 @@ namespace FifthSemester.Gameplay {
                 }
                 catch { }
                 _endHoldCoroutine = null;
-            }
-
-            // Tentar limpar overlay de fade imediatamente.
-            EnsureFadeService();
-            if (_fadeService != null) {
-                // FadeIn com zero duration para garantir tela visível
-                _fadeService.FadeIn(0f, null);
             }
 
             // Finaliza estado do diálogo imediatamente

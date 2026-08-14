@@ -88,11 +88,23 @@ namespace FifthSemester.Core.Audio
                 return false;
             }
 
-            trackName = trackName.ToLower();
+            string cleanName = System.IO.Path.GetFileNameWithoutExtension(trackName);
 
             foreach (var track in _tracks)
             {
-                if (track != null && track.Name != null && track.Name.ToLower() == trackName)
+                if (track == null) continue;
+
+                if (!string.IsNullOrEmpty(track.Name) &&
+                    (string.Equals(track.Name, trackName, System.StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(track.Name, cleanName, System.StringComparison.OrdinalIgnoreCase)))
+                {
+                    value = track;
+                    return true;
+                }
+
+                if (!string.IsNullOrEmpty(track.Path) &&
+                    (string.Equals(track.Path, trackName, System.StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(track.Path, cleanName, System.StringComparison.OrdinalIgnoreCase)))
                 {
                     value = track;
                     return true;
@@ -216,14 +228,23 @@ namespace FifthSemester.Core.Audio
         /// <param name="immediate">If true, stops and destroys the track immediately.</param>
         public void StopTrack(bool immediate = false)
         {
-            if (ActiveTrack == null) return;
-
             if (immediate || _audioService == null || !_audioService.isActiveAndEnabled)
             {
-                DestroyTrack(ActiveTrack);
-                ActiveTrack = null;
+                if (ActiveTrack != null)
+                {
+                    DestroyTrack(ActiveTrack);
+                    ActiveTrack = null;
+                }
+
+                for (int i = _tracks.Count - 1; i >= 0; i--)
+                {
+                    DestroyTrack(_tracks[i]);
+                }
+                _tracks.Clear();
                 return;
             }
+
+            if (ActiveTrack == null) return;
             ActiveTrack = null;
             TryStartVolumeLeveling();
         }

@@ -19,6 +19,7 @@ namespace FifthSemester.Gameplay {
 
         private IEventBus _eventBus;
         private string _currentMissionId;
+        private bool _isHUDVisible = true;
 
         private void Awake() {
             _canvasGroup = GetComponent<CanvasGroup>();
@@ -27,12 +28,18 @@ namespace FifthSemester.Gameplay {
         private void Start() {
             _eventBus = ServiceLocator.Get<IEventBus>();
 
+            IHUDService hudService = ServiceLocator.Get<IHUDService>();
+            if (hudService != null) {
+                _isHUDVisible = hudService.IsHUDVisible;
+            }
+
             if (_eventBus != null) {
                 _eventBus.Subscribe<MissionUpdatedEvent>(OnMissionUpdated);
                 _eventBus.Subscribe<MissionProgressEvent>(OnMissionProgress);
                 _eventBus.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
                 _eventBus.Subscribe<DialogueStartedEvent>(OnDialogueStarted);
                 _eventBus.Subscribe<DialogueEndedEvent>(OnDialogueEnded);
+                _eventBus.Subscribe<HUDVisibilityChangedEvent>(OnHUDVisibilityChanged);
             }
 
             IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
@@ -54,6 +61,7 @@ namespace FifthSemester.Gameplay {
                 _eventBus.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
                 _eventBus.Unsubscribe<DialogueStartedEvent>(OnDialogueStarted);
                 _eventBus.Unsubscribe<DialogueEndedEvent>(OnDialogueEnded);
+                _eventBus.Unsubscribe<HUDVisibilityChangedEvent>(OnHUDVisibilityChanged);
             }
         }
 
@@ -125,8 +133,14 @@ namespace FifthSemester.Gameplay {
             ApplyGameState(gameStateService != null ? gameStateService.CurrentState : GameState.Gameplay);
         }
 
+        private void OnHUDVisibilityChanged(HUDVisibilityChangedEvent evt) {
+            _isHUDVisible = evt.IsVisible;
+            IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
+            ApplyGameState(gameStateService != null ? gameStateService.CurrentState : GameState.Gameplay);
+        }
+
         private void ApplyGameState(GameState currentState) {
-            bool shouldShow = currentState == GameState.Gameplay;
+            bool shouldShow = (currentState == GameState.Gameplay) && _isHUDVisible;
 
             if (_canvasGroup != null) {
                 _canvasGroup.alpha = shouldShow ? 1f : 0f;

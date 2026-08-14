@@ -17,6 +17,7 @@ namespace FifthSemester.Gameplay {
 
         private bool _sprintInputHeld;
         private IEventBus _eventBus;
+        private bool _isHUDVisible = true;
 
         private void Reset() {
             if(_playerController == null) {
@@ -26,14 +27,36 @@ namespace FifthSemester.Gameplay {
 
         private void Start() {
             _eventBus = ServiceLocator.Get<IEventBus>();
+
+            IHUDService hudService = ServiceLocator.Get<IHUDService>();
+            if (hudService != null) {
+                _isHUDVisible = hudService.IsHUDVisible;
+            }
+
             _eventBus?.Subscribe<SprintInputEvent>(HandleSprintInput);
+            _eventBus?.Subscribe<HUDVisibilityChangedEvent>(OnHUDVisibilityChanged);
         }
 
         private void OnDestroy() {
             _eventBus?.Unsubscribe<SprintInputEvent>(HandleSprintInput);
+            _eventBus?.Unsubscribe<HUDVisibilityChangedEvent>(OnHUDVisibilityChanged);
+        }
+
+        private void OnHUDVisibilityChanged(HUDVisibilityChangedEvent evt) {
+            _isHUDVisible = evt.IsVisible;
+            if (!_isHUDVisible && _canvasGroup != null) {
+                _canvasGroup.alpha = 0f;
+            }
         }
 
         private void Update() {
+            if (!_isHUDVisible) {
+                if (_canvasGroup != null && _canvasGroup.alpha > 0f) {
+                    _canvasGroup.alpha = 0f;
+                }
+                return;
+            }
+
             if (_playerController.PlayerMovement == null) return;
             if (!_playerController.PlayerMovement.UsesSprintStamina) return;
 
@@ -52,7 +75,7 @@ namespace FifthSemester.Gameplay {
         private void HandleSprintInput(SprintInputEvent evt) {
             _sprintInputHeld = evt.IsPressed;
 
-            if (_canvasGroup != null && evt.IsPressed) {
+            if (_canvasGroup != null && evt.IsPressed && _isHUDVisible) {
                 _canvasGroup.alpha = 1f;
             }
         }

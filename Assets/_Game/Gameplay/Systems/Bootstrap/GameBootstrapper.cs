@@ -34,6 +34,9 @@ namespace FifthSemester.Gameplay {
             var saveService = new SaveService();
             ServiceLocator.Register<ISaveService>(saveService);
 
+            var hudService = new HUDService();
+            ServiceLocator.Register<IHUDService>(hudService);
+
             GameObject coreSystems = Resources.Load<GameObject>(CORE_SYSTEMS);
             if (coreSystems != null) {
                 GameObject instantiateObject = Object.Instantiate(coreSystems);

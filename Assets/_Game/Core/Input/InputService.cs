@@ -30,6 +30,7 @@ namespace FifthSemester.Core.Events {
         private InputAction _openPause;
         private InputAction _dialogueAdvance;
         private InputAction _skipCutscene;
+        private InputAction _toggleHUD;
 
 
         public InputService() {
@@ -61,6 +62,7 @@ namespace FifthSemester.Core.Events {
             _openPause = _gameInput.Player.OpenPause;
             _dialogueAdvance = _gameInput.UI.Interact;
             _skipCutscene = _gameInput.Player.SkipCutscene;
+            _toggleHUD = _gameInput.Player.ToggleHUD;
 
             _dialogueAdvance.started += HandleDialogueAdvance;
 
@@ -81,6 +83,7 @@ namespace FifthSemester.Core.Events {
             _inventoryNavigate.performed += HandleInventoryNavigation;
             _openPause.performed += HandleOpenPause;
             _skipCutscene.started += HandleSkipCutscene;
+            _toggleHUD.performed += HandleToggleHUD;
 
             ServiceLocator.Get<IEventBus>()?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
             ServiceLocator.Get<IEventBus>()?.Subscribe<InventoryToggledEvent>(OnInventoryToggled);
@@ -213,6 +216,14 @@ namespace FifthSemester.Core.Events {
             PublishEvent(new SkipCutsceneRequestedEvent());
         }
 
+        private void HandleToggleHUD(InputAction.CallbackContext context) {
+            if (!context.performed) return;
+            if (CurrentGameState != GameState.Gameplay) return;
+
+            PublishEvent(new ToggleHUDInputEvent());
+            ServiceLocator.Get<IHUDService>()?.ToggleHUD();
+        }
+
         public void OnGameStateChanged(GameStateChangedEvent evt) {
             CurrentGameState = evt.CurrentState;
 
@@ -225,6 +236,7 @@ namespace FifthSemester.Core.Events {
                 _crouch.Enable();
                 _sprint.Enable();
                 _flash?.Enable();
+                _toggleHUD?.Enable();
             }
             else {
                 PublishEvent(new MoveInputEvent(Vector2.zero));
@@ -237,6 +249,7 @@ namespace FifthSemester.Core.Events {
                 _crouch.Disable();
                 _sprint.Disable();
                 _flash?.Disable();
+                _toggleHUD?.Disable();
             }
         }
         public void Dispose() {
@@ -262,6 +275,7 @@ namespace FifthSemester.Core.Events {
             _openPause.performed -= HandleOpenPause;
             _dialogueAdvance.started -= HandleDialogueAdvance;
             _skipCutscene.started -= HandleSkipCutscene;
+            _toggleHUD.performed -= HandleToggleHUD;
         }
     }
 }

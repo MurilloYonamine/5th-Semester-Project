@@ -1,16 +1,26 @@
+// Autor: Murillo Gomes Yonamine
+// Data: 14/08/2026
+
 using FifthSemester.Core.Events;
 using FifthSemester.Core.Services;
 using FifthSemester.Core.States;
 using UnityEngine;
 
-namespace FifthSemester.Gameplay {
-    public class PlayerStateUIController : MonoBehaviour {
-        [Header("References")]
-        [SerializeField] private GameObject _crosshair;
-        [SerializeField] private GameObject _staminaBarRoot;
+namespace FifthSemester.Gameplay.UI {
+    public class HUDController : MonoBehaviour {
+        private const string TAG = "<color=yellow><b>[HUDController]</b></color>";
+
+        [Header("Canvas Group (Optional Root)")]
+        [SerializeField] private CanvasGroup _rootCanvasGroup;
 
         private IEventBus _eventBus;
         private bool _isHUDVisible = true;
+
+        private void Awake() {
+            if (_rootCanvasGroup == null) {
+                _rootCanvasGroup = GetComponent<CanvasGroup>();
+            }
+        }
 
         private void Start() {
             _eventBus = ServiceLocator.Get<IEventBus>();
@@ -26,9 +36,7 @@ namespace FifthSemester.Gameplay {
             }
 
             IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
-            if (gameStateService != null) {
-                ApplyState(gameStateService.CurrentState);
-            }
+            ApplyVisibility(gameStateService != null ? gameStateService.CurrentState : GameState.Gameplay);
         }
 
         private void OnDestroy() {
@@ -39,24 +47,22 @@ namespace FifthSemester.Gameplay {
         }
 
         private void OnGameStateChanged(GameStateChangedEvent evt) {
-            ApplyState(evt.CurrentState);
+            ApplyVisibility(evt.CurrentState);
         }
 
         private void OnHUDVisibilityChanged(HUDVisibilityChangedEvent evt) {
             _isHUDVisible = evt.IsVisible;
             IGameStateService gameStateService = ServiceLocator.Get<IGameStateService>();
-            ApplyState(gameStateService != null ? gameStateService.CurrentState : GameState.Gameplay);
+            ApplyVisibility(gameStateService != null ? gameStateService.CurrentState : GameState.Gameplay);
         }
 
-        private void ApplyState(GameState currentState) {
-            bool shouldShow = (currentState == GameState.Gameplay) && _isHUDVisible;
+        private void ApplyVisibility(GameState state) {
+            bool shouldShow = (state == GameState.Gameplay) && _isHUDVisible;
 
-            if (_crosshair != null) {
-                _crosshair.SetActive(shouldShow);
-            }
-
-            if (_staminaBarRoot != null) {
-                _staminaBarRoot.SetActive(shouldShow);
+            if (_rootCanvasGroup != null) {
+                _rootCanvasGroup.alpha = shouldShow ? 1f : 0f;
+                _rootCanvasGroup.interactable = shouldShow;
+                _rootCanvasGroup.blocksRaycasts = shouldShow;
             }
         }
     }

@@ -127,6 +127,15 @@ namespace FifthSemester.Core.Input
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""ToggleHUD"",
+                    ""type"": ""Button"",
+                    ""id"": ""e4f8d951-4034-4b53-b295-65d1d6fa5c27"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -602,6 +611,39 @@ namespace FifthSemester.Core.Input
                     ""action"": ""InventoryNavigate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f5127d19-21b8-4e08-9df8-927cb0f19c3b"",
+                    ""path"": ""<Keyboard>/h"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Keyboard&Mouse"",
+                    ""action"": ""ToggleHUD"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""90e66d48-8df0-4a8a-b851-f7614e7a9b0c"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""ToggleHUD"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c138da64-6725-4c07-b2f5-b286f91f7c89"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""ToggleHUD"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1377,6 +1419,7 @@ namespace FifthSemester.Core.Input
             m_Player_Flash = m_Player.FindAction("Flash", throwIfNotFound: true);
             m_Player_SkipCutscene = m_Player.FindAction("Skip Cutscene", throwIfNotFound: true);
             m_Player_InventoryNavigate = m_Player.FindAction("InventoryNavigate", throwIfNotFound: true);
+            m_Player_ToggleHUD = m_Player.FindAction("ToggleHUD", throwIfNotFound: true);
             // UI
             m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
             m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1471,6 +1514,7 @@ namespace FifthSemester.Core.Input
         private readonly InputAction m_Player_Flash;
         private readonly InputAction m_Player_SkipCutscene;
         private readonly InputAction m_Player_InventoryNavigate;
+        private readonly InputAction m_Player_ToggleHUD;
         public struct PlayerActions
         {
             private @GameInput m_Wrapper;
@@ -1486,6 +1530,7 @@ namespace FifthSemester.Core.Input
             public InputAction @Flash => m_Wrapper.m_Player_Flash;
             public InputAction @SkipCutscene => m_Wrapper.m_Player_SkipCutscene;
             public InputAction @InventoryNavigate => m_Wrapper.m_Player_InventoryNavigate;
+            public InputAction @ToggleHUD => m_Wrapper.m_Player_ToggleHUD;
             public InputActionMap Get() { return m_Wrapper.m_Player; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -1528,6 +1573,9 @@ namespace FifthSemester.Core.Input
                 @InventoryNavigate.started += instance.OnInventoryNavigate;
                 @InventoryNavigate.performed += instance.OnInventoryNavigate;
                 @InventoryNavigate.canceled += instance.OnInventoryNavigate;
+                @ToggleHUD.started += instance.OnToggleHUD;
+                @ToggleHUD.performed += instance.OnToggleHUD;
+                @ToggleHUD.canceled += instance.OnToggleHUD;
             }
 
             private void UnregisterCallbacks(IPlayerActions instance)
@@ -1565,6 +1613,9 @@ namespace FifthSemester.Core.Input
                 @InventoryNavigate.started -= instance.OnInventoryNavigate;
                 @InventoryNavigate.performed -= instance.OnInventoryNavigate;
                 @InventoryNavigate.canceled -= instance.OnInventoryNavigate;
+                @ToggleHUD.started -= instance.OnToggleHUD;
+                @ToggleHUD.performed -= instance.OnToggleHUD;
+                @ToggleHUD.canceled -= instance.OnToggleHUD;
             }
 
             public void RemoveCallbacks(IPlayerActions instance)
@@ -1790,6 +1841,7 @@ namespace FifthSemester.Core.Input
             void OnFlash(InputAction.CallbackContext context);
             void OnSkipCutscene(InputAction.CallbackContext context);
             void OnInventoryNavigate(InputAction.CallbackContext context);
+            void OnToggleHUD(InputAction.CallbackContext context);
         }
         public interface IUIActions
         {

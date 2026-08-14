@@ -73,6 +73,16 @@ namespace FifthSemester.Core.Events {
 
     public readonly struct SkipCutsceneRequestedEvent { }
 
+    public readonly struct ToggleHUDInputEvent { }
+
+    public readonly struct HUDVisibilityChangedEvent {
+        public readonly bool IsVisible;
+
+        public HUDVisibilityChangedEvent(bool isVisible) {
+            IsVisible = isVisible;
+        }
+    }
+
     /// ============= Pause Events =============
     public readonly struct PauseToggleRequestedEvent { }
 

@@ -20,6 +20,7 @@ namespace FifthSemester.Gameplay.UI {
 
         private CanvasGroup _canvasGroup;
         private IEventBus _eventBus;
+        private bool _isHUDVisible = true;
 
         private Action<InputEventPtr, InputDevice> _onEventHandler;
 
@@ -33,7 +34,13 @@ namespace FifthSemester.Gameplay.UI {
             _onEventHandler = HandleInputEvent;
             InputSystem.onEvent += _onEventHandler;
 
-            _eventBus.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
+            IHUDService hudService = ServiceLocator.Get<IHUDService>();
+            if (hudService != null) {
+                _isHUDVisible = hudService.IsHUDVisible;
+            }
+
+            _eventBus?.Subscribe<GameStateChangedEvent>(OnGameStateChanged);
+            _eventBus?.Subscribe<HUDVisibilityChangedEvent>(OnHUDVisibilityChanged);
 
             ApplyGameState(ServiceLocator.Get<IGameStateService>()?.CurrentState ?? GameState.Gameplay);
         }
@@ -46,7 +53,8 @@ namespace FifthSemester.Gameplay.UI {
                 _onEventHandler = null;
             }
 
-            _eventBus.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
+            _eventBus?.Unsubscribe<GameStateChangedEvent>(OnGameStateChanged);
+            _eventBus?.Unsubscribe<HUDVisibilityChangedEvent>(OnHUDVisibilityChanged);
         }
 
         private void HandleInputEvent(InputEventPtr inputEvent, InputDevice device) {
@@ -65,10 +73,15 @@ namespace FifthSemester.Gameplay.UI {
             ApplyGameState(evt.CurrentState);
         }
 
+        private void OnHUDVisibilityChanged(HUDVisibilityChangedEvent evt) {
+            _isHUDVisible = evt.IsVisible;
+            ApplyGameState(ServiceLocator.Get<IGameStateService>()?.CurrentState ?? GameState.Gameplay);
+        }
+
         private void ApplyGameState(GameState currentState) {
             if (_canvasGroup == null) return;
 
-            _canvasGroup.alpha = currentState == GameState.Gameplay ? 1f : 0f;
+            _canvasGroup.alpha = (currentState == GameState.Gameplay && _isHUDVisible) ? 1f : 0f;
         }
 
         private DeviceDisplayType DetectDevice(InputDevice device) {
